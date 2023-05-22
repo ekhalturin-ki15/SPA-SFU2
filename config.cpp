@@ -1,6 +1,11 @@
 #include "config.h"
 
-FConfig::FConfig() : iMaxLen(15), iWeigthRib(10), bCreateFolder(false)
+FConfig::FConfig(FGlobal* _fGlobal) : fGlobal(_fGlobal)
+{
+}
+
+
+FConfig::FConfig() : iMaxLen(15), iWeigthRib(10), bCreateFolder(false), bReloadLogFile(false)
 {
     wsNameLableFile = L"Id,Label";
     wsNameRibFile = L"Source,Target,Type,Kind,Id,Label,timeset,Weight";
@@ -170,8 +175,23 @@ void FConfig::SetParams(wstring wsKey, OpenXLSX::XLRow row)
         {
             if (i)
             {
-                wsNameLogFile = fGlobal->GetValue(it);
-                bCreateFolder = (wsNameLogFile.find(L"да") != wstring::npos);
+                wstring wsLine = fGlobal->GetValue(it);
+                bCreateFolder = (wsLine.find(L"да") != wstring::npos);
+                return;
+            }
+            ++i;
+        }
+    }
+
+    wsPatern = L"Перезаписывать лог файл";
+    if (wsKey == wsPatern)
+    {
+        int i = 0; for (auto& it : row.cells())
+        {
+            if (i)
+            {
+                wstring wsLine = fGlobal->GetValue(it);
+                bReloadLogFile = (wsLine.find(L"да") != wstring::npos);
                 return;
             }
             ++i;

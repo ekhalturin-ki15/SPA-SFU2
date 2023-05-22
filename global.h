@@ -31,7 +31,7 @@ struct FGlobal
     const std::wstring sNamePage; //Хардкод, так как точка опоры
 
     FGlobal();
-    //~FGlobal();
+    ~FGlobal();
 
     wstring GetValue(OpenXLSX::XLCell cell);
 
@@ -39,10 +39,9 @@ struct FGlobal
 
     string ConwertToString(wstring wsData);
 
-    string ConwertPathFormat(string sFileName);
-};
+    string ConwertPathFormat(string sFileName, bool bRename = false);
 
-FGlobal* fGlobal; //Синглтон
-FError* fError; //Синглтон
-FConfig* fConfig; //Синглтон
-FSolve* fSolve; //Синглтон
+    FError* fError; //Синглтон
+    FConfig* fConfig; //Синглтон
+    FSolve* fSolve; //Синглтон
+};

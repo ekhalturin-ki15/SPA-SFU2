@@ -2,6 +2,11 @@
 #include "error.h"
 #include "global.h"
 
+FSolve::FSolve(FGlobal* _fGlobal) : fGlobal(_fGlobal)
+{
+}
+
+
 
 void FSolve::ClearTreeDisc()
 {
@@ -16,7 +21,7 @@ void FSolve::Read(string sInPath, string sOutPath)
 {
 	ClearTreeDisc();
 
-	sInPath = fGlobal->ConwertPathFormat(sInPath);
+	sInPath = fGlobal->ConwertPathFormat(sInPath, true);
 	sOutPath = fGlobal->ConwertPathFormat(sOutPath);
 
 	OpenXLSX::XLDocument fDoc;
@@ -28,8 +33,8 @@ void FSolve::Read(string sInPath, string sOutPath)
 	}
 	catch(...)
 	{
-		fError->ErrorOutFileNotFind(fGlobal->ConwertToWstring(sInPath));
-		exit(0); //Код ошибки - не удаётся создать папку для вывода
+		fGlobal->fError->ErrorInFileNotFind(fGlobal->ConwertToWstring(sInPath));
+		return; //Но продолжаем работать с другими файлами
 	}
 	fBook = fDoc.workbook();
 	auto arrNamePage = fBook.worksheetNames();

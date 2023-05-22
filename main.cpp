@@ -38,50 +38,53 @@ struct Disc
         sId(_sNoIdentity) {}
 };
 
+FGlobal* fGlobal; //Синглтон
+
 void Create()
 {
     fGlobal = new FGlobal;
-    fError = new FError;
-    fConfig = new FConfig;
-    fSolve = new FSolve;
+    //fError = new FError;
+    //fConfig = new FConfig;
+    //fSolve = new FSolve;
 }
 
 void Delete()
 {
     delete fGlobal;
-    delete fError;
-	delete fConfig;
-	delete fSolve;
+    //delete fError;
+	//delete fConfig;
+	//delete fSolve;
 }
-
 
 int main()
 {
     Create();
 
-    fConfig->Init(fGlobal->sNameConfig, fGlobal->sNamePage);
+    fGlobal->fConfig->Init(fGlobal->sNameConfig, fGlobal->sNamePage);
+    fGlobal->fError->Init(); // Чтобы очистить лог файл
 
     auto fFile = filesystem::current_path(); //Взятие пути директории расположения exe файла
 
-    for (int category = 0; category < fConfig->arrNameFileIn.size(); ++category)
+    for (int category = 0; category < fGlobal->fConfig->arrNameFileIn.size(); ++category)
     {
-        auto fInFile = fFile / fConfig->arrNameFileIn[category];
+        auto fInFile = fFile / fGlobal->fConfig->arrNameFileIn[category];
         if (!filesystem::exists(fInFile))
         { 
-            fError->ErrorInFileNotFind(fInFile);
-            exit(0); //Код ошибки - нет файлов указанного формата, из которых ожидалось считывание 
+            fGlobal->fError->ErrorInFileNotFind(fInFile);
+            continue; //Код ошибки - нет файлов указанного формата, из которых ожидалось считывание 
         }
-        auto fOutFile = fFile / fConfig->arrNameFileOut[category];
+        auto fOutFile = fFile / fGlobal->fConfig->arrNameFileOut[category];
         if (!filesystem::exists(fOutFile))
         {
-            if (fConfig->bCreateFolder)
+            if (fGlobal->fConfig->bCreateFolder)
             {
                 filesystem::create_directory(fOutFile);
             }
             else
             {
-                fError->ErrorOutFileNotFind(fOutFile);
-                exit(0); //Код ошибки - не удаётся создать папку для вывода
+                fGlobal->fError->ErrorOutFileNotFind(fOutFile);
+                continue;
+                //exit(0); //Код ошибки - не удаётся создать папку для вывода
             }
         }
 
@@ -90,7 +93,7 @@ int main()
             if (!it.is_directory())
             {
                 auto sOutName = fOutFile / it.path().filename() / "";
-                fSolve->Read(it.path().string(), sOutName.string());
+                fGlobal->fSolve->Read(it.path().string(), sOutName.string());
             }
         }
 

@@ -6,6 +6,10 @@
 
 FGlobal::FGlobal() : sNameConfig(L"./config.xlsx"), sNamePage(L"Параметры")
 {
+	fConfig = new FConfig(this);
+	fSolve = new FSolve(this);
+	fError = new FError(this);
+
 	fTranslit = 
 	{
 		{'А' , 'A'},
@@ -53,6 +57,7 @@ FGlobal::FGlobal() : sNameConfig(L"./config.xlsx"), sNamePage(L"Параметры")
 		{'Ф' , 'F'},
 		{'ф' , 'f'},
 		{'Х' , 'H'},
+		{'х' , 'h'},
 		{'ч' , 'h'},
 		{'Ц' , 'С'},
 		{'ц' , 'c'},
@@ -81,7 +86,6 @@ FGlobal::FGlobal() : sNameConfig(L"./config.xlsx"), sNamePage(L"Параметры")
 	{
 		fTranslit[tolower(ch)] = nch;
 	}*/
-
 }
 
 wstring FGlobal::ConwertToWstring(string sData)
@@ -132,7 +136,7 @@ wstring FGlobal::GetValue(OpenXLSX::XLCell cell)
 }
 
 //+ Избавляемся от киррилицы
-string FGlobal::ConwertPathFormat(string sFileName)
+string FGlobal::ConwertPathFormat(string sFileName, bool bRename)
 {
 	string sNewName = sFileName;
 
@@ -142,15 +146,15 @@ string FGlobal::ConwertPathFormat(string sFileName)
 		if (fTranslit.count(it)) it = fTranslit[it];
 	}
 
-	if (sFileName != sNewName)
+	if ((sFileName != sNewName) && (bRename))
 		filesystem::rename(sFileName, sNewName);
 
 	return sNewName;
 }
 
-//FGlobal::~FGlobal()
-//{
-//	delete fError;
-//	delete fConfig;
-//	delete fSolve;
-//}
+FGlobal::~FGlobal()
+{
+	delete fError;
+	delete fConfig;
+	delete fSolve;
+}

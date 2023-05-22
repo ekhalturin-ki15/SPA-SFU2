@@ -1,8 +1,13 @@
 #pragma once
 #include "global.h"
 
+struct FGlobal;
+
 struct FConfig
 {
+
+    FConfig(FGlobal* _fGlobal);
+
     vector<wstring> arrNameKeyPage;
 
     vector<wstring> arrNameFileIn;
@@ -14,6 +19,7 @@ struct FConfig
     wstring wsNameLogFile;
 
     bool bCreateFolder;
+    bool bReloadLogFile;
 
     FConfig();
 
@@ -24,5 +30,5 @@ struct FConfig
 
     void SetParams(wstring wsKey, OpenXLSX::XLRow row);
 
-
+    FGlobal* fGlobal; //Синглтон
 };
