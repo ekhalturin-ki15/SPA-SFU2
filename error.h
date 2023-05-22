@@ -6,12 +6,12 @@ struct FGlobal;
 struct FError
 {
 
-    FError(FGlobal* _fGlobal);
+    FError(FGlobal* _ptrGlobal);
     void Init();
         
     void ErrorInFileNotFind(wstring wsName);
     void ErrorOutFileNotFind(wstring wsName);
 
 
-    FGlobal* fGlobal; //Синглтон
+    FGlobal* ptrGlobal; //Синглтон
 };

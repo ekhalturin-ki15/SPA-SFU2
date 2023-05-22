@@ -1,4 +1,13 @@
-﻿#include "config.h"
+﻿// Префикс f - сложная структура
+// Префикс s - строка (string)
+// Префикс ws - строка UTF 16 (wstring)
+// Префикс arr - массив элементов (vector)
+// Префикс map - словарь (map)
+// Префикс b - флаг (bool)
+// Префикс i - число (int)
+// Префикс ptr - указатель
+
+#include "config.h"
 #include "global.h"
 #include "error.h"
 #include "solve.h"
@@ -6,9 +15,8 @@
 using namespace std;
 //using namespace OpenXLSX;
 
-
-ofstream logFile;// ("logFile.txt"); //Сообщаем об ошибках пользователя
-ofstream debugFile("debugFile.txt"); //Для отладки
+//ofstream logFile;// ("logFile.txt"); //Сообщаем об ошибках пользователя
+//ofstream debugFile("debugFile.txt"); //Для отладки
 
 
 
@@ -38,21 +46,21 @@ struct Disc
         sId(_sNoIdentity) {}
 };
 
-FGlobal* fGlobal; //Синглтон
+FGlobal* ptrGlobal; //Синглтон
 
 void Create()
 {
-    fGlobal = new FGlobal;
-    //fError = new FError;
-    //fConfig = new FConfig;
+    ptrGlobal = new FGlobal;
+    //ptrError = new ptrError;
+    //ptrGlobal = new ptrGlobal;
     //fSolve = new FSolve;
 }
 
 void Delete()
 {
-    delete fGlobal;
-    //delete fError;
-	//delete fConfig;
+    delete ptrGlobal;
+    //delete ptrError;
+	//delete ptrGlobal;
 	//delete fSolve;
 }
 
@@ -60,29 +68,26 @@ int main()
 {
     Create();
 
-    fGlobal->fConfig->Init(fGlobal->sNameConfig, fGlobal->sNamePage);
-    fGlobal->fError->Init(); // Чтобы очистить лог файл
-
     auto fFile = filesystem::current_path(); //Взятие пути директории расположения exe файла
 
-    for (int category = 0; category < fGlobal->fConfig->arrNameFileIn.size(); ++category)
+    for (int category = 0; category < ptrGlobal->ptrConfig->arrNameFileIn.size(); ++category)
     {
-        auto fInFile = fFile / fGlobal->fConfig->arrNameFileIn[category];
+        auto fInFile = fFile / ptrGlobal->ptrConfig->arrNameFileIn[category];
         if (!filesystem::exists(fInFile))
         { 
-            fGlobal->fError->ErrorInFileNotFind(fInFile);
+            ptrGlobal->ptrError->ErrorInFileNotFind(fInFile);
             continue; //Код ошибки - нет файлов указанного формата, из которых ожидалось считывание 
         }
-        auto fOutFile = fFile / fGlobal->fConfig->arrNameFileOut[category];
+        auto fOutFile = fFile / ptrGlobal->ptrConfig->arrNameFileOut[category];
         if (!filesystem::exists(fOutFile))
         {
-            if (fGlobal->fConfig->bCreateFolder)
+            if (ptrGlobal->ptrConfig->bCreateFolder)
             {
                 filesystem::create_directory(fOutFile);
             }
             else
             {
-                fGlobal->fError->ErrorOutFileNotFind(fOutFile);
+                ptrGlobal->ptrError->ErrorOutFileNotFind(fOutFile);
                 continue;
                 //exit(0); //Код ошибки - не удаётся создать папку для вывода
             }
@@ -93,7 +98,7 @@ int main()
             if (!it.is_directory())
             {
                 auto sOutName = fOutFile / it.path().filename() / "";
-                fGlobal->fSolve->Read(it.path().string(), sOutName.string());
+                ptrGlobal->ptrSolve->Read(it.path().string(), sOutName.string());
             }
         }
 

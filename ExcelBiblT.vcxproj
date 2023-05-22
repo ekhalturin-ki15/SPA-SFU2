@@ -155,6 +155,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="debugFile.txt" />
+    <Text Include="logFile.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="config.cpp" />

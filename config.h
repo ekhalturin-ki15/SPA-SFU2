@@ -2,18 +2,27 @@
 #include "global.h"
 
 struct FGlobal;
+//
+//struct FPageInfo
+//{
+//    wstring wsName;
+//    vector<wstring> arrHeader;
+//};
+
 
 struct FConfig
 {
 
-    FConfig(FGlobal* _fGlobal);
+    FConfig(FGlobal* _ptrGlobal);
 
-    vector<wstring> arrNameKeyPage;
+    map<wstring, vector<wstring>> mapKeyPage;
 
     vector<wstring> arrNameFileIn;
     vector<wstring> arrNameFileOut;
     wstring wsNameLableFile;
     wstring wsNameRibFile;
+
+    wstring wsRegexComp;
 
     wstring wsNameDebugFile;
     wstring wsNameLogFile;
@@ -28,7 +37,7 @@ struct FConfig
 
     void Init(wstring _sNameConfig, wstring _sNamePage);
 
-    void SetParams(wstring wsKey, OpenXLSX::XLRow row);
+    void SetParams(OpenXLSX::XLWorkbook& FBook, wstring wsKey, OpenXLSX::XLRow row);
 
-    FGlobal* fGlobal; //Синглтон
+    FGlobal* ptrGlobal; //Синглтон
 };

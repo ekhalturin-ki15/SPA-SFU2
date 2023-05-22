@@ -1,4 +1,3 @@
-Не обнаружен каталог с входными данным R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0104020007_op-20.plm.plx.xls
 Не обнаружен каталог с входными данным R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0104020009_OP-20.plm.plx.xls
 Не обнаружен каталог с входными данным R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0104020009_OP-21.plm.plx.xls
 Не обнаружен каталог с входными данным R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010001_OP-20.plm.plx.xls
@@ -33,3 +32,4 @@
 Не обнаружен каталог с входными данным R:/acmp/excelbibltest/ExcelBiblT/plans/grad/2704040001_OP-20.plm.plx.xls
 Не обнаружен каталог с входными данным R:/acmp/excelbibltest/ExcelBiblT/plans/grad/2704040004_OP-20.plm.plx.xls
 Не обнаружен каталог с входными данным R:/acmp/excelbibltest/ExcelBiblT/plans/grad/2704040005_OP-21.plm.plx.xls
+Не обнаружен каталог с входными данным R:/acmp/excelbibltest/ExcelBiblT/plans/grad/~$0103040030_op-21.plm.plx.xlsx

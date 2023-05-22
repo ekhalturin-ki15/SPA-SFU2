@@ -1,21 +1,21 @@
 #include "error.h"
 #include "config.h"
 
-FError::FError(FGlobal* _fGlobal) : fGlobal(_fGlobal)
+FError::FError(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
 {
 }
 
 void FError::Init()
 {
-	if (fGlobal->fConfig->bReloadLogFile)
+	if (ptrGlobal->ptrConfig->bReloadLogFile)
 	{
-		ofstream out(fGlobal->fConfig->wsNameLogFile);
+		ofstream out(ptrGlobal->ptrConfig->wsNameLogFile);
 		out << "";
 		out.close();
 	}
 	else
 	{
-		ofstream out(fGlobal->fConfig->wsNameLogFile, std::ios::app);
+		ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
 		out << "--------------------------------";
 		out << END;
 		out.close();
@@ -24,16 +24,16 @@ void FError::Init()
 
 void FError::ErrorInFileNotFind(wstring wsName)
 {
-	ofstream out(fGlobal->fConfig->wsNameLogFile, std::ios::app);
-	out << "Не обнаружен каталог с входными данным " + fGlobal->ConwertToString(wsName);
+	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
+	out << "Не обнаружен каталог с входными данным " + ptrGlobal->ConwertToString(wsName);
 	out << END;
 	out.close();
 }
 
 void FError::ErrorOutFileNotFind(wstring wsName)
 {
-	ofstream out(fGlobal->fConfig->wsNameLogFile, std::ios::app);
-	out << "Не обнаружен каталог для вывода данных " + fGlobal->ConwertToString(wsName);
+	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
+	out << "Не обнаружен каталог для вывода данных " + ptrGlobal->ConwertToString(wsName);
 	out << END;
 	out.close();
 }

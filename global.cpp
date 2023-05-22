@@ -6,11 +6,16 @@
 
 FGlobal::FGlobal() : sNameConfig(L"./config.xlsx"), sNamePage(L"Параметры")
 {
-	fConfig = new FConfig(this);
-	fSolve = new FSolve(this);
-	fError = new FError(this);
+	ptrConfig = new FConfig(this);
+	ptrConfig->Init(sNameConfig, sNamePage);
 
-	fTranslit = 
+	ptrSolve = new FSolve(this);
+	//ptrSolve->Init();
+
+	ptrError = new FError(this);
+	ptrError->Init();
+
+	mapTranslit =
 	{
 		{'А' , 'A'},
 		{'а' , 'а'},
@@ -81,6 +86,77 @@ FGlobal::FGlobal() : sNameConfig(L"./config.xlsx"), sNamePage(L"Параметры")
 		{'я' , 'y'}
 	};
 
+	mapWTranslit =
+	{
+		{L'А' , L'A'},
+		{L'а' , L'а'},
+		{L'Б' , L'B'},
+		{L'б' , L'b'},
+		{L'В' , L'V'},
+		{L'в' , L'v'},
+		{L'Г' , L'G'},
+		{L'г' , L'g'},
+		{L'Д' , L'D'},
+		{L'д' , L'd'},
+		{L'Е' , L'E'},
+		{L'е' , L'e'},
+		{L'Ё' , L'E'},
+		{L'ё' , L'e'},
+		{L'Ж' , L'J'},
+		{L'ж' , L'j'},
+		{L'З' , L'Z'},
+		{L'з' , L'z'},
+		{L'И' , L'I'},
+		{L'и' , L'i'},
+		{L'Й' , L'I'},
+		{L'й' , L'i'},
+		{L'К' , L'K'},
+		{L'к' , L'k'},
+		{L'Л' , L'L'},
+		{L'л' , L'l'},
+		{L'М' , L'M'},
+		{L'м' , L'm'},
+		{L'Н' , L'N'},
+		{L'н' , L'n'},
+		{L'О' , L'O'},
+		{L'о' , L'o'},
+		{L'П' , L'P'},
+		{L'п' , L'p'},
+		{L'Р' , L'R'},
+		{L'р' , L'r'},
+		{L'С' , L'S'},
+		{L'с' , L's'},
+		{L'Т' , L'T'},
+		{L'т' , L't'},
+		{L'У' , L'U'},
+		{L'у' , L'u'},
+		{L'Ф' , L'F'},
+		{L'ф' , L'f'},
+		{L'Х' , L'H'},
+		{L'х' , L'h'},
+		{L'ч' , L'h'},
+		{L'Ц' , L'С'},
+		{L'ц' , L'c'},
+		{L'Ч' , L'C'},
+		{L'ч' , L'c'},
+		{L'Ш' , L'S'},
+		{L'ш' , L's'},
+		{L'Щ' , L'С'},
+		{L'щ' , L'c'},
+		{L'Ъ' , L'\''},
+		{L'ъ' , L'\''},
+		{L'Ы' , L'_'},
+		{L'ы' , L'_'},
+		{L'Ь' , L'`'},
+		{L'ь' , L'`'},
+		{L'Э' , L'-'},
+		{L'э' , L'-'},
+		{L'Ю' , L'U'},
+		{L'ю' , L'u'},
+		{L'Я' , L'Y'},
+		{L'я' , L'y'}
+	};
+
 	/*auto fLowTranslit = fTranslit; // Нормального решения нет
 	for (auto [ch, nch] : fLowTranslit)
 	{
@@ -143,18 +219,47 @@ string FGlobal::ConwertPathFormat(string sFileName, bool bRename)
 	for (auto& it : sNewName)
 	{
 		if (it == '\\') it = '/';
-		if (fTranslit.count(it)) it = fTranslit[it];
+		if (mapTranslit.count(it)) it = mapTranslit[it];
 	}
 
-	if ((sFileName != sNewName) && (bRename))
-		filesystem::rename(sFileName, sNewName);
+	if (bRename)
+	{
+		try
+		{
+			filesystem::rename(sFileName, sNewName);
+		}
+		catch (...) {}
+	}
 
 	return sNewName;
 }
 
+//+ Избавляемся от киррилицы
+wstring FGlobal::ConwertPathFormat(wstring wsFileName, bool bRename)
+{
+	wstring wsNewName = wsFileName;
+
+	for (auto& it : wsNewName)
+	{
+		if (it == '\\') it = '/';
+		if (mapWTranslit.count(it)) it = mapWTranslit[it];
+	}
+
+	if (bRename)
+	{
+		try
+		{
+			filesystem::rename(wsFileName, wsNewName);
+		}
+		catch (...) {}
+	}
+
+	return wsNewName;
+}
+
 FGlobal::~FGlobal()
 {
-	delete fError;
-	delete fConfig;
-	delete fSolve;
+	delete ptrError;
+	delete ptrConfig;
+	delete ptrSolve;
 }

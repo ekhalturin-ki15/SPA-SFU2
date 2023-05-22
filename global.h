@@ -9,13 +9,14 @@
 #include <string>
 #include <locale>
 #include <codecvt>
+#include <regex>
 
 #include <OpenXLSX.hpp>
 
 using namespace std;
 
 typedef long long ll;
-#define all(v) v.begin(), v.end()
+#define ALL(v) v.begin(), v.end()
 #define END "\n"
 
 struct FError;
@@ -24,7 +25,8 @@ struct FSolve;
 
 struct FGlobal
 {
-    map<char, char> fTranslit;
+    map<char, char> mapTranslit;
+    map<wchar_t, wchar_t> mapWTranslit;
 
 
     const std::wstring sNameConfig; // "Параметры"
@@ -40,8 +42,9 @@ struct FGlobal
     string ConwertToString(wstring wsData);
 
     string ConwertPathFormat(string sFileName, bool bRename = false);
+    wstring ConwertPathFormat(wstring wsFileName, bool bRename = false);
 
-    FError* fError; //Синглтон
-    FConfig* fConfig; //Синглтон
-    FSolve* fSolve; //Синглтон
+    FError* ptrError; //Синглтон
+    FConfig* ptrConfig; //Синглтон
+    FSolve* ptrSolve; //Синглтон
 };

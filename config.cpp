@@ -1,6 +1,6 @@
 #include "config.h"
 
-FConfig::FConfig(FGlobal* _fGlobal) : fGlobal(_fGlobal)
+FConfig::FConfig(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
 {
 }
 
@@ -10,7 +10,6 @@ FConfig::FConfig() : iMaxLen(15), iWeigthRib(10), bCreateFolder(false), bReloadL
     wsNameLableFile = L"Id,Label";
     wsNameRibFile = L"Source,Target,Type,Kind,Id,Label,timeset,Weight";
 
-    arrNameKeyPage = {};
     arrNameFileIn = {L"plans/grad"};
     arrNameFileOut = {L"result/grad"};
 
@@ -23,23 +22,23 @@ void FConfig::Init(wstring _sNameConfig, wstring _sNamePage)
     OpenXLSX::XLDocument fDoc;
     OpenXLSX::XLWorkbook fBook;
 
-    fDoc.open(fGlobal->ConwertToString(_sNameConfig));
+    fDoc.open(ptrGlobal->ConwertToString(_sNameConfig));
     fBook = fDoc.workbook();
     auto arrNamePage = fBook.worksheetNames();
 
-    auto fMainPage = fBook.worksheet(fGlobal->ConwertToString(_sNamePage));
+    auto fMainPage = fBook.worksheet(ptrGlobal->ConwertToString(_sNamePage));
     for (auto& row : fMainPage.rows())
     {
         auto it = row.cells().begin();
-        wstring sDescript = fGlobal->GetValue(*it);
+        wstring sDescript = ptrGlobal->GetValue(*it);
 
-        SetParams(sDescript, row);
+        SetParams(fBook, sDescript, row);
     }
 
     fDoc.close();
 }
 
-void FConfig::SetParams(wstring wsKey, OpenXLSX::XLRow row)
+void FConfig::SetParams(OpenXLSX::XLWorkbook& FBook, wstring wsKey, OpenXLSX::XLRow row)
 {
     if (wsKey == L"") return;
     wstring wsPatern;
@@ -48,10 +47,28 @@ void FConfig::SetParams(wstring wsKey, OpenXLSX::XLRow row)
     wsPatern = L"Названия анализируемых страниц";
     if (wsKey == wsPatern)
     {
-        arrNameKeyPage.clear();
+        mapKeyPage.clear();
         int i = 0; for (auto& it : row.cells())
         {
-            if (i) arrNameKeyPage.push_back(fGlobal->GetValue(it));
+            if (i)
+            {
+                //arrKeyPage.resize(arrKeyPage.size() + 1);
+
+                wstring wsNamePage = ptrGlobal->GetValue(it);
+
+                auto fExtraPage = FBook.worksheet(ptrGlobal->ConwertToString(wsNamePage));
+
+                for (auto it : fExtraPage.rows().begin()->cells())
+                {
+                    wstring wsData = ptrGlobal->GetValue(it);
+                    if (wsData != L"")
+                    {
+                        mapKeyPage[wsNamePage].push_back(wsData);
+                    }
+                }
+
+
+            }
             ++i;
         }
         return;
@@ -64,7 +81,7 @@ void FConfig::SetParams(wstring wsKey, OpenXLSX::XLRow row)
         arrNameFileIn.clear();
         int i = 0; for (auto& it : row.cells())
         {
-            if (i) arrNameFileIn.push_back(fGlobal->GetValue(it));
+            if (i) arrNameFileIn.push_back(ptrGlobal->GetValue(it));
             ++i;
         }
         return;
@@ -77,7 +94,7 @@ void FConfig::SetParams(wstring wsKey, OpenXLSX::XLRow row)
         arrNameFileOut.clear();
         int i = 0; for (auto& it : row.cells())
         {
-            if (i) arrNameFileOut.push_back(fGlobal->GetValue(it));
+            if (i) arrNameFileOut.push_back(ptrGlobal->GetValue(it));
             ++i;
         }
         return;
@@ -90,7 +107,7 @@ void FConfig::SetParams(wstring wsKey, OpenXLSX::XLRow row)
         {
             if (i)
             {
-                wsNameLableFile = fGlobal->GetValue(it);
+                wsNameLableFile = ptrGlobal->GetValue(it);
                 return;
             }
             ++i;
@@ -105,7 +122,7 @@ void FConfig::SetParams(wstring wsKey, OpenXLSX::XLRow row)
         {
             if (i)
             {
-                wsNameRibFile = fGlobal->GetValue(it);
+                wsNameRibFile = ptrGlobal->GetValue(it);
                 return;
             }
             ++i;
@@ -147,7 +164,7 @@ void FConfig::SetParams(wstring wsKey, OpenXLSX::XLRow row)
         {
             if (i)
             {
-                wsNameDebugFile = fGlobal->GetValue(it);
+                wsNameDebugFile = ptrGlobal->GetValue(it);
                 return;
             }
             ++i;
@@ -161,7 +178,7 @@ void FConfig::SetParams(wstring wsKey, OpenXLSX::XLRow row)
         {
             if (i)
             {
-                wsNameLogFile = fGlobal->GetValue(it);
+                wsNameLogFile = ptrGlobal->GetValue(it);
                 return;
             }
             ++i;
@@ -175,7 +192,7 @@ void FConfig::SetParams(wstring wsKey, OpenXLSX::XLRow row)
         {
             if (i)
             {
-                wstring wsLine = fGlobal->GetValue(it);
+                wstring wsLine = ptrGlobal->GetValue(it);
                 bCreateFolder = (wsLine.find(L"да") != wstring::npos);
                 return;
             }
@@ -190,11 +207,26 @@ void FConfig::SetParams(wstring wsKey, OpenXLSX::XLRow row)
         {
             if (i)
             {
-                wstring wsLine = fGlobal->GetValue(it);
+                wstring wsLine = ptrGlobal->GetValue(it);
                 bReloadLogFile = (wsLine.find(L"да") != wstring::npos);
                 return;
             }
             ++i;
         }
     }
+
+    wsPatern = L"Регулярное выражения разбивки строки ([Компетенции(2)] Формируемые компетенции)";
+    if (wsKey == wsPatern)
+    {
+        int i = 0; for (auto& it : row.cells())
+        {
+            if (i)
+            {
+                wsRegexComp = ptrGlobal->GetValue(it);
+                return;
+            }
+            ++i;
+        }
+    }
+
 }
