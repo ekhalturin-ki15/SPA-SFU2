@@ -10,11 +10,17 @@ struct FConfig
     wstring wsNameLableFile;
     wstring wsNameRibFile;
 
+    wstring wsNameDebugFile;
+    wstring wsNameLogFile;
+
+    bool bCreateFolder;
+
     FConfig();
 
     int iMaxLen;
+    int iWeigthRib;
 
-    void Init(string _sNameConfig, string _sNamePage);
+    void Init(wstring _sNameConfig, wstring _sNamePage);
 
     void SetParams(wstring wsKey, OpenXLSX::XLRow row);
 

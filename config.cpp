@@ -1,24 +1,32 @@
 #include "config.h"
 
-FConfig::FConfig() : iMaxLen(0)
+FConfig::FConfig() : iMaxLen(15), iWeigthRib(10), bCreateFolder(false)
 {
+    wsNameLableFile = L"Id,Label";
+    wsNameRibFile = L"Source,Target,Type,Kind,Id,Label,timeset,Weight";
 
+    arrNameKeyPage = {};
+    arrNameFileIn = {L"plans/grad"};
+    arrNameFileOut = {L"result/grad"};
+
+    wsNameDebugFile = L"debugFile.txt";
+    wsNameLogFile = L"logFile.txt";
 }
 
-void FConfig::Init(string _sNameConfig, string _sNamePage)
+void FConfig::Init(wstring _sNameConfig, wstring _sNamePage)
 {
     OpenXLSX::XLDocument fDoc;
     OpenXLSX::XLWorkbook fBook;
 
-    fDoc.open(_sNameConfig);
+    fDoc.open(fGlobal->ConwertToString(_sNameConfig));
     fBook = fDoc.workbook();
     auto arrNamePage = fBook.worksheetNames();
 
-    auto fMainPage = fBook.worksheet(_sNamePage);
+    auto fMainPage = fBook.worksheet(fGlobal->ConwertToString(_sNamePage));
     for (auto& row : fMainPage.rows())
     {
         auto it = row.cells().begin();
-        wstring sDescript = fGlobal.GetValue(*it);
+        wstring sDescript = fGlobal->GetValue(*it);
 
         SetParams(sDescript, row);
     }
@@ -35,9 +43,10 @@ void FConfig::SetParams(wstring wsKey, OpenXLSX::XLRow row)
     wsPatern = L"Названия анализируемых страниц";
     if (wsKey == wsPatern)
     {
+        arrNameKeyPage.clear();
         int i = 0; for (auto& it : row.cells())
         {
-            if (i) arrNameKeyPage.push_back(fGlobal.GetValue(it));
+            if (i) arrNameKeyPage.push_back(fGlobal->GetValue(it));
             ++i;
         }
         return;
@@ -47,9 +56,10 @@ void FConfig::SetParams(wstring wsKey, OpenXLSX::XLRow row)
     wsPatern = L"Каталог данных УП";
     if (wsKey == wsPatern)
     {
+        arrNameFileIn.clear();
         int i = 0; for (auto& it : row.cells())
         {
-            if (i) arrNameFileIn.push_back(fGlobal.GetValue(it));
+            if (i) arrNameFileIn.push_back(fGlobal->GetValue(it));
             ++i;
         }
         return;
@@ -59,9 +69,10 @@ void FConfig::SetParams(wstring wsKey, OpenXLSX::XLRow row)
     wsPatern = L"Каталог вывода результата";
     if (wsKey == wsPatern)
     {
+        arrNameFileOut.clear();
         int i = 0; for (auto& it : row.cells())
         {
-            if (i) arrNameFileOut.push_back(fGlobal.GetValue(it));
+            if (i) arrNameFileOut.push_back(fGlobal->GetValue(it));
             ++i;
         }
         return;
@@ -74,7 +85,7 @@ void FConfig::SetParams(wstring wsKey, OpenXLSX::XLRow row)
         {
             if (i)
             {
-                wsNameLableFile = fGlobal.GetValue(it);
+                wsNameLableFile = fGlobal->GetValue(it);
                 return;
             }
             ++i;
@@ -89,7 +100,7 @@ void FConfig::SetParams(wstring wsKey, OpenXLSX::XLRow row)
         {
             if (i)
             {
-                wsNameRibFile = fGlobal.GetValue(it);
+                wsNameRibFile = fGlobal->GetValue(it);
                 return;
             }
             ++i;
@@ -110,4 +121,60 @@ void FConfig::SetParams(wstring wsKey, OpenXLSX::XLRow row)
         }
     }
 
+    wsPatern = L"Размер рёбер";
+    if (wsKey == wsPatern)
+    {
+        int i = 0; for (auto& it : row.cells())
+        {
+            if (i)
+            {
+                iWeigthRib = it.value().get<int>();
+                return;
+            }
+            ++i;
+        }
+    }
+
+    wsPatern = L"Название файла отладки";
+    if (wsKey == wsPatern)
+    {
+        int i = 0; for (auto& it : row.cells())
+        {
+            if (i)
+            {
+                wsNameDebugFile = fGlobal->GetValue(it);
+                return;
+            }
+            ++i;
+        }
+    }
+
+    wsPatern = L"Название лог файла (для пользователя)";
+    if (wsKey == wsPatern)
+    {
+        int i = 0; for (auto& it : row.cells())
+        {
+            if (i)
+            {
+                wsNameLogFile = fGlobal->GetValue(it);
+                return;
+            }
+            ++i;
+        }
+    }
+
+    wsPatern = L"Создать новый каталог";
+    if (wsKey == wsPatern)
+    {
+        int i = 0; for (auto& it : row.cells())
+        {
+            if (i)
+            {
+                wsNameLogFile = fGlobal->GetValue(it);
+                bCreateFolder = (wsNameLogFile.find(L"да") != wstring::npos);
+                return;
+            }
+            ++i;
+        }
+    }
 }

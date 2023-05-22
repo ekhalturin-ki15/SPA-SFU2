@@ -1,14 +1,103 @@
 #include "global.h"
 
-wstring Global::ConwertToWstring(string sData)
+#include "config.h"
+#include "error.h"
+#include "solve.h"
+
+FGlobal::FGlobal() : sNameConfig(L"./config.xlsx"), sNamePage(L"Параметры")
+{
+	fTranslit = 
+	{
+		{'А' , 'A'},
+		{'а' , 'а'},
+		{'Б' , 'B'},
+		{'б' , 'b'},
+		{'В' , 'V'},
+		{'в' , 'v'},
+		{'Г' , 'G'},
+		{'г' , 'g'},
+		{'Д' , 'D'},
+		{'д' , 'd'},
+		{'Е' , 'E'},
+		{'е' , 'e'},
+		{'Ё' , 'E'},
+		{'ё' , 'e'},
+		{'Ж' , 'J'},
+		{'ж' , 'j'},
+		{'З' , 'Z'},
+		{'з' , 'z'},
+		{'И' , 'I'},
+		{'и' , 'i'},
+		{'Й' , 'I'},
+		{'й' , 'i'},
+		{'К' , 'K'},
+		{'к' , 'k'},
+		{'Л' , 'L'},
+		{'л' , 'l'},
+		{'М' , 'M'},
+		{'м' , 'm'},
+		{'Н' , 'N'},
+		{'н' , 'n'},
+		{'О' , 'O'},
+		{'о' , 'o'},
+		{'П' , 'P'},
+		{'п' , 'p'},
+		{'Р' , 'R'},
+		{'р' , 'r'},
+		{'С' , 'S'},
+		{'с' , 's'},
+		{'Т' , 'T'},
+		{'т' , 't'},
+		{'У' , 'U'},
+		{'у' , 'u'},
+		{'Ф' , 'F'},
+		{'ф' , 'f'},
+		{'Х' , 'H'},
+		{'ч' , 'h'},
+		{'Ц' , 'С'},
+		{'ц' , 'c'},
+		{'Ч' , 'C'},
+		{'ч' , 'c'},
+		{'Ш' , 'S'},
+		{'ш' , 's'},
+		{'Щ' , 'С'},
+		{'щ' , 'c'},
+		{'Ъ' , '\''},
+		{'ъ' , '\''},
+		{'Ы' , '_'},
+		{'ы' , '_'},
+		{'Ь' , '`'},
+		{'ь' , '`'},
+		{'Э' , '-'},
+		{'э' , '-'},
+		{'Ю' , 'U'},
+		{'ю' , 'u'},
+		{'Я' , 'Y'},
+		{'я' , 'y'}
+	};
+
+	/*auto fLowTranslit = fTranslit; // Нормального решения нет
+	for (auto [ch, nch] : fLowTranslit)
+	{
+		fTranslit[tolower(ch)] = nch;
+	}*/
+
+}
+
+wstring FGlobal::ConwertToWstring(string sData)
 {
 	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 	return(converter.from_bytes(sData.c_str()));
 
 }
 
+string FGlobal::ConwertToString(wstring wsData)
+{
+	std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converterX;
+	return converterX.to_bytes(wsData);
+}
 
-wstring Global::GetValue(OpenXLSX::XLCell cell)
+wstring FGlobal::GetValue(OpenXLSX::XLCell cell)
 {
 	auto sType = cell.value().type();
 
@@ -41,3 +130,27 @@ wstring Global::GetValue(OpenXLSX::XLCell cell)
 
 	return L"";
 }
+
+//+ Избавляемся от киррилицы
+string FGlobal::ConwertPathFormat(string sFileName)
+{
+	string sNewName = sFileName;
+
+	for (auto& it : sNewName)
+	{
+		if (it == '\\') it = '/';
+		if (fTranslit.count(it)) it = fTranslit[it];
+	}
+
+	if (sFileName != sNewName)
+		filesystem::rename(sFileName, sNewName);
+
+	return sNewName;
+}
+
+//FGlobal::~FGlobal()
+//{
+//	delete fError;
+//	delete fConfig;
+//	delete fSolve;
+//}

@@ -1,5 +1,7 @@
 ﻿#include "config.h"
 #include "global.h"
+#include "error.h"
+#include "solve.h"
 
 using namespace std;
 //using namespace OpenXLSX;
@@ -36,41 +38,65 @@ struct Disc
         sId(_sNoIdentity) {}
 };
 
-FConfig fConfig;
+void Create()
+{
+    fGlobal = new FGlobal;
+    fError = new FError;
+    fConfig = new FConfig;
+    fSolve = new FSolve;
+}
+
+void Delete()
+{
+    delete fGlobal;
+    delete fError;
+	delete fConfig;
+	delete fSolve;
+}
 
 
 int main()
 {
-    //ptrGlobal = new Global;
+    Create();
 
-    fConfig.Init(fGlobal.sNameConfig, fGlobal.sNamePage);
+    fConfig->Init(fGlobal->sNameConfig, fGlobal->sNamePage);
 
     auto fFile = filesystem::current_path(); //Взятие пути директории расположения exe файла
 
-
-   /* XLDocument doc;
-    doc.open("./0903010030-21.plm.plx.xlsx");
-    auto wb = doc.workbook();
-    
-
-    auto st = wb.worksheetNames();
-    for (auto s : st) cout << s << " ";
-    
-
-    auto wks = wb.worksheet(st[3]);
-        for (auto& row : wks.rows()) {
-            for (auto& et : row.cells())
-            {
-                cout << et.value().get<string>() << " ";
-            }
-            cout << "\n";
+    for (int category = 0; category < fConfig->arrNameFileIn.size(); ++category)
+    {
+        auto fInFile = fFile / fConfig->arrNameFileIn[category];
+        if (!filesystem::exists(fInFile))
+        { 
+            fError->ErrorInFileNotFind(fInFile);
+            exit(0); //Код ошибки - нет файлов указанного формата, из которых ожидалось считывание 
         }
-    
+        auto fOutFile = fFile / fConfig->arrNameFileOut[category];
+        if (!filesystem::exists(fOutFile))
+        {
+            if (fConfig->bCreateFolder)
+            {
+                filesystem::create_directory(fOutFile);
+            }
+            else
+            {
+                fError->ErrorOutFileNotFind(fOutFile);
+                exit(0); //Код ошибки - не удаётся создать папку для вывода
+            }
+        }
+
+        for (auto it : filesystem::directory_iterator(fInFile))
+        {
+            if (!it.is_directory())
+            {
+                auto sOutName = fOutFile / it.path().filename() / "";
+                fSolve->Read(it.path().string(), sOutName.string());
+            }
+        }
 
 
+    }
 
-    cout << " YES ";*/
 
-
-    //delete ptrGlobal;
+    Delete();
 }

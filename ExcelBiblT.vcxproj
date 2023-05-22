@@ -158,15 +158,19 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="config.cpp" />
+    <ClCompile Include="error.cpp" />
     <ClCompile Include="global.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="solve.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="0903010030-21.plm.plx.xlsx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
+    <ClInclude Include="error.h" />
     <ClInclude Include="global.h" />
+    <ClInclude Include="solve.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

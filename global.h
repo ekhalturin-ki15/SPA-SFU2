@@ -16,17 +16,33 @@ using namespace std;
 
 typedef long long ll;
 #define all(v) v.begin(), v.end()
+#define END "\n"
 
-struct Global
+struct FError;
+struct FConfig;
+struct FSolve;
+
+struct FGlobal
 {
-    std::string sNoIdentity;
+    map<char, char> fTranslit;
 
-    const std::string sNameConfig = "./config.xlsx"; // "Параметры"
-    const std::string sNamePage = "РџР°СЂР°РјРµС‚СЂС‹"; //Хардкод, так как точка опоры
+
+    const std::wstring sNameConfig; // "Параметры"
+    const std::wstring sNamePage; //Хардкод, так как точка опоры
+
+    FGlobal();
+    //~FGlobal();
 
     wstring GetValue(OpenXLSX::XLCell cell);
 
     wstring ConwertToWstring(string sData);
+
+    string ConwertToString(wstring wsData);
+
+    string ConwertPathFormat(string sFileName);
 };
 
-static Global fGlobal; //Синглтон
+FGlobal* fGlobal; //Синглтон
+FError* fError; //Синглтон
+FConfig* fConfig; //Синглтон
+FSolve* fSolve; //Синглтон
