@@ -1,3 +1,34 @@
-Не обнаружен каталог с входными данным R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0104020009_OP-20.plm.plx.xls
-Не обнаружен каталог с входными данным R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0104020009_OP-21.plm.plx.xls
-В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0903030032_OP-20.plm.plx.xlsx неправильное дерево дисциплин
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0104020009_OP-20.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0104020009_OP-21.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010001_OP-20.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010001_OP-21.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010003_OP-20.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010003_OP-21.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010004_OP-20.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010004_OP-21.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010006_OP-20.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010010_OP-20.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010010_OP-21.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010011_OP-21.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010012_OP-21.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904020001_OP-20.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904020001_OP-21.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904020002_OP-20.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904020002_OP-21.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904020003_OP-20.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904020003_OP-21.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904020004_OP-20.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904020004_OP-21.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904020005_OP-20.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904020005_OP-21.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904020006_OP-20.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904020006_OP-21.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904040001_OP-20.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904040002_OP-20.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904040002_OP-21.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904040003_OP-21.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/2704030006_op-20.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/2704030006_OP-21.plm..plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/2704040001_OP-20.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/2704040004_OP-20.plm.plx.xls
+Программа работает только с расширение XLSX, другое у файла R:/acmp/excelbibltest/ExcelBiblT/plans/grad/2704040005_OP-21.plm.plx.xls

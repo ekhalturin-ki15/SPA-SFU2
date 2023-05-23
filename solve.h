@@ -23,12 +23,15 @@ struct FTreeDisc
 	FTreeDisc();
 	~FTreeDisc();
 
+	void DeleteDFS(FTreeElement* ptrThis); // Поиск в глубину для очистки памяти
+
 	FTreeElement* ptrRoot;
 };
 
 struct FSolve
 {
 	FSolve(FGlobal* _ptrGlobal);
+	~FSolve();
 
 	void ClearTreeDisc();
 
@@ -36,7 +39,7 @@ struct FSolve
 
 	void CreateDiscTree(OpenXLSX::XLWorkbook& fBook, wstring wsNamePage);
 
-	vector<FTreeDisc> arrDisc;
+	vector<FTreeDisc*> arrDisc; // Указатели на все УП, которые считали (все они одновременно хранятся в памяти)
 
 	regex fRegexComp;
 

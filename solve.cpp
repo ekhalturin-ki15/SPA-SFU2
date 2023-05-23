@@ -14,7 +14,16 @@ FTreeDisc::FTreeDisc()
 
 FTreeDisc::~FTreeDisc()
 {
-	delete ptrRoot;
+	DeleteDFS(ptrRoot);
+}
+
+void FTreeDisc::DeleteDFS(FTreeElement* ptrThis)
+{
+	for (auto it : ptrThis->arrChild)
+	{
+		DeleteDFS(it);
+	}
+	delete ptrThis;
 }
 
 FSolve::FSolve(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
@@ -29,7 +38,7 @@ void FSolve::ClearTreeDisc()
 
 void FSolve::Read(string _sInPath, string _sOutPath)
 {
-	ClearTreeDisc();
+	//ClearTreeDisc();
 
 	sInPath = ptrGlobal->ConwertPathFormat(_sInPath, true);
 	sOutPath = ptrGlobal->ConwertPathFormat(_sOutPath);
@@ -47,18 +56,23 @@ void FSolve::Read(string _sInPath, string _sOutPath)
 	catch (logic_error eError)
 	{
 		ptrGlobal->ptrError->ErrorBadTree(sInPath);
+		fDoc.close();
 		return; //Но продолжаем работать с другими файлами
 	}
 	catch(...)
 	{
-		ptrGlobal->ptrError->ErrorInFileNotFind(ptrGlobal->ConwertToWstring(sInPath));
+		if (sInPath.find(".xlsx") == string::npos)
+		{
+			ptrGlobal->ptrError->ErrorUncorrectExtension(sInPath);
+		}
+		else
+		{
+			ptrGlobal->ptrError->ErrorInFileNotFind(sInPath);
+		}
 		return; //Но продолжаем работать с другими файлами
 	}
 
-	fBook = fDoc.workbook();
-	auto arrNamePage = fBook.worksheetNames();
-
-
+	fDoc.close();
 }
 
 void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, wstring wsNamePage)
@@ -69,9 +83,8 @@ void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, wstring wsNamePage)
 
 	auto fSheet = fBook.worksheet(ptrGlobal->ConwertToString( wsNamePage ));
 
-	arrDisc.resize(arrDisc.size() + 1);
-	auto& fTree = arrDisc.back();
-	FTreeElement* ptrThis = fTree.ptrRoot;
+	FTreeDisc* ptrTree = new FTreeDisc;
+	FTreeElement* ptrThis = ptrTree->ptrRoot;
 	FTreeElement* ptrNewNode = nullptr;
 	//Считываем заголовок
 	{
@@ -102,6 +115,10 @@ void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, wstring wsNamePage)
 	for (auto row : fSheet.rows())
 	{
 		int x = -1;
+		bool bReadIndex = false;
+		bool bReadName = false;
+		bool bReadComp = false;
+
 		if (y != 0)
 			for (auto it : row.cells())
 			{
@@ -109,8 +126,9 @@ void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, wstring wsNamePage)
 				wstring wsData = ptrGlobal->GetValue(it);
 				if (wsData != L"")
 				{
-					if (x < iIdName) // Ищем позицию в дереве для нового предмета
+					if ((iIdIndex <= x) && (x < iIdName) && (!bReadIndex)) // Ищем позицию в дереве для нового предмета
 					{
+						bReadIndex = true; //Чтобы повторно не находить индекс в строке
 						while (iPreX >= x)
 						{
 							if (ptrThis == nullptr)
@@ -130,13 +148,16 @@ void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, wstring wsNamePage)
 						ptrThis = ptrNewNode;
 						continue;
 					}
-					if (x < iIdComp)
+					if ((x < iIdComp) && (!bReadName))
 					{
+						bReadName = true;
 						ptrNewNode->wsName = wsData;
 						continue;
 					}
 
+					if (!bReadComp)
 					{
+						bReadComp = true;
 						string sParsingData = ptrGlobal->ConwertToString(ptrGlobal->ConwertPathFormat(wsData)) + ";";
 
 						vector<smatch> matches{
@@ -156,5 +177,12 @@ void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, wstring wsNamePage)
 			}
 		++y;
 	}
+
+	arrDisc.push_back(ptrTree);
 }
 	
+FSolve::~FSolve()
+{
+	for (auto& it : arrDisc)
+		delete it;
+}

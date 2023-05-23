@@ -12,6 +12,12 @@
 #include "error.h"
 #include "solve.h"
 
+#ifdef DEBUG
+    #define _CRTDBG_MAP_ALLOC
+    #include <stdlib.h>
+    #include <crtdbg.h>
+#endif
+
 using namespace std;
 //using namespace OpenXLSX;
 
@@ -105,6 +111,9 @@ int main()
 
     }
 
-
     Delete();
+
+#ifdef DEBUG
+    _CrtDumpMemoryLeaks();
+#endif // DEBUG
 }
