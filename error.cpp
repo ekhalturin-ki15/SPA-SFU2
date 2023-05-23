@@ -37,3 +37,11 @@ void FError::ErrorOutFileNotFind(wstring wsName)
 	out << END;
 	out.close();
 }
+
+void FError::ErrorBadTree(string sName)
+{
+	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
+	out << "В учебном плане " + sName + " неправильное дерево дисциплин";
+	out << END;
+	out.close();
+}

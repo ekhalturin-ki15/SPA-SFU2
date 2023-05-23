@@ -10,6 +10,7 @@
 #include <locale>
 #include <codecvt>
 #include <regex>
+#include <exception>
 
 #include <OpenXLSX.hpp>
 
