@@ -47,7 +47,7 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& FBook, wstring wsKey, OpenXLSX::XL
     wsPatern = L"Названия анализируемых страниц";
     if (wsKey == wsPatern)
     {
-        mapKeyPage.clear();
+        arrKeyPage.clear();
         int i = 0; for (auto& it : row.cells())
         {
             if (i)
@@ -58,16 +58,17 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& FBook, wstring wsKey, OpenXLSX::XL
 
                 auto fExtraPage = FBook.worksheet(ptrGlobal->ConwertToString(wsNamePage));
 
+                vector<wstring> arrReadHeader;
+
                 for (auto it : fExtraPage.rows().begin()->cells())
                 {
                     wstring wsData = ptrGlobal->GetValue(it);
                     if (wsData != L"")
                     {
-                        mapKeyPage[wsNamePage].push_back(wsData);
+                        arrReadHeader.push_back(wsData);
                     }
                 }
-
-
+                arrKeyPage.push_back({ wsNamePage, arrReadHeader });
             }
             ++i;
         }

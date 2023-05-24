@@ -72,47 +72,48 @@ void Delete()
 
 int main()
 {
-    Create();
-
-    auto fFile = filesystem::current_path(); //Взятие пути директории расположения exe файла
-
-    for (int category = 0; category < ptrGlobal->ptrConfig->arrNameFileIn.size(); ++category)
     {
-        auto fInFile = fFile / ptrGlobal->ptrConfig->arrNameFileIn[category];
-        if (!filesystem::exists(fInFile))
-        { 
-            ptrGlobal->ptrError->ErrorInFileNotFind(fInFile);
-            continue; //Код ошибки - нет файлов указанного формата, из которых ожидалось считывание 
-        }
-        auto fOutFile = fFile / ptrGlobal->ptrConfig->arrNameFileOut[category];
-        if (!filesystem::exists(fOutFile))
+        Create();
+
+        auto fFile = filesystem::current_path(); //Взятие пути директории расположения exe файла
+
+        for (int category = 0; category < ptrGlobal->ptrConfig->arrNameFileIn.size(); ++category)
         {
-            if (ptrGlobal->ptrConfig->bCreateFolder)
+            auto fInFile = fFile / ptrGlobal->ptrConfig->arrNameFileIn[category];
+            if (!filesystem::exists(fInFile))
             {
-                filesystem::create_directory(fOutFile);
+                ptrGlobal->ptrError->ErrorInFileNotFind(fInFile);
+                continue; //Код ошибки - нет файлов указанного формата, из которых ожидалось считывание 
             }
-            else
+            auto fOutFile = fFile / ptrGlobal->ptrConfig->arrNameFileOut[category];
+            if (!filesystem::exists(fOutFile))
             {
-                ptrGlobal->ptrError->ErrorOutFileNotFind(fOutFile);
-                continue;
-                //exit(0); //Код ошибки - не удаётся создать папку для вывода
+                if (ptrGlobal->ptrConfig->bCreateFolder)
+                {
+                    filesystem::create_directory(fOutFile);
+                }
+                else
+                {
+                    ptrGlobal->ptrError->ErrorOutFileNotFind(fOutFile);
+                    continue;
+                    //exit(0); //Код ошибки - не удаётся создать папку для вывода
+                }
             }
+
+            for (auto it : filesystem::directory_iterator(fInFile))
+            {
+                if (!it.is_directory())
+                {
+                    auto sOutName = fOutFile / it.path().filename() / "";
+                    ptrGlobal->ptrSolve->Read(it.path().string(), sOutName.string());
+                }
+            }
+
+
         }
 
-        for (auto it : filesystem::directory_iterator(fInFile))
-        {
-            if (!it.is_directory())
-            {
-                auto sOutName = fOutFile / it.path().filename() / "";
-                ptrGlobal->ptrSolve->Read(it.path().string(), sOutName.string());
-            }
-        }
-
-
+        Delete();
     }
-
-    Delete();
-
 #ifdef DEBUG
     _CrtDumpMemoryLeaks();
 #endif // DEBUG

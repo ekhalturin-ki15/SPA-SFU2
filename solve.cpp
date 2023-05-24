@@ -50,8 +50,17 @@ void FSolve::Read(string _sInPath, string _sOutPath)
 	{
 		fDoc.open(sInPath);
 		fBook = fDoc.workbook();
-		CreateDiscTree(fBook,
-			next(ptrGlobal->ptrConfig->mapKeyPage.begin(), 1)->first); // Вторая страница
+		CreateDiscTree(fBook, 0);
+			//ptrGlobal->ptrConfig->arrKeyPage[0].wsName);
+
+		AddCompIndicator(fBook, 1);
+			//ptrGlobal->ptrConfig->arrKeyPage[1].wsName);
+	}
+	catch (length_error eError)
+	{
+		ptrGlobal->ptrError->ErrorToMuchColums(sInPath);
+		fDoc.close();
+		return; //Но продолжаем работать с другими файлами
 	}
 	catch (logic_error eError)
 	{
@@ -75,13 +84,13 @@ void FSolve::Read(string _sInPath, string _sOutPath)
 	fDoc.close();
 }
 
-void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, wstring wsNamePage)
+void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 {
 	int iIdIndex = 0;
 	int iIdName = 0;
 	int iIdComp = 0;
 
-	auto fSheet = fBook.worksheet(ptrGlobal->ConwertToString( wsNamePage ));
+	auto fSheet = fBook.worksheet(ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].wsName ));
 
 	FTreeDisc* ptrTree = new FTreeDisc;
 	FTreeElement* ptrThis = ptrTree->ptrRoot;
@@ -92,13 +101,13 @@ void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, wstring wsNamePage)
 		for (auto it : fSheet.rows().begin()->cells())
 		{
 			if (ptrGlobal->GetValue(it) == 
-				ptrGlobal->ptrConfig->mapKeyPage[wsNamePage][0])
+				ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].arrHeader[0])
 				iIdIndex = x;
 			if (ptrGlobal->GetValue(it) ==
-				ptrGlobal->ptrConfig->mapKeyPage[wsNamePage][1])
+				ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].arrHeader[1])
 				iIdName = x;
 			if (ptrGlobal->GetValue(it) ==
-				ptrGlobal->ptrConfig->mapKeyPage[wsNamePage][2])
+				ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].arrHeader[2])
 				iIdComp = x;
 			++x;
 		}
@@ -146,6 +155,9 @@ void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, wstring wsNamePage)
 						ptrThis->arrChild.push_back(ptrNewNode);
 						ptrNewNode->ptrPerent = ptrThis;
 						ptrThis = ptrNewNode;
+
+						ptrNewNode->wsIndexName = wsData;
+						ptrTree->mapDisc[wsData] = ptrNewNode;
 						continue;
 					}
 					if ((x < iIdComp) && (!bReadName))
@@ -169,6 +181,7 @@ void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, wstring wsNamePage)
 						for (auto sData : matches)
 						{
 							ptrNewNode->fComp.push_back(sData.str());
+							ptrTree->fAllComp.insert(sData.str());
 						}
 						continue;
 					}
@@ -181,6 +194,32 @@ void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, wstring wsNamePage)
 	arrDisc.push_back(ptrTree);
 }
 	
+void FSolve::AddCompIndicator(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
+{
+	int iIdIndex = 0;
+	int iIdСontent = 0;
+
+	auto fSheet = fBook.worksheet(ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].wsName));
+
+	//Считываем заголовок
+	{
+		int x = 0;
+		for (auto it : fSheet.rows().begin()->cells())
+		{
+			if (ptrGlobal->GetValue(it) ==
+				ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].arrHeader[0])
+				iIdIndex = x;
+			if (ptrGlobal->GetValue(it) ==
+				ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].arrHeader[1])
+				iIdСontent = x;
+			++x;
+		}
+	}
+
+	if ()
+
+}
+
 FSolve::~FSolve()
 {
 	for (auto& it : arrDisc)

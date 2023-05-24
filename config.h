@@ -3,11 +3,11 @@
 
 struct FGlobal;
 //
-//struct FPageInfo
-//{
-//    wstring wsName;
-//    vector<wstring> arrHeader;
-//};
+struct FPageInfo
+{
+    wstring wsName;
+    vector<wstring> arrHeader;
+};
 
 
 struct FConfig
@@ -15,7 +15,7 @@ struct FConfig
 
     FConfig(FGlobal* _ptrGlobal);
 
-    map<wstring, vector<wstring>> mapKeyPage;
+    vector<FPageInfo> arrKeyPage;
 
     vector<wstring> arrNameFileIn;
     vector<wstring> arrNameFileOut;

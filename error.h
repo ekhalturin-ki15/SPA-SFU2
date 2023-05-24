@@ -20,6 +20,8 @@ struct FError
     void ErrorBadTree(wstring wsName); // Если ошибки при построении дерева дисциплин
     void ErrorBadTree(string sName); // Если ошибки при построении дерева дисциплин
 
+    void ErrorToMuchColums(wstring wsName); // Если ошибки при построении дерева дисциплин
+    void ErrorToMuchColums(string sName); // Если ошибки при построении дерева дисциплин
 
     FGlobal* ptrGlobal; //Синглтон
 };

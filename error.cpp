@@ -24,10 +24,7 @@ void FError::Init()
 
 void FError::ErrorInFileNotFind(wstring wsName)
 {
-	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
-	out << "Не обнаружен каталог с входными данным " + ptrGlobal->ConwertToString(wsName);
-	out << END;
-	out.close();
+	ErrorInFileNotFind(ptrGlobal->ConwertToString(wsName));
 }
 
 void FError::ErrorInFileNotFind(string sName)
@@ -40,10 +37,7 @@ void FError::ErrorInFileNotFind(string sName)
 
 void FError::ErrorOutFileNotFind(wstring wsName)
 {
-	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
-	out << "Не обнаружен каталог для вывода данных " + ptrGlobal->ConwertToString(wsName);
-	out << END;
-	out.close();
+	ErrorOutFileNotFind(ptrGlobal->ConwertToString(wsName));
 }
 
 void FError::ErrorOutFileNotFind(string sName)
@@ -56,10 +50,7 @@ void FError::ErrorOutFileNotFind(string sName)
 
 void FError::ErrorUncorrectExtension(wstring wsName)
 {
-	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
-	out << "Программа работает только с расширение XLSX, другое у файла " + ptrGlobal->ConwertToString(wsName);
-	out << END;
-	out.close();
+	ErrorUncorrectExtension(ptrGlobal->ConwertToString(wsName));
 }
 
 void FError::ErrorUncorrectExtension(string sName)
@@ -72,16 +63,26 @@ void FError::ErrorUncorrectExtension(string sName)
 
 void FError::ErrorBadTree(wstring wsName)
 {
-	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
-	out << "В учебном плане " + ptrGlobal->ConwertToString(wsName) + " неправильное дерево дисциплин";
-	out << END;
-	out.close();
+	ErrorBadTree(ptrGlobal->ConwertToString(wsName));
 }
 
 void FError::ErrorBadTree(string sName)
 {
 	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
 	out << "В учебном плане " + sName + " неправильное дерево дисциплин";
+	out << END;
+	out.close();
+}
+
+void FError::ErrorToMuchColums(wstring wsName)
+{
+	ErrorToMuchColums(ptrGlobal->ConwertToString(wsName));
+}
+
+void FError::ErrorToMuchColums(string sName)
+{
+	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
+	out << "В учебном плане " + sName + " слишком много столбцов для определения индикаторов компетенций";
 	out << END;
 	out.close();
 }
