@@ -1,21 +1,20 @@
-#pragma once
+п»ї#pragma once
 
 #include "global.h"
 
 struct FGlobal;
 
-
 struct FTreeElement
 {
 	FTreeElement();
 
-	bool bAllow; //Учитывать ли при подсчёте зачётных единиц (ЗЕ)
-	int iSumScore; // Количество зачётных единиц (ЗЕ)
+	bool bAllow; //РЈС‡РёС‚С‹РІР°С‚СЊ Р»Рё РїСЂРё РїРѕРґСЃС‡С‘С‚Рµ Р·Р°С‡С‘С‚РЅС‹С… РµРґРёРЅРёС† (Р—Р•)
+	int iSumScore; // РљРѕР»РёС‡РµСЃС‚РІРѕ Р·Р°С‡С‘С‚РЅС‹С… РµРґРёРЅРёС† (Р—Р•)
 	wstring wsName;
 	wstring wsIndexName;
 
 	FTreeElement* ptrPerent;
-	vector<FTreeElement*> arrChild;  //Дисциплины внутри модуля
+	vector<FTreeElement*> arrChild;  //Р”РёСЃС†РёРїР»РёРЅС‹ РІРЅСѓС‚СЂРё РјРѕРґСѓР»СЏ
 	vector<string> fComp;
 
 };
@@ -25,12 +24,12 @@ struct FTreeDisc
 	FTreeDisc();
 	~FTreeDisc();
 
-	void DeleteDFS(FTreeElement* ptrThis); // Поиск в глубину для очистки памяти
+	void DeleteDFS(FTreeElement* ptrThis); // РџРѕРёСЃРє РІ РіР»СѓР±РёРЅСѓ РґР»СЏ РѕС‡РёСЃС‚РєРё РїР°РјСЏС‚Рё
 
 	FTreeElement* ptrRoot;
-	map<wstring, FTreeElement*> mapDisc; //Поиск указателя на дисциплину по её индексу
+	map<wstring, FTreeElement*> mapDisc; //РџРѕРёСЃРє СѓРєР°Р·Р°С‚РµР»СЏ РЅР° РґРёСЃС†РёРїР»РёРЅСѓ РїРѕ РµС‘ РёРЅРґРµРєСЃСѓ
 
-	set< string > fAllComp; //Множество всех компетенций, присутствующих в учебном плане (УП)
+	set< string > fAllComp; //РњРЅРѕР¶РµСЃС‚РІРѕ РІСЃРµС… РєРѕРјРїРµС‚РµРЅС†РёР№, РїСЂРёСЃСѓС‚СЃС‚РІСѓСЋС‰РёС… РІ СѓС‡РµР±РЅРѕРј РїР»Р°РЅРµ (РЈРџ)
 };
 
 struct FSolve
@@ -46,14 +45,14 @@ struct FSolve
 
 	void AddCompIndicator(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber);
 
-	vector<FTreeDisc*> arrDisc; // Указатели на все УП, которые считали (все они одновременно хранятся в памяти)
+	vector<FTreeDisc*> arrDisc; // РЈРєР°Р·Р°С‚РµР»Рё РЅР° РІСЃРµ РЈРџ, РєРѕС‚РѕСЂС‹Рµ СЃС‡РёС‚Р°Р»Рё (РІСЃРµ РѕРЅРё РѕРґРЅРѕРІСЂРµРјРµРЅРЅРѕ С…СЂР°РЅСЏС‚СЃСЏ РІ РїР°РјСЏС‚Рё)
 
 	regex fRegexComp;
 
-	string sInPath; // Для отладки
+	string sInPath; // Р”Р»СЏ РѕС‚Р»Р°РґРєРё
 	string sOutPath;
 
-	FGlobal* ptrGlobal; //Синглтон
+	FGlobal* ptrGlobal; //РЎРёРЅРіР»С‚РѕРЅ
 };
 
 

@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include <string>
 #include <iostream>
 #include <vector>
@@ -30,8 +30,8 @@ struct FGlobal
     map<wchar_t, wchar_t> mapWTranslit;
 
 
-    const std::wstring sNameConfig; // "Параметры"
-    const std::wstring sNamePage; //Хардкод, так как точка опоры
+    const std::wstring sNameConfig; // "РџР°СЂР°РјРµС‚СЂС‹"
+    const std::wstring sNamePage; //РҐР°СЂРґРєРѕРґ, С‚Р°Рє РєР°Рє С‚РѕС‡РєР° РѕРїРѕСЂС‹
 
     FGlobal();
     ~FGlobal();
@@ -45,7 +45,7 @@ struct FGlobal
     string ConwertPathFormat(string sFileName, bool bRename = false);
     wstring ConwertPathFormat(wstring wsFileName, bool bRename = false);
 
-    FError* ptrError; //Синглтон
-    FConfig* ptrConfig; //Синглтон
-    FSolve* ptrSolve; //Синглтон
+    FError* ptrError; //РЎРёРЅРіР»С‚РѕРЅ
+    FConfig* ptrConfig; //РЎРёРЅРіР»С‚РѕРЅ
+    FSolve* ptrSolve; //РЎРёРЅРіР»С‚РѕРЅ
 };

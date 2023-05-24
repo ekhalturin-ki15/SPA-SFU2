@@ -1,9 +1,12 @@
-#include "solve.h"
+п»ї#include "solve.h"
 #include "error.h"
 #include "config.h"
 #include "global.h"
 
-FTreeElement::FTreeElement() : iSumScore(0), wsName(L""), ptrPerent(nullptr), bAllow(true)
+const string FError::sBadTree = "Bad Tree";
+const string FError::sNotAllData = "Not all data";
+
+FTreeElement::FTreeElement() : iSumScore(0), wsName(L""), wsIndexName(L""), ptrPerent(nullptr), bAllow(true)
 {
 }
 
@@ -56,17 +59,19 @@ void FSolve::Read(string _sInPath, string _sOutPath)
 		AddCompIndicator(fBook, 1);
 			//ptrGlobal->ptrConfig->arrKeyPage[1].wsName);
 	}
-	catch (length_error eError)
-	{
-		ptrGlobal->ptrError->ErrorToMuchColums(sInPath);
-		fDoc.close();
-		return; //Но продолжаем работать с другими файлами
-	}
 	catch (logic_error eError)
 	{
-		ptrGlobal->ptrError->ErrorBadTree(sInPath);
+		/*if (FError::sNotAllData == eError.what())
+		{
+			ptrGlobal->ptrError->ErrorBadParser(sInPath);
+		}
+		else*/
+		if (FError::sBadTree == eError.what())
+		{
+			ptrGlobal->ptrError->ErrorBadTree(sInPath);
+		}
 		fDoc.close();
-		return; //Но продолжаем работать с другими файлами
+		return; //РќРѕ РїСЂРѕРґРѕР»Р¶Р°РµРј СЂР°Р±РѕС‚Р°С‚СЊ СЃ РґСЂСѓРіРёРјРё С„Р°Р№Р»Р°РјРё
 	}
 	catch(...)
 	{
@@ -78,9 +83,10 @@ void FSolve::Read(string _sInPath, string _sOutPath)
 		{
 			ptrGlobal->ptrError->ErrorInFileNotFind(sInPath);
 		}
-		return; //Но продолжаем работать с другими файлами
+		return; //РќРѕ РїСЂРѕРґРѕР»Р¶Р°РµРј СЂР°Р±РѕС‚Р°С‚СЊ СЃ РґСЂСѓРіРёРјРё С„Р°Р№Р»Р°РјРё
 	}
 
+	ptrGlobal->ptrError->OKParsing(sInPath);
 	fDoc.close();
 }
 
@@ -95,7 +101,7 @@ void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 	FTreeDisc* ptrTree = new FTreeDisc;
 	FTreeElement* ptrThis = ptrTree->ptrRoot;
 	FTreeElement* ptrNewNode = nullptr;
-	//Считываем заголовок
+	//РЎС‡РёС‚С‹РІР°РµРј Р·Р°РіРѕР»РѕРІРѕРє
 	{
 		int x = 0;
 		for (auto it : fSheet.rows().begin()->cells())
@@ -119,7 +125,7 @@ void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 
 	
 	int y = 0;
-	int iPreX = -1; // Root вне учебного плана (в нём все модули)
+	vector<int> arrPreX = { -1 }; // Root РІРЅРµ СѓС‡РµР±РЅРѕРіРѕ РїР»Р°РЅР° (РІ РЅС‘Рј РІСЃРµ РјРѕРґСѓР»Рё)
 
 	for (auto row : fSheet.rows())
 	{
@@ -129,28 +135,31 @@ void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 		bool bReadComp = false;
 
 		if (y != 0)
+		{
 			for (auto it : row.cells())
 			{
 				++x;
+				arrPreX.push_back(arrPreX.back());
+
 				wstring wsData = ptrGlobal->GetValue(it);
 				if (wsData != L"")
 				{
-					if ((iIdIndex <= x) && (x < iIdName) && (!bReadIndex)) // Ищем позицию в дереве для нового предмета
+					if ((iIdIndex <= x) && (x < iIdName) && (!bReadIndex)) // РС‰РµРј РїРѕР·РёС†РёСЋ РІ РґРµСЂРµРІРµ РґР»СЏ РЅРѕРІРѕРіРѕ РїСЂРµРґРјРµС‚Р°
 					{
-						bReadIndex = true; //Чтобы повторно не находить индекс в строке
-						while (iPreX >= x)
+						bReadIndex = true; //Р§С‚РѕР±С‹ РїРѕРІС‚РѕСЂРЅРѕ РЅРµ РЅР°С…РѕРґРёС‚СЊ РёРЅРґРµРєСЃ РІ СЃС‚СЂРѕРєРµ
+						while (arrPreX.back() >= x)
 						{
 							if (ptrThis == nullptr)
 							{
-								throw std::logic_error("BadTree");
+								throw std::logic_error(FError::sBadTree);
 								return;
 							}
 							ptrThis = ptrThis->ptrPerent;
-							
 
-							iPreX--;
+
+							arrPreX.back()--;
 						}
-						iPreX = x;
+						arrPreX.back() = x;
 						ptrNewNode = new FTreeElement;
 						ptrThis->arrChild.push_back(ptrNewNode);
 						ptrNewNode->ptrPerent = ptrThis;
@@ -188,8 +197,26 @@ void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 				}
 
 			}
+
+			if ((ptrNewNode->wsName == L"") || (ptrNewNode->fComp.size() == 0))
+			{
+				ptrGlobal->ptrError->ErrorBadParser(sInPath);
+
+				//РЈРґР°Р»РµРЅРёРµ РЅРµРїСЂР°РІРёР»СЊРЅРѕР№ РѕС„РѕСЂРјР»РµРЅРЅРѕР№ РґРёСЃС†РёРїР»РёРЅС‹
+				ptrThis = ptrNewNode->ptrPerent;
+				ptrNewNode->ptrPerent->arrChild.pop_back();
+				delete ptrNewNode;
+				arrPreX.pop_back();
+				//throw std::logic_error(FError::sNotAllData); // Р©Р°РґСЏС‰РёР№ СЂРµР¶РёРј, РёРіРЅРѕСЂРёСЂСѓРµРј РЅРµРїСЂР°РІРёР»СЊРЅС‹Рµ РґРёСЃС†РёРїР»РёРЅС‹
+				
+			}
+		}
+
 		++y;
 	}
+
+	
+
 
 	arrDisc.push_back(ptrTree);
 }
@@ -197,11 +224,11 @@ void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 void FSolve::AddCompIndicator(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 {
 	int iIdIndex = 0;
-	int iIdСontent = 0;
+	int iIdРЎontent = 0;
 
 	auto fSheet = fBook.worksheet(ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].wsName));
 
-	//Считываем заголовок
+	//РЎС‡РёС‚С‹РІР°РµРј Р·Р°РіРѕР»РѕРІРѕРє
 	{
 		int x = 0;
 		for (auto it : fSheet.rows().begin()->cells())
@@ -211,12 +238,11 @@ void FSolve::AddCompIndicator(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 				iIdIndex = x;
 			if (ptrGlobal->GetValue(it) ==
 				ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].arrHeader[1])
-				iIdСontent = x;
+				iIdРЎontent = x;
 			++x;
 		}
 	}
 
-	if ()
 
 }
 

@@ -1,26 +1,11 @@
-В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0104020009_OP-20.plm.plx.xlsx слишком много столбцов для определения индикаторов компетенций
-В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0903020030_op-21.plm.plx.xlsx слишком много столбцов для определения индикаторов компетенций
-В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0903030031_OP-21.plm.plx.xlsx слишком много столбцов для определения индикаторов компетенций
-В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0903030033_OP-21.plm.plx.xlsx слишком много столбцов для определения индикаторов компетенций
-В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0903030035_OP-21.plm.plx.xlsx слишком много столбцов для определения индикаторов компетенций
-В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010001_OP-20.plm.plx.xlsx слишком много столбцов для определения индикаторов компетенций
-В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010004_OP-20.plm.plx.xlsx слишком много столбцов для определения индикаторов компетенций
-В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010006_OP-20.plm.plx.xlsx слишком много столбцов для определения индикаторов компетенций
-В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010010_OP-20.plm.plx.xlsx слишком много столбцов для определения индикаторов компетенций
-В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010010_OP-21.plm.plx.xlsx слишком много столбцов для определения индикаторов компетенций
-В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010011_OP-21.plm.plx.xlsx слишком много столбцов для определения индикаторов компетенций
-В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010012_OP-21.plm.plx.xlsx слишком много столбцов для определения индикаторов компетенций
-В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904020001_OP-20.plm.plx.xlsx слишком много столбцов для определения индикаторов компетенций
-В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904020001_OP-21.plm.plx.xlsx слишком много столбцов для определения индикаторов компетенций
-В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904020002_OP-20.plm.plx.xlsx слишком много столбцов для определения индикаторов компетенций
-В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904020003_OP-21.plm.plx.xlsx слишком много столбцов для определения индикаторов компетенций
-В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904020004_OP-21.plm.plx.xlsx слишком много столбцов для определения индикаторов компетенций
-В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904020005_OP-20.plm.plx.xlsx слишком много столбцов для определения индикаторов компетенций
-В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904020005_OP-21.plm.plx.xlsx слишком много столбцов для определения индикаторов компетенций
-В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904020006_OP-20.plm.plx.xlsx слишком много столбцов для определения индикаторов компетенций
-В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904020006_OP-21.plm.plx.xlsx слишком много столбцов для определения индикаторов компетенций
-В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904040003_OP-21.plm.plx.xlsx слишком много столбцов для определения индикаторов компетенций
-В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/2703030030_op-21.plm.plx.xlsx слишком много столбцов для определения индикаторов компетенций
-В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/2703040030_op-21.plm.plx.xlsx слишком много столбцов для определения индикаторов компетенций
-В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/2704030006_OP-21.plm..plx.xlsx слишком много столбцов для определения индикаторов компетенций
-Не обнаружен каталог с входными данным R:/acmp/excelbibltest/ExcelBiblT/plans/grad/~$1005010034_OP-21.pli.plx.xlsx
++ РЈС‡РµР±РЅС‹Р№ РїР»Р°РЅ R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0103040030_op-21.plm.plx.xlsx СѓСЃРїРµС€РЅРѕ РѕР±СЂР°Р±РѕС‚Р°РЅ
++ РЈС‡РµР±РЅС‹Р№ РїР»Р°РЅ R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0104020007_op-20.plm.plx.xlsx СѓСЃРїРµС€РЅРѕ РѕР±СЂР°Р±РѕС‚Р°РЅ
++ РЈС‡РµР±РЅС‹Р№ РїР»Р°РЅ R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0104020009_OP-20.plm.plx.xlsx СѓСЃРїРµС€РЅРѕ РѕР±СЂР°Р±РѕС‚Р°РЅ
++ РЈС‡РµР±РЅС‹Р№ РїР»Р°РЅ R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0104020009_OP-21.plm.plx.xlsx СѓСЃРїРµС€РЅРѕ РѕР±СЂР°Р±РѕС‚Р°РЅ
++ РЈС‡РµР±РЅС‹Р№ РїР»Р°РЅ R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0903010030_op-21.plm.plx.xlsx СѓСЃРїРµС€РЅРѕ РѕР±СЂР°Р±РѕС‚Р°РЅ
++ РЈС‡РµР±РЅС‹Р№ РїР»Р°РЅ R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0903020030_op-21.plm.plx.xlsx СѓСЃРїРµС€РЅРѕ РѕР±СЂР°Р±РѕС‚Р°РЅ
++ РЈС‡РµР±РЅС‹Р№ РїР»Р°РЅ R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0903030031_OP-21.plm.plx.xlsx СѓСЃРїРµС€РЅРѕ РѕР±СЂР°Р±РѕС‚Р°РЅ
++ РЈС‡РµР±РЅС‹Р№ РїР»Р°РЅ R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0903030032_OP-20.plm.plx.xlsx СѓСЃРїРµС€РЅРѕ РѕР±СЂР°Р±РѕС‚Р°РЅ
++ РЈС‡РµР±РЅС‹Р№ РїР»Р°РЅ R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0903030033_OP-21.plm.plx.xlsx СѓСЃРїРµС€РЅРѕ РѕР±СЂР°Р±РѕС‚Р°РЅ
++ РЈС‡РµР±РЅС‹Р№ РїР»Р°РЅ R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0903030035_OP-21.plm.plx.xlsx СѓСЃРїРµС€РЅРѕ РѕР±СЂР°Р±РѕС‚Р°РЅ
+Р’ СѓС‡РµР±РЅРѕРј РїР»Р°РЅРµ R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0903040030_op-21.plm.plx.xlsx РЅРµ С…РІР°С‚Р°РµС‚ РґР°РЅРЅС‹С… Рѕ РґРёСЃС†РёРїР»РёРЅР°С…

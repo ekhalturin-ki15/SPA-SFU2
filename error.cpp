@@ -1,4 +1,4 @@
-#include "error.h"
+ï»¿#include "error.h"
 #include "config.h"
 
 FError::FError(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
@@ -30,7 +30,7 @@ void FError::ErrorInFileNotFind(wstring wsName)
 void FError::ErrorInFileNotFind(string sName)
 {
 	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
-	out << "Íå îáíàðóæåí êàòàëîã ñ âõîäíûìè äàííûì " +sName;
+	out << "ÐÐµ Ð¾Ð±Ð½Ð°Ñ€ÑƒÐ¶ÐµÐ½ ÐºÐ°Ñ‚Ð°Ð»Ð¾Ð³ Ñ Ð²Ñ…Ð¾Ð´Ð½Ñ‹Ð¼Ð¸ Ð´Ð°Ð½Ð½Ñ‹Ð¼ " +sName;
 	out << END;
 	out.close();
 }
@@ -43,7 +43,7 @@ void FError::ErrorOutFileNotFind(wstring wsName)
 void FError::ErrorOutFileNotFind(string sName)
 {
 	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
-	out << "Íå îáíàðóæåí êàòàëîã äëÿ âûâîäà äàííûõ " + sName;
+	out << "ÐÐµ Ð¾Ð±Ð½Ð°Ñ€ÑƒÐ¶ÐµÐ½ ÐºÐ°Ñ‚Ð°Ð»Ð¾Ð³ Ð´Ð»Ñ Ð²Ñ‹Ð²Ð¾Ð´Ð° Ð´Ð°Ð½Ð½Ñ‹Ñ… " + sName;
 	out << END;
 	out.close();
 }
@@ -56,7 +56,7 @@ void FError::ErrorUncorrectExtension(wstring wsName)
 void FError::ErrorUncorrectExtension(string sName)
 {
 	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
-	out << "Ïðîãðàììà ðàáîòàåò òîëüêî ñ ðàñøèðåíèå XLSX, äðóãîå ó ôàéëà " + sName;
+	out << "ÐŸÑ€Ð¾Ð³Ñ€Ð°Ð¼Ð¼Ð° Ñ€Ð°Ð±Ð¾Ñ‚Ð°ÐµÑ‚ Ñ‚Ð¾Ð»ÑŒÐºÐ¾ Ñ Ñ€Ð°ÑÑˆÐ¸Ñ€ÐµÐ½Ð¸Ðµ XLSX, Ð´Ñ€ÑƒÐ³Ð¾Ðµ Ñƒ Ñ„Ð°Ð¹Ð»Ð° " + sName;
 	out << END;
 	out.close();
 }
@@ -69,7 +69,7 @@ void FError::ErrorBadTree(wstring wsName)
 void FError::ErrorBadTree(string sName)
 {
 	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
-	out << "Â ó÷åáíîì ïëàíå " + sName + " íåïðàâèëüíîå äåðåâî äèñöèïëèí";
+	out << "Ð’ ÑƒÑ‡ÐµÐ±Ð½Ð¾Ð¼ Ð¿Ð»Ð°Ð½Ðµ " + sName + " Ð½ÐµÐ¿Ñ€Ð°Ð²Ð¸Ð»ÑŒÐ½Ð¾Ðµ Ð´ÐµÑ€ÐµÐ²Ð¾ Ð´Ð¸ÑÑ†Ð¸Ð¿Ð»Ð¸Ð½";
 	out << END;
 	out.close();
 }
@@ -82,7 +82,36 @@ void FError::ErrorToMuchColums(wstring wsName)
 void FError::ErrorToMuchColums(string sName)
 {
 	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
-	out << "Â ó÷åáíîì ïëàíå " + sName + " ñëèøêîì ìíîãî ñòîëáöîâ äëÿ îïðåäåëåíèÿ èíäèêàòîðîâ êîìïåòåíöèé";
+	out << "Ð’ ÑƒÑ‡ÐµÐ±Ð½Ð¾Ð¼ Ð¿Ð»Ð°Ð½Ðµ " + sName + " ÑÐ»Ð¸ÑˆÐºÐ¾Ð¼ Ð¼Ð½Ð¾Ð³Ð¾ ÑÑ‚Ð¾Ð»Ð±Ñ†Ð¾Ð² Ð´Ð»Ñ Ð¾Ð¿Ñ€ÐµÐ´ÐµÐ»ÐµÐ½Ð¸Ñ Ð¸Ð½Ð´Ð¸ÐºÐ°Ñ‚Ð¾Ñ€Ð¾Ð² ÐºÐ¾Ð¼Ð¿ÐµÑ‚ÐµÐ½Ñ†Ð¸Ð¹";
+	out << END;
+	out.close();
+}
+
+
+void FError::ErrorBadParser(wstring wsName)
+{
+	ErrorBadParser(ptrGlobal->ConwertToString(wsName));
+}
+
+void FError::ErrorBadParser(string sName)
+{
+	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
+	out << "Ð’ ÑƒÑ‡ÐµÐ±Ð½Ð¾Ð¼ Ð¿Ð»Ð°Ð½Ðµ " + sName + " Ð½Ðµ Ñ…Ð²Ð°Ñ‚Ð°ÐµÑ‚ Ð´Ð°Ð½Ð½Ñ‹Ñ… Ð¾ Ð´Ð¸ÑÑ†Ð¸Ð¿Ð»Ð¸Ð½Ð°Ñ…";
+	out << END;
+	out.close();
+}
+
+
+
+void FError::OKParsing(wstring wsName)
+{
+	OKParsing(ptrGlobal->ConwertToString(wsName));
+}
+
+void FError::OKParsing(string sName)
+{
+	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
+	out << "+ Ð£Ñ‡ÐµÐ±Ð½Ñ‹Ð¹ Ð¿Ð»Ð°Ð½ " + sName + " ÑƒÑÐ¿ÐµÑˆÐ½Ð¾ Ð¾Ð±Ñ€Ð°Ð±Ð¾Ñ‚Ð°Ð½";
 	out << END;
 	out.close();
 }

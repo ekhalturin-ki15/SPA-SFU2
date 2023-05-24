@@ -1,15 +1,17 @@
-#pragma once
+п»ї#pragma once
 #include "global.h"
 
 struct FGlobal;
 
 struct FError
 {
+    static const string sBadTree;
+    static const string sNotAllData;
 
     FError(FGlobal* _ptrGlobal);
     void Init();
         
-    void ErrorInFileNotFind(wstring wsName);// Если ошибки при открытии файла в виде zip
+    void ErrorInFileNotFind(wstring wsName);// Р•СЃР»Рё РѕС€РёР±РєРё РїСЂРё РѕС‚РєСЂС‹С‚РёРё С„Р°Р№Р»Р° РІ РІРёРґРµ zip
     void ErrorInFileNotFind(string sName);
     void ErrorOutFileNotFind(wstring wsName);
     void ErrorOutFileNotFind(string sName);
@@ -17,11 +19,17 @@ struct FError
     void ErrorUncorrectExtension(wstring wsName);
     void ErrorUncorrectExtension(string sName);
 
-    void ErrorBadTree(wstring wsName); // Если ошибки при построении дерева дисциплин
-    void ErrorBadTree(string sName); // Если ошибки при построении дерева дисциплин
+    void ErrorBadTree(wstring wsName); // Р•СЃР»Рё РѕС€РёР±РєРё РїСЂРё РїРѕСЃС‚СЂРѕРµРЅРёРё РґРµСЂРµРІР° РґРёСЃС†РёРїР»РёРЅ
+    void ErrorBadTree(string sName); // Р•СЃР»Рё РѕС€РёР±РєРё РїСЂРё РїРѕСЃС‚СЂРѕРµРЅРёРё РґРµСЂРµРІР° РґРёСЃС†РёРїР»РёРЅ
 
-    void ErrorToMuchColums(wstring wsName); // Если ошибки при построении дерева дисциплин
-    void ErrorToMuchColums(string sName); // Если ошибки при построении дерева дисциплин
+    void ErrorToMuchColums(wstring wsName); // Р•СЃР»Рё РѕС€РёР±РєРё РїСЂРё РїРѕСЃС‚СЂРѕРµРЅРёРё РґРµСЂРµРІР° РґРёСЃС†РёРїР»РёРЅ
+    void ErrorToMuchColums(string sName); // Р•СЃР»Рё РѕС€РёР±РєРё РїСЂРё РїРѕСЃС‚СЂРѕРµРЅРёРё РґРµСЂРµРІР° РґРёСЃС†РёРїР»РёРЅ
 
-    FGlobal* ptrGlobal; //Синглтон
+    void ErrorBadParser(wstring wsName);
+    void ErrorBadParser(string sName);
+
+    void OKParsing(wstring wsName);
+    void OKParsing(string sName);
+
+    FGlobal* ptrGlobal; //РЎРёРЅРіР»С‚РѕРЅ
 };

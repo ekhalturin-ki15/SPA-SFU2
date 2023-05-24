@@ -1,4 +1,4 @@
-#include "config.h"
+п»ї#include "config.h"
 
 FConfig::FConfig(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
 {
@@ -43,8 +43,8 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& FBook, wstring wsKey, OpenXLSX::XL
     if (wsKey == L"") return;
     wstring wsPatern;
 
-    // Названия анализируемых страниц
-    wsPatern = L"Названия анализируемых страниц";
+    // РќР°Р·РІР°РЅРёСЏ Р°РЅР°Р»РёР·РёСЂСѓРµРјС‹С… СЃС‚СЂР°РЅРёС†
+    wsPatern = L"РќР°Р·РІР°РЅРёСЏ Р°РЅР°Р»РёР·РёСЂСѓРµРјС‹С… СЃС‚СЂР°РЅРёС†";
     if (wsKey == wsPatern)
     {
         arrKeyPage.clear();
@@ -75,8 +75,8 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& FBook, wstring wsKey, OpenXLSX::XL
         return;
     }
 
-    //Каталог данных УП
-    wsPatern = L"Каталог данных УП";
+    //РљР°С‚Р°Р»РѕРі РґР°РЅРЅС‹С… РЈРџ
+    wsPatern = L"РљР°С‚Р°Р»РѕРі РґР°РЅРЅС‹С… РЈРџ";
     if (wsKey == wsPatern)
     {
         arrNameFileIn.clear();
@@ -88,8 +88,8 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& FBook, wstring wsKey, OpenXLSX::XL
         return;
     }
 
-    //Каталог вывода результата
-    wsPatern = L"Каталог вывода результата";
+    //РљР°С‚Р°Р»РѕРі РІС‹РІРѕРґР° СЂРµР·СѓР»СЊС‚Р°С‚Р°
+    wsPatern = L"РљР°С‚Р°Р»РѕРі РІС‹РІРѕРґР° СЂРµР·СѓР»СЊС‚Р°С‚Р°";
     if (wsKey == wsPatern)
     {
         arrNameFileOut.clear();
@@ -101,7 +101,7 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& FBook, wstring wsKey, OpenXLSX::XL
         return;
     }
 
-    wsPatern = L"Заголовок файла с названиями вершин";
+    wsPatern = L"Р—Р°РіРѕР»РѕРІРѕРє С„Р°Р№Р»Р° СЃ РЅР°Р·РІР°РЅРёСЏРјРё РІРµСЂС€РёРЅ";
     if (wsKey == wsPatern)
     {
         int i = 0; for (auto& it : row.cells())
@@ -116,7 +116,7 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& FBook, wstring wsKey, OpenXLSX::XL
         
     }
 
-    wsPatern = L"Заголовок файла с рёбрами";
+    wsPatern = L"Р—Р°РіРѕР»РѕРІРѕРє С„Р°Р№Р»Р° СЃ СЂС‘Р±СЂР°РјРё";
     if (wsKey == wsPatern)
     {
         int i = 0; for (auto& it : row.cells())
@@ -130,7 +130,7 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& FBook, wstring wsKey, OpenXLSX::XL
         }
     }
 
-    wsPatern = L"Макс длина названия дисциплин";
+    wsPatern = L"РњР°РєСЃ РґР»РёРЅР° РЅР°Р·РІР°РЅРёСЏ РґРёСЃС†РёРїР»РёРЅ";
     if (wsKey == wsPatern)
     {
         int i = 0; for (auto& it : row.cells())
@@ -144,7 +144,7 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& FBook, wstring wsKey, OpenXLSX::XL
         }
     }
 
-    wsPatern = L"Размер рёбер";
+    wsPatern = L"Р Р°Р·РјРµСЂ СЂС‘Р±РµСЂ";
     if (wsKey == wsPatern)
     {
         int i = 0; for (auto& it : row.cells())
@@ -158,7 +158,7 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& FBook, wstring wsKey, OpenXLSX::XL
         }
     }
 
-    wsPatern = L"Название файла отладки";
+    wsPatern = L"РќР°Р·РІР°РЅРёРµ С„Р°Р№Р»Р° РѕС‚Р»Р°РґРєРё";
     if (wsKey == wsPatern)
     {
         int i = 0; for (auto& it : row.cells())
@@ -172,7 +172,7 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& FBook, wstring wsKey, OpenXLSX::XL
         }
     }
 
-    wsPatern = L"Название лог файла (для пользователя)";
+    wsPatern = L"РќР°Р·РІР°РЅРёРµ Р»РѕРі С„Р°Р№Р»Р° (РґР»СЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ)";
     if (wsKey == wsPatern)
     {
         int i = 0; for (auto& it : row.cells())
@@ -186,7 +186,7 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& FBook, wstring wsKey, OpenXLSX::XL
         }
     }
 
-    wsPatern = L"Создать новый каталог";
+    wsPatern = L"РЎРѕР·РґР°С‚СЊ РЅРѕРІС‹Р№ РєР°С‚Р°Р»РѕРі";
     if (wsKey == wsPatern)
     {
         int i = 0; for (auto& it : row.cells())
@@ -194,14 +194,14 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& FBook, wstring wsKey, OpenXLSX::XL
             if (i)
             {
                 wstring wsLine = ptrGlobal->GetValue(it);
-                bCreateFolder = (wsLine.find(L"да") != wstring::npos);
+                bCreateFolder = (wsLine.find(L"РґР°") != wstring::npos);
                 return;
             }
             ++i;
         }
     }
 
-    wsPatern = L"Перезаписывать лог файл";
+    wsPatern = L"РџРµСЂРµР·Р°РїРёСЃС‹РІР°С‚СЊ Р»РѕРі С„Р°Р№Р»";
     if (wsKey == wsPatern)
     {
         int i = 0; for (auto& it : row.cells())
@@ -209,14 +209,14 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& FBook, wstring wsKey, OpenXLSX::XL
             if (i)
             {
                 wstring wsLine = ptrGlobal->GetValue(it);
-                bReloadLogFile = (wsLine.find(L"да") != wstring::npos);
+                bReloadLogFile = (wsLine.find(L"РґР°") != wstring::npos);
                 return;
             }
             ++i;
         }
     }
 
-    wsPatern = L"Регулярное выражения разбивки строки ([Компетенции(2)] Формируемые компетенции)";
+    wsPatern = L"Р РµРіСѓР»СЏСЂРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёСЏ СЂР°Р·Р±РёРІРєРё СЃС‚СЂРѕРєРё ([РљРѕРјРїРµС‚РµРЅС†РёРё(2)] Р¤РѕСЂРјРёСЂСѓРµРјС‹Рµ РєРѕРјРїРµС‚РµРЅС†РёРё)";
     if (wsKey == wsPatern)
     {
         int i = 0; for (auto& it : row.cells())

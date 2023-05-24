@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include "global.h"
 
 struct FGlobal;
@@ -39,5 +39,5 @@ struct FConfig
 
     void SetParams(OpenXLSX::XLWorkbook& FBook, wstring wsKey, OpenXLSX::XLRow row);
 
-    FGlobal* ptrGlobal; //Синглтон
+    FGlobal* ptrGlobal; //РЎРёРЅРіР»С‚РѕРЅ
 };
