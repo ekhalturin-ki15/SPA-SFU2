@@ -4,7 +4,7 @@
 #include "global.h"
 
 const string FError::sBadTree = "Bad Tree";
-const string FError::sNotAllData = "Not all data";
+const string FError::sDontHaveIndex = "Dont have index";
 
 FTreeElement::FTreeElement() : iSumScore(0), wsName(L""), wsIndexName(L""), ptrPerent(nullptr), bAllow(true)
 {
@@ -61,11 +61,11 @@ void FSolve::Read(string _sInPath, string _sOutPath)
 	}
 	catch (logic_error eError)
 	{
-		/*if (FError::sNotAllData == eError.what())
+		if (FError::sDontHaveIndex== eError.what())
 		{
 			ptrGlobal->ptrError->ErrorBadParser(sInPath);
 		}
-		else*/
+		else
 		if (FError::sBadTree == eError.what())
 		{
 			ptrGlobal->ptrError->ErrorBadTree(sInPath);
@@ -125,7 +125,7 @@ void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 
 	
 	int y = 0;
-	vector<int> arrPreX = { -1 }; // Root вне учебного плана (в нём все модули)
+	int iPreX = -1; // Root вне учебного плана (в нём все модули)
 
 	for (auto row : fSheet.rows())
 	{
@@ -139,15 +139,13 @@ void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 			for (auto it : row.cells())
 			{
 				++x;
-				arrPreX.push_back(arrPreX.back());
-
 				wstring wsData = ptrGlobal->GetValue(it);
 				if (wsData != L"")
 				{
 					if ((iIdIndex <= x) && (x < iIdName) && (!bReadIndex)) // Ищем позицию в дереве для нового предмета
 					{
 						bReadIndex = true; //Чтобы повторно не находить индекс в строке
-						while (arrPreX.back() >= x)
+						while (iPreX >= x)
 						{
 							if (ptrThis == nullptr)
 							{
@@ -157,9 +155,9 @@ void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 							ptrThis = ptrThis->ptrPerent;
 
 
-							arrPreX.back()--;
+							iPreX--;
 						}
-						arrPreX.back() = x;
+						iPreX = x;
 						ptrNewNode = new FTreeElement;
 						ptrThis->arrChild.push_back(ptrNewNode);
 						ptrNewNode->ptrPerent = ptrThis;
@@ -169,14 +167,14 @@ void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 						ptrTree->mapDisc[wsData] = ptrNewNode;
 						continue;
 					}
-					if ((x < iIdComp) && (!bReadName))
+					if ((iIdName <= x) && (x < iIdComp) && (!bReadName))
 					{
 						bReadName = true;
 						ptrNewNode->wsName = wsData;
 						continue;
 					}
 
-					if (!bReadComp)
+					if ((iIdComp <= x) && (!bReadComp))
 					{
 						bReadComp = true;
 						string sParsingData = ptrGlobal->ConwertToString(ptrGlobal->ConwertPathFormat(wsData)) + ";";
@@ -198,17 +196,21 @@ void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 
 			}
 
-			if ((ptrNewNode->wsName == L"") || (ptrNewNode->fComp.size() == 0))
+			//Игнорируем неправильно оформленную дисциплины
+			//Однозначного исправления нет
+			if (ptrNewNode->wsIndexName == L"")
 			{
-				ptrGlobal->ptrError->ErrorBadParser(sInPath);
-
-				//Удаление неправильной оформленной дисциплины
-				ptrThis = ptrNewNode->ptrPerent;
-				ptrNewNode->ptrPerent->arrChild.pop_back();
-				delete ptrNewNode;
-				arrPreX.pop_back();
+				throw std::logic_error(FError::sDontHaveIndex); // Неуказанный индекс, это критично
+			}
+			if (ptrNewNode->wsName == L"")
+			{
+				ptrGlobal->ptrError->ErrorBadParserName(ptrGlobal->ConwertToWstring(sInPath), ptrNewNode->wsIndexName);
 				//throw std::logic_error(FError::sNotAllData); // Щадящий режим, игнорируем неправильные дисциплины
-				
+			}
+			if (ptrNewNode->fComp.size() == 0)
+			{
+				ptrGlobal->ptrError->ErrorBadParserComp(ptrGlobal->ConwertToWstring(sInPath), ptrNewNode->wsIndexName);
+				//throw std::logic_error(FError::sNotAllData); // Щадящий режим, игнорируем неправильные дисциплины
 			}
 		}
 

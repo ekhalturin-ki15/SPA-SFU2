@@ -6,7 +6,7 @@ struct FGlobal;
 struct FError
 {
     static const string sBadTree;
-    static const string sNotAllData;
+    static const string sDontHaveIndex;
 
     FError(FGlobal* _ptrGlobal);
     void Init();
@@ -27,6 +27,12 @@ struct FError
 
     void ErrorBadParser(wstring wsName);
     void ErrorBadParser(string sName);
+
+    void ErrorBadParserName(wstring wsName, wstring wsIndexName);
+    void ErrorBadParserName(string sName, string sIndexName);
+
+    void ErrorBadParserComp(wstring wsName, wstring wsIndexName);
+    void ErrorBadParserComp(string sName, string sIndexName);
 
     void OKParsing(wstring wsName);
     void OKParsing(string sName);

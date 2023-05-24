@@ -87,7 +87,6 @@ void FError::ErrorToMuchColums(string sName)
 	out.close();
 }
 
-
 void FError::ErrorBadParser(wstring wsName)
 {
 	ErrorBadParser(ptrGlobal->ConwertToString(wsName));
@@ -96,11 +95,36 @@ void FError::ErrorBadParser(wstring wsName)
 void FError::ErrorBadParser(string sName)
 {
 	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
-	out << "В учебном плане " + sName + " не хватает данных о дисциплинах";
+	out << "В учебном плане " + sName + " у одной из дисциплин не указан индекс";
 	out << END;
 	out.close();
 }
 
+void FError::ErrorBadParserName(wstring wsName, wstring wsIndexName)
+{
+	ErrorBadParserName(ptrGlobal->ConwertToString(wsName), ptrGlobal->ConwertToString(wsIndexName));
+}
+
+void FError::ErrorBadParserName(string sName, string sIndexName)
+{
+	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
+	out << "В учебном плане " + sName + " нет имени у дисциплины с индексом " + sIndexName;
+	out << END;
+	out.close();
+}
+
+void FError::ErrorBadParserComp(wstring wsName, wstring wsIndexName)
+{
+	ErrorBadParserComp(ptrGlobal->ConwertToString(wsName), ptrGlobal->ConwertToString(wsIndexName));
+}
+
+void FError::ErrorBadParserComp(string sName, string sIndexName)
+{
+	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
+	out << "В учебном плане " + sName + " не указаны компетенции у дисциплины с индексом " + sIndexName;
+	out << END;
+	out.close();
+}
 
 
 void FError::OKParsing(wstring wsName)
