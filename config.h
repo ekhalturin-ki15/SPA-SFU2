@@ -6,7 +6,7 @@ struct FGlobal;
 struct FPageInfo
 {
     wstring wsName;
-    vector<wstring> arrHeader;
+    vector<set<wstring>> arrHeader; // Для каждого столбца есть множество синонимов
 };
 
 

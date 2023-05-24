@@ -58,15 +58,17 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& FBook, wstring wsKey, OpenXLSX::XL
 
                 auto fExtraPage = FBook.worksheet(ptrGlobal->ConwertToString(wsNamePage));
 
-                vector<wstring> arrReadHeader;
+                vector<set<wstring>> arrReadHeader(fExtraPage.rows().begin()->cells().size());
 
+                int i = 0;
                 for (auto it : fExtraPage.rows().begin()->cells())
                 {
                     wstring wsData = ptrGlobal->GetValue(it);
                     if (wsData != L"")
                     {
-                        arrReadHeader.push_back(wsData);
+                        arrReadHeader[i].insert(wsData);
                     }
+                    ++i;
                 }
                 arrKeyPage.push_back({ wsNamePage, arrReadHeader });
             }

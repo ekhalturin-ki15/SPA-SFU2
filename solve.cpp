@@ -106,14 +106,11 @@ void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 		int x = 0;
 		for (auto it : fSheet.rows().begin()->cells())
 		{
-			if (ptrGlobal->GetValue(it) == 
-				ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].arrHeader[0])
+			if (ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].arrHeader[0].count(ptrGlobal->GetValue(it)))
 				iIdIndex = x;
-			if (ptrGlobal->GetValue(it) ==
-				ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].arrHeader[1])
+			if (ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].arrHeader[1].count(ptrGlobal->GetValue(it)))
 				iIdName = x;
-			if (ptrGlobal->GetValue(it) ==
-				ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].arrHeader[2])
+			if (ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].arrHeader[2].count(ptrGlobal->GetValue(it)))
 				iIdComp = x;
 			++x;
 		}
@@ -235,11 +232,9 @@ void FSolve::AddCompIndicator(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 		int x = 0;
 		for (auto it : fSheet.rows().begin()->cells())
 		{
-			if (ptrGlobal->GetValue(it) ==
-				ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].arrHeader[0])
+			if (ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].arrHeader[0].count(ptrGlobal->GetValue(it)))
 				iIdIndex = x;
-			if (ptrGlobal->GetValue(it) ==
-				ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].arrHeader[1])
+			if (ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].arrHeader[1].count(ptrGlobal->GetValue(it)))
 				iIdСontent = x;
 			++x;
 		}
