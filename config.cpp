@@ -15,6 +15,8 @@ FConfig::FConfig() : iMaxLen(15), iWeigthRib(10), bCreateFolder(false), bReloadL
 
     wsNameDebugFile = L"debugFile.txt";
     wsNameLogFile = L"logFile.txt";
+
+    wsRegexComp = L" {0,1}(.{0,}?);";
 }
 
 void FConfig::Init(wstring _sNameConfig, wstring _sNamePage)
@@ -48,27 +50,30 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& FBook, wstring wsKey, OpenXLSX::XL
     if (wsKey == wsPatern)
     {
         arrKeyPage.clear();
-        int i = 0; for (auto& it : row.cells())
+        int i = 0; for (auto& page : row.cells())
         {
             if (i)
             {
                 //arrKeyPage.resize(arrKeyPage.size() + 1);
 
-                wstring wsNamePage = ptrGlobal->GetValue(it);
+                wstring wsNamePage = ptrGlobal->GetValue(page);
 
                 auto fExtraPage = FBook.worksheet(ptrGlobal->ConwertToString(wsNamePage));
 
                 vector<set<wstring>> arrReadHeader(fExtraPage.rows().begin()->cells().size());
 
-                int i = 0;
-                for (auto it : fExtraPage.rows().begin()->cells())
+                for (auto row : fExtraPage.rows())
                 {
-                    wstring wsData = ptrGlobal->GetValue(it);
-                    if (wsData != L"")
+                    int i = 0;
+                    for (auto& column : row.cells())
                     {
-                        arrReadHeader[i].insert(wsData);
+                        wstring wsData = ptrGlobal->GetValue(column);
+                        if (wsData != L"")
+                        {
+                            arrReadHeader[i].insert(wsData);
+                        }
+                        ++i;
                     }
-                    ++i;
                 }
                 arrKeyPage.push_back({ wsNamePage, arrReadHeader });
             }

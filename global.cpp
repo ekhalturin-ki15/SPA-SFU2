@@ -7,12 +7,11 @@
 FGlobal::FGlobal() : sNameConfig(L"./config.xlsx"), sNamePage(L"Параметры")
 {
 	ptrConfig = new FConfig(this);
-	ptrConfig->Init(sNameConfig, sNamePage);
-
 	ptrSolve = new FSolve(this);
-	//ptrSolve->Init();
-
 	ptrError = new FError(this);
+
+	ptrConfig->Init(sNameConfig, sNamePage);
+	ptrSolve->Init();
 	ptrError->Init();
 
 	mapTranslit =

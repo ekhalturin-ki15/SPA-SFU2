@@ -34,6 +34,9 @@ struct FError
     void ErrorBadParserComp(wstring wsName, wstring wsIndexName);
     void ErrorBadParserComp(string sName, string sIndexName);
 
+    void ErrorBadIndicatorBind(wstring wsName, wstring wsIndexName, wstring wsIndicator);
+    void ErrorBadIndicatorBind(string sName, string sIndexName, string sIndicator);
+
     void OKParsing(wstring wsName);
     void OKParsing(string sName);
 

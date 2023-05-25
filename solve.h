@@ -15,7 +15,7 @@ struct FTreeElement
 
 	FTreeElement* ptrPerent;
 	vector<FTreeElement*> arrChild;  //Дисциплины внутри модуля
-	vector<string> fComp;
+	map<string, vector<string>> mapComp; // Компетенции, у каждой из которых перечень индикаторов
 
 };
 
@@ -37,6 +37,8 @@ struct FSolve
 	FSolve(FGlobal* _ptrGlobal);
 	~FSolve();
 
+	void Init();
+
 	void ClearTreeDisc();
 
 	void Read(string sInPath, string sOutPath);
@@ -46,6 +48,8 @@ struct FSolve
 	void AddCompIndicator(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber);
 
 	vector<FTreeDisc*> arrDisc; // Указатели на все УП, которые считали (все они одновременно хранятся в памяти)
+
+	int iCurrentPage; // Какая по счёту страница обрабатывается в данный момент
 
 	regex fRegexComp;
 

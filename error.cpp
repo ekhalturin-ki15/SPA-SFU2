@@ -1,5 +1,9 @@
 ﻿#include "error.h"
 #include "config.h"
+#include "solve.h"
+
+const string FError::sBadTree = "Bad Tree";
+const string FError::sDontHaveIndex = "Dont have index";
 
 FError::FError(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
 {
@@ -69,6 +73,9 @@ void FError::ErrorBadTree(wstring wsName)
 void FError::ErrorBadTree(string sName)
 {
 	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
+	int& iCurrentPage = ptrGlobal->ptrSolve->iCurrentPage;
+	out << ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].wsName);
+
 	out << "В учебном плане " + sName + " неправильное дерево дисциплин";
 	out << END;
 	out.close();
@@ -82,6 +89,9 @@ void FError::ErrorToMuchColums(wstring wsName)
 void FError::ErrorToMuchColums(string sName)
 {
 	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
+	int& iCurrentPage = ptrGlobal->ptrSolve->iCurrentPage;
+	out << ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].wsName);
+
 	out << "В учебном плане " + sName + " слишком много столбцов для определения индикаторов компетенций";
 	out << END;
 	out.close();
@@ -95,6 +105,9 @@ void FError::ErrorBadParser(wstring wsName)
 void FError::ErrorBadParser(string sName)
 {
 	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
+	int& iCurrentPage = ptrGlobal->ptrSolve->iCurrentPage;
+	out << ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].wsName);
+
 	out << "В учебном плане " + sName + " у одной из дисциплин не указан индекс";
 	out << END;
 	out.close();
@@ -108,6 +121,9 @@ void FError::ErrorBadParserName(wstring wsName, wstring wsIndexName)
 void FError::ErrorBadParserName(string sName, string sIndexName)
 {
 	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
+	int& iCurrentPage = ptrGlobal->ptrSolve->iCurrentPage;
+	out << ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].wsName);
+
 	out << "В учебном плане " + sName + " нет имени у дисциплины с индексом " + sIndexName;
 	out << END;
 	out.close();
@@ -121,11 +137,30 @@ void FError::ErrorBadParserComp(wstring wsName, wstring wsIndexName)
 void FError::ErrorBadParserComp(string sName, string sIndexName)
 {
 	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
+	int& iCurrentPage = ptrGlobal->ptrSolve->iCurrentPage;
+	out << ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].wsName);
+
 	out << "В учебном плане " + sName + " не указаны компетенции у дисциплины с индексом " + sIndexName;
 	out << END;
 	out.close();
 }
 
+void FError::ErrorBadIndicatorBind(wstring wsName, wstring wsIndexName, wstring wsIndicator)
+{
+	ErrorBadIndicatorBind(ptrGlobal->ConwertToString(wsName),
+		ptrGlobal->ConwertToString(wsIndexName), ptrGlobal->ConwertToString(wsIndicator));
+}
+
+void FError::ErrorBadIndicatorBind(string sName, string sIndexName, string sIndicator)
+{
+	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
+	int& iCurrentPage = ptrGlobal->ptrSolve->iCurrentPage;
+	out << ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].wsName);
+
+	out << "В учебном плане " + sName + " для дисциплины " + sIndexName + " не получается связать с индикатором " + sIndicator;
+	out << END;
+	out.close();
+}
 
 void FError::OKParsing(wstring wsName)
 {
@@ -135,6 +170,7 @@ void FError::OKParsing(wstring wsName)
 void FError::OKParsing(string sName)
 {
 	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
+
 	out << "+ Учебный план " + sName + " успешно обработан";
 	out << END;
 	out.close();
