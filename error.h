@@ -11,6 +11,8 @@ struct FError
     FError(FGlobal* _ptrGlobal);
     void Init();
         
+    ofstream OutHeader();
+
     void ErrorInFileNotFind(wstring wsName);// Если ошибки при открытии файла в виде zip
     void ErrorInFileNotFind(string sName);
     void ErrorOutFileNotFind(wstring wsName);
@@ -28,6 +30,9 @@ struct FError
     void ErrorBadParser(wstring wsName);
     void ErrorBadParser(string sName);
 
+    void ErrorEmptyLine(wstring wsName);
+    void ErrorEmptyLine(string sName);
+
     void ErrorBadParserName(wstring wsName, wstring wsIndexName);
     void ErrorBadParserName(string sName, string sIndexName);
 
@@ -39,6 +44,9 @@ struct FError
 
     void OKParsing(wstring wsName);
     void OKParsing(string sName);
+
+    void WAParsing(wstring wsName); // WA - wrong answer
+    void WAParsing(string sName);
 
     FGlobal* ptrGlobal; //Синглтон
 };

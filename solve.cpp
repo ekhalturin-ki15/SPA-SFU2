@@ -50,6 +50,7 @@ void FSolve::Read(string _sInPath, string _sOutPath)
 	OpenXLSX::XLDocument fDoc;
 	OpenXLSX::XLWorkbook fBook;
 	iCurrentPage = 0;
+	bIsCorrectParsing = true;
 
 	try
 	{
@@ -90,7 +91,10 @@ void FSolve::Read(string _sInPath, string _sOutPath)
 		return; //Но продолжаем работать с другими файлами
 	}
 
-	ptrGlobal->ptrError->OKParsing(sInPath);
+	if (this->bIsCorrectParsing)
+		ptrGlobal->ptrError->OKParsing(sInPath);
+	else
+		ptrGlobal->ptrError->WAParsing(sInPath);
 	fDoc.close();
 }
 
@@ -195,8 +199,12 @@ void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 
 						for (auto sData : matches)
 						{
-							ptrNewNode->mapComp[sData[1].str()] = {};
-							ptrTree->fAllComp.insert(sData[1].str());
+							string sCompName = sData[1].str();
+							//Есть ошибка оператора: иногда вместо компетенции указан индикатор
+							sCompName = sCompName.substr(0, sCompName.find('.'));
+
+							ptrNewNode->mapComp[sCompName] = {};
+							ptrTree->fAllComp.insert(sCompName);
 						}
 						break;
 					}
@@ -323,7 +331,7 @@ void FSolve::AddCompIndicator(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 			//Однозначного исправления нет
 			if (!bReadIndex)
 			{
-				ptrGlobal->ptrError->ErrorBadParser(sInPath);
+				ptrGlobal->ptrError->ErrorEmptyLine(sInPath);
 			}
 		}
 		++y;

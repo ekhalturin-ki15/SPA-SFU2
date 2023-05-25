@@ -50,6 +50,7 @@ struct FSolve
 	vector<FTreeDisc*> arrDisc; // Указатели на все УП, которые считали (все они одновременно хранятся в памяти)
 
 	int iCurrentPage; // Какая по счёту страница обрабатывается в данный момент
+	bool bIsCorrectParsing;
 
 	regex fRegexComp;
 
