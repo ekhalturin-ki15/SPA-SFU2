@@ -201,7 +201,8 @@ void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 						{
 							string sCompName = sData[1].str();
 							//Есть ошибка оператора: иногда вместо компетенции указан индикатор
-							sCompName = sCompName.substr(0, sCompName.find('.'));
+							if (ptrGlobal->ptrConfig->bMultiIndicator)
+								sCompName = sCompName.substr(0, sCompName.find('.'));
 
 							ptrNewNode->mapComp[sCompName] = {};
 							ptrTree->fAllComp.insert(sCompName);

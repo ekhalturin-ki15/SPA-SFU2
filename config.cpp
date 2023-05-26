@@ -223,6 +223,22 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& FBook, wstring wsKey, OpenXLSX::XL
         }
     }
 
+    wsPatern = L"Использовать многоуровневые индикаторы";
+    if (wsKey == wsPatern)
+    {
+        int i = 0; for (auto& it : row.cells())
+        {
+            if (i)
+            {
+                wstring wsLine = ptrGlobal->GetValue(it);
+                bMultiIndicator = (wsLine.find(L"да") != wstring::npos);
+                return;
+            }
+            ++i;
+        }
+    }
+
+
     wsPatern = L"Регулярное выражения разбивки строки ([Компетенции(2)] Формируемые компетенции)";
     if (wsKey == wsPatern)
     {

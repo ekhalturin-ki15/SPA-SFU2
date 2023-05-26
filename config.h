@@ -29,6 +29,7 @@ struct FConfig
 
     bool bCreateFolder;
     bool bReloadLogFile;
+    bool bMultiIndicator;
 
     FConfig();
 
