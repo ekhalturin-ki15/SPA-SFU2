@@ -167,6 +167,9 @@
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/utf-8 </AdditionalOptions>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">/utf-8 </AdditionalOptions>
     </ClCompile>
+    <ClCompile Include="solveFirstPage.cpp" />
+    <ClCompile Include="solveSecondPage.cpp" />
+    <ClCompile Include="solveZeroPage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="0903010030-21.plm.plx.xlsx" />

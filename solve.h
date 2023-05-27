@@ -43,13 +43,17 @@ struct FSolve
 
 	void Read(string sInPath, string sOutPath);
 
-	void CreateDiscTree(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber);
+	void CreateDiscTree(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber); // Находится в solveZeroPage.cpp
 
-	void AddCompIndicator(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber);
+	void AddCompIndicator(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber); // Находится в solveFirstPage.cpp
+
+	void AddDiscScore(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber); // Находится в solveSecondPage.cpp
 
 	vector<FTreeDisc*> arrDisc; // Указатели на все УП, которые считали (все они одновременно хранятся в памяти)
 
 	int iCurrentPage; // Какая по счёту страница обрабатывается в данный момент
+	int iCurrentRow; // Какая по счёту строка обрабатывается 
+
 	bool bIsCorrectParsing;
 
 	regex fRegexComp;
