@@ -7,46 +7,43 @@ struct FError
 {
     static const string sBadTree;
     static const string sDontHaveIndex;
+    static const string sNotFoundKeyCol;
 
     FError(FGlobal* _ptrGlobal);
     void Init();
         
     ofstream OutHeader();
 
-    void ErrorInFileNotFind(wstring wsName);// Если ошибки при открытии файла в виде zip
-    void ErrorInFileNotFind(string sName);
-    void ErrorOutFileNotFind(wstring wsName);
-    void ErrorOutFileNotFind(string sName);
+    void ErrorInFileNotFind(string sPathName);// Если ошибки при открытии файла в виде zip
+    void ErrorInFileNotFind(wstring wsPathName);// Если ошибки при открытии файла в виде zip
+    
+    void ErrorOutFileNotFind(string wsPathName);
+    void ErrorOutFileNotFind(wstring wsPathName);
 
-    void ErrorUncorrectExtension(wstring wsName);
-    void ErrorUncorrectExtension(string sName);
+    void ErrorUncorrectExtension();
 
-    void ErrorBadTree(wstring wsName); // Если ошибки при построении дерева дисциплин
-    void ErrorBadTree(string sName); // Если ошибки при построении дерева дисциплин
+    void ErrorBadTree(); // Если ошибки при построении дерева дисциплин
 
-    void ErrorToMuchColums(wstring wsName); // Если ошибки при построении дерева дисциплин
-    void ErrorToMuchColums(string sName); // Если ошибки при построении дерева дисциплин
+    void ErrorNotFoundKeyCol(); // Если ошибки при нахождении ключевого поля
 
-    void ErrorBadParser(wstring wsName);
-    void ErrorBadParser(string sName);
+    void ErrorToMuchColums(); // Если ошибки при построении дерева дисциплин
 
-    void ErrorEmptyLine(wstring wsName);
-    void ErrorEmptyLine(string sName);
+    void ErrorBadParser();
 
-    void ErrorBadParserName(wstring wsName, wstring wsIndexName);
-    void ErrorBadParserName(string sName, string sIndexName);
+    void ErrorEmptyLine();
 
-    void ErrorBadParserComp(wstring wsName, wstring wsIndexName);
-    void ErrorBadParserComp(string sName, string sIndexName);
+    void ErrorBadParserName(wstring wsIndexName);
+    void ErrorBadParserName(string sIndexName);
 
-    void ErrorBadIndicatorBind(wstring wsName, wstring wsIndexName, wstring wsIndicator);
-    void ErrorBadIndicatorBind(string sName, string sIndexName, string sIndicator);
+    void ErrorBadParserComp(wstring wsIndexName);
+    void ErrorBadParserComp(string sIndexName);
 
-    void OKParsing(wstring wsName);
-    void OKParsing(string sName);
+    void ErrorBadIndicatorBind(wstring wsIndexName, wstring wsIndicator);
+    void ErrorBadIndicatorBind(string sIndexName, string sIndicator);
 
-    void WAParsing(wstring wsName); // WA - wrong answer
-    void WAParsing(string sName);
+    void OKParsing();
+
+    void WAParsing(); // WA - wrong answer
 
     FGlobal* ptrGlobal; //Синглтон
 };

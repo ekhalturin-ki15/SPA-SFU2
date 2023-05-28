@@ -3,7 +3,7 @@
 #include "config.h"
 #include "global.h"
 
-FTreeElement::FTreeElement() : iSumScore(0), wsName(L""), wsIndexName(L""), ptrPerent(nullptr), bAllow(true)
+FTreeElement::FTreeElement() : dSumScore(0.), wsName(L""), wsIndexName(L""), ptrPerent(nullptr), bAllow(true)
 {
 }
 
@@ -76,7 +76,12 @@ void FSolve::Read(string _sInPath, string _sOutPath)
 		else*/
 		if (FError::sBadTree == eError.what())
 		{
-			ptrGlobal->ptrError->ErrorBadTree(sInPath);
+			ptrGlobal->ptrError->ErrorBadTree();
+		}
+		else
+		if (FError::sNotFoundKeyCol == eError.what())
+		{
+			ptrGlobal->ptrError->ErrorNotFoundKeyCol();
 		}
 		fDoc.close();
 		return; //Но продолжаем работать с другими файлами
@@ -85,7 +90,7 @@ void FSolve::Read(string _sInPath, string _sOutPath)
 	{
 		if (sInPath.find(".xlsx") == string::npos)
 		{
-			ptrGlobal->ptrError->ErrorUncorrectExtension(sInPath);
+			ptrGlobal->ptrError->ErrorUncorrectExtension();
 		}
 		else
 		{
@@ -95,9 +100,9 @@ void FSolve::Read(string _sInPath, string _sOutPath)
 	}
 
 	if (this->bIsCorrectParsing)
-		ptrGlobal->ptrError->OKParsing(sInPath);
+		ptrGlobal->ptrError->OKParsing();
 	else
-		ptrGlobal->ptrError->WAParsing(sInPath);
+		ptrGlobal->ptrError->WAParsing();
 	fDoc.close();
 }
 

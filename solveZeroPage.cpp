@@ -7,9 +7,9 @@
 
 void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 {
-	int iIdIndex = 0;
-	int iIdName = 0;
-	int iIdComp = 0;
+	int iIdIndex = -1;
+	int iIdName = -1;
+	int iIdComp = -1;
 
 	auto fSheet = fBook.worksheet(ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].wsName));
 
@@ -46,9 +46,10 @@ void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 
 	int iPreX = -1; // Root вне учебного плана (в нём все модули)
 
-	iCurrentRow = 0;
+	iCurrentRow = -1;
 	for (auto row : fSheet.rows())
 	{
+		++iCurrentRow;
 		int x = -1;
 		bool bReadIndex = false;
 		bool bReadName = false;
@@ -129,23 +130,21 @@ void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 			//Дисциплин на данном моменте
 			if (!bReadIndex)
 			{
-				ptrGlobal->ptrError->ErrorBadParser(sInPath);
+				ptrGlobal->ptrError->ErrorBadParser();
 				return;
 				//throw std::logic_error(FError::sDontHaveIndex); // Неуказанный индекс, это критично
 			}
 			if (!bReadName)
 			{
-				ptrGlobal->ptrError->ErrorBadParserName(ptrGlobal->ConwertToWstring(sInPath), ptrNewNode->wsIndexName);
+				ptrGlobal->ptrError->ErrorBadParserName(ptrNewNode->wsIndexName);
 				//throw std::logic_error(FError::sNotAllData); // Щадящий режим, игнорируем неправильные дисциплины
 			}
 			if (!bReadComp)// Если не считали, значит не указаны
 			{
-				ptrGlobal->ptrError->ErrorBadParserComp(ptrGlobal->ConwertToWstring(sInPath), ptrNewNode->wsIndexName);
+				ptrGlobal->ptrError->ErrorBadParserComp(ptrNewNode->wsIndexName);
 				//throw std::logic_error(FError::sNotAllData); // Щадящий режим, игнорируем неправильные дисциплины
 			}
 		}
-
-		++iCurrentRow;
 	}
 
 }

@@ -751,6 +751,7 @@
 
 + Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904020005_OP-21.plm.plx.xlsx успешно обработан
 
+Компетенции [строка 2] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904020006_OP-20.plm.plx.xlsx присутствует пустая строка
 - Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904020006_OP-20.plm.plx.xlsx обработан с недочётами
 
 + Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904020006_OP-21.plm.plx.xlsx успешно обработан
@@ -860,3 +861,4 @@
 
 + Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad/2704040005_OP-21.plm.plx.xlsx успешно обработан
 
+Не обнаружен каталог с входными данным R:/acmp/excelbibltest/ExcelBiblT/plans/grad/~$0103040030_op-21.plm.plx.xlsx

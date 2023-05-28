@@ -7,8 +7,8 @@
 
 void FSolve::AddCompIndicator(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 {
-	int iIdIndex = 0;
-	//int iIdСontent = 0;
+	int iIdIndex = -1;
+	//int iIdСontent = -1;
 
 	auto fSheet = fBook.worksheet(ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].wsName));
 
@@ -34,9 +34,10 @@ void FSolve::AddCompIndicator(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 	string sLastIndicator = "";
 	FTreeElement* ptrThis = nullptr;
 
-	iCurrentRow = 0;
+	iCurrentRow = -1;
 	for (auto row : fSheet.rows())
 	{
+		++iCurrentRow;
 		int x = -1;
 		bool bReadIndex = false;
 		//bool bReadСontent = false;
@@ -75,7 +76,7 @@ void FSolve::AddCompIndicator(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 								//Неправильно указаны компетенции у дисциплины
 								//Не к чему соотнести индикатор
 								ptrGlobal->ptrError->ErrorBadIndicatorBind
-								(sInPath, sLastComp, sLastIndicator);
+								(sLastComp, sLastIndicator);
 
 								break;
 							}
@@ -98,10 +99,9 @@ void FSolve::AddCompIndicator(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 			//Однозначного исправления нет
 			if (!bReadIndex)
 			{
-				ptrGlobal->ptrError->ErrorEmptyLine(sInPath);
+				ptrGlobal->ptrError->ErrorEmptyLine();
 			}
 		}
-		++iCurrentRow;
 	}
 
 }

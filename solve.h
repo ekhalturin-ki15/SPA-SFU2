@@ -4,15 +4,24 @@
 
 struct FGlobal;
 
+
+struct FSemesterScore
+{
+	int iNumSemester;
+	double dScore;
+};
+
 struct FTreeElement
 {
 	FTreeElement();
 
 	bool bAllow; //Учитывать ли при подсчёте зачётных единиц (ЗЕ)
-	int iSumScore; // Количество зачётных единиц (ЗЕ)
+	double dSumScore; // Количество зачётных единиц (ЗЕ)
+	vector<FSemesterScore> arrSemScore;
+
 	wstring wsName;
 	wstring wsIndexName;
-
+	
 	FTreeElement* ptrPerent;
 	vector<FTreeElement*> arrChild;  //Дисциплины внутри модуля
 	map<string, vector<string>> mapComp; // Компетенции, у каждой из которых перечень индикаторов

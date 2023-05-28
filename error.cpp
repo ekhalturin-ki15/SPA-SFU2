@@ -4,6 +4,7 @@
 
 const string FError::sBadTree = "Bad Tree";
 const string FError::sDontHaveIndex = "Dont have index";
+const string FError::sNotFoundKeyCol = "Key column not found";
 
 FError::FError(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
 {
@@ -26,31 +27,32 @@ void FError::Init()
 	}
 }
 
-void FError::ErrorInFileNotFind(wstring wsName)
-{
-	ErrorInFileNotFind(ptrGlobal->ConwertToString(wsName));
-}
-
-void FError::ErrorInFileNotFind(string sName)
+void FError::ErrorInFileNotFind(string sPathName)
 {
 	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
-	out << "Не обнаружен каталог с входными данным " +sName;
+	out << "Не обнаружен каталог с входными данным " + sPathName;
 	out << END;
 	out.close();
 }
 
-void FError::ErrorOutFileNotFind(wstring wsName)
+void FError::ErrorInFileNotFind(wstring wsPathName)
 {
-	ErrorOutFileNotFind(ptrGlobal->ConwertToString(wsName));
+	ErrorInFileNotFind(ptrGlobal->ConwertToString(wsPathName));
 }
 
-void FError::ErrorOutFileNotFind(string sName)
+void FError::ErrorOutFileNotFind(string sPathName)
 {
 	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
-	out << "Не обнаружен каталог для вывода данных " + sName;
+	out << "Не обнаружен каталог для вывода данных " + sPathName;
 	out << END;
 	out.close();
 }
+
+void FError::ErrorOutFileNotFind(wstring wsPathName)
+{
+	ErrorOutFileNotFind(ptrGlobal->ConwertToString(wsPathName));
+}
+
 
 ofstream FError::OutHeader()
 {
@@ -63,144 +65,118 @@ ofstream FError::OutHeader()
 	return out;
 }
 
-void FError::ErrorUncorrectExtension(wstring wsName)
-{
-	ErrorUncorrectExtension(ptrGlobal->ConwertToString(wsName));
-}
-
-void FError::ErrorUncorrectExtension(string sName)
+void FError::ErrorUncorrectExtension()
 {
 	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
-	out << "Программа работает только с расширение XLSX, другое у файла " + sName;
+	out << "Программа работает только с расширение XLSX, другое у файла " + ptrGlobal->ptrSolve->sInPath;
 	out << END;
 	out.close();
 }
 
-void FError::ErrorBadTree(wstring wsName)
-{
-	ErrorBadTree(ptrGlobal->ConwertToString(wsName));
-}
-
-void FError::ErrorBadTree(string sName)
+void FError::ErrorBadTree()
 {
 	ofstream out = OutHeader();
 
-	out << "В учебном плане " + sName + " неправильное дерево дисциплин";
+	out << "В учебном плане " + ptrGlobal->ptrSolve->sInPath + " неправильное дерево дисциплин";
 	out << END;
 	out.close();
 }
 
-void FError::ErrorToMuchColums(wstring wsName)
-{
-	ErrorToMuchColums(ptrGlobal->ConwertToString(wsName));
-}
-
-void FError::ErrorToMuchColums(string sName)
+void FError::ErrorNotFoundKeyCol()
 {
 	ofstream out = OutHeader();
 
-	out << "В учебном плане " + sName + " слишком много столбцов для определения индикаторов компетенций";
+	out << "В учебном плане " + ptrGlobal->ptrSolve->sInPath + " не найдён ключевой столбец на странице";
 	out << END;
 	out.close();
 }
 
-void FError::ErrorBadParser(wstring wsName)
-{
-	ErrorBadParser(ptrGlobal->ConwertToString(wsName));
-}
-
-void FError::ErrorBadParser(string sName)
+void FError::ErrorToMuchColums()
 {
 	ofstream out = OutHeader();
 
-	out << "В учебном плане " + sName + " у одной из дисциплин не указан индекс";
+	out << "В учебном плане " + ptrGlobal->ptrSolve->sInPath + " слишком много столбцов для определения индикаторов компетенций";
 	out << END;
 	out.close();
 }
 
-void FError::ErrorEmptyLine(wstring wsName)
-{
-	ErrorEmptyLine(ptrGlobal->ConwertToString(wsName));
-}
-
-void FError::ErrorEmptyLine(string sName)
+void FError::ErrorBadParser()
 {
 	ofstream out = OutHeader();
 
-	out << "В учебном плане " + sName + " присутствует пустая строка";
+	out << "В учебном плане " + ptrGlobal->ptrSolve->sInPath + " у одной из дисциплин не указан индекс";
 	out << END;
 	out.close();
 }
 
-void FError::ErrorBadParserName(wstring wsName, wstring wsIndexName)
-{
-	ErrorBadParserName(ptrGlobal->ConwertToString(wsName), ptrGlobal->ConwertToString(wsIndexName));
-}
-
-void FError::ErrorBadParserName(string sName, string sIndexName)
+void FError::ErrorEmptyLine()
 {
 	ofstream out = OutHeader();
 
-	out << " В учебном плане " + sName + " нет имени у дисциплины с индексом " + sIndexName;
+	out << "В учебном плане " + ptrGlobal->ptrSolve->sInPath + " присутствует пустая строка";
 	out << END;
 	out.close();
 }
 
-void FError::ErrorBadParserComp(wstring wsName, wstring wsIndexName)
+void FError::ErrorBadParserName(wstring wsIndexName)
 {
-	ErrorBadParserComp(ptrGlobal->ConwertToString(wsName), ptrGlobal->ConwertToString(wsIndexName));
+	ErrorBadParserName(ptrGlobal->ConwertToString(wsIndexName));
 }
 
-void FError::ErrorBadParserComp(string sName, string sIndexName)
+void FError::ErrorBadParserName(string sIndexName)
 {
 	ofstream out = OutHeader();
 
-	out << "В учебном плане " + sName + " не указаны компетенции у дисциплины с индексом " + sIndexName;
+	out << " В учебном плане " + ptrGlobal->ptrSolve->sInPath + " нет имени у дисциплины с индексом " + sIndexName;
 	out << END;
 	out.close();
 }
 
-void FError::ErrorBadIndicatorBind(wstring wsName, wstring wsIndexName, wstring wsIndicator)
+void FError::ErrorBadParserComp(wstring wsIndexName)
 {
-	ErrorBadIndicatorBind(ptrGlobal->ConwertToString(wsName),
-		ptrGlobal->ConwertToString(wsIndexName), ptrGlobal->ConwertToString(wsIndicator));
+	ErrorBadParserComp(ptrGlobal->ConwertToString(wsIndexName));
 }
 
-void FError::ErrorBadIndicatorBind(string sName, string sIndexName, string sIndicator)
+void FError::ErrorBadParserComp(string sIndexName)
+{
+	ofstream out = OutHeader();
+
+	out << "В учебном плане " + ptrGlobal->ptrSolve->sInPath + " не указаны компетенции у дисциплины с индексом " + sIndexName;
+	out << END;
+	out.close();
+}
+
+void FError::ErrorBadIndicatorBind(wstring wsIndexName, wstring wsIndicator)
+{
+	ErrorBadIndicatorBind(ptrGlobal->ConwertToString(wsIndexName),
+		ptrGlobal->ConwertToString(wsIndicator));
+}
+
+void FError::ErrorBadIndicatorBind(string sIndexName, string sIndicator)
 {
 	ofstream&& out = OutHeader();
 
-	out << "В учебном плане " + sName + " для дисциплины " + sIndexName + " не получается связать с индикатором " + sIndicator;
+	out << "В учебном плане " + ptrGlobal->ptrSolve->sInPath + " для дисциплины " + sIndexName + " не получается связать с индикатором " + sIndicator;
 	out << END;
 	out.close();
 }
 
-void FError::OKParsing(wstring wsName)
-{
-	OKParsing(ptrGlobal->ConwertToString(wsName));
-}
-
-void FError::OKParsing(string sName)
+void FError::OKParsing()
 {
 	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
 
-	out << "+ Учебный план " + sName + " успешно обработан";
+	out << "+ Учебный план " + ptrGlobal->ptrSolve->sInPath + " успешно обработан";
 	out << END;
 	out << END;
 	out.close();
 }
 
 
-void FError::WAParsing(wstring wsName)
-{
-	WAParsing(ptrGlobal->ConwertToString(wsName));
-}
-
-void FError::WAParsing(string sName)
+void FError::WAParsing()
 {
 	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
 
-	out << "- Учебный план " + sName + " обработан с недочётами";
+	out << "- Учебный план " + ptrGlobal->ptrSolve->sInPath + " обработан с недочётами";
 	out << END;
 	out << END;
 	out.close();
