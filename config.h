@@ -35,6 +35,7 @@ struct FConfig
 
     int iMaxLen;
     int iWeigthRib;
+    int iCourseLen;
 
     void Init(wstring _sNameConfig, wstring _sNamePage);
 

@@ -7,7 +7,7 @@ FTreeElement::FTreeElement() : dSumScore(0.), wsName(L""), wsIndexName(L""), ptr
 {
 }
 
-FTreeDisc::FTreeDisc()
+FTreeDisc::FTreeDisc() : iAmountCourse(0), dAllSumScore(0.)
 {
 	ptrRoot = new FTreeElement;
 }

@@ -5,11 +5,11 @@
 struct FGlobal;
 
 
-struct FSemesterScore
-{
-	int iNumSemester;
-	double dScore;
-};
+//struct FSemesterScore
+//{
+//	int iNumSemester;
+//	double dScore;
+//};
 
 struct FTreeElement
 {
@@ -17,7 +17,7 @@ struct FTreeElement
 
 	bool bAllow; //Учитывать ли при подсчёте зачётных единиц (ЗЕ)
 	double dSumScore; // Количество зачётных единиц (ЗЕ)
-	vector<FSemesterScore> arrSemScore;
+	map<int, double> mapCourseScore; // В каком семестре (ключ) сколько ЗЕ (значение)
 
 	wstring wsName;
 	wstring wsIndexName;
@@ -37,6 +37,9 @@ struct FTreeDisc
 
 	FTreeElement* ptrRoot;
 	map<wstring, FTreeElement*> mapDisc; //Поиск указателя на дисциплину по её индексу
+
+	int iAmountCourse;
+	double dAllSumScore;
 
 	set< string > fAllComp; //Множество всех компетенций, присутствующих в учебном плане (УП)
 };

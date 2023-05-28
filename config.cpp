@@ -5,7 +5,7 @@ FConfig::FConfig(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
 }
 
 
-FConfig::FConfig() : iMaxLen(15), iWeigthRib(10), bCreateFolder(false), bReloadLogFile(false)
+FConfig::FConfig() : iCourseLen(2), iMaxLen(15), iWeigthRib(10), bCreateFolder(false), bReloadLogFile(false)
 {
     wsNameLableFile = L"Id,Label";
     wsNameRibFile = L"Source,Target,Type,Kind,Id,Label,timeset,Weight";
@@ -145,6 +145,20 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& FBook, wstring wsKey, OpenXLSX::XL
             if (i)
             {
                 iMaxLen = it.value().get<int>();
+                return;
+            }
+            ++i;
+        }
+    }
+
+    wsPatern = L"Сколько семестров в одном курсе";
+    if (wsKey == wsPatern)
+    {
+        int i = 0; for (auto& it : row.cells())
+        {
+            if (i)
+            {
+                iCourseLen = it.value().get<int>();
                 return;
             }
             ++i;

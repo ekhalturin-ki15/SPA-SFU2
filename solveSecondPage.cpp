@@ -72,12 +72,17 @@ void FSolve::AddDiscScore(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 					if (arrDisc.back()->mapDisc.count(wsCurrentIndex))
 					{
 						auto& ptrThis = arrDisc.back()->mapDisc[wsCurrentIndex];
-						FSemesterScore fThisScore;
-						fThisScore.iNumSemester = x - iIdLScore; // Нуль нумерация семестров
-						fThisScore.dScore = atof(ptrGlobal->ConwertToString(wsData).c_str());
+						int iNumCource;
+						double dScore;
+						iNumCource = x - iIdLScore; // Нуль нумерация семестров
+						iNumCource /= ptrGlobal->ptrConfig->iCourseLen; // Определяем курс, а не семестр
+						dScore = atof(ptrGlobal->ConwertToString(wsData).c_str());
 							
-						ptrThis->dSumScore += fThisScore.dScore;
-						ptrThis->arrSemScore.push_back(fThisScore);
+						ptrThis->dSumScore += dScore;
+						ptrThis->mapCourseScore[iNumCource] += dScore;
+
+						if ((bIsAllow) && (ptrThis->arrChild.size() == 0)) // Т.е разрешён и является дисциплиной (не модулем)
+							arrDisc.back()->dAllSumScore += dScore;
 					}
 				}
 
@@ -90,5 +95,7 @@ void FSolve::AddDiscScore(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 	{
 		throw std::logic_error(FError::sNotFoundKeyCol); // Неудалось найти ключевой столбец
 	}
+
+	arrDisc.back()->iAmountCourse = (iIdRScore - iIdLScore) / ptrGlobal->ptrConfig->iCourseLen;
 
 }
