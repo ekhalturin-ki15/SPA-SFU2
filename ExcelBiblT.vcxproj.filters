@@ -66,5 +66,8 @@
     <ClInclude Include="solve.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="solveSecondPage.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

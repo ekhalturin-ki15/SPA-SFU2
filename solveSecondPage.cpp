@@ -1,11 +1,12 @@
-﻿#include "solve.h"
+﻿#include "solveSecondPage.h"
+#include "solve.h"
 #include "error.h"
 #include "config.h"
 #include "global.h"
 
 
 
-void FSolve::AddDiscScore(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
+void FSolveSecondPage::AddDiscScore(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 {
 	int iIdAllow = -1; // Не инициализированы
 	int iIdIndex = -1;
@@ -14,10 +15,10 @@ void FSolve::AddDiscScore(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 
 	auto fSheet = fBook.worksheet(ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].wsName));
 
-	iCurrentRow = -1;
+	ptrGlobal->ptrSolve->iCurrentRow = -1;
 	for (auto row : fSheet.rows())
 	{
-		++iCurrentRow;
+		++ptrGlobal->ptrSolve->iCurrentRow;
 		int x = -1;
 		bool bReadAllow = false;
 		bool bReadIndex = false;
@@ -57,9 +58,9 @@ void FSolve::AddDiscScore(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 					bReadIndex = true;
 					wsCurrentIndex = wsData;
 					//Если указан среди перечня кодов дисциплин
-					if (arrDisc.back()->mapDisc.count(wsCurrentIndex))
+					if (ptrGlobal->ptrSolve->arrDisc.back()->mapDisc.count(wsCurrentIndex))
 					{
-						auto& ptrThis = arrDisc.back()->mapDisc[wsCurrentIndex];
+						auto& ptrThis = ptrGlobal->ptrSolve->arrDisc.back()->mapDisc[wsCurrentIndex];
 						ptrThis->bAllow = bIsAllow;
 					}
 				}
@@ -69,20 +70,20 @@ void FSolve::AddDiscScore(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 				{
 					//bReadScore = true;
 					//Если указан среди перечня кодов дисциплин
-					if (arrDisc.back()->mapDisc.count(wsCurrentIndex))
+					if (ptrGlobal->ptrSolve->arrDisc.back()->mapDisc.count(wsCurrentIndex))
 					{
-						auto& ptrThis = arrDisc.back()->mapDisc[wsCurrentIndex];
+						auto& ptrThis = ptrGlobal->ptrSolve->arrDisc.back()->mapDisc[wsCurrentIndex];
 						int iNumCource;
 						double dScore;
 						iNumCource = x - iIdLScore; // Нуль нумерация семестров
 						iNumCource /= ptrGlobal->ptrConfig->iCourseLen; // Определяем курс, а не семестр
 						dScore = atof(ptrGlobal->ConwertToString(wsData).c_str());
-							
+						ptrThis->bAllow = bIsAllow;
 						ptrThis->dSumScore += dScore;
 						ptrThis->mapCourseScore[iNumCource] += dScore;
 
 						if ((bIsAllow) && (ptrThis->arrChild.size() == 0)) // Т.е разрешён и является дисциплиной (не модулем)
-							arrDisc.back()->dAllSumScore += dScore;
+							ptrGlobal->ptrSolve->arrDisc.back()->dAllSumScore += dScore;
 					}
 				}
 
@@ -96,6 +97,31 @@ void FSolve::AddDiscScore(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 		throw std::logic_error(FError::sNotFoundKeyCol); // Неудалось найти ключевой столбец
 	}
 
-	arrDisc.back()->iAmountCourse = (iIdRScore - iIdLScore) / ptrGlobal->ptrConfig->iCourseLen;
+	ptrGlobal->ptrSolve->arrDisc.back()->iAmountCourse = (iIdRScore - iIdLScore) / ptrGlobal->ptrConfig->iCourseLen;
 
+}
+
+
+double FSolveSecondPage::DFSCountingScore(FTreeElement* ptrThis)
+{
+	if (ptrThis->arrChild.size() == 0)
+	{
+		if (ptrThis->bAllow)
+		{
+			return ptrThis->dSumScore;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+
+	double dScore = 0;
+
+	for (auto it : ptrThis->arrChild)
+	{
+		dScore += DFSCountingScore(it);
+	}
+
+	return ptrThis->dSumScore = dScore;
 }

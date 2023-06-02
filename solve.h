@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "global.h"
+#include "solveSecondPage.h"
 
 struct FGlobal;
 
@@ -59,7 +60,8 @@ struct FSolve
 
 	void AddCompIndicator(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber); // Находится в solveFirstPage.cpp
 
-	void AddDiscScore(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber); // Находится в solveSecondPage.cpp
+	//void AddDiscScore(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber); // Находится в solveSecondPage.h
+	FSolveSecondPage fSolveSecondPage;
 
 	vector<FTreeDisc*> arrDisc; // Указатели на все УП, которые считали (все они одновременно хранятся в памяти)
 

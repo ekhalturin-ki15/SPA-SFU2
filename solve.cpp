@@ -28,6 +28,7 @@ void FTreeDisc::DeleteDFS(FTreeElement* ptrThis)
 
 FSolve::FSolve(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
 {
+	fSolveSecondPage.ptrGlobal = _ptrGlobal;
 }
 
 void FSolve::Init()
@@ -64,7 +65,8 @@ void FSolve::Read(string _sInPath, string _sOutPath)
 		++iCurrentPage;
 			//ptrGlobal->ptrConfig->arrKeyPage[1].wsName);
 
-		AddDiscScore(fBook, iCurrentPage);
+		fSolveSecondPage.AddDiscScore(fBook, iCurrentPage);
+		fSolveSecondPage.DFSCountingScore(arrDisc.back()->ptrRoot);
 		++iCurrentPage;
 	}
 	catch (logic_error eError)

@@ -179,6 +179,7 @@
     <ClInclude Include="error.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="solve.h" />
+    <ClInclude Include="solveSecondPage.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
