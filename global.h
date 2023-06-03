@@ -11,6 +11,8 @@
 #include <codecvt>
 #include <regex>
 #include <exception>
+#include <codecvt>
+#include <locale>
 
 #include <OpenXLSX.hpp>
 
@@ -23,6 +25,7 @@ typedef long long ll;
 struct FError;
 struct FConfig;
 struct FSolve;
+struct FOutData;
 
 struct FGlobal
 {
@@ -48,4 +51,6 @@ struct FGlobal
     FError* ptrError; //Синглтон
     FConfig* ptrConfig; //Синглтон
     FSolve* ptrSolve; //Синглтон
+    FOutData* ptrOutData; //Синглтон
+
 };

@@ -136,11 +136,11 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level1</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;OPENXLSX_STATIC_DEFINE;CMAKE_INTDIR="Release";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>false</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;OPENXLSX_STATIC_DEFINE;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>R:\acmp\excelbibltest\ExcelBiblT\OpenXLSX;R:\acmp\excelbibltest\ExcelBiblT\OpenXLSX\headers</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
@@ -163,6 +163,7 @@
     <ClCompile Include="error.cpp" />
     <ClCompile Include="global.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="outData.cpp" />
     <ClCompile Include="solve.cpp">
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/utf-8 </AdditionalOptions>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">/utf-8 </AdditionalOptions>
@@ -178,6 +179,7 @@
     <ClInclude Include="config.h" />
     <ClInclude Include="error.h" />
     <ClInclude Include="global.h" />
+    <ClInclude Include="outData.h" />
     <ClInclude Include="solve.h" />
     <ClInclude Include="solveSecondPage.h" />
   </ItemGroup>

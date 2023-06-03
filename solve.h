@@ -38,6 +38,7 @@ struct FTreeDisc
 
 	FTreeElement* ptrRoot;
 	map<wstring, FTreeElement*> mapDisc; //Поиск указателя на дисциплину по её индексу
+	string sNamePlan;
 
 	int iAmountCourse;
 	double dAllSumScore;
@@ -54,7 +55,7 @@ struct FSolve
 
 	void ClearTreeDisc();
 
-	void Read(string sInPath, string sOutPath);
+	bool Read(string sInPath, string sNamePlan);
 
 	void CreateDiscTree(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber); // Находится в solveZeroPage.cpp
 

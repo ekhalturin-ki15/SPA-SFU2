@@ -3,16 +3,19 @@
 #include "config.h"
 #include "error.h"
 #include "solve.h"
+#include "outData.h"
 
 FGlobal::FGlobal() : sNameConfig(L"./config.xlsx"), sNamePage(L"Параметры")
 {
 	ptrConfig = new FConfig(this);
 	ptrSolve = new FSolve(this);
 	ptrError = new FError(this);
+	ptrOutData = new FOutData(this);
 
 	ptrConfig->Init(sNameConfig, sNamePage);
 	ptrSolve->Init();
 	ptrError->Init();
+	ptrOutData->Init();
 
 	mapTranslit =
 	{

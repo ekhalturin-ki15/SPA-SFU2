@@ -41,12 +41,11 @@ void FSolve::ClearTreeDisc()
 	arrDisc.clear();
 }
 
-void FSolve::Read(string _sInPath, string _sOutPath)
+bool FSolve::Read(string _sInPath, string sNamePlan)
 {
 	//ClearTreeDisc();
 
 	sInPath = ptrGlobal->ConwertPathFormat(_sInPath, true);
-	sOutPath = ptrGlobal->ConwertPathFormat(_sOutPath);
 
 	OpenXLSX::XLDocument fDoc;
 	OpenXLSX::XLWorkbook fBook;
@@ -67,10 +66,13 @@ void FSolve::Read(string _sInPath, string _sOutPath)
 
 		fSolveSecondPage.AddDiscScore(fBook, iCurrentPage);
 		fSolveSecondPage.DFSCountingScore(arrDisc.back()->ptrRoot);
+		arrDisc.back()->sNamePlan = sNamePlan;
+
 		++iCurrentPage;
 	}
 	catch (logic_error eError)
 	{
+		arrDisc.pop_back();
 		/*if (FError::sDontHaveIndex== eError.what())
 		{
 			ptrGlobal->ptrError->ErrorBadParser(sInPath);
@@ -85,11 +87,13 @@ void FSolve::Read(string _sInPath, string _sOutPath)
 		{
 			ptrGlobal->ptrError->ErrorNotFoundKeyCol();
 		}
+
 		fDoc.close();
-		return; //Но продолжаем работать с другими файлами
+		return false; //Но продолжаем работать с другими файлами
 	}
 	catch(...)
 	{
+		arrDisc.pop_back();
 		if (sInPath.find(".xlsx") == string::npos)
 		{
 			ptrGlobal->ptrError->ErrorUncorrectExtension();
@@ -98,7 +102,7 @@ void FSolve::Read(string _sInPath, string _sOutPath)
 		{
 			ptrGlobal->ptrError->ErrorInFileNotFind(sInPath);
 		}
-		return; //Но продолжаем работать с другими файлами
+		return false; //Но продолжаем работать с другими файлами
 	}
 
 	if (this->bIsCorrectParsing)
@@ -106,6 +110,8 @@ void FSolve::Read(string _sInPath, string _sOutPath)
 	else
 		ptrGlobal->ptrError->WAParsing();
 	fDoc.close();
+
+	return bIsCorrectParsing;
 }
 
 FSolve::~FSolve()

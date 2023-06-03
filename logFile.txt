@@ -790,8 +790,6 @@
 
 Компетенции [строка 310] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/1005010034_OP-21.pli.plx.xlsx для дисциплины OPK-17 не получается связать с индикатором OPK-4.1.1
 Компетенции [строка 313] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/1005010034_OP-21.pli.plx.xlsx для дисциплины OPK-17 не получается связать с индикатором OPK-4.1.2
-Компетенции [строка 317] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/1005010034_OP-21.pli.plx.xlsx для дисциплины OPK-17 не получается связать с индикатором OPK-4.2.1
-Компетенции [строка 318] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/1005010034_OP-21.pli.plx.xlsx для дисциплины OPK-17 не получается связать с индикатором OPK-4.2.1
 Компетенции [строка 321] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/1005010034_OP-21.pli.plx.xlsx для дисциплины OPK-17 не получается связать с индикатором OPK-4.2.2
 Компетенции [строка 322] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/1005010034_OP-21.pli.plx.xlsx для дисциплины OPK-17 не получается связать с индикатором OPK-4.2.2
 Компетенции [строка 326] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/1005010034_OP-21.pli.plx.xlsx для дисциплины OPK-17 не получается связать с индикатором OPK-4.3.1
@@ -861,3 +859,4 @@
 
 + Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad/2704040005_OP-21.plm.plx.xlsx успешно обработан
 
+Не обнаружен каталог с входными данным R:/acmp/excelbibltest/ExcelBiblT/plans/spec/TotalData.xlsx

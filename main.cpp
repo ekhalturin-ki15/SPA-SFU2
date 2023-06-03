@@ -13,6 +13,7 @@
 #include "global.h"
 #include "error.h"
 #include "solve.h"
+#include "outData.h"
 
 #ifdef DEBUG
     #define _CRTDBG_MAP_ALLOC
@@ -106,11 +107,13 @@ int main()
             {
                 if (!it.is_directory())
                 {
-                    auto sOutName = fOutFile / it.path().filename() / "";
-                    ptrGlobal->ptrSolve->Read(it.path().string(), sOutName.string());
+                    auto sOutName = fOutFile / it.path().filename();
+                    ptrGlobal->ptrSolve->Read(it.path().string(), it.path().filename().string());
                 }
             }
 
+            auto sTotalOutName = fFile / ptrGlobal->ptrConfig->arrNameFileOut[category] / "TotalData.xlsx";
+            ptrGlobal->ptrOutData->Out(sTotalOutName.string());
 
         }
 
