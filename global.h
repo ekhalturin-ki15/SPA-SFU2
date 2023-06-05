@@ -32,10 +32,6 @@ struct FGlobal
     map<char, char> mapTranslit;
     map<wchar_t, wchar_t> mapWTranslit;
 
-
-    const std::wstring sNameConfig; // "Параметры"
-    const std::wstring sNamePage; //Хардкод, так как точка опоры
-
     FGlobal();
     ~FGlobal();
 

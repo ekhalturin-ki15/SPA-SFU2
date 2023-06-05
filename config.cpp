@@ -1,11 +1,9 @@
 ﻿#include "config.h"
 
-FConfig::FConfig(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
-{
-}
 
-
-FConfig::FConfig() : iCourseLen(2), iMaxLen(15), iWeigthRib(10), bCreateFolder(false), bReloadLogFile(false)
+FConfig::FConfig(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal), iCourseLen(2), iMaxLen(15),
+iWeigthRib(10), bCreateFolder(false), bReloadLogFile(false),
+wsNameConfig(L"./config.xlsx"), wsNamePage(L"Параметры")
 {
     wsNameLableFile = L"Id,Label";
     wsNameRibFile = L"Source,Target,Type,Kind,Id,Label,timeset,Weight";
@@ -19,16 +17,17 @@ FConfig::FConfig() : iCourseLen(2), iMaxLen(15), iWeigthRib(10), bCreateFolder(f
     wsRegexComp = L" {0,1}(.{0,}?);";
 }
 
-void FConfig::Init(wstring _sNameConfig, wstring _sNamePage)
+void FConfig::Init()
 {
+
     OpenXLSX::XLDocument fDoc;
     OpenXLSX::XLWorkbook fBook;
 
-    fDoc.open(ptrGlobal->ConwertToString(_sNameConfig));
+    fDoc.open(ptrGlobal->ConwertToString(wsNameConfig));
     fBook = fDoc.workbook();
     auto arrNamePage = fBook.worksheetNames();
 
-    auto fMainPage = fBook.worksheet(ptrGlobal->ConwertToString(_sNamePage));
+    auto fMainPage = fBook.worksheet(ptrGlobal->ConwertToString(wsNamePage));
     for (auto& row : fMainPage.rows())
     {
         auto it = row.cells().begin();
@@ -62,18 +61,23 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& FBook, wstring wsKey, OpenXLSX::XL
 
                 vector<set<wstring>> arrReadHeader(fExtraPage.rows().begin()->cells().size());
 
+                int y = 0;
                 for (auto row : fExtraPage.rows())
                 {
-                    int i = 0;
-                    for (auto& column : row.cells())
+                    if (y) //Игнорируем первую строку, в ней описание столбцов
                     {
-                        wstring wsData = ptrGlobal->GetValue(column);
-                        if (wsData != L"")
+                        int i = 0;
+                        for (auto& column : row.cells())
                         {
-                            arrReadHeader[i].insert(wsData);
+                            wstring wsData = ptrGlobal->GetValue(column);
+                            if (wsData != L"")
+                            {
+                                arrReadHeader[i].insert(wsData);
+                            }
+                            ++i;
                         }
-                        ++i;
                     }
+                    ++y;
                 }
                 arrKeyPage.push_back({ wsNamePage, arrReadHeader });
             }
@@ -265,6 +269,57 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& FBook, wstring wsKey, OpenXLSX::XL
             }
             ++i;
         }
+    }
+
+
+
+    wsPatern = L"Параметры выводы";
+    if (wsKey == wsPatern)
+    {
+        mapOutParams.clear();
+        int i = 0; for (auto& page : row.cells())
+        {
+            if (i)
+            {
+                //arrKeyPage.resize(arrKeyPage.size() + 1);
+
+                wstring wsNamePage = ptrGlobal->GetValue(page);
+
+                auto fExtraPage = FBook.worksheet(ptrGlobal->ConwertToString(wsNamePage));
+
+                int y = 0;
+                for (auto row : fExtraPage.rows())
+                {
+                    if (y) //Игнорируем первую строку, в ней описание столбцов
+                    {
+                        int i = 0;
+                        wstring wsKeyName;
+                        wstring wsData;
+                        for (auto& column : row.cells())
+                        {
+                            
+                            if (i == 0)
+                            {
+                                wsKeyName = ptrGlobal->GetValue(column);
+                            }
+                            else
+                            {
+                                wsData = ptrGlobal->GetValue(column);
+                                mapOutParams[wsKeyName] = wsData;
+
+                            }
+                            ++i;
+                        }
+                    }
+                    ++y;
+                }
+
+                return;
+            }
+            ++i;
+        }
+        return;
+        
     }
 
 }

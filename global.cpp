@@ -5,14 +5,14 @@
 #include "solve.h"
 #include "outData.h"
 
-FGlobal::FGlobal() : sNameConfig(L"./config.xlsx"), sNamePage(L"Параметры")
+FGlobal::FGlobal()
 {
 	ptrConfig = new FConfig(this);
 	ptrSolve = new FSolve(this);
 	ptrError = new FError(this);
 	ptrOutData = new FOutData(this);
 
-	ptrConfig->Init(sNameConfig, sNamePage);
+	ptrConfig->Init();
 	ptrSolve->Init();
 	ptrError->Init();
 	ptrOutData->Init();

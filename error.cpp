@@ -30,7 +30,7 @@ void FError::Init()
 void FError::ErrorInFileNotFind(string sPathName)
 {
 	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
-	out << "Не обнаружен каталог с входными данным " + sPathName;
+	out << "! Не обнаружен каталог с входными данным " + sPathName;
 	out << END;
 	out.close();
 }
@@ -68,7 +68,7 @@ ofstream FError::OutHeader()
 void FError::ErrorUncorrectExtension()
 {
 	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
-	out << "Программа работает только с расширение XLSX, другое у файла " + ptrGlobal->ptrSolve->sInPath;
+	out << "! Программа работает только с расширение XLSX, другое у файла " + ptrGlobal->ptrSolve->sInPath;
 	out << END;
 	out.close();
 }
@@ -77,7 +77,7 @@ void FError::ErrorBadTree()
 {
 	ofstream out = OutHeader();
 
-	out << "В учебном плане " + ptrGlobal->ptrSolve->sInPath + " неправильное дерево дисциплин";
+	out << "! В учебном плане " + ptrGlobal->ptrSolve->sInPath + " неправильное дерево дисциплин";
 	out << END;
 	out.close();
 }
@@ -86,7 +86,7 @@ void FError::ErrorNotFoundKeyCol()
 {
 	ofstream out = OutHeader();
 
-	out << "В учебном плане " + ptrGlobal->ptrSolve->sInPath + " не найдён ключевой столбец на странице";
+	out << "! В учебном плане " + ptrGlobal->ptrSolve->sInPath + " не найдён ключевой столбец на странице";
 	out << END;
 	out.close();
 }

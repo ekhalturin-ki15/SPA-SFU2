@@ -18,7 +18,10 @@ struct FConfig
     vector<FPageInfo> arrKeyPage;
 
     vector<wstring> arrNameFileIn;
+
     vector<wstring> arrNameFileOut;
+    map< wstring, wstring > mapOutParams;
+
     wstring wsNameLableFile;
     wstring wsNameRibFile;
 
@@ -31,13 +34,14 @@ struct FConfig
     bool bReloadLogFile;
     bool bMultiIndicator;
 
-    FConfig();
-
     int iMaxLen;
     int iWeigthRib;
     int iCourseLen;
 
-    void Init(wstring _sNameConfig, wstring _sNamePage);
+    std::wstring wsNameConfig; // "Параметры"
+    std::wstring wsNamePage; 
+
+    void Init();
 
     void SetParams(OpenXLSX::XLWorkbook& FBook, wstring wsKey, OpenXLSX::XLRow row);
 
