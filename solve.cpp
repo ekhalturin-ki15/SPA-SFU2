@@ -93,7 +93,6 @@ bool FSolve::Read(string _sInPath, string sNamePlan)
 	}
 	catch(...)
 	{
-		arrDisc.pop_back();
 		if (sInPath.find(".xlsx") == string::npos)
 		{
 			ptrGlobal->ptrError->ErrorUncorrectExtension();
