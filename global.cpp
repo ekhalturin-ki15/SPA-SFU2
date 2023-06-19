@@ -4,6 +4,7 @@
 #include "error.h"
 #include "solve.h"
 #include "outData.h"
+#include "graph.h"
 
 FGlobal::FGlobal()
 {
@@ -11,11 +12,13 @@ FGlobal::FGlobal()
 	ptrSolve = new FSolve(this);
 	ptrError = new FError(this);
 	ptrOutData = new FOutData(this);
+	ptrGraph = new FGraph(this);
 
 	ptrConfig->Init();
 	ptrSolve->Init();
 	ptrError->Init();
 	ptrOutData->Init();
+	ptrGraph->Init();
 
 	mapTranslit =
 	{

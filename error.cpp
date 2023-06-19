@@ -41,6 +41,19 @@ void FError::ErrorInFileNotFind(wstring wsPathName)
 	ErrorInFileNotFind(ptrGlobal->ConwertToString(wsPathName));
 }
 
+void FError::ErrorOutFileCreate(string sPathName)
+{
+	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
+	out << "! Не удаётся создать каталог " + sPathName;
+	out << END;
+	out.close();
+}
+
+void FError::ErrorOutFileCreate(wstring wsPathName)
+{
+	ErrorOutFileCreate(ptrGlobal->ConwertToString(wsPathName));
+}
+
 void FError::ErrorOutFileNotFind(string sPathName)
 {
 	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);

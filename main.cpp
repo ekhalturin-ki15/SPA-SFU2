@@ -93,7 +93,14 @@ int main()
             {
                 if (ptrGlobal->ptrConfig->bCreateFolder)
                 {
-                    filesystem::create_directory(fOutFile);
+                    try
+                    {
+                        filesystem::create_directories(fOutFile);
+                    }
+                    catch (...)
+                    {
+                        ptrGlobal->ptrError->ErrorOutFileCreate(fOutFile);
+                    }
                 }
                 else
                 {
@@ -112,7 +119,7 @@ int main()
                 }
             }
 
-            auto sTotalOutName = fFile / ptrGlobal->ptrConfig->arrNameFileOut[category] / "TotalData.xlsx";
+            auto sTotalOutName = fFile / ptrGlobal->ptrConfig->arrNameFileOut[category];// / "TotalData.xlsx";
             ptrGlobal->ptrOutData->Out(sTotalOutName.string());
 
         }

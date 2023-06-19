@@ -2,6 +2,7 @@
 #include "global.h"
 #include "solve.h"
 #include "config.h"
+#include "error.h"
 
 FOutData::FOutData(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
 {
@@ -14,7 +15,7 @@ void FOutData::Init()
 void FOutData::Out(string sOutPath)
 {
 	OpenXLSX::XLDocument fOutFile;
-	fOutFile.create(sOutPath);
+	fOutFile.create(sOutPath + "/TotalData.xlsx");
 	fOutFile.workbook().addWorksheet("Total Data");
 	fOutFile.workbook().deleteSheet("Sheet1"); // Стартовая страница не нужна
 	auto wks = fOutFile.workbook().worksheet("Total Data");
@@ -43,10 +44,50 @@ void FOutData::Out(string sOutPath)
 		wks.cell(y, x++).value() = dSumScoreExt;
 		wks.cell(y, x++).value() = iAmountDiscExt;
 
-
-
 		++y;
 	}
+
+	for (const auto& it : ptrGlobal->ptrSolve->arrDisc)
+	{
+		string sNewFile = sOutPath + "/" + it->sNamePlan;
+
+		if (!filesystem::exists(sNewFile))
+		{
+			try
+			{
+				filesystem::create_directories(sNewFile);
+			}
+			catch (...)
+			{
+				ptrGlobal->ptrError->ErrorOutFileCreate(sNewFile);
+			}
+		}
+
+		CreateAndTake(it->sNamePlan, sOutPath);
+	}
+	
+
 	fOutFile.save();
 	fOutFile.close();
+}
+
+
+OpenXLSX::XLWorksheet FOutData::CreateAndTake(string sName, string sPath)
+{
+	OpenXLSX::XLDocument fFile;
+	if (ptrGlobal->ptrConfig->bCompactOutput)
+	{
+		fFile.open(sPath + "/TotalData.xlsx");
+		fFile.workbook().addWorksheet(sName);
+		return fFile.workbook().worksheet(sName);
+	}
+	else
+	{
+
+		fFile.create(sPath + "/" + sName + "/" + "Data.xlsx");
+		fFile.workbook().addWorksheet("Total Data");
+		fFile.workbook().deleteSheet("Sheet1"); // Стартовая страница не нужна
+		fFile.save();
+		return fFile.workbook().worksheet("Total Data");
+	}
 }
