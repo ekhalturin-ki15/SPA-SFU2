@@ -8,6 +8,7 @@ struct FError
     static const string sBadTree;
     static const string sDontHaveIndex;
     static const string sNotFoundKeyCol;
+    static const string sNotEqualSum;
 
     FError(FGlobal* _ptrGlobal);
     void Init();
@@ -27,6 +28,8 @@ struct FError
     void ErrorNotFoundKeyCol(); // Если ошибки при нахождении ключевого поля
 
     void ErrorToMuchColums(); // Если ошибки при построении дерева дисциплин
+
+    void ErrorNotEqualSum();
 
     void ErrorBadParser();
 

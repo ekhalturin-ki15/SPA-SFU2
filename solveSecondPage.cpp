@@ -9,9 +9,9 @@
 void FSolveSecondPage::AddDiscScore(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 {
 	int iIdAllow = -1; // Не инициализированы
-	int iIdIndex = -1;
-	int iIdLScore = -1;
-	int iIdRScore = -1;
+	int iIdIndex = -1; // Позиция столбца, где указан индекс
+	int iIdLScore = -1; //  Позиция столбца, где начинается перечесление ЗЕ за семестр
+	int iIdRScore = -1;//  Позиция столбца, где заканчивается перечесление ЗЕ за семестр
 
 	auto fSheet = fBook.worksheet(ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].wsName));
 
@@ -83,7 +83,10 @@ void FSolveSecondPage::AddDiscScore(OpenXLSX::XLWorkbook& fBook, int iKeyPageNum
 						ptrThis->mapCourseScore[iNumCource] += dScore;
 
 						if ((bIsAllow) && (ptrThis->arrChild.size() == 0)) // Т.е разрешён и является дисциплиной (не модулем)
+						{
 							ptrGlobal->ptrSolve->arrDisc.back()->dAllSumScore += dScore;
+						}
+					
 					}
 				}
 

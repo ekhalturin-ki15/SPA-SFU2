@@ -120,6 +120,7 @@ int main()
         Delete();
     }
 #ifdef DEBUG
+    //Будет ругаться на Статические поля в error.h
     _CrtDumpMemoryLeaks();
 #endif // DEBUG
 }

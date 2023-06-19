@@ -5,6 +5,7 @@
 const string FError::sBadTree = "Bad Tree";
 const string FError::sDontHaveIndex = "Dont have index";
 const string FError::sNotFoundKeyCol = "Key column not found";
+const string FError::sNotEqualSum = "Lack of links between disciplines"; //Не хватает связей между дисциплинами
 
 FError::FError(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
 {
@@ -87,6 +88,15 @@ void FError::ErrorNotFoundKeyCol()
 	ofstream out = OutHeader();
 
 	out << "! В учебном плане " + ptrGlobal->ptrSolve->sInPath + " не найдён ключевой столбец на странице";
+	out << END;
+	out.close();
+}
+
+void FError::ErrorNotEqualSum()
+{
+	ofstream out = OutHeader();
+
+	out << "! В учебном плане " + ptrGlobal->ptrSolve->sInPath + " не совпали ЗЕ дисциплин в общем, и по семестрам";
 	out << END;
 	out.close();
 }

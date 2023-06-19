@@ -3,29 +3,6 @@
 #include "config.h"
 #include "global.h"
 
-FTreeElement::FTreeElement() : dSumScore(0.), wsName(L""), wsIndexName(L""), ptrPerent(nullptr), bAllow(true)
-{
-}
-
-FTreeDisc::FTreeDisc() : iAmountCourse(0), dAllSumScore(0.)
-{
-	ptrRoot = new FTreeElement;
-}
-
-FTreeDisc::~FTreeDisc()
-{
-	DeleteDFS(ptrRoot);
-}
-
-void FTreeDisc::DeleteDFS(FTreeElement* ptrThis)
-{
-	for (auto it : ptrThis->arrChild)
-	{
-		DeleteDFS(it);
-	}
-	delete ptrThis;
-}
-
 FSolve::FSolve(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
 {
 	fSolveSecondPage.ptrGlobal = _ptrGlobal;
@@ -57,21 +34,25 @@ bool FSolve::Read(string _sInPath, string sNamePlan)
 		fDoc.open(sInPath);
 		fBook = fDoc.workbook();
 		CreateDiscTree(fBook, iCurrentPage);
-			//ptrGlobal->ptrConfig->arrKeyPage[0].wsName);
 		++iCurrentPage;
 
 		AddCompIndicator(fBook, iCurrentPage);
 		++iCurrentPage;
-			//ptrGlobal->ptrConfig->arrKeyPage[1].wsName);
 
 		fSolveSecondPage.AddDiscScore(fBook, iCurrentPage);
-		fSolveSecondPage.DFSCountingScore(arrDisc.back()->ptrRoot);
+		arrDisc.back()->CountDisc();
+
+		if (fSolveSecondPage.DFSCountingScore(arrDisc.back()->ptrRoot) != arrDisc.back()->dAllSumScore)
+		{
+			throw std::logic_error(FError::sNotEqualSum);
+		}
 		arrDisc.back()->sNamePlan = sNamePlan;
 
 		++iCurrentPage;
 	}
 	catch (logic_error eError)
 	{
+		delete arrDisc.back();
 		arrDisc.pop_back();
 		/*if (FError::sDontHaveIndex== eError.what())
 		{
@@ -86,6 +67,11 @@ bool FSolve::Read(string _sInPath, string sNamePlan)
 		if (FError::sNotFoundKeyCol == eError.what())
 		{
 			ptrGlobal->ptrError->ErrorNotFoundKeyCol();
+		}
+		else
+		if (FError::sNotEqualSum == eError.what())
+		{
+			ptrGlobal->ptrError->ErrorNotEqualSum();
 		}
 
 		fDoc.close();

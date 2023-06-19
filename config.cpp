@@ -39,49 +39,28 @@ void FConfig::Init()
     fDoc.close();
 }
 
-void FConfig::SetParams(OpenXLSX::XLWorkbook& FBook, wstring wsKey, OpenXLSX::XLRow row)
+void FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XLRow row)
 {
     if (wsKey == L"") return;
     wstring wsPatern;
 
     // Названия анализируемых страниц
     wsPatern = L"Названия анализируемых страниц";
+    //Не обобщить, сложная логика
     if (wsKey == wsPatern)
     {
         arrKeyPage.clear();
-        int i = 0; for (auto& page : row.cells())
+        int i = -1; for (auto& page : row.cells())
         {
+            i++;
             if (i)
             {
-                //arrKeyPage.resize(arrKeyPage.size() + 1);
-
                 wstring wsNamePage = ptrGlobal->GetValue(page);
 
-                auto fExtraPage = FBook.worksheet(ptrGlobal->ConwertToString(wsNamePage));
-
-                vector<set<wstring>> arrReadHeader(fExtraPage.rows().begin()->cells().size());
-
-                int y = 0;
-                for (auto row : fExtraPage.rows())
-                {
-                    if (y) //Игнорируем первую строку, в ней описание столбцов
-                    {
-                        int i = 0;
-                        for (auto& column : row.cells())
-                        {
-                            wstring wsData = ptrGlobal->GetValue(column);
-                            if (wsData != L"")
-                            {
-                                arrReadHeader[i].insert(wsData);
-                            }
-                            ++i;
-                        }
-                    }
-                    ++y;
-                }
-                arrKeyPage.push_back({ wsNamePage, arrReadHeader });
+                OpenXLSX::XLWorksheet fExtraPage = fBook.worksheet(ptrGlobal->ConwertToString(wsNamePage));
+               
+                arrKeyPage.push_back({ wsNamePage, SetParsingParams(fExtraPage, wsNamePage, i) });
             }
-            ++i;
         }
         return;
     }
@@ -90,12 +69,7 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& FBook, wstring wsKey, OpenXLSX::XL
     wsPatern = L"Каталог данных УП";
     if (wsKey == wsPatern)
     {
-        arrNameFileIn.clear();
-        int i = 0; for (auto& it : row.cells())
-        {
-            if (i) arrNameFileIn.push_back(ptrGlobal->GetValue(it));
-            ++i;
-        }
+        TakeData(arrNameFileIn, row);
         return;
     }
 
@@ -103,201 +77,161 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& FBook, wstring wsKey, OpenXLSX::XL
     wsPatern = L"Каталог вывода результата";
     if (wsKey == wsPatern)
     {
-        arrNameFileOut.clear();
-        int i = 0; for (auto& it : row.cells())
-        {
-            if (i) arrNameFileOut.push_back(ptrGlobal->GetValue(it));
-            ++i;
-        }
+        TakeData(arrNameFileOut, row);
         return;
     }
 
     wsPatern = L"Заголовок файла с названиями вершин";
     if (wsKey == wsPatern)
     {
-        int i = 0; for (auto& it : row.cells())
-        {
-            if (i)
-            {
-                wsNameLableFile = ptrGlobal->GetValue(it);
-                return;
-            }
-            ++i;
-        }
-        
+        TakeData(wsNameLableFile, row);
+        return;        
     }
 
     wsPatern = L"Заголовок файла с рёбрами";
     if (wsKey == wsPatern)
     {
-        int i = 0; for (auto& it : row.cells())
-        {
-            if (i)
-            {
-                wsNameRibFile = ptrGlobal->GetValue(it);
-                return;
-            }
-            ++i;
-        }
+        TakeData(wsNameRibFile, row);
+        return;
     }
 
     wsPatern = L"Макс длина названия дисциплин";
     if (wsKey == wsPatern)
     {
-        int i = 0; for (auto& it : row.cells())
-        {
-            if (i)
-            {
-                iMaxLen = it.value().get<int>();
-                return;
-            }
-            ++i;
-        }
+        TakeData(iMaxLen, row);
+        return;
     }
 
     wsPatern = L"Сколько семестров в одном курсе";
     if (wsKey == wsPatern)
     {
-        int i = 0; for (auto& it : row.cells())
-        {
-            if (i)
-            {
-                iCourseLen = it.value().get<int>();
-                return;
-            }
-            ++i;
-        }
+        TakeData(iCourseLen, row);
+        return;
     }
 
     wsPatern = L"Размер рёбер";
     if (wsKey == wsPatern)
     {
-        int i = 0; for (auto& it : row.cells())
-        {
-            if (i)
-            {
-                iWeigthRib = it.value().get<int>();
-                return;
-            }
-            ++i;
-        }
+        TakeData(iWeigthRib, row);
+        return;
     }
 
     wsPatern = L"Название файла отладки";
     if (wsKey == wsPatern)
     {
-        int i = 0; for (auto& it : row.cells())
-        {
-            if (i)
-            {
-                wsNameDebugFile = ptrGlobal->GetValue(it);
-                return;
-            }
-            ++i;
-        }
+        TakeData(wsNameDebugFile, row);
+        return;
     }
 
     wsPatern = L"Название лог файла (для пользователя)";
     if (wsKey == wsPatern)
     {
-        int i = 0; for (auto& it : row.cells())
-        {
-            if (i)
-            {
-                wsNameLogFile = ptrGlobal->GetValue(it);
-                return;
-            }
-            ++i;
-        }
+        TakeData(wsNameLogFile, row);
+        return;
     }
 
     wsPatern = L"Создать новый каталог";
     if (wsKey == wsPatern)
     {
-        int i = 0; for (auto& it : row.cells())
-        {
-            if (i)
-            {
-                wstring wsLine = ptrGlobal->GetValue(it);
-                bCreateFolder = (wsLine.find(L"да") != wstring::npos);
-                return;
-            }
-            ++i;
-        }
+        TakeData(bCreateFolder, row);
+        return;
+    }
+
+    wsPatern = L"Компактный вывод результата";
+    if (wsKey == wsPatern)
+    {
+        TakeData(bCompactOutput, row);
+        return;
     }
 
     wsPatern = L"Перезаписывать лог файл";
     if (wsKey == wsPatern)
     {
-        int i = 0; for (auto& it : row.cells())
-        {
-            if (i)
-            {
-                wstring wsLine = ptrGlobal->GetValue(it);
-                bReloadLogFile = (wsLine.find(L"да") != wstring::npos);
-                return;
-            }
-            ++i;
-        }
+        TakeData(bReloadLogFile, row);
+        return;
     }
 
     wsPatern = L"Использовать многоуровневые индикаторы";
     if (wsKey == wsPatern)
     {
-        int i = 0; for (auto& it : row.cells())
-        {
-            if (i)
-            {
-                wstring wsLine = ptrGlobal->GetValue(it);
-                bMultiIndicator = (wsLine.find(L"да") != wstring::npos);
-                return;
-            }
-            ++i;
-        }
+        TakeData(bMultiIndicator, row);
+        return;
     }
 
 
     wsPatern = L"Регулярное выражения разбивки строки ([Компетенции(2)] Формируемые компетенции)";
     if (wsKey == wsPatern)
     {
-        int i = 0; for (auto& it : row.cells())
+        TakeData(wsRegexComp, row);
+        return;
+    }
+
+    wsPatern = L"Псевдонимы (название страницы)";
+    if (wsKey == wsPatern)
+    {
+        fAlias.mapRename.clear();
+        int i = -1; for (auto& page : row.cells())
         {
+            i++;
             if (i)
             {
-                wsRegexComp = ptrGlobal->GetValue(it);
-                return;
+                wstring wsNamePage = ptrGlobal->GetValue(page);
+                auto fPage = fBook.worksheet(ptrGlobal->ConwertToString(wsNamePage));
+
+                int y = 0;
+                for (auto row : fPage.rows())
+                {
+                    if (y++) //Игнорируем первую строку, в ней описание столбцов
+                    {
+                        int i = -1;
+                        wstring wsKeyName;
+                        wstring wsRename;
+                        for (auto& column : row.cells())
+                        {
+                            ++i;
+                            if (i == 0)
+                            {
+                                wsKeyName = ptrGlobal->GetValue(column);
+                            }
+                            else
+                            {
+                                wsRename = ptrGlobal->GetValue(column);
+                                fAlias.mapRename[wsKeyName] = wsRename;
+                            }
+                        }
+                    }
+                }
+                break; //Псевдонимы должны все находиться только на одной странице, остальные проигнорируются
             }
-            ++i;
         }
     }
 
-
-
-    wsPatern = L"Параметры выводы";
+    wsPatern = L"Параметры выводы (название страницы)";
     if (wsKey == wsPatern)
     {
         mapOutParams.clear();
-        int i = 0; for (auto& page : row.cells())
+        int i = -1; for (auto& page : row.cells())
         {
+            i++;
             if (i)
             {
                 //arrKeyPage.resize(arrKeyPage.size() + 1);
 
                 wstring wsNamePage = ptrGlobal->GetValue(page);
 
-                auto fExtraPage = FBook.worksheet(ptrGlobal->ConwertToString(wsNamePage));
+                auto fExtraPage = fBook.worksheet(ptrGlobal->ConwertToString(wsNamePage));
 
                 int y = 0;
                 for (auto row : fExtraPage.rows())
                 {
-                    if (y) //Игнорируем первую строку, в ней описание столбцов
+                    if (y++) //Игнорируем первую строку, в ней описание столбцов
                     {
-                        int i = 0;
+                        int i = -1;
                         wstring wsKeyName;
                         wstring wsData;
                         for (auto& column : row.cells())
                         {
-                            
+                            ++i;
                             if (i == 0)
                             {
                                 wsKeyName = ptrGlobal->GetValue(column);
@@ -308,18 +242,42 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& FBook, wstring wsKey, OpenXLSX::XL
                                 mapOutParams[wsKeyName] = wsData;
 
                             }
-                            ++i;
                         }
                     }
-                    ++y;
                 }
 
                 return;
             }
-            ++i;
         }
         return;
         
     }
 
+}
+
+
+vector<set<wstring>> FConfig::SetParsingParams(OpenXLSX::XLWorksheet& fPage, const wstring& wsNamePage, const int& iNumPage)
+{
+    vector<set<wstring>> arrResult(fPage.rows().begin()->cells().size());
+
+    int y = 0;
+    for (auto row : fPage.rows())
+    {
+        if (y++) //Игнорируем первую строку, в ней описание столбцов
+        {
+            int i = 0;
+            for (auto& column : row.cells())
+            {
+                wstring wsData = ptrGlobal->GetValue(column);
+                if (wsData != L"")
+                {
+                    arrResult[i].insert(wsData);
+                }
+                ++i;
+            }
+        }
+    }
+
+
+    return arrResult;
 }

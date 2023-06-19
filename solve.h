@@ -35,15 +35,20 @@ struct FTreeDisc
 	~FTreeDisc();
 
 	void DeleteDFS(FTreeElement* ptrThis); // Поиск в глубину для очистки памяти
+	void CountDisc();
 
 	FTreeElement* ptrRoot;
 	map<wstring, FTreeElement*> mapDisc; //Поиск указателя на дисциплину по её индексу
 	string sNamePlan;
 
-	int iAmountCourse;
-	double dAllSumScore;
+	int iAmountCourse; // Количество курсов (именно курсов, не семестров)
+	double dAllSumScore; //Общее кол-во ЗЕ курса (только дисциплин, и только основный (не по выбору))
+	int iAmountDisc; // Количество основных дисциплин (не по выбору)
 
 	set< string > fAllComp; //Множество всех компетенций, присутствующих в учебном плане (УП)
+
+	void dFindAllScore(double& outDSum, int& outIAmountDisc); //Вывод через параметры
+	void dFindAllScore(double& outDSum);
 };
 
 struct FSolve

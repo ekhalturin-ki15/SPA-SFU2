@@ -18,9 +18,15 @@ void FOutData::Out(string sOutPath)
 	fOutFile.workbook().addWorksheet("Total Data");
 	fOutFile.workbook().deleteSheet("Sheet1"); // Стартовая страница не нужна
 	auto wks = fOutFile.workbook().worksheet("Total Data");
-	wks.cell(1, 1).value() = ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->mapOutParams[L"Учебный план"]);
-	wks.cell(1, 2).value() = ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->mapOutParams[L"Всего ЗЕ"]);
-	wks.cell(1, 3).value() = ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->mapOutParams[L"Кол-во дисциплин"]);
+
+	int i = 0; //Задаём порядок вывода
+	for (const auto& it : vector<wstring>{ L"Название учебного плана" , L"Всего ЗЕ" , L"Кол-во дисциплин"
+		, L"(Расш.) Общее колв-о ЗЕ в УП" , L"(Расш.) Кол-во дисциплин в УП" })
+
+	{
+		++i; // Начинаем с 1
+		wks.cell(1, i).value() = ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->mapOutParams[it]);
+	}
 	int x = 1, y = 2;
 
 	for (const auto& it : ptrGlobal->ptrSolve->arrDisc)
@@ -30,7 +36,15 @@ void FOutData::Out(string sOutPath)
 		fOutFile.workbook().addWorksheet(it->sNamePlan);
 
 		wks.cell(y, x++).value() = it->dAllSumScore;
-		wks.cell(y, x++).value() = it->mapDisc.size();
+		wks.cell(y, x++).value() = it->iAmountDisc;
+
+		double dSumScoreExt = 0; int iAmountDiscExt = 0;
+		it->dFindAllScore(dSumScoreExt, iAmountDiscExt);
+		wks.cell(y, x++).value() = dSumScoreExt;
+		wks.cell(y, x++).value() = iAmountDiscExt;
+
+
+
 		++y;
 	}
 	fOutFile.save();
