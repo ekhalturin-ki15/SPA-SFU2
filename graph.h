@@ -13,11 +13,11 @@ struct FGraph
 
 };
 
-struct Expression 
+struct Expression
 {
 	Expression(string _sToken) : sToken(_sToken) {}
 	Expression(string _sToken, Expression fArg) : sToken(_sToken), arrArgument{ fArg } {}
-	Expression(string _sToken, Expression fLeftArg, Expression fRightArg) : sToken(_sToken), 
+	Expression(string _sToken, Expression fLeftArg, Expression fRightArg) : sToken(_sToken),
 		arrArgument{ fLeftArg, fRightArg } {}
 
 	double dSolve(const Expression& fExp);
@@ -26,12 +26,12 @@ struct Expression
 	vector<Expression> arrArgument;
 };
 
-struct Parser 
+struct Parser
 {
 	Parser(string _sInput, double _dLeft, double _dRight, int _iAmountDisc, int _iPowerComp, double _dSumScore) :
-		sInput(_sInput) , dLeft(_dLeft), dRight(_dRight), dSumScore(_dSumScore), iAmountDisc(_iAmountDisc), iPowerComp(_iPowerComp)
-		{}
-	
+		sInput(_sInput), dLeft(_dLeft), dRight(_dRight), dSumScore(_dSumScore), iAmountDisc(_iAmountDisc), iPowerComp(_iPowerComp)
+	{}
+
 	Expression parse();
 
 	string sParserToken();

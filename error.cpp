@@ -75,7 +75,7 @@ ofstream FError::OutHeader()
 	int& iCurrentRow = ptrGlobal->ptrSolve->iCurrentRow;
 	ptrGlobal->ptrSolve->bIsCorrectParsing = false;
 	out << ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].wsName);
-	out << " [строка " << iCurrentRow + 1 <<"] : ";
+	out << " [строка " << iCurrentRow + 1 << "] : ";
 	return out;
 }
 

@@ -63,7 +63,7 @@ Expression Parser::UnaryExp()
 		return Expression(token);
 
 	vector< string > arrToken =
-	{"L", "R", "A", "N", "K" };
+	{ "L", "R", "A", "N", "K" };
 
 	int i = 0;
 	for (; i < arrToken.size(); ++i)

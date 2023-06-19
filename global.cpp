@@ -193,7 +193,7 @@ wstring FGlobal::GetValue(OpenXLSX::XLCell cell)
 		return L"";
 
 	case OpenXLSX::XLValueType::Boolean:
-		return cell.value().get<bool>()?L"1":L"0";
+		return cell.value().get<bool>() ? L"1" : L"0";
 
 	case OpenXLSX::XLValueType::Integer:
 		return to_wstring(cell.value().get<int>());
@@ -211,7 +211,7 @@ wstring FGlobal::GetValue(OpenXLSX::XLCell cell)
 		return L"";
 	}
 
-	
+
 
 	return L"";
 }

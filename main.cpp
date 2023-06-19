@@ -16,9 +16,9 @@
 #include "outData.h"
 
 #ifdef DEBUG
-    #define _CRTDBG_MAP_ALLOC
-    #include <stdlib.h>
-    #include <crtdbg.h>
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
 #endif
 
 using namespace std;
@@ -69,8 +69,8 @@ void Delete()
 {
     delete ptrGlobal;
     //delete ptrError;
-	//delete ptrGlobal;
-	//delete fSolve;
+    //delete ptrGlobal;
+    //delete fSolve;
 }
 
 int main()

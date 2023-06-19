@@ -65,7 +65,7 @@ void FOutData::Out(string sOutPath)
 
 		CreateAndTake(it->sNamePlan, sOutPath);
 	}
-	
+
 
 	fOutFile.save();
 	fOutFile.close();
