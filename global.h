@@ -26,6 +26,7 @@ struct FError;
 struct FConfig;
 struct FSolve;
 struct FOutData;
+struct FGraph;
 
 struct FGlobal
 {
@@ -48,5 +49,6 @@ struct FGlobal
     FConfig* ptrConfig; //Синглтон
     FSolve* ptrSolve; //Синглтон
     FOutData* ptrOutData; //Синглтон
+    FGraph* ptrGraph; //Синглтон
 
 };

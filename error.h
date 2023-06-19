@@ -21,6 +21,9 @@ struct FError
     void ErrorOutFileNotFind(string wsPathName);
     void ErrorOutFileNotFind(wstring wsPathName);
 
+    void ErrorOutFileCreate(string wsPathName);
+    void ErrorOutFileCreate(wstring wsPathName);
+
     void ErrorUncorrectExtension();
 
     void ErrorBadTree(); // Если ошибки при построении дерева дисциплин

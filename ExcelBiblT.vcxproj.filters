@@ -56,6 +56,9 @@
     <ClCompile Include="solveTree.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="graph.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="0903010030-21.plm.plx.xlsx">
@@ -79,6 +82,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="outData.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="graph.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

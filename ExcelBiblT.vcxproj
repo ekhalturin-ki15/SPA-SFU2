@@ -163,6 +163,7 @@
     <ClCompile Include="configAdd.cpp" />
     <ClCompile Include="error.cpp" />
     <ClCompile Include="global.cpp" />
+    <ClCompile Include="graph.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="outData.cpp" />
     <ClCompile Include="solve.cpp">
@@ -181,6 +182,7 @@
     <ClInclude Include="config.h" />
     <ClInclude Include="error.h" />
     <ClInclude Include="global.h" />
+    <ClInclude Include="graph.h" />
     <ClInclude Include="outData.h" />
     <ClInclude Include="solve.h" />
     <ClInclude Include="solveSecondPage.h" />
