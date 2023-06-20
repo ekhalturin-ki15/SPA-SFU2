@@ -5,12 +5,12 @@
 
 
 
-void FSolve::AddCompIndicator(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
+void FSolve::AddCompIndicator(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageNumber)
 {
+	int h = ptrGlobal->HeightPage(fSheet);
+
 	int iIdIndex = -1;
 	//int iIdСontent = -1;
-
-	auto fSheet = fBook.worksheet(ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].wsName));
 
 	//Считываем заголовок
 	{
@@ -32,6 +32,9 @@ void FSolve::AddCompIndicator(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 	for (auto row : fSheet.rows())
 	{
 		++iCurrentRow;
+
+		if (iCurrentRow == h) break;//Далее только пустые строки
+
 		int x = -1;
 		bool bReadIndex = false; //Удалось ли считать индекс дисциплины в строке
 		//bool bReadСontent = false;

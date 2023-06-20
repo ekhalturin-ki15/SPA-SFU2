@@ -34,7 +34,10 @@ struct FGlobal
     explicit FGlobal();
     ~FGlobal();
 
-    wstring GetValue(OpenXLSX::XLCell cell);
+    wstring GetValue(const OpenXLSX::XLCell& cell);
+
+    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> fConverterToWString1;
+    std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> fConverterToString2;
 
     wstring ConwertToWstring(string sData);
 
@@ -42,6 +45,16 @@ struct FGlobal
 
     string ConwertPathFormat(string sFileName, bool bRename = false);
     wstring ConwertPathFormat(wstring wsFileName, bool bRename = false);
+
+    void TakeData(bool& outBData, const OpenXLSX::XLRow& row); // Возвращение результата через параметры (значение со втрой ячейки)
+    void TakeData(vector<wstring>& outArrData, const OpenXLSX::XLRow& row); // Возвращение результата через параметры (значение со втрой ячейки)
+    void TakeData(wstring& outWsData, const OpenXLSX::XLRow& row); // Возвращение результата через параметры (значение со втрой ячейки)
+    void TakeData(int& outIData, const OpenXLSX::XLRow& row); // Возвращение результата через параметры (значение со втрой ячейки)
+
+    vector<pair<wstring, wstring>> SetMapParams(const OpenXLSX::XLWorksheet& fPage);
+
+    //Возвращает количество строк на странице Excel файла (не включительно, то есть, на 1 больше)
+    int HeightPage(const OpenXLSX::XLWorksheet& fSheet);
 
     FError* ptrError; //Синглтон
     FConfig* ptrConfig; //Синглтон

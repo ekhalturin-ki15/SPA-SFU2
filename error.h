@@ -9,6 +9,7 @@ struct FError
     static const string sDontHaveIndex;
     static const string sNotFoundKeyCol;
     static const string sNotEqualSum;
+    static const string sNotInitConfig;
 
     explicit FError(FGlobal* _ptrGlobal);
     void Init();
@@ -21,6 +22,8 @@ struct FError
 
     void ErrorOutFileCreate(string wsPathName);
     void ErrorOutFileCreate(wstring wsPathName);
+
+    void FatalErrorFewConfigPages();
 
     void ErrorUncorrectExtension();
 

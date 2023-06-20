@@ -34,13 +34,17 @@ bool FSolve::Read(string _sInPath, string sNamePlan)
 	{
 		fDoc.open(sInPath);
 		fBook = fDoc.workbook();
-		CreateDiscTree(fBook, iCurrentPage);
+		CreateDiscTree(
+			fBook.worksheet(ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].wsName))
+			, iCurrentPage);
 		++iCurrentPage;
 
-		AddCompIndicator(fBook, iCurrentPage);
+		AddCompIndicator(fBook.worksheet(ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].wsName))
+			, iCurrentPage);
 		++iCurrentPage;
 
-		ptrSolveSecondPage->AddDiscScore(fBook, iCurrentPage);
+		ptrSolveSecondPage->AddDiscScore(fBook.worksheet(ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].wsName))
+			, iCurrentPage);
 		arrDisc.back()->CountDisc();
 
 		if (ptrSolveSecondPage->DFSCountingScore(arrDisc.back()->ptrRoot) != arrDisc.back()->dAllSumScore)

@@ -1,11 +1,11 @@
 ﻿#include "graph.h"
 
-Parser::Parser(string _sInput, double _dLeft, double _dRight, int _iAmountDisc, int _iPowerComp, double _dSumScore) :
+FormulaParser::FormulaParser(string _sInput, double _dLeft, double _dRight, int _iAmountDisc, int _iPowerComp, double _dSumScore) :
 	sInput(_sInput), dLeft(_dLeft), dRight(_dRight), dSumScore(_dSumScore), iAmountDisc(_iAmountDisc), iPowerComp(_iPowerComp)
 {
 }
 
-std::string Parser::sParserToken() {
+std::string FormulaParser::sParserToken() {
 	while (true)
 	{
 		if (sInput.size() <= i) break;
@@ -44,13 +44,13 @@ std::string Parser::sParserToken() {
 	return "";
 }
 
-Expression Parser::UnaryExp()
+Expression FormulaParser::UnaryExp()
 {
 	string token = sParserToken();
 	if (token.empty()) throw std::runtime_error("Invalid input");
 
 	if (token == "(") {
-		auto result = parse();
+		auto result = Parse();
 		if (sParserToken() != ")") throw std::runtime_error("Expected ')'");
 		return result;
 	}
@@ -102,7 +102,7 @@ int iGetPriority(const string& sOperation)
 	return 0;
 }
 
-Expression Parser::BinaryExp(int iMinPriority)
+Expression FormulaParser::BinaryExp(int iMinPriority)
 {
 	auto left_expr = UnaryExp();
 
@@ -121,7 +121,7 @@ Expression Parser::BinaryExp(int iMinPriority)
 	}
 }
 
-Expression Parser::parse() {
+Expression FormulaParser::Parse() {
 	return BinaryExp(0);
 }
 

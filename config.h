@@ -54,14 +54,9 @@ struct FConfig
     Alias fAlias; //Явная композиция
 
 private:
-    void TakeData(bool& outBData, OpenXLSX::XLRow& row); // Возвращение результата через параметры
-    void TakeData(vector<wstring>& outArrData, OpenXLSX::XLRow& row); // Возвращение результата через параметры
-    void TakeData(wstring& outWsData, OpenXLSX::XLRow& row); // Возвращение результата через параметры
-    void TakeData(int& outIData, OpenXLSX::XLRow& row); // Возвращение результата через параметры
 
     void SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XLRow row);
-    vector<set<wstring>> SetParsingParams(OpenXLSX::XLWorksheet& fPage, const wstring& wsNamePage, const int& iNumPage);
-    vector<pair<wstring, wstring>> SetMapParams(const OpenXLSX::XLWorksheet& fPage);
+    vector<set<wstring>> SetParsingParams(OpenXLSX::XLWorksheet& fPage, const wstring& wsNamePage);
 
     FGlobal* ptrGlobal; //Синглтон
 };

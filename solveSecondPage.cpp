@@ -10,8 +10,10 @@ FSolveSecondPage::FSolveSecondPage(FGlobal* _ptrGlobal): ptrGlobal(_ptrGlobal)
 
 
 
-void FSolveSecondPage::AddDiscScore(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
+void FSolveSecondPage::AddDiscScore(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageNumber)
 {
+	int h = ptrGlobal->HeightPage(fSheet);
+
 	//Инициализируются один раз
 	int iIdAllow = -1; // Не инициализированы
 	int iIdIndex = -1; // Позиция столбца, где указан индекс
@@ -22,12 +24,15 @@ void FSolveSecondPage::AddDiscScore(OpenXLSX::XLWorkbook& fBook, int iKeyPageNum
 	//Здесь более мягкий режим, так как вся ключевая информация уже была получена, и мы выискиваем доп
 	//информацию, чтобы дополнить данные
 
-	auto fSheet = fBook.worksheet(ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].wsName));
+	//auto fSheet = fBook.worksheet(ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].wsName));
 
 	ptrGlobal->ptrSolve->iCurrentRow = -1;
 	for (auto row : fSheet.rows())
 	{
 		++ptrGlobal->ptrSolve->iCurrentRow;
+
+		if (ptrGlobal->ptrSolve->iCurrentRow == h) break;//Далее только пустые строки
+
 		int x = -1;
 		bool bReadAllow = false;
 		bool bReadIndex = false;

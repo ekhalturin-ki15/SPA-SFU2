@@ -5,13 +5,13 @@
 
 
 
-void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
+void FSolve::CreateDiscTree(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageNumber)
 {
+	int h = ptrGlobal->HeightPage(fSheet);
+
 	int iIdIndex = -1;
 	int iIdName = -1;
 	int iIdComp = -1;
-
-	auto fSheet = fBook.worksheet(ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].wsName));
 
 	FTreeDisc* ptrTree = new FTreeDisc;
 	arrDisc.push_back(ptrTree);
@@ -43,13 +43,15 @@ void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 	ofstream out(ptrGlobal->ptrConfig->wsNameDebugFile);
 #endif // DEBUG
 
-
-	int iPreX = -1; // Root вне учебного плана (в нём все модули)
+	int iPreX = -1; // Root вне учебного плана (в нём все модули) у него индекс вложенности -1
 
 	iCurrentRow = -1;
 	for (auto row : fSheet.rows())
 	{
 		++iCurrentRow;
+
+		if (iCurrentRow == h) break;//Далее только пустые строки
+
 		int x = -1;
 		bool bReadIndex = false;
 		bool bReadName = false;

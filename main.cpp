@@ -78,6 +78,14 @@ int main()
     {
         Create();
 
+
+        if (ptrGlobal->ptrConfig->arrKeyPage.size() < 3)
+        {
+            ptrGlobal->ptrError->FatalErrorFewConfigPages(); // Не хватает данных для парсинга УП
+            Delete();
+            return 0;
+        }
+
         auto fFile = filesystem::current_path(); //Взятие пути директории расположения exe файла
 
         for (int category = 0; category < ptrGlobal->ptrConfig->arrNameFileIn.size(); ++category)

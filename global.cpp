@@ -171,18 +171,15 @@ FGlobal::FGlobal()
 
 wstring FGlobal::ConwertToWstring(string sData)
 {
-	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-	return(converter.from_bytes(sData.c_str()));
-
+	return(fConverterToWString1.from_bytes(sData.c_str()));
 }
 
 string FGlobal::ConwertToString(wstring wsData)
 {
-	std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converterX;
-	return converterX.to_bytes(wsData);
+	return fConverterToString2.to_bytes(wsData);
 }
 
-wstring FGlobal::GetValue(OpenXLSX::XLCell cell)
+wstring FGlobal::GetValue(const OpenXLSX::XLCell& cell)
 {
 	auto sType = cell.value().type();
 

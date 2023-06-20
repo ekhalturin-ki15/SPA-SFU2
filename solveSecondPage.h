@@ -9,7 +9,7 @@ struct FSolveSecondPage
 {
 	explicit FSolveSecondPage(FGlobal* _ptrGlobal);
 
-	void AddDiscScore(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber);
+	void AddDiscScore(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageNumber);
 	double DFSCountingScore(FTreeElement* ptrThis);
 
 private:

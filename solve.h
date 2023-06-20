@@ -76,9 +76,10 @@ private:
 
 	void ClearTreeDisc();
 
-	void CreateDiscTree(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber); // Находится в solveZeroPage.cpp
+	// По идеи, там передаётся всегда this->iKeyPageNumber
 
-	void AddCompIndicator(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber); // Находится в solveFirstPage.cpp
+	void CreateDiscTree(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageNumber); // Находится в solveZeroPage.cpp 
+	void AddCompIndicator(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageNumber); // Находится в solveFirstPage.cpp
 
 	FSolveSecondPage* ptrSolveSecondPage; //Композиция (вынес в отдельный класс, так как много методов)
 	FGlobal* ptrGlobal; //Синглтон

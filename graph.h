@@ -27,11 +27,11 @@ private:
 	vector<Expression> arrArgument;
 };
 
-struct Parser 
+struct FormulaParser 
 {
-	explicit Parser(string _sInput, double _dLeft, double _dRight, int _iAmountDisc, int _iPowerComp, double _dSumScore);
+	explicit FormulaParser(string _sInput, double _dLeft, double _dRight, int _iAmountDisc, int _iPowerComp, double _dSumScore);
 	
-	Expression parse();
+	Expression Parse();
 
 	string sParserToken();
 	Expression UnaryExp();

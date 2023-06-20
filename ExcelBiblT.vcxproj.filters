@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="debugFile.txt">
+    <Text Include="logFile.txt">
       <Filter>Файлы ресурсов</Filter>
     </Text>
-    <Text Include="logFile.txt">
+    <Text Include="debugFile.txt">
       <Filter>Файлы ресурсов</Filter>
     </Text>
   </ItemGroup>
@@ -50,7 +50,7 @@
     <ClCompile Include="outData.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="configAdd.cpp">
+    <ClCompile Include="globalAdd.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="solveTree.cpp">
@@ -59,7 +59,7 @@
     <ClCompile Include="graph.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="parser.cpp">
+    <ClCompile Include="formulaParser.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>

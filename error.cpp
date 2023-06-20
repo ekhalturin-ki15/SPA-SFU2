@@ -6,6 +6,7 @@ const string FError::sBadTree = "Bad Tree";
 const string FError::sDontHaveIndex = "Dont have index";
 const string FError::sNotFoundKeyCol = "Key column not found";
 const string FError::sNotEqualSum = "Lack of links between disciplines"; //Не хватает связей между дисциплинами
+const string FError::sNotInitConfig = "Not init Config pointer";//Нужны данные с config, а он ещё не создан (например, такая ошибка может быть в FGlobal::HeightPage)
 
 FError::FError(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
 {
@@ -34,11 +35,22 @@ ofstream FError::OutHeader()
 	int& iCurrentPage = ptrGlobal->ptrSolve->iCurrentPage;
 	int& iCurrentRow = ptrGlobal->ptrSolve->iCurrentRow;
 	ptrGlobal->ptrSolve->bIsCorrectParsing = false;
-	out << ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].wsName);
+	if (iCurrentPage < ptrGlobal->ptrConfig->arrKeyPage.size())
+		out << ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].wsName);
+	else
+		out << "! Страница не определена";
+
 	out << " [строка " << iCurrentRow + 1 << "] : ";
 	return out;
 }
 
+void FError::FatalErrorFewConfigPages()
+{
+	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
+	out << "!! Не хватает указаний страниц для парсинга УП (их 3, обычно их названия: Компетенции(2), Компетенции, ПланСвод";
+	out << END;
+	out.close();
+}
 void FError::ErrorInFileNotFind(string sPathName)
 {
 	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);

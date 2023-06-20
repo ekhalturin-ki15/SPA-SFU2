@@ -1,0 +1,124 @@
+﻿#include "global.h"
+#include "error.h"
+#include "config.h"
+
+void FGlobal::TakeData(bool& outBData, const OpenXLSX::XLRow& row)
+{
+    for (auto& it : row.cells(2,2)) // Считываем только вторую ячейку
+    {
+        wstring wsLine = GetValue(it);
+        outBData = (wsLine.find(L"да") != wstring::npos);
+    }
+}
+
+void FGlobal::TakeData(vector<wstring>& outArrData, const OpenXLSX::XLRow& row)
+{
+    outArrData.clear();
+    int i = -1; for (auto& it : row.cells()) // Считываем, начиная со 2 ячейки
+    {
+        i++;
+        if (i)
+            outArrData.push_back(GetValue(it));
+    }
+}
+
+void FGlobal::TakeData(wstring& outWsData, const OpenXLSX::XLRow& row)
+{
+    for (auto& it : row.cells(2, 2)) // Считываем только вторую ячейку
+        outWsData = GetValue(it);
+}
+
+void FGlobal::TakeData(int& outIData, const OpenXLSX::XLRow& row)
+{
+    for (auto& it : row.cells(2, 2)) // Считываем только вторую ячейку
+        outIData = it.value().get<int>();
+           
+}
+
+vector<pair<wstring, wstring>> FGlobal::SetMapParams(const OpenXLSX::XLWorksheet& fPage)
+{
+    vector<pair<wstring, wstring>> arrReturn;
+    int y = -1;
+    for (auto row : fPage.rows())
+    {
+        y++;
+        if (y) //Игнорируем первую строку, в ней описание столбцов
+        {
+            wstring wsKeyName;
+            wstring wsRename;
+
+            int i = -1;
+            for (auto& column : row.cells())
+            {
+                ++i;
+                if (i == 0)
+                {
+                    wsKeyName = GetValue(column);
+                }
+                else
+                {
+                    wsRename = GetValue(column);
+                    arrReturn.push_back({ wsKeyName , wsRename });
+                }
+            }
+        }
+    }
+
+    return arrReturn;
+}
+
+int FGlobal::HeightPage(const OpenXLSX::XLWorksheet& fSheet)
+{
+    if (ptrConfig == nullptr)
+    {
+        throw std::logic_error(FError::sNotInitConfig);
+    }
+
+    int h = 0;
+    vector<int> arrEmptyRow;
+
+    for (auto row : fSheet.rows())
+    {
+        bool bIsEmpty = true;
+        for (auto it : row.cells())
+        {
+            wstring wsData = GetValue(it);
+            if (wsData != L"")
+            {
+                bIsEmpty = false;
+                break;
+            }
+        }
+
+        if (bIsEmpty)
+        {
+            arrEmptyRow.push_back(h);
+            if (arrEmptyRow.size() >= ptrConfig->iIgnoreEmptyLine)
+            {
+                if (arrEmptyRow[arrEmptyRow.size() - ptrConfig->iIgnoreEmptyLine]
+                    ==
+                    (h - ptrConfig->iIgnoreEmptyLine + 1)) // Нашли iIgnoreEmptyLine подряд идущих пустых строк
+                {
+                    return h - ptrConfig->iIgnoreEmptyLine + 1;
+                }
+            }
+        }
+
+        ++h;
+    }
+
+    while (arrEmptyRow.size() > 0)
+    {
+        if (arrEmptyRow.back() == h - 1)
+        {
+            --h;
+            arrEmptyRow.pop_back();
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    return h;
+}
