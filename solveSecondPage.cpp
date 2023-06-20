@@ -4,14 +4,23 @@
 #include "config.h"
 #include "global.h"
 
+FSolveSecondPage::FSolveSecondPage(FGlobal* _ptrGlobal): ptrGlobal(_ptrGlobal)
+{
+}
+
 
 
 void FSolveSecondPage::AddDiscScore(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 {
+	//Инициализируются один раз
 	int iIdAllow = -1; // Не инициализированы
 	int iIdIndex = -1; // Позиция столбца, где указан индекс
 	int iIdLScore = -1; //  Позиция столбца, где начинается перечесление ЗЕ за семестр
 	int iIdRScore = -1;//  Позиция столбца, где заканчивается перечесление ЗЕ за семестр
+
+	//Иная логика считывания, нежеле на предыдущих таблицах
+	//Здесь более мягкий режим, так как вся ключевая информация уже была получена, и мы выискиваем доп
+	//информацию, чтобы дополнить данные
 
 	auto fSheet = fBook.worksheet(ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].wsName));
 

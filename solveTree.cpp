@@ -3,7 +3,7 @@
 #include "config.h"
 #include "global.h"
 
-FTreeElement::FTreeElement() : dSumScore(0.), wsName(L""), wsIndexName(L""), ptrPerent(nullptr), bAllow(true)
+FTreeElement::FTreeElement() : dSumScore(0.), wsName(L""), wsIndexName(L""), ptrParent(nullptr), bAllow(true)
 {
 }
 

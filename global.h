@@ -30,10 +30,8 @@ struct FGraph;
 
 struct FGlobal
 {
-    map<char, char> mapTranslit;
-    map<wchar_t, wchar_t> mapWTranslit;
 
-    FGlobal();
+    explicit FGlobal();
     ~FGlobal();
 
     wstring GetValue(OpenXLSX::XLCell cell);
@@ -50,5 +48,10 @@ struct FGlobal
     FSolve* ptrSolve; //Синглтон
     FOutData* ptrOutData; //Синглтон
     FGraph* ptrGraph; //Синглтон
+
+private:
+
+    map<char, char> mapTranslit;
+    map<wchar_t, wchar_t> mapWTranslit;
 
 };

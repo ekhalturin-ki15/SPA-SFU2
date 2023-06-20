@@ -1,20 +1,15 @@
 ﻿#include "config.h"
 
 
-FConfig::FConfig(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal), iCourseLen(2), iMaxLen(15),
-iWeigthRib(10), bCreateFolder(false), bReloadLogFile(false),
-wsNameConfig(L"./config.xlsx"), wsNamePage(L"Параметры")
+FConfig::FConfig(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
+,iCourseLen(2), iMaxLen(15), iIgnoreEmptyLine(5) ,iWeigthRib(10)
+,bCreateFolder(false), bCompactOutput(false), bReloadLogFile(false), bMultiIndicator(false)
+,wsNameConfig(L"./config.xlsx"), wsNamePage(L"Параметры")
+, wsNameLableFile(L"Id,Label"), wsNameRibFile(L"Source,Target,Type,Kind,Id,Label,timeset,Weight")
+, arrNameFileIn({ L"plans/grad" }), arrNameFileOut({ L"result/grad" })
+, wsNameDebugFile(L"debugFile.txt"), wsNameLogFile(L"logFile.txt")
+, wsRegexComp(L" {0,1}(.{0,}?);"), wsFormula(L"((L + R) / 2) * K")
 {
-    wsNameLableFile = L"Id,Label";
-    wsNameRibFile = L"Source,Target,Type,Kind,Id,Label,timeset,Weight";
-
-    arrNameFileIn = {L"plans/grad"};
-    arrNameFileOut = {L"result/grad"};
-
-    wsNameDebugFile = L"debugFile.txt";
-    wsNameLogFile = L"logFile.txt";
-
-    wsRegexComp = L" {0,1}(.{0,}?);";
 }
 
 void FConfig::Init()
@@ -166,6 +161,13 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
         return;
     }
 
+    wsPatern = L"Формула расчёта весов рёбер";
+    if (wsKey == wsPatern)
+    {
+        TakeData(wsFormula, row);
+        return;
+    }
+
     wsPatern = L"Псевдонимы (название страницы)";
     if (wsKey == wsPatern)
     {
@@ -176,34 +178,15 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
             if (i)
             {
                 wstring wsNamePage = ptrGlobal->GetValue(page);
-                auto fPage = fBook.worksheet(ptrGlobal->ConwertToString(wsNamePage));
-
-                int y = 0;
-                for (auto row : fPage.rows())
+                for (auto& [key, val] : 
+                    SetMapParams(fBook.worksheet(ptrGlobal->ConwertToString(wsNamePage)))
+                    )
                 {
-                    if (y++) //Игнорируем первую строку, в ней описание столбцов
-                    {
-                        int i = -1;
-                        wstring wsKeyName;
-                        wstring wsRename;
-                        for (auto& column : row.cells())
-                        {
-                            ++i;
-                            if (i == 0)
-                            {
-                                wsKeyName = ptrGlobal->GetValue(column);
-                            }
-                            else
-                            {
-                                wsRename = ptrGlobal->GetValue(column);
-                                fAlias.mapRename[wsKeyName] = wsRename;
-                            }
-                        }
-                    }
+                    fAlias.mapRename[key] = val;
                 }
-                break; //Псевдонимы должны все находиться только на одной странице, остальные проигнорируются
             }
         }
+        return;
     }
 
     wsPatern = L"Параметры выводы (название страницы)";
@@ -215,69 +198,17 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
             i++;
             if (i)
             {
-                //arrKeyPage.resize(arrKeyPage.size() + 1);
-
                 wstring wsNamePage = ptrGlobal->GetValue(page);
-
-                auto fExtraPage = fBook.worksheet(ptrGlobal->ConwertToString(wsNamePage));
-
-                int y = 0;
-                for (auto row : fExtraPage.rows())
+                for (auto& [key, val] :
+                    SetMapParams(fBook.worksheet(ptrGlobal->ConwertToString(wsNamePage)))
+                    )
                 {
-                    if (y++) //Игнорируем первую строку, в ней описание столбцов
-                    {
-                        int i = -1;
-                        wstring wsKeyName;
-                        wstring wsData;
-                        for (auto& column : row.cells())
-                        {
-                            ++i;
-                            if (i == 0)
-                            {
-                                wsKeyName = ptrGlobal->GetValue(column);
-                            }
-                            else
-                            {
-                                wsData = ptrGlobal->GetValue(column);
-                                mapOutParams[wsKeyName] = wsData;
-
-                            }
-                        }
-                    }
+                    mapOutParams[key] = val;
                 }
-
-                return;
             }
         }
         return;
         
     }
 
-}
-
-
-vector<set<wstring>> FConfig::SetParsingParams(OpenXLSX::XLWorksheet& fPage, const wstring& wsNamePage, const int& iNumPage)
-{
-    vector<set<wstring>> arrResult(fPage.rows().begin()->cells().size());
-
-    int y = 0;
-    for (auto row : fPage.rows())
-    {
-        if (y++) //Игнорируем первую строку, в ней описание столбцов
-        {
-            int i = 0;
-            for (auto& column : row.cells())
-            {
-                wstring wsData = ptrGlobal->GetValue(column);
-                if (wsData != L"")
-                {
-                    arrResult[i].insert(wsData);
-                }
-                ++i;
-            }
-        }
-    }
-
-
-    return arrResult;
 }

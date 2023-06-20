@@ -5,7 +5,8 @@
 
 FSolve::FSolve(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
 {
-	fSolveSecondPage.ptrGlobal = _ptrGlobal;
+	ptrSolveSecondPage = new FSolveSecondPage(_ptrGlobal);
+	//fSolveSecondPage.ptrGlobal = _ptrGlobal;
 }
 
 void FSolve::Init()
@@ -39,10 +40,10 @@ bool FSolve::Read(string _sInPath, string sNamePlan)
 		AddCompIndicator(fBook, iCurrentPage);
 		++iCurrentPage;
 
-		fSolveSecondPage.AddDiscScore(fBook, iCurrentPage);
+		ptrSolveSecondPage->AddDiscScore(fBook, iCurrentPage);
 		arrDisc.back()->CountDisc();
 
-		if (fSolveSecondPage.DFSCountingScore(arrDisc.back()->ptrRoot) != arrDisc.back()->dAllSumScore)
+		if (ptrSolveSecondPage->DFSCountingScore(arrDisc.back()->ptrRoot) != arrDisc.back()->dAllSumScore)
 		{
 			throw std::logic_error(FError::sNotEqualSum);
 		}
@@ -103,4 +104,6 @@ FSolve::~FSolve()
 {
 	for (auto& it : arrDisc)
 		delete it;
+
+	delete ptrSolveSecondPage;
 }

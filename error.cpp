@@ -28,6 +28,17 @@ void FError::Init()
 	}
 }
 
+ofstream FError::OutHeader()
+{
+	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
+	int& iCurrentPage = ptrGlobal->ptrSolve->iCurrentPage;
+	int& iCurrentRow = ptrGlobal->ptrSolve->iCurrentRow;
+	ptrGlobal->ptrSolve->bIsCorrectParsing = false;
+	out << ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].wsName);
+	out << " [строка " << iCurrentRow + 1 << "] : ";
+	return out;
+}
+
 void FError::ErrorInFileNotFind(string sPathName)
 {
 	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
@@ -65,18 +76,6 @@ void FError::ErrorOutFileNotFind(string sPathName)
 void FError::ErrorOutFileNotFind(wstring wsPathName)
 {
 	ErrorOutFileNotFind(ptrGlobal->ConwertToString(wsPathName));
-}
-
-
-ofstream FError::OutHeader()
-{
-	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
-	int& iCurrentPage = ptrGlobal->ptrSolve->iCurrentPage;
-	int& iCurrentRow = ptrGlobal->ptrSolve->iCurrentRow;
-	ptrGlobal->ptrSolve->bIsCorrectParsing = false;
-	out << ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].wsName);
-	out << " [строка " << iCurrentRow + 1 <<"] : ";
-	return out;
 }
 
 void FError::ErrorUncorrectExtension()

@@ -5,32 +5,31 @@ struct FGlobal;
 
 struct FGraph
 {
-	FGraph(FGlobal* _ptrGlobal);
+	explicit FGraph(FGlobal* _ptrGlobal);
 
 	void Init();
 
+private:
 	FGlobal* ptrGlobal; //Синглтон
-
 };
 
 struct Expression 
 {
-	Expression(string _sToken) : sToken(_sToken) {}
-	Expression(string _sToken, Expression fArg) : sToken(_sToken), arrArgument{ fArg } {}
-	Expression(string _sToken, Expression fLeftArg, Expression fRightArg) : sToken(_sToken), 
+	explicit Expression(string _sToken) : sToken(_sToken) {}
+	explicit Expression(string _sToken, Expression fArg) : sToken(_sToken), arrArgument{ fArg } {}
+	explicit Expression(string _sToken, Expression fLeftArg, Expression fRightArg) : sToken(_sToken),
 		arrArgument{ fLeftArg, fRightArg } {}
 
 	double dSolve(const Expression& fExp);
 
+private:
 	string sToken;
 	vector<Expression> arrArgument;
 };
 
 struct Parser 
 {
-	Parser(string _sInput, double _dLeft, double _dRight, int _iAmountDisc, int _iPowerComp, double _dSumScore) :
-		sInput(_sInput) , dLeft(_dLeft), dRight(_dRight), dSumScore(_dSumScore), iAmountDisc(_iAmountDisc), iPowerComp(_iPowerComp)
-		{}
+	explicit Parser(string _sInput, double _dLeft, double _dRight, int _iAmountDisc, int _iPowerComp, double _dSumScore);
 	
 	Expression parse();
 
@@ -38,6 +37,7 @@ struct Parser
 	Expression UnaryExp();
 	Expression BinaryExp(int iMinPriority);
 
+private:
 	string sInput;
 	int i = 0;
 

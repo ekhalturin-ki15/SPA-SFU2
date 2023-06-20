@@ -14,19 +14,13 @@ void FSolve::AddCompIndicator(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 
 	//Считываем заголовок
 	{
-		int x = 0;
+		int x = -1;
 		for (auto it : fSheet.rows().begin()->cells())
 		{
+			++x;
 			if (ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].
 				arrHeader[0].count(ptrGlobal->GetValue(it)))
-				iIdIndex = x; //
-
-			//Закоментировал, так как достаточно только одного столбца
-			/*if (ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].
-				arrHeader[1].count(ptrGlobal->GetValue(it)))
-				iIdСontent = x;*/
-
-			++x;
+				iIdIndex = x;
 		}
 	}
 
@@ -39,7 +33,7 @@ void FSolve::AddCompIndicator(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 	{
 		++iCurrentRow;
 		int x = -1;
-		bool bReadIndex = false;
+		bool bReadIndex = false; //Удалось ли считать индекс дисциплины в строке
 		//bool bReadСontent = false;
 		bool bThisRowIsDisc = false;
 
@@ -100,6 +94,8 @@ void FSolve::AddCompIndicator(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 			if (!bReadIndex)
 			{
 				ptrGlobal->ptrError->ErrorEmptyLine();
+				//может присутствовать множество пустых строк в конце, сделал усечение и предварительный выход
+				continue;
 			}
 		}
 	}

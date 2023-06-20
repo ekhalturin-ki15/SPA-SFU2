@@ -23,7 +23,7 @@ struct FTreeElement
 	wstring wsName;
 	wstring wsIndexName;
 	
-	FTreeElement* ptrPerent;
+	FTreeElement* ptrParent;
 	vector<FTreeElement*> arrChild;  //Дисциплины внутри модуля
 	map<string, vector<string>> mapComp; // Компетенции, у каждой из которых перечень индикаторов
 
@@ -34,7 +34,6 @@ struct FTreeDisc
 	FTreeDisc();
 	~FTreeDisc();
 
-	void DeleteDFS(FTreeElement* ptrThis); // Поиск в глубину для очистки памяти
 	void CountDisc();
 
 	FTreeElement* ptrRoot;
@@ -49,25 +48,19 @@ struct FTreeDisc
 
 	void dFindAllScore(double& outDSum, int& outIAmountDisc); //Вывод через параметры
 	void dFindAllScore(double& outDSum);
+
+private:
+	void DeleteDFS(FTreeElement* ptrThis); // Поиск в глубину для очистки памяти
 };
 
 struct FSolve
 {
-	FSolve(FGlobal* _ptrGlobal);
+	explicit FSolve(FGlobal* _ptrGlobal);
 	~FSolve();
 
 	void Init();
 
-	void ClearTreeDisc();
-
 	bool Read(string sInPath, string sNamePlan);
-
-	void CreateDiscTree(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber); // Находится в solveZeroPage.cpp
-
-	void AddCompIndicator(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber); // Находится в solveFirstPage.cpp
-
-	//void AddDiscScore(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber); // Находится в solveSecondPage.h
-	FSolveSecondPage fSolveSecondPage;
 
 	vector<FTreeDisc*> arrDisc; // Указатели на все УП, которые считали (все они одновременно хранятся в памяти)
 
@@ -76,12 +69,20 @@ struct FSolve
 
 	bool bIsCorrectParsing;
 
-	regex fRegexComp;
-
 	string sInPath; // Для отладки
 	string sOutPath;
 
+private:
+
+	void ClearTreeDisc();
+
+	void CreateDiscTree(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber); // Находится в solveZeroPage.cpp
+
+	void AddCompIndicator(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber); // Находится в solveFirstPage.cpp
+
+	FSolveSecondPage* ptrSolveSecondPage; //Композиция (вынес в отдельный класс, так как много методов)
 	FGlobal* ptrGlobal; //Синглтон
+	regex fRegexComp;
 };
 
 

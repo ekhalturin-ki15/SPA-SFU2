@@ -73,7 +73,7 @@ void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 								throw std::logic_error(FError::sBadTree);
 								return;
 							}
-							ptrThis = ptrThis->ptrPerent;
+							ptrThis = ptrThis->ptrParent;
 
 
 							iPreX--;
@@ -81,7 +81,7 @@ void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 						iPreX = x;
 						ptrNewNode = new FTreeElement;
 						ptrThis->arrChild.push_back(ptrNewNode);
-						ptrNewNode->ptrPerent = ptrThis;
+						ptrNewNode->ptrParent = ptrThis;
 						ptrThis = ptrNewNode;
 
 						ptrNewNode->wsIndexName = wsData;
@@ -131,18 +131,20 @@ void FSolve::CreateDiscTree(OpenXLSX::XLWorkbook& fBook, int iKeyPageNumber)
 			if (!bReadIndex)
 			{
 				ptrGlobal->ptrError->ErrorBadParser();
-				return;
 				//throw std::logic_error(FError::sDontHaveIndex); // Неуказанный индекс, это критично
+				continue;
 			}
 			if (!bReadName)
 			{
 				ptrGlobal->ptrError->ErrorBadParserName(ptrNewNode->wsIndexName);
 				//throw std::logic_error(FError::sNotAllData); // Щадящий режим, игнорируем неправильные дисциплины
+				continue;
 			}
 			if (!bReadComp)// Если не считали, значит не указаны
 			{
 				ptrGlobal->ptrError->ErrorBadParserComp(ptrNewNode->wsIndexName);
 				//throw std::logic_error(FError::sNotAllData); // Щадящий режим, игнорируем неправильные дисциплины
+				continue;
 			}
 		}
 	}

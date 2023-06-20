@@ -5,13 +5,14 @@ struct FGlobal;
 
 struct FOutData
 {
-	FOutData(FGlobal* _ptrGlobal);
+	explicit FOutData(FGlobal* _ptrGlobal);
 
 	void Out(string sOutPath); // Каталог, где будут файлы
 
 	void Init();
 
-	FGlobal* ptrGlobal; //Синглтон
-
+private:
 	OpenXLSX::XLWorksheet CreateAndTake(string sName, string sPath);
+
+	FGlobal* ptrGlobal; //Синглтон
 };

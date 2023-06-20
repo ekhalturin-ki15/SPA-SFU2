@@ -10,11 +10,9 @@ struct FError
     static const string sNotFoundKeyCol;
     static const string sNotEqualSum;
 
-    FError(FGlobal* _ptrGlobal);
+    explicit FError(FGlobal* _ptrGlobal);
     void Init();
         
-    ofstream OutHeader();
-
     void ErrorInFileNotFind(string sPathName);// Если ошибки при открытии файла в виде zip
     void ErrorInFileNotFind(wstring wsPathName);// Если ошибки при открытии файла в виде zip
     
@@ -50,6 +48,10 @@ struct FError
     void OKParsing();
 
     void WAParsing(); // WA - wrong answer
+
+private:
+
+    ofstream OutHeader();
 
     FGlobal* ptrGlobal; //Синглтон
 };

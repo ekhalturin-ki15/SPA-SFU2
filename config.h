@@ -18,8 +18,7 @@ struct Alias
 
 struct FConfig
 {
-
-    FConfig(FGlobal* _ptrGlobal);
+    explicit FConfig(FGlobal* _ptrGlobal);
 
     vector<FPageInfo> arrKeyPage;
 
@@ -32,6 +31,7 @@ struct FConfig
     wstring wsNameRibFile;
 
     wstring wsRegexComp;
+    wstring wsFormula;
 
     wstring wsNameDebugFile;
     wstring wsNameLogFile;
@@ -44,21 +44,24 @@ struct FConfig
     int iMaxLen;
     int iWeigthRib;
     int iCourseLen;
+    int iIgnoreEmptyLine;
 
     std::wstring wsNameConfig; // "Параметры"
     std::wstring wsNamePage; 
 
     void Init();
 
-    void SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XLRow row);
-    vector<set<wstring>> SetParsingParams(OpenXLSX::XLWorksheet& fPage, const wstring& wsNamePage, const int& iNumPage);
+    Alias fAlias; //Явная композиция
 
+private:
     void TakeData(bool& outBData, OpenXLSX::XLRow& row); // Возвращение результата через параметры
     void TakeData(vector<wstring>& outArrData, OpenXLSX::XLRow& row); // Возвращение результата через параметры
     void TakeData(wstring& outWsData, OpenXLSX::XLRow& row); // Возвращение результата через параметры
     void TakeData(int& outIData, OpenXLSX::XLRow& row); // Возвращение результата через параметры
 
-    FGlobal* ptrGlobal; //Синглтон
+    void SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XLRow row);
+    vector<set<wstring>> SetParsingParams(OpenXLSX::XLWorksheet& fPage, const wstring& wsNamePage, const int& iNumPage);
+    vector<pair<wstring, wstring>> SetMapParams(const OpenXLSX::XLWorksheet& fPage);
 
-    Alias fAlias; //Явная композиция
+    FGlobal* ptrGlobal; //Синглтон
 };
