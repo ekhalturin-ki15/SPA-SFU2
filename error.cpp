@@ -36,7 +36,7 @@ ofstream FError::OutHeader()
 	int& iCurrentRow = ptrGlobal->ptrSolve->iCurrentRow;
 	ptrGlobal->ptrSolve->bIsCorrectParsing = false;
 	if (iCurrentPage < ptrGlobal->ptrConfig->arrKeyPage.size())
-		out << ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].wsName);
+		out << ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].sName;
 	else
 		out << "! Страница не определена";
 

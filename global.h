@@ -36,11 +36,8 @@ struct FGlobal
 
     wstring GetValue(const OpenXLSX::XLCell& cell);
 
-    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> fConverterToWString1;
-    std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> fConverterToString2;
-
-    wstring ConwertToWstring(string sData);
-
+    wstring ConwertToWstring(string sData); //Придётся постоянно конвертировать, так как мы точно не знаем, 
+    //какие данные в ячейках, и всё переводим в наиболее общий тип данных wstring
     string ConwertToString(wstring wsData);
 
     string ConwertPathFormat(string sFileName, bool bRename = false);
@@ -63,6 +60,9 @@ struct FGlobal
     FGraph* ptrGraph; //Синглтон
 
 private:
+
+    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> fConverterToWString1;
+    std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> fConverterToString2;
 
     map<char, char> mapTranslit;
     map<wchar_t, wchar_t> mapWTranslit;

@@ -6,6 +6,7 @@ struct FGlobal;
 struct FPageInfo
 {
     wstring wsName;
+    string sName; // Лучше один раз конвертировать (быстрее по времени)
     vector<set<wstring>> arrHeader; // Для каждого столбца есть множество синонимов
 };
 
@@ -56,7 +57,7 @@ struct FConfig
 private:
 
     void SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XLRow row);
-    vector<set<wstring>> SetParsingParams(OpenXLSX::XLWorksheet& fPage, const wstring& wsNamePage);
+    vector<set<wstring>> SetParsingParams(OpenXLSX::XLWorksheet& fPage);
 
     FGlobal* ptrGlobal; //Синглтон
 };

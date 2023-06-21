@@ -51,10 +51,11 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
             if (i)
             {
                 wstring wsNamePage = ptrGlobal->GetValue(page);
+                string sNamePage = ptrGlobal->ConwertToString(wsNamePage);
 
-                OpenXLSX::XLWorksheet fExtraPage = fBook.worksheet(ptrGlobal->ConwertToString(wsNamePage));
+                OpenXLSX::XLWorksheet fExtraPage = fBook.worksheet(sNamePage);
                
-                arrKeyPage.push_back({ wsNamePage, SetParsingParams(fExtraPage, wsNamePage) });
+                arrKeyPage.push_back({ wsNamePage, sNamePage, SetParsingParams(fExtraPage) });
             }
         }
         return;
@@ -221,7 +222,7 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
 }
 
 
-vector<set<wstring>> FConfig::SetParsingParams(OpenXLSX::XLWorksheet& fPage, const wstring& wsNamePage)
+vector<set<wstring>> FConfig::SetParsingParams(OpenXLSX::XLWorksheet& fPage)
 {
     vector<set<wstring>> arrResult(fPage.rows().begin()->cells().size());
 
