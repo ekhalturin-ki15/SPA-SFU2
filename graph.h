@@ -1,51 +1,27 @@
 ﻿#pragma once
-#include "global.h"
+#include "solve.h"
+#include <map>
 
-struct FGlobal;
+using namespace std;
+struct FTreeDisc;
 
 struct FGraph
 {
-	explicit FGraph(FGlobal* _ptrGlobal);
+	//Инверсия зависимости
+	explicit FGraph(FTreeDisc* _ptrTree);
 
-	void Init();
+	//Использовать только после вызова Read у ptrSolve, то есть, когда ptrTree заполнен
+	void Create();
 
-private:
-	FGlobal* ptrGlobal; //Синглтон
-};
+	//Сопоставление id его названия (инициализируются в конструкторе)
+	vector<wstring> arrRel;
 
-struct Expression 
-{
-	explicit Expression(string _sToken) : sToken(_sToken) {}
-	explicit Expression(string _sToken, Expression fArg) : sToken(_sToken), arrArgument{ fArg } {}
-	explicit Expression(string _sToken, Expression fLeftArg, Expression fRightArg) : sToken(_sToken),
-		arrArgument{ fLeftArg, fRightArg } {}
+	//Сопоставление названию его id (инициализируются в конструкторе)
+	map < wstring, int> mapReversRel;
 
-	double dSolve(const Expression& fExp);
+	vector< vector <pair<int, double>>> fAdjacency;
+
 
 private:
-	string sToken;
-	vector<Expression> arrArgument;
+	FTreeDisc* ptrTree; //Синглтон
 };
-
-struct FormulaParser 
-{
-	explicit FormulaParser(string _sInput, double _dLeft, double _dRight, int _iAmountDisc, int _iPowerComp, double _dSumScore);
-	
-	Expression Parse();
-
-	string sParserToken();
-	Expression UnaryExp();
-	Expression BinaryExp(int iMinPriority);
-
-private:
-	string sInput;
-	int i = 0;
-
-	double dLeft = 0; // L
-	double dRight = 0; // R
-	double dSumScore = 0; // A
-	int iAmountDisc = 0; // N
-	int iPowerComp = 0; // K
-
-};
-

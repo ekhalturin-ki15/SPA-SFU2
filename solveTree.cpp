@@ -1,4 +1,4 @@
-#include "solve.h"
+﻿#include "solve.h"
 #include "error.h"
 #include "config.h"
 #include "global.h"
@@ -7,14 +7,17 @@ FTreeElement::FTreeElement() : dSumScore(0.), wsName(L""), wsIndexName(L""), ptr
 {
 }
 
-FTreeDisc::FTreeDisc() : iAmountCourse(0), dAllSumScore(0.), iAmountDisc(0)
+FTreeDisc::FTreeDisc(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal), iAmountCourse(0), dAllSumScore(0.), iAmountDisc(0)
 {
 	ptrRoot = new FTreeElement;
+	ptrGraph = nullptr; // Только после Read можно строить граф
 }
 
 FTreeDisc::~FTreeDisc()
 {
 	DeleteDFS(ptrRoot);
+	if (ptrGraph)
+		delete ptrGraph;
 }
 
 void FTreeDisc::DeleteDFS(FTreeElement* ptrThis)

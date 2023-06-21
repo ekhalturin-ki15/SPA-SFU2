@@ -31,8 +31,8 @@ struct FConfig
     wstring wsNameLableFile;
     wstring wsNameRibFile;
 
-    wstring wsRegexComp;
-    wstring wsFormula;
+    string sRegexComp;
+    string sFormula;
 
     wstring wsNameDebugFile;
     wstring wsNameLogFile;
@@ -42,6 +42,7 @@ struct FConfig
     bool bReloadLogFile;
     bool bMultiIndicator;
 
+    double dMinWeigthRib;
     int iMaxLen;
     int iWeigthRib;
     int iCourseLen;

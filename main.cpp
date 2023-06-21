@@ -60,17 +60,11 @@ FGlobal* ptrGlobal; //Синглтон
 void Create()
 {
     ptrGlobal = new FGlobal;
-    //ptrError = new ptrError;
-    //ptrGlobal = new ptrGlobal;
-    //fSolve = new FSolve;
 }
 
 void Delete()
 {
     delete ptrGlobal;
-    //delete ptrError;
-	//delete ptrGlobal;
-	//delete fSolve;
 }
 
 int main()
@@ -123,9 +117,12 @@ int main()
                 if (!it.is_directory())
                 {
                     auto sOutName = fOutFile / it.path().filename();
-                    ptrGlobal->ptrSolve->Read(it.path().string(), it.path().filename().string());
+                    ptrGlobal->ptrSolve->Read(it.path().string(), it.path().filename().string());                
                 }
             }
+
+            ptrGlobal->ptrSolve->CreateAllGraph();
+
 
             auto sTotalOutName = fFile / ptrGlobal->ptrConfig->arrNameFileOut[category];// / "TotalData.xlsx";
             ptrGlobal->ptrOutData->Out(sTotalOutName.string());

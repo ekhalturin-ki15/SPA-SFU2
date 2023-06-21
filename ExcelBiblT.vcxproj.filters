@@ -90,5 +90,8 @@
     <ClInclude Include="graph.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="formulaParser.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -10,6 +10,7 @@ struct FError
     static const string sNotFoundKeyCol;
     static const string sNotEqualSum;
     static const string sNotInitConfig;
+    static const string sNotInitSolve;
 
     explicit FError(FGlobal* _ptrGlobal);
     void Init();
@@ -36,6 +37,8 @@ struct FError
     void ErrorNotEqualSum();
 
     void ErrorBadParser();
+
+    void ErrorBadFormula();
 
     void ErrorEmptyLine();
 

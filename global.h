@@ -26,7 +26,6 @@ struct FError;
 struct FConfig;
 struct FSolve;
 struct FOutData;
-struct FGraph;
 
 struct FGlobal
 {
@@ -46,7 +45,11 @@ struct FGlobal
     void TakeData(bool& outBData, const OpenXLSX::XLRow& row); // Возвращение результата через параметры (значение со втрой ячейки)
     void TakeData(vector<wstring>& outArrData, const OpenXLSX::XLRow& row); // Возвращение результата через параметры (значение со втрой ячейки)
     void TakeData(wstring& outWsData, const OpenXLSX::XLRow& row); // Возвращение результата через параметры (значение со втрой ячейки)
+    
+    //Можно объединить следующие 3 функции через шаблон, но тогда придётся реализовывать в .h
+    void TakeData(string& outWsData, const OpenXLSX::XLRow& row); // Возвращение результата через параметры (значение со втрой ячейки)
     void TakeData(int& outIData, const OpenXLSX::XLRow& row); // Возвращение результата через параметры (значение со втрой ячейки)
+    void TakeData(double& outIData, const OpenXLSX::XLRow& row); // Возвращение результата через параметры (значение со втрой ячейки)
 
     vector<pair<wstring, wstring>> SetMapParams(const OpenXLSX::XLWorksheet& fPage);
 
@@ -57,7 +60,7 @@ struct FGlobal
     FConfig* ptrConfig; //Синглтон
     FSolve* ptrSolve; //Синглтон
     FOutData* ptrOutData; //Синглтон
-    FGraph* ptrGraph; //Синглтон
+    //FGraph* ptrGraph; //У каждого УП свой Граф
 
 private:
 

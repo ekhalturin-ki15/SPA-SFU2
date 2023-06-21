@@ -25,14 +25,25 @@ void FGlobal::TakeData(vector<wstring>& outArrData, const OpenXLSX::XLRow& row)
 void FGlobal::TakeData(wstring& outWsData, const OpenXLSX::XLRow& row)
 {
     for (auto& it : row.cells(2, 2)) // Считываем только вторую ячейку
-        outWsData = GetValue(it);
+        outWsData = GetValue(it); // Так как нет value().get<wstring>
+}
+
+void FGlobal::TakeData(string& outWsData, const OpenXLSX::XLRow& row)
+{
+    for (auto& it : row.cells(2, 2)) // Считываем только вторую ячейку
+        outWsData = it.value().get<string>();
 }
 
 void FGlobal::TakeData(int& outIData, const OpenXLSX::XLRow& row)
 {
     for (auto& it : row.cells(2, 2)) // Считываем только вторую ячейку
-        outIData = it.value().get<int>();
-           
+        outIData = it.value().get<int>();       
+}
+
+void FGlobal::TakeData(double& outIData, const OpenXLSX::XLRow& row)
+{
+    for (auto& it : row.cells(2, 2)) // Считываем только вторую ячейку
+        outIData = it.value().get<double>();
 }
 
 vector<pair<wstring, wstring>> FGlobal::SetMapParams(const OpenXLSX::XLWorksheet& fPage)

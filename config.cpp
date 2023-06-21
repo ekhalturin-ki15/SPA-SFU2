@@ -2,13 +2,13 @@
 
 
 FConfig::FConfig(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
-,iCourseLen(2), iMaxLen(15), iIgnoreEmptyLine(5) ,iWeigthRib(10)
+,iCourseLen(2), iMaxLen(15), iIgnoreEmptyLine(5) ,iWeigthRib(10), dMinWeigthRib(0.01)
 ,bCreateFolder(false), bCompactOutput(false), bReloadLogFile(false), bMultiIndicator(false)
 ,wsNameConfig(L"./config.xlsx"), wsNamePage(L"Параметры")
 , wsNameLableFile(L"Id,Label"), wsNameRibFile(L"Source,Target,Type,Kind,Id,Label,timeset,Weight")
 , arrNameFileIn({ L"plans/grad" }), arrNameFileOut({ L"result/grad" })
 , wsNameDebugFile(L"debugFile.txt"), wsNameLogFile(L"logFile.txt")
-, wsRegexComp(L" {0,1}(.{0,}?);"), wsFormula(L"((L + R) / 2) * K")
+, sRegexComp("{0, 1}(.{0, } ? ); "), sFormula("((L + R) / 2) * K")
 {
 }
 
@@ -105,6 +105,13 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
         return;
     }
 
+    wsPatern = L"Создавать ребро, если его вес больше X=";
+    if (wsKey == wsPatern)
+    {
+        ptrGlobal->TakeData(dMinWeigthRib, row);
+        return;
+    }
+
     wsPatern = L"Размер рёбер";
     if (wsKey == wsPatern)
     {
@@ -158,14 +165,14 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
     wsPatern = L"Регулярное выражения разбивки строки ([Компетенции(2)] Формируемые компетенции)";
     if (wsKey == wsPatern)
     {
-        ptrGlobal->TakeData(wsRegexComp, row);
+        ptrGlobal->TakeData(sRegexComp, row);
         return;
     }
 
     wsPatern = L"Формула расчёта весов рёбер";
     if (wsKey == wsPatern)
     {
-        ptrGlobal->TakeData(wsFormula, row);
+        ptrGlobal->TakeData(sFormula, row);
         return;
     }
     

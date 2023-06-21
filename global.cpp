@@ -12,13 +12,13 @@ FGlobal::FGlobal()
 	ptrSolve = new FSolve(this);
 	ptrError = new FError(this);
 	ptrOutData = new FOutData(this);
-	ptrGraph = new FGraph(this);
+	//ptrGraph = new FGraph(this);
 
 	ptrConfig->Init();
 	ptrSolve->Init();
 	ptrError->Init();
 	ptrOutData->Init();
-	ptrGraph->Init();
+	//ptrGraph->Init();
 
 	mapTranslit =
 	{
@@ -264,4 +264,7 @@ FGlobal::~FGlobal()
 	delete ptrError;
 	delete ptrConfig;
 	delete ptrSolve;
+	delete ptrOutData;
+
+	//delete ptrGraph;
 }

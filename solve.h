@@ -4,7 +4,7 @@
 #include "solveSecondPage.h"
 
 struct FGlobal;
-
+struct FGraph;
 
 //struct FSemesterScore
 //{
@@ -14,7 +14,7 @@ struct FGlobal;
 
 struct FTreeElement
 {
-	FTreeElement();
+	explicit FTreeElement();
 
 	bool bAllow; //Учитывать ли при подсчёте зачётных единиц (ЗЕ)
 	double dSumScore; // Количество зачётных единиц (ЗЕ)
@@ -26,12 +26,11 @@ struct FTreeElement
 	FTreeElement* ptrParent;
 	vector<FTreeElement*> arrChild;  //Дисциплины внутри модуля
 	map<string, vector<string>> mapComp; // Компетенции, у каждой из которых перечень индикаторов
-
 };
 
 struct FTreeDisc
 {
-	FTreeDisc();
+	explicit FTreeDisc(FGlobal* _ptrGlobal);
 	~FTreeDisc();
 
 	void CountDisc();
@@ -49,6 +48,11 @@ struct FTreeDisc
 	void dFindAllScore(double& outDSum, int& outIAmountDisc); //Вывод через параметры
 	void dFindAllScore(double& outDSum);
 
+	FGraph* ptrGraph; //У каждого УП свой объект класса Graph
+
+	//Добавил, чтобы можно было обращаться к Config
+	FGlobal* ptrGlobal; //Синглтон
+
 private:
 	void DeleteDFS(FTreeElement* ptrThis); // Поиск в глубину для очистки памяти
 };
@@ -60,8 +64,13 @@ struct FSolve
 
 	void Init();
 
+	//Основная функция
 	bool Read(string sInPath, string sNamePlan);
 
+	//Использовать только после полного считывания, строит Графы всем УП из arrDisc
+	void CreateAllGraph();
+
+public:
 	vector<FTreeDisc*> arrDisc; // Указатели на все УП, которые считали (все они одновременно хранятся в памяти)
 
 	int iCurrentPage; // Какая по счёту страница обрабатывается в данный момент
@@ -81,6 +90,7 @@ private:
 	void CreateDiscTree(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageNumber); // Находится в solveZeroPage.cpp 
 	void AddCompIndicator(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageNumber); // Находится в solveFirstPage.cpp
 
+	//В solveSecondPage.h и solveSecondPage.cpp 
 	FSolveSecondPage* ptrSolveSecondPage; //Композиция (вынес в отдельный класс, так как много методов)
 	FGlobal* ptrGlobal; //Синглтон
 	regex fRegexComp;

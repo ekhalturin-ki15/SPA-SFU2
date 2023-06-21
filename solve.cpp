@@ -2,8 +2,9 @@
 #include "error.h"
 #include "config.h"
 #include "global.h"
+#include "graph.h"
 
-FSolve::FSolve(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
+FSolve::FSolve(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal), bIsCorrectParsing(true), iCurrentPage(0), iCurrentRow(0)
 {
 	ptrSolveSecondPage = new FSolveSecondPage(_ptrGlobal);
 	//fSolveSecondPage.ptrGlobal = _ptrGlobal;
@@ -11,7 +12,7 @@ FSolve::FSolve(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
 
 void FSolve::Init()
 {
-	fRegexComp = (ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->wsRegexComp));
+	fRegexComp = ptrGlobal->ptrConfig->sRegexComp;
 }
 
 void FSolve::ClearTreeDisc()
@@ -102,6 +103,15 @@ bool FSolve::Read(string _sInPath, string sNamePlan)
 	fDoc.close();
 
 	return bIsCorrectParsing;
+}
+
+void FSolve::CreateAllGraph()
+{
+	for (auto& it : arrDisc)
+	{
+		it->ptrGraph = new FGraph(it);
+		it->ptrGraph->Create(); //А теперь, построй граф на основе УП
+	}
 }
 
 FSolve::~FSolve()

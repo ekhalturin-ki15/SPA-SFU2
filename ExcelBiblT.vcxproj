@@ -160,13 +160,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="config.cpp" />
+    <ClCompile Include="formulaParser.cpp" />
     <ClCompile Include="globalAdd.cpp" />
     <ClCompile Include="error.cpp" />
     <ClCompile Include="global.cpp" />
     <ClCompile Include="graph.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="outData.cpp" />
-    <ClCompile Include="formulaParser.cpp" />
     <ClCompile Include="solve.cpp">
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/utf-8 </AdditionalOptions>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">/utf-8 </AdditionalOptions>
@@ -182,6 +182,7 @@
   <ItemGroup>
     <ClInclude Include="config.h" />
     <ClInclude Include="error.h" />
+    <ClInclude Include="formulaParser.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="graph.h" />
     <ClInclude Include="outData.h" />

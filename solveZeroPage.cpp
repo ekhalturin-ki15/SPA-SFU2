@@ -13,7 +13,7 @@ void FSolve::CreateDiscTree(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageNum
 	int iIdName = -1;
 	int iIdComp = -1;
 
-	FTreeDisc* ptrTree = new FTreeDisc;
+	FTreeDisc* ptrTree = new FTreeDisc(ptrGlobal);
 	arrDisc.push_back(ptrTree);
 
 	FTreeElement* ptrThis = ptrTree->ptrRoot;

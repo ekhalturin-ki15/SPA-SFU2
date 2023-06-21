@@ -7,7 +7,7 @@ const string FError::sDontHaveIndex = "Dont have index";
 const string FError::sNotFoundKeyCol = "Key column not found";
 const string FError::sNotEqualSum = "Lack of links between disciplines"; //Не хватает связей между дисциплинами
 const string FError::sNotInitConfig = "Not init Config pointer";//Нужны данные с config, а он ещё не создан (например, такая ошибка может быть в FGlobal::HeightPage)
-
+const string FError::sNotInitSolve = "Not init Solve pointer";
 FError::FError(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
 {
 }
@@ -139,6 +139,14 @@ void FError::ErrorBadParser()
 	ofstream out = OutHeader();
 
 	out << "В учебном плане " + ptrGlobal->ptrSolve->sInPath + " у одной из дисциплин не указан индекс";
+	out << END;
+	out.close();
+}
+
+void FError::ErrorBadFormula()
+{
+	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
+	out << "Неправильная формула для расчёта весов рёбер в файле config.xlsx";
 	out << END;
 	out.close();
 }
