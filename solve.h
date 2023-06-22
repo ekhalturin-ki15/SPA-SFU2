@@ -5,6 +5,7 @@
 
 struct FGlobal;
 struct FGraph;
+struct FMetric;
 
 //struct FSemesterScore
 //{
@@ -17,6 +18,8 @@ struct FTreeElement
 	explicit FTreeElement();
 
 	bool bAllow; //Учитывать ли при подсчёте зачётных единиц (ЗЕ)
+	bool bNotIgnore; //Если предмет входит в перечень игнорируемых
+
 	double dSumScore; // Количество зачётных единиц (ЗЕ)
 	map<int, double> mapCourseScore; // В каком семестре (ключ) сколько ЗЕ (значение)
 
@@ -35,6 +38,9 @@ struct FTreeDisc
 
 	void CountDisc();
 
+	//Получить только дисциплины (без модулей)
+	map<wstring, FTreeElement*> GewMapAllowDisc(bool IsNecessaryAllow, bool IsNecessaryNotIgnore);
+
 	FTreeElement* ptrRoot;
 	map<wstring, FTreeElement*> mapDisc; //Поиск указателя на дисциплину по её индексу
 	string sNamePlan;
@@ -47,8 +53,9 @@ struct FTreeDisc
 
 	void dFindAllScore(double& outDSum, int& outIAmountDisc); //Вывод через параметры
 	void dFindAllScore(double& outDSum);
-
-	FGraph* ptrGraph; //У каждого УП свой объект класса Graph
+	
+	FMetric* ptrMetric; //У каждого УП свой объект класса FMetric
+	FGraph* ptrGraph; //У каждого УП свой объект класса FGraph
 
 	//Добавил, чтобы можно было обращаться к Config
 	FGlobal* ptrGlobal; //Синглтон
@@ -69,6 +76,9 @@ struct FSolve
 
 	//Использовать только после полного считывания, строит Графы всем УП из arrDisc
 	void CreateAllGraph();
+
+	//Использовать только после полного считывания, строит Графы всем УП из arrDisc
+	void CreateAllMetric();
 
 public:
 	vector<FTreeDisc*> arrDisc; // Указатели на все УП, которые считали (все они одновременно хранятся в памяти)

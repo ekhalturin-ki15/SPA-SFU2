@@ -27,11 +27,13 @@ struct FConfig
 
     vector<wstring> arrNameFileOut;
     map< wstring, wstring > mapOutParams;
+    set< wstring > setIgnoreDisc;
 
     wstring wsNameLableFile;
     wstring wsNameRibFile;
 
     string sRegexComp;
+    string sRegexHeaderComp;
     string sFormula;
 
     wstring wsNameDebugFile;

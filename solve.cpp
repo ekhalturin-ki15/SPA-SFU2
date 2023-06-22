@@ -3,6 +3,7 @@
 #include "config.h"
 #include "global.h"
 #include "graph.h"
+#include "metric.h"
 
 FSolve::FSolve(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal), bIsCorrectParsing(true), iCurrentPage(0), iCurrentRow(0)
 {
@@ -114,6 +115,15 @@ void FSolve::CreateAllGraph()
 	}
 }
 
+void FSolve::CreateAllMetric()
+{
+	for (auto& it : arrDisc)
+	{
+		it->ptrMetric = new FMetric(it);
+		it->ptrMetric->Create(); //А теперь, посчитай метрики УП
+	}
+}
+
 FSolve::~FSolve()
 {
 	for (auto& it : arrDisc)
@@ -121,3 +131,4 @@ FSolve::~FSolve()
 
 	delete ptrSolveSecondPage;
 }
+

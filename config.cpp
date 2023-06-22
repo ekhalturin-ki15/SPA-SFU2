@@ -162,10 +162,17 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
     }
 
 
-    wsPatern = L"Регулярное выражения разбивки строки ([Компетенции(2)] Формируемые компетенции)";
+    wsPatern = L"Регулярное выражение разбивки строки ([Компетенции(2)] Формируемые компетенции)";
     if (wsKey == wsPatern)
     {
         ptrGlobal->TakeData(sRegexComp, row);
+        return;
+    }
+
+    wsPatern = L"Регулярное выражение поиска заголовка компетенции";
+    if (wsKey == wsPatern)
+    {
+        ptrGlobal->TakeData(sRegexHeaderComp, row);
         return;
     }
 
@@ -224,6 +231,27 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
         }
         return;
         
+    }
+
+    wsPatern = L"Игнорируемые предметы (название страницы)";
+    if (wsKey == wsPatern)
+    {
+        setIgnoreDisc.clear();
+        int i = -1; for (auto& page : row.cells())
+        {
+            i++;
+            if (i)
+            {
+                wstring wsNamePage = ptrGlobal->GetValue(page);
+                for (auto& [key, val] :
+                    ptrGlobal->SetMapParams(fBook.worksheet(ptrGlobal->ConwertToString(wsNamePage)))
+                    )
+                {
+                    setIgnoreDisc.insert(key);
+                }
+            }
+        }
+        return;
     }
 
 }

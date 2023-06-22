@@ -5,25 +5,19 @@
 using namespace std;
 struct FTreeDisc;
 
-struct FGraph
+//Класс похож на FGraph по идеологии, но в нём другие данные
+struct FMetric
 {
 	//Инверсия зависимости
-	explicit FGraph(FTreeDisc* _ptrTree);
+	explicit FMetric(FTreeDisc* _ptrTree);
 
 	//Использовать только после вызова Read у ptrSolve, то есть, когда ptrTree заполнен
 	void Create();
 
-	//Сопоставление id его названия (инициализируются в конструкторе)
-	vector<wstring> arrRel;
-
-	//Сопоставление названию его id (инициализируются в конструкторе)
-	map < wstring, int> mapReversRel;
-
-	vector< vector <pair<int, double>>> fAdjacency;
-
-
 private:
-	FTreeDisc* ptrTree; 
+	FTreeDisc* ptrTree;
+	regex fRegexHeaderComp;
 
 	map<wstring, FTreeElement*> mapAllowDisc; //Оставляем только разрешённые дисциплины (без модулей) для анализа
 };
+

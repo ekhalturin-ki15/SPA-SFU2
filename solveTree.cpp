@@ -2,6 +2,8 @@
 #include "error.h"
 #include "config.h"
 #include "global.h"
+#include "graph.h"
+#include "metric.h"
 
 FTreeElement::FTreeElement() : dSumScore(0.), wsName(L""), wsIndexName(L""), ptrParent(nullptr), bAllow(true)
 {
@@ -11,13 +13,20 @@ FTreeDisc::FTreeDisc(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal), iAmountCourse
 {
 	ptrRoot = new FTreeElement;
 	ptrGraph = nullptr; // Только после Read можно строить граф
+	ptrMetric = nullptr;// Только после Read высчитывать метрики
 }
 
 FTreeDisc::~FTreeDisc()
 {
 	DeleteDFS(ptrRoot);
 	if (ptrGraph)
+	{
 		delete ptrGraph;
+	}
+	if (ptrMetric)
+	{
+		delete ptrMetric;
+	}
 }
 
 void FTreeDisc::DeleteDFS(FTreeElement* ptrThis)
@@ -68,4 +77,23 @@ void FTreeDisc::CountDisc()
 		}
 	}
 	return;
+}
+
+map<wstring, FTreeElement*> FTreeDisc::GewMapAllowDisc(bool IsNecessaryAllow, bool IsNecessaryNotIgnore)
+{
+	map<wstring, FTreeElement*> mapReturn;
+	for (const auto& [key, it] : mapDisc)
+	{
+		if (it->arrChild.size() == 0)
+		{
+			if (IsNecessaryNotIgnore)
+				if (!it->bNotIgnore) continue;
+
+			if (IsNecessaryAllow)
+				if (!it->bAllow) continue;
+
+			mapReturn[key] = it;
+		}
+	}
+	return mapReturn;
 }

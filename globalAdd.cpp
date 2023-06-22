@@ -65,11 +65,12 @@ vector<pair<wstring, wstring>> FGlobal::SetMapParams(const OpenXLSX::XLWorksheet
                 if (i == 0)
                 {
                     wsKeyName = GetValue(column);
+                    arrReturn.push_back({ wsKeyName , L"" });
                 }
                 else
                 {
                     wsRename = GetValue(column);
-                    arrReturn.push_back({ wsKeyName , wsRename });
+                    arrReturn.back().second = wsRename;
                 }
             }
         }

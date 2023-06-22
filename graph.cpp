@@ -8,11 +8,13 @@
 //Инверсия зависимости
 FGraph::FGraph(FTreeDisc* _ptrTree) : ptrTree(_ptrTree)
 {
-	arrRel.resize(_ptrTree->mapDisc.size());
-	fAdjacency.resize(_ptrTree->mapDisc.size());
+	mapAllowDisc = _ptrTree->GewMapAllowDisc(true, true);
+
+	arrRel.resize(mapAllowDisc.size());
+	fAdjacency.resize(mapAllowDisc.size());
 
 	int i = 0;
-	for (auto& [key, it] : _ptrTree->mapDisc)
+	for (auto& [key, it] : mapAllowDisc)
 	{
 		arrRel[i] = key;
 		mapReversRel[key] = i;
@@ -22,14 +24,12 @@ FGraph::FGraph(FTreeDisc* _ptrTree) : ptrTree(_ptrTree)
 
 void FGraph::Create()
 {
-
-
 	FormulaParser fFormulaParser(
 		ptrTree->ptrGlobal->ptrConfig->sFormula
 		, ptrTree->dAllSumScore, ptrTree->iAmountDisc);
 
 	int iL = -1;
-	for (auto& [keyL, L] : ptrTree->mapDisc)
+	for (auto& [keyL, L] : mapAllowDisc)
 	{
 		++iL;
 
@@ -37,7 +37,7 @@ void FGraph::Create()
 		if (L->arrChild.size()) continue;
 
 		int iR = -1;
-		for (auto& [keyR, R] : ptrTree->mapDisc)
+		for (auto& [keyR, R] : mapAllowDisc)
 		{
 			++iR;
 

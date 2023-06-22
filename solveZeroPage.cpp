@@ -95,6 +95,7 @@ void FSolve::CreateDiscTree(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageNum
 						{
 							bReadName = true;
 							ptrNewNode->wsName = wsData;
+							ptrNewNode->bNotIgnore = !(ptrGlobal->ptrConfig->setIgnoreDisc.count(wsData));
 							continue;
 						}
 						else
