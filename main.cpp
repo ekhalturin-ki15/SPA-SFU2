@@ -4,6 +4,7 @@
 // Префикс ws - строка UTF 16 (wstring)
 // Префикс arr - массив элементов (vector)
 // Префикс map - словарь (map)
+// Префикс set - множество (set)
 // Префикс b - флаг (bool)
 // Префикс i - число (int)
 // Префикс d - вещественное число (double)
@@ -122,7 +123,7 @@ int main()
             }
 
             ptrGlobal->ptrSolve->CreateAllGraph();
-
+            ptrGlobal->ptrSolve->CreateAllMetric(); // Метрики не связаны с графом
 
             auto sTotalOutName = fFile / ptrGlobal->ptrConfig->arrNameFileOut[category];// / "TotalData.xlsx";
             ptrGlobal->ptrOutData->Out(sTotalOutName.string());

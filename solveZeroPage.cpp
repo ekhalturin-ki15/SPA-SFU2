@@ -106,8 +106,7 @@ void FSolve::CreateDiscTree(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageNum
 
 								vector<smatch> matches{
 									sregex_iterator{ALL(sParsingData), fRegexComp},
-									sregex_iterator{}
-								};
+									sregex_iterator{}};
 
 
 								for (auto sData : matches)
@@ -119,6 +118,17 @@ void FSolve::CreateDiscTree(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageNum
 
 									ptrNewNode->mapComp[sCompName] = {};
 									ptrTree->fAllComp.insert(sCompName);
+
+									vector<smatch> matchesHeader{
+										sregex_iterator{ALL(sCompName), fRegexHeaderComp},
+											sregex_iterator{}};
+
+									for (auto sData : matchesHeader)
+									{
+										string sCompHeaderName = sData[1].str();
+										setHeaderComp.insert(sCompHeaderName);
+									}
+
 								}
 								break;
 							}

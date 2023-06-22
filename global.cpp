@@ -15,8 +15,8 @@ FGlobal::FGlobal()
 	//ptrGraph = new FGraph(this);
 
 	ptrConfig->Init();
-	ptrSolve->Init();
 	ptrError->Init();
+	ptrSolve->Init();
 	ptrOutData->Init();
 	//ptrGraph->Init();
 

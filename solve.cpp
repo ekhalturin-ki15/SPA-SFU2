@@ -13,7 +13,23 @@ FSolve::FSolve(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal), bIsCorrectParsing(t
 
 void FSolve::Init()
 {
-	fRegexComp = ptrGlobal->ptrConfig->sRegexComp;
+	try
+	{
+		fRegexComp = ptrGlobal->ptrConfig->sRegexComp;
+	}
+	catch (...)
+	{
+		ptrGlobal->ptrError->ErrorBadRegex("Регулярное выражение разбивки строки ([Компетенции(2)] Формируемые компетенции)");
+	}
+
+	try
+	{
+		fRegexHeaderComp = ptrGlobal->ptrConfig->sRegexHeaderComp;
+	}
+	catch (...)
+	{
+		ptrGlobal->ptrError->ErrorBadRegex("Регулярное выражение поиска заголовка компетенции");
+	}
 }
 
 void FSolve::ClearTreeDisc()

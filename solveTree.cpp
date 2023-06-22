@@ -5,7 +5,7 @@
 #include "graph.h"
 #include "metric.h"
 
-FTreeElement::FTreeElement() : dSumScore(0.), wsName(L""), wsIndexName(L""), ptrParent(nullptr), bAllow(true)
+FTreeElement::FTreeElement() : dSumScore(0.), wsName(L""), wsIndexName(L""), ptrParent(nullptr), bAllow(true), bNotIgnore(true)
 {
 }
 

@@ -8,7 +8,7 @@ FConfig::FConfig(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
 , wsNameLableFile(L"Id,Label"), wsNameRibFile(L"Source,Target,Type,Kind,Id,Label,timeset,Weight")
 , arrNameFileIn({ L"plans/grad" }), arrNameFileOut({ L"result/grad" })
 , wsNameDebugFile(L"debugFile.txt"), wsNameLogFile(L"logFile.txt")
-, sRegexComp("{0, 1}(.{0, } ? ); "), sFormula("((L + R) / 2) * K")
+, sRegexComp("{0, 1}(.{0, } ? ); "), sRegexHeaderComp("(.{1,})-"), sFormula("((L + R) / 2) * K")
 {
 }
 

@@ -8,7 +8,7 @@ const string FError::sNotFoundKeyCol = "Key column not found";
 const string FError::sNotEqualSum = "Lack of links between disciplines"; //Не хватает связей между дисциплинами
 const string FError::sNotInitConfig = "Not init Config pointer";//Нужны данные с config, а он ещё не создан (например, такая ошибка может быть в FGlobal::HeightPage)
 const string FError::sNotInitSolve = "Not init Solve pointer";
-FError::FError(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
+FError::FError(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal), bIsPrint(false)
 {
 }
 
@@ -143,12 +143,29 @@ void FError::ErrorBadParser()
 	out.close();
 }
 
+void FError::ErrorBadRegex(string sName)
+{
+	if (!setBadRegexName.count(sName))
+	{
+		setBadRegexName.insert(sName);
+		ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
+		out << "!! Неправильная регулярное выражение в файле config.xlsx ";
+		out << sName;
+		out << END;
+		out.close();
+	}
+}
+
 void FError::ErrorBadFormula()
 {
-	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
-	out << "Неправильная формула для расчёта весов рёбер в файле config.xlsx";
-	out << END;
-	out.close();
+	if (!bIsPrint)
+	{
+		bIsPrint = true;
+		ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
+		out << "!! Неправильная формула для расчёта весов рёбер в файле config.xlsx";
+		out << END;
+		out.close();
+	}
 }
 
 void FError::ErrorEmptyLine()

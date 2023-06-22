@@ -39,6 +39,10 @@ struct FError
     void ErrorBadParser();
 
     void ErrorBadFormula();
+    bool bIsPrint; // Выводим один раз (пока false)
+
+    void ErrorBadRegex(string sName);
+    set<string> setBadRegexName;
 
     void ErrorEmptyLine();
 

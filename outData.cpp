@@ -21,12 +21,24 @@ void FOutData::Out(string sOutPath)
 	auto wks = fOutFile.workbook().worksheet("Total Data");
 
 	int i = 0; //Задаём порядок вывода
-	for (const auto& it : vector<wstring>{ L"Название учебного плана" , L"Всего ЗЕ" , L"Кол-во дисциплин"
-		, L"(Расш.) Общее колв-о ЗЕ в УП" , L"(Расш.) Кол-во дисциплин в УП" })
+
+	vector<wstring> arrHead = { L"Название учебного плана", L"Всего ЗЕ", L"Кол-во дисциплин"
+		, L"(Расш.) Общее колв-о ЗЕ в УП", L"(Расш.) Кол-во дисциплин в УП" };
+
+	for (auto& it : ptrGlobal->ptrSolve->setHeaderComp)
+	{
+		arrHead.push_back(ptrGlobal->ConwertToWstring(it));
+	}
+
+	for (const auto& it : arrHead)
 
 	{
 		++i; // Начинаем с 1
-		wks.cell(1, i).value() = ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->mapOutParams[it]);
+		if (ptrGlobal->ptrConfig->mapOutParams.count(it))
+			wks.cell(1, i).value() = ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->mapOutParams[it]);
+		else
+			wks.cell(1, i).value() = ptrGlobal->ConwertToString(it);
+	
 	}
 	int x = 1, y = 2;
 

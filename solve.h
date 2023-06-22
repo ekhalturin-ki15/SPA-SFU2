@@ -91,6 +91,8 @@ public:
 	string sInPath; // Для отладки
 	string sOutPath;
 
+	set< string > setHeaderComp; //Все заголовки компетенций (УК, ПК, ОПК). Нужно для вывода
+
 private:
 
 	void ClearTreeDisc();
@@ -104,6 +106,7 @@ private:
 	FSolveSecondPage* ptrSolveSecondPage; //Композиция (вынес в отдельный класс, так как много методов)
 	FGlobal* ptrGlobal; //Синглтон
 	regex fRegexComp;
+	regex fRegexHeaderComp;
 };
 
 

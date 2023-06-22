@@ -14,6 +14,12 @@ struct FMetric
 	//Использовать только после вызова Read у ptrSolve, то есть, когда ptrTree заполнен
 	void Create();
 
+	map<string, int> mapCompDistr;
+
+	// Так как у одного предмета могут быть несколько групп компетенций (и УК и ОПК), то сумма % будет больше 100 (из-за пересечений)
+
+	int iBalancAmountComp;
+
 private:
 	FTreeDisc* ptrTree;
 	regex fRegexHeaderComp;
