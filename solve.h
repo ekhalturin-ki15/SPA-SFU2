@@ -95,6 +95,8 @@ public:
 
 private:
 
+	static int iSinglControll;
+
 	void ClearTreeDisc();
 
 	// По идеи, там передаётся всегда this->iKeyPageNumber

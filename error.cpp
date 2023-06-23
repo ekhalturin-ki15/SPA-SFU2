@@ -8,8 +8,14 @@ const string FError::sNotFoundKeyCol = "Key column not found";
 const string FError::sNotEqualSum = "Lack of links between disciplines"; //Не хватает связей между дисциплинами
 const string FError::sNotInitConfig = "Not init Config pointer";//Нужны данные с config, а он ещё не создан (например, такая ошибка может быть в FGlobal::HeightPage)
 const string FError::sNotInitSolve = "Not init Solve pointer";
+
+int FError::iSinglControll = 0;
+
 FError::FError(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal), bIsPrint(false)
 {
+	if (iSinglControll > 0)
+		throw std::runtime_error("Re-creation Singleton");
+	++iSinglControll;
 }
 
 void FError::Init()
@@ -239,4 +245,9 @@ void FError::WAParsing()
 	out << END;
 	out << END;
 	out.close();
+}
+
+FError::~FError()
+{
+	--iSinglControll;
 }

@@ -27,6 +27,7 @@ struct FConfig;
 struct FSolve;
 struct FOutData;
 
+//Паттерн фасад
 struct FGlobal
 {
 
@@ -63,6 +64,8 @@ struct FGlobal
     //FGraph* ptrGraph; //У каждого УП свой Граф
 
 private:
+
+    static int iSinglControll;
 
     std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> fConverterToWString1;
     std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> fConverterToString2;

@@ -13,6 +13,7 @@ struct FError
     static const string sNotInitSolve;
 
     explicit FError(FGlobal* _ptrGlobal);
+    ~FError();
     void Init();
         
     void ErrorInFileNotFind(string sPathName);// Если ошибки при открытии файла в виде zip
@@ -60,6 +61,8 @@ struct FError
     void WAParsing(); // WA - wrong answer
 
 private:
+
+    static int iSinglControll;
 
     ofstream OutHeader();
 

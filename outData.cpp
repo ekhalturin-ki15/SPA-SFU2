@@ -3,6 +3,8 @@
 #include "solve.h"
 #include "config.h"
 #include "error.h"
+#include "graph.h"
+#include "metric.h"
 
 FOutData::FOutData(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
 {
@@ -25,9 +27,9 @@ void FOutData::Out(string sOutPath)
 	vector<wstring> arrHead = { L"Название учебного плана", L"Всего ЗЕ", L"Кол-во дисциплин"
 		, L"(Расш.) Общее колв-о ЗЕ в УП", L"(Расш.) Кол-во дисциплин в УП" };
 
-	for (auto& it : ptrGlobal->ptrSolve->setHeaderComp)
+	for (auto& sHeaderComp : ptrGlobal->ptrSolve->setHeaderComp)
 	{
-		arrHead.push_back(ptrGlobal->ConwertToWstring(it));
+		arrHead.push_back(ptrGlobal->ConwertToWstring(sHeaderComp));
 	}
 
 	for (const auto& it : arrHead)
@@ -55,6 +57,25 @@ void FOutData::Out(string sOutPath)
 		it->dFindAllScore(dSumScoreExt, iAmountDiscExt);
 		wks.cell(y, x++).value() = dSumScoreExt;
 		wks.cell(y, x++).value() = iAmountDiscExt;
+
+		for (auto& sHeaderComp : ptrGlobal->ptrSolve->setHeaderComp)
+		{
+			if (it->ptrMetric)
+			{
+				double dRes =
+					(ptrGlobal->ptrConfig->bCompInterDelete) ?
+					it->ptrMetric->mapCompDistr[sHeaderComp] / double(it->ptrMetric->iBalancAmountComp) :
+					it->ptrMetric->mapCompDistr[sHeaderComp] / double(it->iAmountDisc);
+
+				wks.cell(y, x++).value() = to_string(dRes * 100) + "%";
+			}
+			else
+			{
+				x++; //В холостую пропускаем столбцы, они не будут заполнены
+			}
+
+		}
+		
 
 		++y;
 	}

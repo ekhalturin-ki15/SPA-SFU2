@@ -1,15 +1,21 @@
 ﻿#include "config.h"
 
 
+int FConfig::iSinglControll = 0;
+
 FConfig::FConfig(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
 ,iCourseLen(2), iMaxLen(15), iIgnoreEmptyLine(5) ,iWeigthRib(10), dMinWeigthRib(0.01)
-,bCreateFolder(false), bCompactOutput(false), bReloadLogFile(false), bMultiIndicator(false)
+,bCreateFolder(true), bCompactOutput(true), bReloadLogFile(true)
+, bMultiIndicator(true), bCompInterDelete(true)
 ,wsNameConfig(L"./config.xlsx"), wsNamePage(L"Параметры")
 , wsNameLableFile(L"Id,Label"), wsNameRibFile(L"Source,Target,Type,Kind,Id,Label,timeset,Weight")
 , arrNameFileIn({ L"plans/grad" }), arrNameFileOut({ L"result/grad" })
 , wsNameDebugFile(L"debugFile.txt"), wsNameLogFile(L"logFile.txt")
 , sRegexComp("{0, 1}(.{0, } ? ); "), sRegexHeaderComp("(.{1,})-"), sFormula("((L + R) / 2) * K")
 {
+    if (iSinglControll > 0)
+        throw std::runtime_error("Re-creation Singleton");
+    ++iSinglControll;
 }
 
 void FConfig::Init()
@@ -147,6 +153,13 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
         return;
     }
 
+    wsPatern = L"Если у предмета несколько групп компетенций, учитывать пересечение дважды (для 100% суммы)";
+    if (wsKey == wsPatern)
+    {
+        ptrGlobal->TakeData(bCompInterDelete, row);
+        return;
+    }
+
     wsPatern = L"Перезаписывать лог файл";
     if (wsKey == wsPatern)
     {
@@ -279,4 +292,10 @@ vector<set<wstring>> FConfig::SetParsingParams(OpenXLSX::XLWorksheet& fPage)
         }
     }
     return arrResult;
+}
+
+
+FConfig::~FConfig()
+{
+    --iSinglControll;
 }

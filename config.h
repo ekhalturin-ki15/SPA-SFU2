@@ -20,6 +20,7 @@ struct Alias
 struct FConfig
 {
     explicit FConfig(FGlobal* _ptrGlobal);
+    ~FConfig();
 
     vector<FPageInfo> arrKeyPage;
 
@@ -43,6 +44,7 @@ struct FConfig
     bool bCompactOutput;
     bool bReloadLogFile;
     bool bMultiIndicator;
+    bool bCompInterDelete;
 
     double dMinWeigthRib;
     int iMaxLen;
@@ -58,6 +60,8 @@ struct FConfig
     Alias fAlias; //Явная композиция
 
 private:
+
+    static int iSinglControll;
 
     void SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XLRow row);
     vector<set<wstring>> SetParsingParams(OpenXLSX::XLWorksheet& fPage);

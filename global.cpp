@@ -6,8 +6,14 @@
 #include "outData.h"
 #include "graph.h"
 
+int FGlobal::iSinglControll = 0;
+
 FGlobal::FGlobal()
 {
+	if (iSinglControll > 0)
+		throw std::runtime_error("Re-creation Singleton");
+	++iSinglControll;
+
 	ptrConfig = new FConfig(this);
 	ptrSolve = new FSolve(this);
 	ptrError = new FError(this);
@@ -265,6 +271,6 @@ FGlobal::~FGlobal()
 	delete ptrConfig;
 	delete ptrSolve;
 	delete ptrOutData;
-
+	--iSinglControll;
 	//delete ptrGraph;
 }

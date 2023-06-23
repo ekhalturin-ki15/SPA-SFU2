@@ -5,8 +5,14 @@
 #include "graph.h"
 #include "metric.h"
 
+int FSolve::iSinglControll = 0;
+
 FSolve::FSolve(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal), bIsCorrectParsing(true), iCurrentPage(0), iCurrentRow(0)
 {
+	if (iSinglControll > 0)
+		throw std::runtime_error("Re-creation Singleton");
+	++iSinglControll;
+
 	ptrSolveSecondPage = new FSolveSecondPage(_ptrGlobal);
 	//fSolveSecondPage.ptrGlobal = _ptrGlobal;
 }
@@ -146,5 +152,6 @@ FSolve::~FSolve()
 		delete it;
 
 	delete ptrSolveSecondPage;
+	--iSinglControll;
 }
 
