@@ -10,8 +10,9 @@ FOutData::FOutData(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
 {
 }
 
-void FOutData::Init()
+bool FOutData::Init()
 {
+	return true;
 }
 
 void FOutData::Out(string sOutPath)

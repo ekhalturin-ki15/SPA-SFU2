@@ -34,6 +34,8 @@ struct FGlobal
     explicit FGlobal();
     ~FGlobal();
 
+    bool Init();
+
     wstring GetValue(const OpenXLSX::XLCell& cell);
 
     wstring ConwertToWstring(string sData); //Придётся постоянно конвертировать, так как мы точно не знаем, 

@@ -14,7 +14,7 @@ struct FError
 
     explicit FError(FGlobal* _ptrGlobal);
     ~FError();
-    void Init();
+    bool Init();
         
     void ErrorInFileNotFind(string sPathName);// Если ошибки при открытии файла в виде zip
     void ErrorInFileNotFind(wstring wsPathName);// Если ошибки при открытии файла в виде zip
@@ -24,6 +24,8 @@ struct FError
 
     void ErrorOutFileCreate(string wsPathName);
     void ErrorOutFileCreate(wstring wsPathName);
+
+    void ErrorNotFoundConfig();
 
     void FatalErrorFewConfigPages();
 

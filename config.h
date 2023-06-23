@@ -55,7 +55,7 @@ struct FConfig
     std::wstring wsNameConfig; // "Параметры"
     std::wstring wsNamePage; 
 
-    void Init();
+    bool Init();
 
     Alias fAlias; //Явная композиция
 

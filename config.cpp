@@ -1,5 +1,5 @@
 ﻿#include "config.h"
-
+#include "error.h"
 
 int FConfig::iSinglControll = 0;
 
@@ -18,13 +18,20 @@ FConfig::FConfig(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
     ++iSinglControll;
 }
 
-void FConfig::Init()
+bool FConfig::Init()
 {
 
     OpenXLSX::XLDocument fDoc;
     OpenXLSX::XLWorkbook fBook;
-
-    fDoc.open(ptrGlobal->ConwertToString(wsNameConfig));
+    try
+    {
+        fDoc.open(ptrGlobal->ConwertToString(wsNameConfig));
+    }
+    catch (...)
+    {
+        ptrGlobal->ptrError->ErrorNotFoundConfig();
+        return false;
+    }
     fBook = fDoc.workbook();
     auto arrNamePage = fBook.worksheetNames();
 
@@ -38,6 +45,8 @@ void FConfig::Init()
     }
 
     fDoc.close();
+
+    return true;
 }
 
 void FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XLRow row)

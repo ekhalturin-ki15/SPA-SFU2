@@ -17,7 +17,7 @@ FSolve::FSolve(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal), bIsCorrectParsing(t
 	//fSolveSecondPage.ptrGlobal = _ptrGlobal;
 }
 
-void FSolve::Init()
+bool FSolve::Init()
 {
 	try
 	{
@@ -36,6 +36,8 @@ void FSolve::Init()
 	{
 		ptrGlobal->ptrError->ErrorBadRegex("Регулярное выражение поиска заголовка компетенции");
 	}
+
+	return true;
 }
 
 void FSolve::ClearTreeDisc()

@@ -57,28 +57,43 @@ struct Disc
 };
 
 FGlobal* ptrGlobal; //Синглтон
-
-void Create()
-{
-    ptrGlobal = new FGlobal;
-}
+bool Create();
 
 void Delete()
 {
     delete ptrGlobal;
 }
 
+bool Create()
+{
+    ptrGlobal = new FGlobal;
+    if (!ptrGlobal->Init())
+    {
+        Delete();
+        return false;
+    }
+    return true;
+}
+
 int main()
 {
     {
-        Create();
-
+        if (!Create()) 
+#ifdef DEBUG
+            return 4; //Аварийное завершение
+#else
+            return 0; //Аварийное завершение
+#endif
 
         if (ptrGlobal->ptrConfig->arrKeyPage.size() < 3)
         {
             ptrGlobal->ptrError->FatalErrorFewConfigPages(); // Не хватает данных для парсинга УП
             Delete();
-            return 0;
+#ifdef DEBUG
+            return 3; //Аварийное завершение
+#else
+            return 0; //Аварийное завершение
+#endif
         }
 
         auto fFile = filesystem::current_path(); //Взятие пути директории расположения exe файла

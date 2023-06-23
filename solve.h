@@ -69,7 +69,7 @@ struct FSolve
 	explicit FSolve(FGlobal* _ptrGlobal);
 	~FSolve();
 
-	void Init();
+	bool Init();
 
 	//Основная функция
 	bool Read(string sInPath, string sNamePlan);

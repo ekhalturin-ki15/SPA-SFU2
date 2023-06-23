@@ -14,18 +14,6 @@ FGlobal::FGlobal()
 		throw std::runtime_error("Re-creation Singleton");
 	++iSinglControll;
 
-	ptrConfig = new FConfig(this);
-	ptrSolve = new FSolve(this);
-	ptrError = new FError(this);
-	ptrOutData = new FOutData(this);
-	//ptrGraph = new FGraph(this);
-
-	ptrConfig->Init();
-	ptrError->Init();
-	ptrSolve->Init();
-	ptrOutData->Init();
-	//ptrGraph->Init();
-
 	mapTranslit =
 	{
 		{'А' , 'A'},
@@ -168,11 +156,21 @@ FGlobal::FGlobal()
 		{L'я' , L'y'}
 	};
 
-	/*auto fLowTranslit = fTranslit; // Нормального решения нет
-	for (auto [ch, nch] : fLowTranslit)
-	{
-		fTranslit[tolower(ch)] = nch;
-	}*/
+}
+
+bool FGlobal::Init()
+{
+	ptrConfig = new FConfig(this);
+	ptrSolve = new FSolve(this);
+	ptrError = new FError(this);
+	ptrOutData = new FOutData(this);
+
+	if (!ptrConfig->Init()) return false;
+	if (!ptrError->Init()) return false;
+	if (!ptrSolve->Init()) return false;
+	if (!ptrOutData->Init()) return false;
+	
+	return true;
 }
 
 wstring FGlobal::ConwertToWstring(string sData)

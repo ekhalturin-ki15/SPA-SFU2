@@ -9,7 +9,7 @@ struct FOutData
 
 	void Out(string sOutPath); // Каталог, где будут файлы
 
-	void Init();
+	bool Init();
 
 private:
 	OpenXLSX::XLWorksheet CreateAndTake(string sName, string sPath);

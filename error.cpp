@@ -18,7 +18,7 @@ FError::FError(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal), bIsPrint(false)
 	++iSinglControll;
 }
 
-void FError::Init()
+bool FError::Init()
 {
 	if (ptrGlobal->ptrConfig->bReloadLogFile)
 	{
@@ -33,6 +33,7 @@ void FError::Init()
 		out << END;
 		out.close();
 	}
+	return true;
 }
 
 ofstream FError::OutHeader()
@@ -74,6 +75,14 @@ void FError::ErrorOutFileCreate(string sPathName)
 {
 	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
 	out << "! Не удаётся создать каталог " + sPathName;
+	out << END;
+	out.close();
+}
+
+void FError::ErrorNotFoundConfig()
+{
+	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
+	out << "!!! не найден файл config.xlsx";
 	out << END;
 	out.close();
 }
