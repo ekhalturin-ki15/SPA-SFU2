@@ -21,7 +21,7 @@ void FOutData::Out(string sOutPath)
 	fOutFile.create(sOutPath + "/TotalData.xlsx");
 	fOutFile.workbook().addWorksheet("Total Data");
 	fOutFile.workbook().deleteSheet("Sheet1"); // Стартовая страница не нужна
-	auto wks = fOutFile.workbook().worksheet("Total Data");
+	OpenXLSX::XLWorksheet wks = fOutFile.workbook().worksheet("Total Data");
 
 	int i = 0; //Задаём порядок вывода
 
@@ -48,16 +48,24 @@ void FOutData::Out(string sOutPath)
 	for (const auto& it : ptrGlobal->ptrSolve->arrDisc)
 	{
 		x = 1;
-		wks.cell(y, x++).value() = it->sNamePlan;
+
 		fOutFile.workbook().addWorksheet(it->sNamePlan);
 
-		wks.cell(y, x++).value() = it->dAllSumScore;
-		wks.cell(y, x++).value() = it->iAmountDisc;
+		OutData(x, y, it->sNamePlan.size(), it->sNamePlan, wks, it->sNamePlan);
+		//wks.cell(y, x++).value() = it->sNamePlan;
+
+		OutData(x, y, it->dAllSumScore, it->sNamePlan, wks, to_string(it->dAllSumScore));
+		//wks.cell(y, x++).value() = it->dAllSumScore;
+
+		OutData(x, y, it->iAmountDisc, it->sNamePlan, wks, to_string(it->iAmountDisc));
+		//wks.cell(y, x++).value() = it->iAmountDisc;
 
 		double dSumScoreExt = 0; int iAmountDiscExt = 0;
 		it->dFindAllScore(dSumScoreExt, iAmountDiscExt);
-		wks.cell(y, x++).value() = dSumScoreExt;
-		wks.cell(y, x++).value() = iAmountDiscExt;
+		OutData(x, y, dSumScoreExt, it->sNamePlan, wks, to_string(dSumScoreExt));
+		//wks.cell(y, x++).value() = dSumScoreExt;
+		OutData(x, y, iAmountDiscExt, it->sNamePlan, wks, to_string(iAmountDiscExt));
+		//wks.cell(y, x++).value() = iAmountDiscExt;
 
 		for (auto& sHeaderComp : ptrGlobal->ptrSolve->setHeaderComp)
 		{
@@ -67,19 +75,50 @@ void FOutData::Out(string sOutPath)
 					(ptrGlobal->ptrConfig->bCompInterDelete) ?
 					it->ptrMetric->mapCompDistr[sHeaderComp] / double(it->ptrMetric->iBalancAmountComp) :
 					it->ptrMetric->mapCompDistr[sHeaderComp] / double(it->iAmountDisc);
+				
+				if (dRes > ptrGlobal->ptrConfig->dMinComp)
+				{
+					OutData(x, y, dRes * 100, it->sNamePlan, wks, to_string(dRes * 100) + "%");
+				}
+				else
+				{
+					wks.cell(y, x++).value() = "-";
+				}
 
-				wks.cell(y, x++).value() = to_string(dRes * 100) + "%";
 			}
 			else
 			{
 				x++; //В холостую пропускаем столбцы, они не будут заполнены
 			}
-
 		}
-		
 
-		++y;
+		++y; //Перевод строки
 	}
+
+	//Вывод коридора минимума максимума
+	{
+		for (auto& [id, fСorridor]: mapSaveData)
+		{
+			if (id == 1)
+			{
+				wks.cell(y, id).value() = "Максимальные значения:";
+			}
+			else
+				wks.cell(y, id).value() = to_string(fСorridor.dMax) + " у УП " + fСorridor.sMax;
+		}
+		++y;
+		for (auto& [id, fСorridor] : mapSaveData)
+		{
+			if (id == 1)
+			{
+				wks.cell(y, id).value() = "Минимальные значения:";
+			}
+			else
+				wks.cell(y, id).value() = to_string(fСorridor.dMin) + " у УП " + fСorridor.sMin;
+		}
+	}
+
+
 
 	for (const auto& it : ptrGlobal->ptrSolve->arrDisc)
 	{
@@ -124,4 +163,27 @@ OpenXLSX::XLWorksheet FOutData::CreateAndTake(string sName, string sPath)
 		fFile.save();
 		return fFile.workbook().worksheet("Total Data");
 	}
+}
+
+
+void FOutData::RetakeMinMax(FСorridor& fSaveData, const double& dNewData, const string& sNewData)
+{
+	if ((dNewData > fSaveData.dMax) || (fSaveData.sMax == ""))
+	{
+		fSaveData.dMax = dNewData;
+		fSaveData.sMax= sNewData;
+	}
+
+	if ((dNewData < fSaveData.dMin) || (fSaveData.sMin == ""))
+	{
+		fSaveData.dMin = dNewData;
+		fSaveData.sMin = sNewData;
+	}
+	return;
+}
+
+void FOutData::OutData(int& x, const int& y, double dDate, string sDate, OpenXLSX::XLWorksheet& wks, string sOutData)
+{
+	RetakeMinMax(mapSaveData[x], dDate, sDate);
+	wks.cell(y, x++).value() = sOutData;
 }

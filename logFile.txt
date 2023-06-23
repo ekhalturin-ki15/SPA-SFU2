@@ -189,12 +189,3 @@
 + Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad/2704040005_OP-21.plm.plx.xlsx успешно обработан
 
 ! Не обнаружен каталог с входными данным R:\acmp\excelbibltest\ExcelBiblT\plans\spec
-!!! не найден файл config.xlsx
-!!! не найден файл config.xlsx
-!!! не найден файл config.xlsx
-!!! не найден файл config.xlsx
-!!! не найден файл config.xlsx
-!!! не найден файл config.xlsx
-!!! не найден файл config.xlsx
-!!! �� ������ ���� config.xlsx
-!!! �� ������ ���� config.xlsx

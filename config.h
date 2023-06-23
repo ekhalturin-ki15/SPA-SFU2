@@ -47,6 +47,8 @@ struct FConfig
     bool bCompInterDelete;
 
     double dMinWeigthRib;
+    double dMinComp;
+
     int iMaxLen;
     int iWeigthRib;
     int iCourseLen;

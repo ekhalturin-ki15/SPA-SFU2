@@ -127,6 +127,13 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
         return;
     }
 
+    wsPatern = L"Считать компетенцию отсутсвующей, если значение меньше X=";
+    if (wsKey == wsPatern)
+    {
+        ptrGlobal->TakeData(dMinComp, row);
+        return;
+    }
+
     wsPatern = L"Размер рёбер";
     if (wsKey == wsPatern)
     {
