@@ -242,7 +242,7 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
                     ptrGlobal->SetMapParams(fBook.worksheet(ptrGlobal->ConwertToString(wsNamePage)))
                     )
                 {
-                    fAlias.mapRename[key] = val;
+                    fAlias.mapRename[key] = val.at(0);
                 }
             }
         }
@@ -252,7 +252,7 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
     wsPatern = L"Параметры выводы (название страницы)";
     if (wsKey == wsPatern)
     {
-        mapOutParams.clear();
+        mapArrOutParams.clear();
         int i = -1; for (auto& page : row.cells())
         {
             i++;
@@ -263,7 +263,7 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
                     ptrGlobal->SetMapParams(fBook.worksheet(ptrGlobal->ConwertToString(wsNamePage)))
                     )
                 {
-                    mapOutParams[key] = val;
+                    mapArrOutParams[key] = val;
                 }
             }
         }

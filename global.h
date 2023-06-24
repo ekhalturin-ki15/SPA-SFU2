@@ -54,7 +54,7 @@ struct FGlobal
     void TakeData(int& outIData, const OpenXLSX::XLRow& row); // Возвращение результата через параметры (значение со втрой ячейки)
     void TakeData(double& outIData, const OpenXLSX::XLRow& row); // Возвращение результата через параметры (значение со втрой ячейки)
 
-    vector<pair<wstring, wstring>> SetMapParams(const OpenXLSX::XLWorksheet& fPage);
+    vector<pair<wstring, vector<wstring> >> SetMapParams(const OpenXLSX::XLWorksheet& fPage);
 
     //Возвращает количество строк на странице Excel файла (не включительно, то есть, на 1 больше)
     int HeightPage(const OpenXLSX::XLWorksheet& fSheet);

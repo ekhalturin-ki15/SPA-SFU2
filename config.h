@@ -27,7 +27,7 @@ struct FConfig
     vector<wstring> arrNameFileIn;
 
     vector<wstring> arrNameFileOut;
-    map< wstring, wstring > mapOutParams;
+    map< wstring, vector<wstring> > mapArrOutParams;
     set< wstring > setIgnoreDisc;
     set< string > setIgnoreСurriculum; //Какие УП игнорировать впринципе
 

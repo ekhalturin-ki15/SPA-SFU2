@@ -6,7 +6,7 @@
 #include "formulaParser.h"
 
 //Инверсия зависимости
-FGraph::FGraph(FTreeDisc* _ptrTree) : ptrTree(_ptrTree)
+FGraph::FGraph(FTreeDisc* _ptrTree) : ptrTree(_ptrTree), dMaxDiscScore(0.)
 {
 	mapAllowDisc = _ptrTree->GewMapAllowDisc(true, true);
 
@@ -43,6 +43,8 @@ void FGraph::Create()
 
 			if (!R->bAllow) continue;
 			if (R->arrChild.size()) continue;
+
+			if (dMaxDiscScore < R->dSumScore) dMaxDiscScore = R->dSumScore;
 
 			if (iL != iR)
 			{

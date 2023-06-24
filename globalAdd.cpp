@@ -61,9 +61,9 @@ void FGlobal::TakeData(double& outIData, const OpenXLSX::XLRow& row)
         outIData = it.value().get<double>();
 }
 
-vector<pair<wstring, wstring>> FGlobal::SetMapParams(const OpenXLSX::XLWorksheet& fPage)
+vector<pair<wstring, vector<wstring> >> FGlobal::SetMapParams(const OpenXLSX::XLWorksheet& fPage)
 {
-    vector<pair<wstring, wstring>> arrReturn;
+    vector<pair<wstring, vector<wstring>>> arrReturn;
     int y = -1;
     for (auto row : fPage.rows())
     {
@@ -80,12 +80,12 @@ vector<pair<wstring, wstring>> FGlobal::SetMapParams(const OpenXLSX::XLWorksheet
                 if (i == 0)
                 {
                     wsKeyName = GetValue(column);
-                    arrReturn.push_back({ wsKeyName , L"" });
+                    arrReturn.push_back({ wsKeyName, vector< wstring >() });
                 }
                 else
                 {
                     wsRename = GetValue(column);
-                    arrReturn.back().second = wsRename;
+                    arrReturn.back().second.push_back( wsRename );
                 }
             }
         }

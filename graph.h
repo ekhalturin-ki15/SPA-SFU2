@@ -21,6 +21,7 @@ struct FGraph
 
 	vector< vector <pair<int, double>>> fAdjacency;
 
+	double dMaxDiscScore;
 
 private:
 	FTreeDisc* ptrTree; 
