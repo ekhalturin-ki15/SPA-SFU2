@@ -31,9 +31,11 @@
 
 + Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010001_OP-21.plm.plx.xlsx успешно обработан
 
-+ Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010003_OP-20.plm.plx.xlsx успешно обработан
+Компетенции [строка 96] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010003_OP-20.plm.plx.xlsx для дисциплины PK-3 не получается связать с индикатором PK-4 
+- Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010003_OP-20.plm.plx.xlsx обработан с недочётами
 
-+ Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010003_OP-21.plm.plx.xlsx успешно обработан
+Компетенции [строка 90] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010003_OP-21.plm.plx.xlsx для дисциплины PK-3 не получается связать с индикатором PK-4 
+- Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010003_OP-21.plm.plx.xlsx обработан с недочётами
 
 Компетенции [строка 2] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010004_OP-20.plm.plx.xlsx присутствует пустая строка
 - Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010004_OP-20.plm.plx.xlsx обработан с недочётами
@@ -186,6 +188,9 @@
 Компетенции(2) [строка 39] :  В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/2704040004_OP-20.plm.plx.xlsx нет имени у дисциплины с индексом ФТД.
 - Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad/2704040004_OP-20.plm.plx.xlsx обработан с недочётами
 
-+ Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad/2704040005_OP-21.plm.plx.xlsx успешно обработан
+Компетенции [строка 132] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/2704040005_OP-21.plm.plx.xlsx для дисциплины OPK-10 не получается связать с индикатором PK -1.3
+Компетенции [строка 133] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/2704040005_OP-21.plm.plx.xlsx для дисциплины OPK-10 не получается связать с индикатором PK -1.3
+Компетенции [строка 134] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/2704040005_OP-21.plm.plx.xlsx для дисциплины OPK-10 не получается связать с индикатором PK -1.3
+- Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad/2704040005_OP-21.plm.plx.xlsx обработан с недочётами
 
 ! Не обнаружен каталог с входными данным R:\acmp\excelbibltest\ExcelBiblT\plans\spec

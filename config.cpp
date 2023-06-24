@@ -190,6 +190,15 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
         return;
     }
 
+    wsPatern = L"Удалить спецсимволы из наименования компетенции";
+    if (wsKey == wsPatern)
+    {
+        string sData;
+        ptrGlobal->TakeData(sData, row);
+        for (auto& it : sData)
+            setIgnoreCharCompHeader.insert(it);
+        return;
+    }
 
     wsPatern = L"Регулярное выражение разбивки строки ([Компетенции(2)] Формируемые компетенции)";
     if (wsKey == wsPatern)

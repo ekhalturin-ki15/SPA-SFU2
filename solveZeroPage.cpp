@@ -116,6 +116,8 @@ void FSolve::CreateDiscTree(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageNum
 									if (ptrGlobal->ptrConfig->bMultiIndicator)
 										sCompName = sCompName.substr(0, sCompName.find('.'));
 
+									ptrGlobal->DeleteSpechChars(sCompName);
+
 									ptrNewNode->mapComp[sCompName] = {};
 									ptrTree->fAllComp.insert(sCompName);
 

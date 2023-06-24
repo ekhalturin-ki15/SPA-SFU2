@@ -2,6 +2,21 @@
 #include "error.h"
 #include "config.h"
 
+void FGlobal::DeleteSpechChars(string& sData)
+{
+    if (ptrConfig == nullptr) return;
+   
+    string sNewData;
+    for (const auto& it : sData)
+    {
+        if (ptrConfig->setIgnoreCharCompHeader.count(it)) continue;
+        sNewData.push_back(it);
+    }
+    sData = sNewData;
+    return;
+    
+}
+
 void FGlobal::TakeData(bool& outBData, const OpenXLSX::XLRow& row)
 {
     for (auto& it : row.cells(2,2)) // Считываем только вторую ячейку

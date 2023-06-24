@@ -59,6 +59,8 @@ struct FGlobal
     //Возвращает количество строк на странице Excel файла (не включительно, то есть, на 1 больше)
     int HeightPage(const OpenXLSX::XLWorksheet& fSheet);
 
+    void DeleteSpechChars(string& sData); //Удаляем спецсимволы из строки, взятые с Config
+
     FError* ptrError; //Синглтон
     FConfig* ptrConfig; //Синглтон
     FSolve* ptrSolve; //Синглтон

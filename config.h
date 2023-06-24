@@ -30,6 +30,8 @@ struct FConfig
     map< wstring, wstring > mapOutParams;
     set< wstring > setIgnoreDisc;
 
+    set<char> setIgnoreCharCompHeader;
+
     wstring wsNameLableFile;
     wstring wsNameRibFile;
 
