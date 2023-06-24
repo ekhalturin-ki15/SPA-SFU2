@@ -54,7 +54,6 @@ void FOutData::Out(string sOutPath)
 	}
 	x = 1; y = 2;
 
-	
 	for (const auto& it : ptrGlobal->ptrSolve->arrDisc)
 	{
 		i = 1;
@@ -120,7 +119,7 @@ void FOutData::Out(string sOutPath)
 							ptrGlobal->ptrConfig->mapArrOutParams[L"Максимальные значения:"].at(0));
 					}
 					else
-						wks.cell(y, id).value() = to_string(fСorridor.dMax) + " у УП " + fСorridor.sMax;
+						wks.cell(y, id).value() = to_string(fСorridor.dMax) + " (" + fСorridor.sMax + ")";
 				}
 				++y;
 			}
@@ -137,7 +136,7 @@ void FOutData::Out(string sOutPath)
 							ptrGlobal->ptrConfig->mapArrOutParams[L"Минимальные значения:"].at(0));
 					}
 					else
-						wks.cell(y, id).value() = to_string(fСorridor.dMin) + " у УП " + fСorridor.sMin;
+						wks.cell(y, id).value() = to_string(fСorridor.dMin) + " (" + fСorridor.sMin + ")";
 				}
 				++y;
 			}
