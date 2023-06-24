@@ -132,6 +132,7 @@ int main()
             {
                 if (!it.is_directory())
                 {
+                    if (ptrGlobal->ptrConfig->setIgnoreСurriculum.count(it.path().filename().string())) continue;
                     auto sOutName = fOutFile / it.path().filename();
                     ptrGlobal->ptrSolve->Read(it.path().string(), it.path().filename().string());                
                 }

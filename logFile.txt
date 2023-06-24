@@ -42,9 +42,6 @@
 
 + Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010004_OP-21.plm.plx.xlsx успешно обработан
 
-Компетенции [строка 2] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010006_OP-20.plm.plx.xlsx присутствует пустая строка
-- Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010006_OP-20.plm.plx.xlsx обработан с недочётами
-
 Компетенции [строка 2] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010010_OP-20.plm.plx.xlsx присутствует пустая строка
 - Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904010010_OP-20.plm.plx.xlsx обработан с недочётами
 

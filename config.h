@@ -29,6 +29,7 @@ struct FConfig
     vector<wstring> arrNameFileOut;
     map< wstring, wstring > mapOutParams;
     set< wstring > setIgnoreDisc;
+    set< string > setIgnoreСurriculum; //Какие УП игнорировать впринципе
 
     set<char> setIgnoreCharCompHeader;
 

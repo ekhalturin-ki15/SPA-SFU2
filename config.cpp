@@ -292,6 +292,27 @@ void FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
         return;
     }
 
+    wsPatern = L"Игнорируемые УП (название страницы)";
+    if (wsKey == wsPatern)
+    {
+        setIgnoreСurriculum.clear();
+        int i = -1; for (auto& page : row.cells())
+        {
+            i++;
+            if (i)
+            {
+                wstring wsNamePage = ptrGlobal->GetValue(page);
+                for (auto& [key, val] :
+                    ptrGlobal->SetMapParams(fBook.worksheet(ptrGlobal->ConwertToString(wsNamePage)))
+                    )
+                {
+                    setIgnoreСurriculum.insert(ptrGlobal->ConwertToString(key));
+                }
+            }
+        }
+        return;
+    }
+
 }
 
 
