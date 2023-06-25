@@ -26,7 +26,7 @@ void FOutData::Out(string sOutPath)
 	int i = 0; //Задаём порядок вывода
 	int x = 0; int y = 0;
 	arrHead = { L"Название учебного плана", L"Всего ЗЕ", L"Кол-во дисциплин"
-		, L"(Расш.) Общее колв-о ЗЕ в УП", L"(Расш.) Кол-во дисциплин в УП", L"Максимальное ЗЕ у дисциплины"};
+		, L"(Расш.) Общее кол-во ЗЕ в УП", L"(Расш.) Кол-во дисциплин в УП", L"Максимальное ЗЕ у дисциплины"};
 
 	for (auto& sHeaderComp : ptrGlobal->ptrSolve->setHeaderComp)
 	{
@@ -212,6 +212,6 @@ void FOutData::OutData(int& x, int& index, const int& y, double dDate, string sD
 	if (arrOutColm[index++])
 	{
 		RetakeMinMax(mapSaveData[x], dDate, sDate);
-		wks.cell(y, x++).value() = sOutData;
+		wks.cell(y, x++).value() = ptrGlobal->ConwertUTF16RU(sOutData);
 	}
 }
