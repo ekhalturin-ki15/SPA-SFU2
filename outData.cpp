@@ -26,7 +26,9 @@ void FOutData::Out(string sOutPath)
 	int i = 0; //Задаём порядок вывода
 	int x = 0; int y = 0;
 	arrHead = { L"Название учебного плана", L"Всего ЗЕ", L"Кол-во дисциплин"
-		, L"(Расш.) Общее кол-во ЗЕ в УП", L"(Расш.) Кол-во дисциплин в УП", L"Максимальное ЗЕ у дисциплины"};
+		, L"(Расш.) Общее кол-во ЗЕ в УП", L"(Расш.) Кол-во дисциплин в УП", L"Максимальное ЗЕ у дисциплины"
+		, L"Диаметр графа по расстоянию", L"Диаметр графа по количеству рёбер", L"Количество компонент связности"
+	};
 
 	for (auto& sHeaderComp : ptrGlobal->ptrSolve->setHeaderComp)
 	{
@@ -58,22 +60,24 @@ void FOutData::Out(string sOutPath)
 	{
 		i = 1;
 		x = 1;
-		
-		fOutFile.workbook().addWorksheet(it->sNamePlan);
-
-		OutData(x, i, y,  it->sNamePlan.size(), it->sNamePlan, wks, it->sNamePlan);
-		//wks.cell(y, x++).value() = it->sNamePlan;
-
-		OutData(x, i, y,  it->dAllSumScore, it->sNamePlan, wks, to_string(it->dAllSumScore));
-
-		OutData(x, i, y,  it->iAmountDisc, it->sNamePlan, wks, to_string(it->iAmountDisc));
 
 		double dSumScoreExt = 0; int iAmountDiscExt = 0;
 		it->dFindAllScore(dSumScoreExt, iAmountDiscExt);
-		OutData(x, i, y,  dSumScoreExt, it->sNamePlan, wks, to_string(dSumScoreExt));
-		OutData(x, i, y,  iAmountDiscExt, it->sNamePlan, wks, to_string(iAmountDiscExt));
 
-		OutData(x, i, y,  it->ptrGraph->dMaxDiscScore, it->sNamePlan, wks, to_string(it->ptrGraph->dMaxDiscScore));
+		vector< double > arrResult = { 
+		it->dAllSumScore, double(it->iAmountDisc)
+		,dSumScoreExt, double(iAmountDiscExt), it->ptrGraph->dMaxDiscScore
+		,it->ptrGraph->dDiametrLen, it->ptrGraph->dDiametrStep, double(it->ptrGraph->iComponent)
+		};
+
+		fOutFile.workbook().addWorksheet(it->sNamePlan);
+		OutData(x, i, y,  it->sNamePlan.size(), it->sNamePlan, wks, it->sNamePlan);
+		//wks.cell(y, x++).value() = it->sNamePlan;
+
+		for (const auto& dValue : arrResult)
+		{
+			OutData(x, i, y, dValue, it->sNamePlan, wks, to_string(dValue));
+		}
 
 		for (auto& sHeaderComp : ptrGlobal->ptrSolve->setHeaderComp)
 		{

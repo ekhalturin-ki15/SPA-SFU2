@@ -6,12 +6,14 @@
 #include "formulaParser.h"
 
 //Инверсия зависимости
-FGraph::FGraph(FTreeDisc* _ptrTree) : ptrTree(_ptrTree), dMaxDiscScore(0.)
+FGraph::FGraph(FTreeDisc* _ptrTree) : ptrTree(_ptrTree), n(0), iComponent(0), dMaxDiscScore(0.), dDiametrLen(0.), dDiametrStep(0.)
 {
 	mapAllowDisc = _ptrTree->GewMapAllowDisc(true, true);
-
-	arrRel.resize(mapAllowDisc.size());
-	fAdjacency.resize(mapAllowDisc.size());
+	n = mapAllowDisc.size(); //Кол-во вершин в графе
+	arrRel.resize(n);
+	fAdjacency.resize(n);
+	arrColor.resize(n);
+	//arrPreColor.resize(n);
 
 	int i = 0;
 	for (auto& [key, it] : mapAllowDisc)
@@ -78,4 +80,91 @@ void FGraph::Create()
 			}
 		}
 	}
+	try
+	{
+		CalculateDiametrAndComponent();
+	}
+	catch (...)
+	{
+		//Игнорируем ошибки, работаем как ни в чём не бывало
+	}
+}
+
+void FGraph::CalculateDiametrAndComponent()
+{
+	UpdateArrColor();
+
+	dDiametrLen = 0.;
+	iComponent = 0;
+
+	for (int i = 0; i < n; ++i)
+	{
+		double dTempLen;
+		int iTemp = i;
+		if (!arrColor[i])
+		{
+			++iComponent;
+			MaxDist(dTempLen, iTemp, i, true);
+			MaxDist(dTempLen, iTemp, iTemp, true);
+			if (dDiametrLen < dTempLen)
+			{
+				dDiametrLen = dTempLen;
+			}
+			MaxDist(dTempLen, iTemp, i, false);
+			MaxDist(dTempLen, iTemp, iTemp, false);
+			if (dDiametrStep < dTempLen)
+			{
+				dDiametrStep = dTempLen;
+			}
+		}
+	}
+
+}
+
+void FGraph::UpdateArrColor()
+{
+	arrColor.assign(n, 0);
+}
+
+void FGraph::MaxDist(double& dMaxDist, int& iIdNode, int iIdStart, bool IsСonsDist)
+{
+	dMaxDist = 0.;
+	iIdNode = iIdStart;
+
+	priority_queue<pair<double, int>> q;
+	q.push({0., iIdStart });
+
+	vector<double> arrLen(n, 1e9);
+	vector<int> arrPass(n, 0);
+	arrLen[iIdStart] = 0.;
+
+	while (q.size())
+	{
+		auto [dLen, id] = q.top();
+		dLen = -dLen;
+		q.pop();
+		if (arrPass[id]) continue;
+		arrPass[id] = 1;
+
+		arrColor[id] = 1;
+
+
+		if (dMaxDist < dLen)
+		{
+			dMaxDist = dLen;
+			iIdNode = id;
+		}
+
+		for (auto [l, d] : fAdjacency[id])
+		{
+			double dNewLen = (IsСonsDist) ? d : 1; // Учитываем ли мы растояние, или шаги
+			if (arrLen[l] > dLen + dNewLen)
+			{
+				arrLen[l] = dLen + dNewLen;
+				q.push({ -arrLen[l] , l});
+			}
+		}
+	}
+
+	return;
 }
