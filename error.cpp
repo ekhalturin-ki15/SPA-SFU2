@@ -43,7 +43,7 @@ ofstream FError::OutHeader()
 	int& iCurrentRow = ptrGlobal->ptrSolve->iCurrentRow;
 	ptrGlobal->ptrSolve->bIsCorrectParsing = false;
 	if (iCurrentPage < ptrGlobal->ptrConfig->arrKeyPage.size())
-		out << ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].sName;
+		out << ptrGlobal->ReversUTF16RU(ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].sName);
 	else
 		out << "! Страница не определена";
 
@@ -209,7 +209,8 @@ void FError::ErrorBadParserName(string sIndexName)
 {
 	ofstream out = OutHeader();
 
-	out << " В учебном плане " + ptrGlobal->ptrSolve->sInPath + " нет имени у дисциплины с индексом " + sIndexName;
+	out << " В учебном плане " + ptrGlobal->ptrSolve->sInPath 
+		+ " нет имени у дисциплины с индексом " + ptrGlobal->ReversUTF16RU(sIndexName);
 	out << END;
 	out.close();
 }
@@ -223,7 +224,9 @@ void FError::ErrorBadParserComp(string sIndexName)
 {
 	ofstream out = OutHeader();
 
-	out << "В учебном плане " + ptrGlobal->ptrSolve->sInPath + " не указаны компетенции у дисциплины с индексом " + sIndexName;
+	out << "В учебном плане " + ptrGlobal->ptrSolve->sInPath 
+		+ " не указаны компетенции у дисциплины с индексом " 
+		+ ptrGlobal->ReversUTF16RU(sIndexName);
 	out << END;
 	out.close();
 }
@@ -238,7 +241,9 @@ void FError::ErrorBadIndicatorBind(string sIndexName, string sIndicator)
 {
 	ofstream&& out = OutHeader();
 
-	out << "В учебном плане " + ptrGlobal->ptrSolve->sInPath + " для дисциплины " + sIndexName + " не получается связать с индикатором " + sIndicator;
+	out << "В учебном плане " + ptrGlobal->ptrSolve->sInPath 
+		+ " для дисциплины " + ptrGlobal->ReversUTF16RU(sIndexName) 
+		+ " не получается связать с индикатором " + ptrGlobal->ReversUTF16RU(sIndicator);
 	out << END;
 	out.close();
 }

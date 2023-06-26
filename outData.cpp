@@ -27,7 +27,7 @@ void FOutData::Out(string sOutPath)
 	int x = 0; int y = 0;
 	arrHead = { L"Название учебного плана", L"Всего ЗЕ", L"Кол-во дисциплин"
 		, L"(Расш.) Общее кол-во ЗЕ в УП", L"(Расш.) Кол-во дисциплин в УП", L"Максимальное ЗЕ у дисциплины"
-		, L"Диаметр графа по расстоянию", L"Диаметр графа по количеству рёбер", L"Количество компонент связности"
+		, L"Диаметр графа по расстоянию", L"Диаметр графа по количеству рёбер", L"Количество компонент связности", L"Минимальное оставное дерево"
 	};
 
 	for (auto& sHeaderComp : ptrGlobal->ptrSolve->setHeaderComp)
@@ -67,7 +67,8 @@ void FOutData::Out(string sOutPath)
 		vector< double > arrResult = { 
 		it->dAllSumScore, double(it->iAmountDisc)
 		,dSumScoreExt, double(iAmountDiscExt), it->ptrGraph->dMaxDiscScore
-		,it->ptrGraph->dDiametrLen, it->ptrGraph->dDiametrStep, double(it->ptrGraph->iComponent)
+		,it->ptrGraph->dDiametrLen, it->ptrGraph->dDiametrStep
+		, double(it->ptrGraph->iComponent), it->ptrGraph->dMinSpanTree
 		};
 
 		fOutFile.workbook().addWorksheet(it->sNamePlan);

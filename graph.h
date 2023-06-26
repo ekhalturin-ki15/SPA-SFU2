@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "solve.h"
+#include "dsu.h"
 #include <map>
 #include <queue>
 
@@ -14,7 +15,8 @@ struct FGraph
 	//Использовать только после вызова Read у ptrSolve, то есть, когда ptrTree заполнен
 	void Create();
 
-	void CalculateDiametrAndComponent();
+	void CalculateDiametrAndComponent(); // Высчитываем диаметр и кол-во компонент связности за O(n log(n))
+	void CalculateMST(); // Высчитываем минимальное остовное дерево за O(m log(n))
 
 	//Сопоставление id его названия (инициализируются в конструкторе)
 	vector<wstring> arrRel;
@@ -28,6 +30,8 @@ struct FGraph
 
 	double dDiametrLen;
 	double dDiametrStep;
+
+	double dMinSpanTree;
 
 	int iComponent;
 

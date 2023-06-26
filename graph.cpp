@@ -6,7 +6,8 @@
 #include "formulaParser.h"
 
 //Инверсия зависимости
-FGraph::FGraph(FTreeDisc* _ptrTree) : ptrTree(_ptrTree), n(0), iComponent(0), dMaxDiscScore(0.), dDiametrLen(0.), dDiametrStep(0.)
+FGraph::FGraph(FTreeDisc* _ptrTree) : ptrTree(_ptrTree), n(0), iComponent(0)
+, dMaxDiscScore(0.), dDiametrLen(0.), dDiametrStep(0.), dMinSpanTree(0.)
 {
 	mapAllowDisc = _ptrTree->GewMapAllowDisc(true, true);
 	n = mapAllowDisc.size(); //Кол-во вершин в графе
@@ -83,10 +84,40 @@ void FGraph::Create()
 	try
 	{
 		CalculateDiametrAndComponent();
+		CalculateMST();
 	}
 	catch (...)
 	{
 		//Игнорируем ошибки, работаем как ни в чём не бывало
+	}
+}
+
+void FGraph::CalculateMST()
+{
+	vector< pair<double, pair<int, int>>> q;
+
+	for (int l = 0; l < n; ++l)
+	{
+		for (const auto& [r, len] : fAdjacency[l])
+		{
+			q.push_back({ len, {l, r} });
+		}
+	}
+	sort(ALL(q));
+
+	vector<int> arrDSU(n);
+	int i = 0; for (auto& it : arrDSU) it = i++;
+	True_DSU<int> fDSU(arrDSU);
+
+	for (const auto& it : q)
+	{
+		auto [len, pr] = it;
+		auto& [l, r] = pr;
+		if (!fDSU.isSame(l, r))
+		{
+			dMinSpanTree += len;
+			fDSU.Merge(l, r);
+		}
 	}
 }
 

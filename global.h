@@ -43,6 +43,7 @@ struct FGlobal
     string ConwertToString(wstring wsData);
 
     string ConwertUTF16RU(string sData); // Перевод в UTF16 RU вручную (через mapFirstUnicRU и mapLastUnicRU)
+    string ReversUTF16RU(string sData); // Перевод из UTF16 RU обратно в строку вручную (через mapReversUnic)
 
     string ConwertPathFormat(string sFileName, bool bRename = false);
     wstring ConwertPathFormat(wstring wsFileName, bool bRename = false);
@@ -79,8 +80,9 @@ private:
     map<char, char> mapTranslit;
     map<wchar_t, wchar_t> mapWTranslit;
 
+
     map<char, char> mapFirstUnicRU;
     map<char, char> mapLastUnicRU;
-
+    map<pair<char, char>, char> mapReversUnic;
 
 };
