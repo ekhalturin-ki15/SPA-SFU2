@@ -39,6 +39,8 @@ struct FError
 
     void ErrorNotEqualSum();
 
+    void ErrorBadConfigSizeParams(string sNameParams, string sInfo);
+
     void ErrorBadParser();
 
     void ErrorBadFormula();

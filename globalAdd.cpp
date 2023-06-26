@@ -26,7 +26,7 @@ void FGlobal::TakeData(bool& outBData, const OpenXLSX::XLRow& row)
     }
 }
 
-void FGlobal::TakeData(vector<wstring>& outArrData, const OpenXLSX::XLRow& row)
+void FGlobal::TakeData(vector<wstring>& outArrData, const OpenXLSX::XLRow& row, int iSize)
 {
     outArrData.clear();
     int i = -1; for (auto& it : row.cells()) // Считываем, начиная со 2 ячейки
@@ -35,6 +35,7 @@ void FGlobal::TakeData(vector<wstring>& outArrData, const OpenXLSX::XLRow& row)
         if (i)
             outArrData.push_back(GetValue(it));
     }
+    if (iSize) if (i != (iSize - 1)) throw std::out_of_range("No equeal " + to_string(i) + "!+");
 }
 
 void FGlobal::TakeData(wstring& outWsData, const OpenXLSX::XLRow& row)
@@ -61,7 +62,7 @@ void FGlobal::TakeData(double& outIData, const OpenXLSX::XLRow& row)
         outIData = it.value().get<double>();
 }
 
-vector<pair<wstring, vector<wstring> >> FGlobal::SetMapParams(const OpenXLSX::XLWorksheet& fPage)
+vector<pair<wstring, vector<wstring> >> FGlobal::SetMapParams(const OpenXLSX::XLWorksheet& fPage, int iSize)
 {
     vector<pair<wstring, vector<wstring>>> arrReturn;
     int y = -1;
@@ -88,6 +89,7 @@ vector<pair<wstring, vector<wstring> >> FGlobal::SetMapParams(const OpenXLSX::XL
                     arrReturn.back().second.push_back( wsRename );
                 }
             }
+            if (iSize) if (i != (iSize - 1)) throw std::out_of_range("No equeal " + to_string(i) + "!+");
         }
     }
 

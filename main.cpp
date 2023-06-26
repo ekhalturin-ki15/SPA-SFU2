@@ -77,6 +77,7 @@ bool Create()
 
 int main()
 {
+    try
     {
         if (!Create()) 
 #ifdef DEBUG
@@ -148,6 +149,17 @@ int main()
 
         Delete();
     }
+    catch (...)
+    {
+        Delete();
+#ifdef DEBUG
+        return 2; //Аварийное завершение
+#else
+        return 0; //Аварийное завершение
+#endif
+    }
+
+
 #ifdef DEBUG
     //Будет ругаться на Статические поля в error.h
     _CrtDumpMemoryLeaks();

@@ -68,7 +68,7 @@ private:
 
     static int iSinglControll;
 
-    void SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XLRow row);
+    bool SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XLRow row);
     vector<set<wstring>> SetParsingParams(OpenXLSX::XLWorksheet& fPage);
 
     FGlobal* ptrGlobal; //Синглтон

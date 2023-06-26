@@ -48,7 +48,7 @@ struct FGlobal
     wstring ConwertPathFormat(wstring wsFileName, bool bRename = false);
 
     void TakeData(bool& outBData, const OpenXLSX::XLRow& row); // Возвращение результата через параметры (значение со втрой ячейки)
-    void TakeData(vector<wstring>& outArrData, const OpenXLSX::XLRow& row); // Возвращение результата через параметры (значение со втрой ячейки)
+    void TakeData(vector<wstring>& outArrData, const OpenXLSX::XLRow& row, int iSize); // Возвращение результата через параметры (значение со втрой ячейки)
     void TakeData(wstring& outWsData, const OpenXLSX::XLRow& row); // Возвращение результата через параметры (значение со втрой ячейки)
     
     //Можно объединить следующие 3 функции через шаблон, но тогда придётся реализовывать в .h
@@ -56,7 +56,7 @@ struct FGlobal
     void TakeData(int& outIData, const OpenXLSX::XLRow& row); // Возвращение результата через параметры (значение со втрой ячейки)
     void TakeData(double& outIData, const OpenXLSX::XLRow& row); // Возвращение результата через параметры (значение со втрой ячейки)
 
-    vector<pair<wstring, vector<wstring> >> SetMapParams(const OpenXLSX::XLWorksheet& fPage);
+    vector<pair<wstring, vector<wstring> >> SetMapParams(const OpenXLSX::XLWorksheet& fPage, int iSize);
 
     //Возвращает количество строк на странице Excel файла (не включительно, то есть, на 1 больше)
     int HeightPage(const OpenXLSX::XLWorksheet& fSheet);
