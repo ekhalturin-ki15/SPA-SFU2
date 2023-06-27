@@ -33,6 +33,9 @@ void FOutData::Out(string sOutPath)
 
 	for (auto& sHeaderComp : ptrGlobal->ptrSolve->setHeaderComp)
 	{
+		wstring wsCompScore = ptrGlobal->ConwertToWstring(sHeaderComp);
+		wsCompScore = ptrGlobal->ptrConfig->mapArrOutParams[L"ЗЕ у компетенции"].at(0) + wsCompScore;
+		arrHead.push_back(wsCompScore);
 		arrHead.push_back(ptrGlobal->ConwertToWstring(sHeaderComp));
 	}
 
@@ -50,8 +53,16 @@ void FOutData::Out(string sOutPath)
 		}
 		else
 		{
-			i++;
-			wks.cell(1, x++).value() = ptrGlobal->ConwertToString(it);
+			arrOutColm[i] = true;
+			if (it.find(ptrGlobal->ptrConfig->mapArrOutParams[L"ЗЕ у компетенции"].at(0)) != wstring::npos)
+			{
+				if (ptrGlobal->ptrConfig->mapArrOutParams[L"ЗЕ у компетенции"].at(1) != L"да")
+					arrOutColm[i] = false;
+			}
+			if (arrOutColm[i++])
+			{
+				wks.cell(1, x++).value() = ptrGlobal->ConwertToString(it);
+			}
 		}
 	
 	}
@@ -92,7 +103,9 @@ void FOutData::Out(string sOutPath)
 					(ptrGlobal->ptrConfig->bCompInterDelete) ?
 					it->ptrMetric->mapCompDistr[sHeaderComp] / double(it->ptrMetric->iBalancAmountComp) :
 					it->ptrMetric->mapCompDistr[sHeaderComp] / double(it->iAmountDisc);
-				
+
+				OutData(x, i, y, it->ptrMetric->mapCompDistr[sHeaderComp], sOutName, wks, to_string(it->ptrMetric->mapCompDistr[sHeaderComp]));
+
 				if (dRes > ptrGlobal->ptrConfig->dMinComp)
 				{
 					OutData(x, i, y,  dRes * 100, sOutName, wks, to_string(dRes * 100) + "%");
@@ -145,7 +158,8 @@ void FOutData::Out(string sOutPath)
 							ptrGlobal->ptrConfig->mapArrOutParams[L"Минимальные значения:"].at(0));
 					}
 					else
-						wks.cell(y, id).value() = to_string(fСorridor.dMin) + " (" + fСorridor.sMin + ")";
+						wks.cell(y, id).value() = to_string(fСorridor.dMin) 
+						+ " (" + ptrGlobal->ptrConfig->sOutPrefMinMax + fСorridor.sMin + ")";
 				}
 				++y;
 			}

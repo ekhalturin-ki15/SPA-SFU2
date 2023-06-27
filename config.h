@@ -41,6 +41,8 @@ struct FConfig
     string sRegexHeaderComp;
     string sFormula;
 
+    string sOutPrefMinMax;
+
     wstring wsNameDebugFile;
     wstring wsNameLogFile;
 

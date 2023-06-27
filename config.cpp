@@ -12,6 +12,7 @@ FConfig::FConfig(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
 , sNameLableHeader("Id;Label"), sNameRibHeader("Source;Target;Type;Weight"), sNameRibDir("Undirected")
 , arrNameFileIn({ L"plans/grad" }), arrNameFileOut({ L"result/grad" })
 , wsNameDebugFile(L"debugFile.txt"), wsNameLogFile(L"logFile.txt")
+, sOutPrefMinMax("Предлог перед выводом результата мин. макс.")
 , sRegexComp("{0, 1}(.{0, } ? ); "), sRegexHeaderComp("(.{1,})-"), sFormula("((L + R) / 2) * K")
 {
     if (iSinglControll > 0)
@@ -249,6 +250,13 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(sFormula, row);
+            return true;
+        }
+
+        wsPatern = L"Предлог перед выводом результата мин. макс.";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(sOutPrefMinMax, row);
             return true;
         }
 
