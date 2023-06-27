@@ -265,9 +265,9 @@ void FOutData::OutGephiRib(string sName, string sPath, FTreeDisc* fTree)
 	outLabel << ptrGlobal->ptrConfig->sNameRibHeader << "\n";
 
 	//Откуда, куда, тип (неориентированный), Вес
-	for (int l = 0; l < fTree->ptrGraph->fAdjacency.size(); ++l)
+	for (int l = 0; l < fTree->ptrGraph->fAdjLust.size(); ++l)
 	{
-		for (auto [r, dLen] : fTree->ptrGraph->fAdjacency[l])
+		for (auto [r, dLen] : fTree->ptrGraph->fAdjLust[l])
 		{
 			//Чтобы не дублировать, он же неориентированный
 			if ((l < r) || (!ptrGlobal->ptrConfig->bIsUnDirected))

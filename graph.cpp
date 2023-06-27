@@ -6,15 +6,14 @@
 #include "formulaParser.h"
 
 //Инверсия зависимости
-FGraph::FGraph(FTreeDisc* _ptrTree) : ptrTree(_ptrTree), n(0), iComponent(0)
+FGraph::FGraph(FTreeDisc* _ptrTree) : ptrTree(_ptrTree), iComponent(0)
 , dMaxDiscScore(0.), dDiametrLen(0.), dDiametrStep(0.), dMinSpanTree(0.), dMaxSpanTree(0.)
 {
 	mapAllowDisc = _ptrTree->GewMapAllowDisc(true, true);
-	n = mapAllowDisc.size(); //Кол-во вершин в графе
+	int n = mapAllowDisc.size(); //Кол-во вершин в графе (У нас несколько графов, убрал из полей)
 	arrRel.resize(n);
-	fAdjacency.resize(n);
-	arrColor.resize(n);
-	//arrPreColor.resize(n);
+	fAdjLust.resize(n);
+	//arrColor.resize(n);
 
 	int i = 0;
 	for (auto& [key, it] : mapAllowDisc)
@@ -65,7 +64,7 @@ void FGraph::Create()
 
 					if (dRibWeight > ptrTree->ptrGlobal->ptrConfig->dMinWeigthRib)
 					{
-						fAdjacency[iL].push_back({ iR, dRibWeight });
+						fAdjLust[iL].push_back({ iR, dRibWeight });
 					}
 				}
 				catch (runtime_error eError)
@@ -83,9 +82,10 @@ void FGraph::Create()
 	}
 	try
 	{
-		CalculateDiametrAndComponent();
-		CalculateMST(dMinSpanTree, std::less<pair<double, pair<int, int>>>());
-		CalculateMST(dMaxSpanTree, std::greater<pair<double, pair<int, int>>>());
+		CalcDiametrAndComp(dDiametrLen, iComponent, fAdjLust, true);
+		CalcDiametrAndComp(dDiametrStep, iComponent, fAdjLust, false);
+		CalculateMST(dMinSpanTree, fAdjLust, std::less<pair<double, pair<int, int>>>());
+		CalculateMST(dMaxSpanTree, fAdjLust, std::greater<pair<double, pair<int, int>>>());
 	}
 	catch (...)
 	{
@@ -93,14 +93,15 @@ void FGraph::Create()
 	}
 }
 
-void FGraph::CalculateMST(double& dResult, auto cmp)
+void FGraph::CalculateMST(double& dResult, const vector< vector <pair<int, double>>>& fCurrentAdj, auto cmp)
 {
 	dResult = 0;
 	vector< pair<double, pair<int, int>>> q;
+	int n = fCurrentAdj.size();
 
 	for (int l = 0; l < n; ++l)
 	{
-		for (const auto& [r, len] : fAdjacency[l])
+		for (const auto& [r, len] : fCurrentAdj[l])
 		{
 			//Чтобы не дублировать, он же неориентированный
 			if ((l < r) || (!ptrTree->ptrGlobal->ptrConfig->bIsUnDirected))
@@ -125,13 +126,13 @@ void FGraph::CalculateMST(double& dResult, auto cmp)
 	}
 }
 
-void FGraph::CalculateDiametrAndComponent()
+void FGraph::CalcDiametrAndComp(double& dResult, int& iComponent, const vector< vector <pair<int, double>>>& fCurrentAdj, bool IsConsLen)
 {
-	UpdateArrColor();
-
-	dDiametrLen = 0.;
+	dResult = 0.;
 	iComponent = 0;
+	int n = fCurrentAdj.size();
 
+	vector<int> arrColor(n);
 	for (int i = 0; i < n; ++i)
 	{
 		double dTempLen;
@@ -139,30 +140,22 @@ void FGraph::CalculateDiametrAndComponent()
 		if (!arrColor[i])
 		{
 			++iComponent;
-			MaxDist(dTempLen, iTemp, i, true);
-			MaxDist(dTempLen, iTemp, iTemp, true);
-			if (dDiametrLen < dTempLen)
+			MaxDist(dTempLen, iTemp, arrColor, i, IsConsLen, fCurrentAdj);
+			MaxDist(dTempLen, iTemp, arrColor, iTemp, IsConsLen, fCurrentAdj);
+			if (dResult < dTempLen)
 			{
-				dDiametrLen = dTempLen;
-			}
-			MaxDist(dTempLen, iTemp, i, false);
-			MaxDist(dTempLen, iTemp, iTemp, false);
-			if (dDiametrStep < dTempLen)
-			{
-				dDiametrStep = dTempLen;
+				dResult = dTempLen;
 			}
 		}
 	}
 
 }
 
-void FGraph::UpdateArrColor()
-{
-	arrColor.assign(n, 0);
-}
 
-void FGraph::MaxDist(double& dMaxDist, int& iIdNode, int iIdStart, bool IsСonsDist)
+void FGraph::MaxDist(double& dMaxDist, int& iIdNode, vector<int>& arrColor, int iIdStart, bool IsСonsDist, const vector< vector <pair<int, double>>>& fCurrentAdj)
 {
+	int n = fCurrentAdj.size();
+
 	dMaxDist = 0.;
 	iIdNode = iIdStart;
 
@@ -190,7 +183,7 @@ void FGraph::MaxDist(double& dMaxDist, int& iIdNode, int iIdStart, bool IsСonsD
 			iIdNode = id;
 		}
 
-		for (auto [l, d] : fAdjacency[id])
+		for (auto [l, d] : fCurrentAdj[id])
 		{
 			double dNewLen = (IsСonsDist) ? d : 1; // Учитываем ли мы растояние, или шаги
 			if (arrLen[l] > dLen + dNewLen)
