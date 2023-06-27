@@ -241,9 +241,7 @@ string FGlobal::ConwertUTF16RU(string sData)
 
 string FGlobal::ReversUTF16RU(string sData)
 {
-#ifdef DEBUG
-	return sData;
-#else
+
 	string sOut;
 	for (int i = 0; i < sData.size();)
 	{
@@ -268,7 +266,7 @@ string FGlobal::ReversUTF16RU(string sData)
 		
 	}
 	return sOut;
-#endif
+
 }
 
 wstring FGlobal::GetValue(const OpenXLSX::XLCell& cell)

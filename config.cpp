@@ -4,11 +4,12 @@
 int FConfig::iSinglControll = 0;
 
 FConfig::FConfig(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
-,iCourseLen(2), iMaxLen(15), iIgnoreEmptyLine(5) ,iWeigthRib(10), dMinWeigthRib(0.01)
+,iCourseLen(2), iMaxNameDiscLen(15), iIgnoreEmptyLine(5) ,iWeigthRib(10), dMinWeigthRib(0.01)
 ,bCreateFolder(true), bCompactOutput(true), bReloadLogFile(true)
-, bMultiIndicator(true), bCompInterDelete(true)
+, bMultiIndicator(true), bCompInterDelete(true), bOutCompWithName(true)
+, bOutShortNameCurr(true), bIsUnDirected(true)
 ,wsNameConfig(L"./config.xlsx"), wsNamePage(L"Параметры")
-, wsNameLableFile(L"Id,Label"), wsNameRibFile(L"Source,Target,Type,Kind,Id,Label,timeset,Weight")
+, sNameLableHeader("Id;Label"), sNameRibHeader("Source;Target;Type;Weight"), sNameRibDir("Undirected")
 , arrNameFileIn({ L"plans/grad" }), arrNameFileOut({ L"result/grad" })
 , wsNameDebugFile(L"debugFile.txt"), wsNameLogFile(L"logFile.txt")
 , sRegexComp("{0, 1}(.{0, } ? ); "), sRegexHeaderComp("(.{1,})-"), sFormula("((L + R) / 2) * K")
@@ -96,21 +97,28 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
         wsPatern = L"Заголовок файла с названиями вершин";
         if (wsKey == wsPatern)
         {
-            ptrGlobal->TakeData(wsNameLableFile, row);
+            ptrGlobal->TakeData(sNameLableHeader, row);
             return true;
         }
 
         wsPatern = L"Заголовок файла с рёбрами";
         if (wsKey == wsPatern)
         {
-            ptrGlobal->TakeData(wsNameRibFile, row);
+            ptrGlobal->TakeData(sNameRibHeader, row);
+            return true;
+        }
+
+        wsPatern = L"Тип рёбер";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(sNameRibDir, row);
             return true;
         }
 
         wsPatern = L"Макс длина названия дисциплин";
         if (wsKey == wsPatern)
         {
-            ptrGlobal->TakeData(iMaxLen, row);
+            ptrGlobal->TakeData(iMaxNameDiscLen, row);
             return true;
         }
 
@@ -174,6 +182,28 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(bCompInterDelete, row);
+            return true;
+        }
+
+        wsPatern = L"Отображать компетенции в названии";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(bOutCompWithName, row);
+            return true;
+        }
+
+
+        wsPatern = L"Выводить короткое имя для УП";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(bOutShortNameCurr, row);
+            return true;
+        }
+
+        wsPatern = L"Граф неориентированный";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(bIsUnDirected, row);
             return true;
         }
 

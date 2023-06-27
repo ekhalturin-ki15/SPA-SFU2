@@ -44,6 +44,7 @@ struct FTreeDisc
 	FTreeElement* ptrRoot;
 	map<wstring, FTreeElement*> mapDisc; //Поиск указателя на дисциплину по её индексу
 	string sNamePlan;
+	string sShortNamePlan; // Имя УП без расширения
 
 	int iAmountCourse; // Количество курсов (именно курсов, не семестров)
 	double dAllSumScore; //Общее кол-во ЗЕ курса (только дисциплин, и только основный (не по выбору))

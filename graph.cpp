@@ -7,7 +7,7 @@
 
 //Инверсия зависимости
 FGraph::FGraph(FTreeDisc* _ptrTree) : ptrTree(_ptrTree), n(0), iComponent(0)
-, dMaxDiscScore(0.), dDiametrLen(0.), dDiametrStep(0.), dMinSpanTree(0.)
+, dMaxDiscScore(0.), dDiametrLen(0.), dDiametrStep(0.), dMinSpanTree(0.), dMaxSpanTree(0.)
 {
 	mapAllowDisc = _ptrTree->GewMapAllowDisc(true, true);
 	n = mapAllowDisc.size(); //Кол-во вершин в графе
@@ -84,7 +84,8 @@ void FGraph::Create()
 	try
 	{
 		CalculateDiametrAndComponent();
-		CalculateMST();
+		CalculateMST(dMinSpanTree, std::less<pair<double, pair<int, int>>>());
+		CalculateMST(dMaxSpanTree, std::greater<pair<double, pair<int, int>>>());
 	}
 	catch (...)
 	{
@@ -92,18 +93,21 @@ void FGraph::Create()
 	}
 }
 
-void FGraph::CalculateMST()
+void FGraph::CalculateMST(double& dResult, auto cmp)
 {
+	dResult = 0;
 	vector< pair<double, pair<int, int>>> q;
 
 	for (int l = 0; l < n; ++l)
 	{
 		for (const auto& [r, len] : fAdjacency[l])
 		{
-			q.push_back({ len, {l, r} });
+			//Чтобы не дублировать, он же неориентированный
+			if ((l < r) || (!ptrTree->ptrGlobal->ptrConfig->bIsUnDirected))
+				q.push_back({ len, {l, r} });		
 		}
 	}
-	sort(ALL(q));
+	sort(ALL(q), cmp);
 
 	vector<int> arrDSU(n);
 	int i = 0; for (auto& it : arrDSU) it = i++;
@@ -115,7 +119,7 @@ void FGraph::CalculateMST()
 		auto& [l, r] = pr;
 		if (!fDSU.isSame(l, r))
 		{
-			dMinSpanTree += len;
+			dResult += len;
 			fDSU.Merge(l, r);
 		}
 	}

@@ -95,6 +95,26 @@
 
 + Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad/0904040003_OP-21.plm.plx.xlsx успешно обработан
 
+Компетенции [строка 271] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/1003010031_op-21.plm.plx.xlsx для дисциплины OPK-13 не получается связать с индикатором OPK-1.1.1
+Компетенции [строка 273] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/1003010031_op-21.plm.plx.xlsx для дисциплины OPK-13 не получается связать с индикатором OPK-1.1.1
+Компетенции [строка 275] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/1003010031_op-21.plm.plx.xlsx для дисциплины OPK-13 не получается связать с индикатором OPK-1.1.2
+Компетенции [строка 277] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/1003010031_op-21.plm.plx.xlsx для дисциплины OPK-13 не получается связать с индикатором OPK-1.1.2
+Компетенции [строка 280] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/1003010031_op-21.plm.plx.xlsx для дисциплины OPK-13 не получается связать с индикатором OPK-1.2.1
+Компетенции [строка 282] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/1003010031_op-21.plm.plx.xlsx для дисциплины OPK-13 не получается связать с индикатором OPK-1.2.1
+Компетенции [строка 284] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/1003010031_op-21.plm.plx.xlsx для дисциплины OPK-13 не получается связать с индикатором OPK-1.2.2
+Компетенции [строка 286] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/1003010031_op-21.plm.plx.xlsx для дисциплины OPK-13 не получается связать с индикатором OPK-1.2.2
+Компетенции [строка 289] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/1003010031_op-21.plm.plx.xlsx для дисциплины OPK-13 не получается связать с индикатором OPK-1.3.1
+Компетенции [строка 290] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/1003010031_op-21.plm.plx.xlsx для дисциплины OPK-13 не получается связать с индикатором OPK-1.3.1
+Компетенции [строка 292] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/1003010031_op-21.plm.plx.xlsx для дисциплины OPK-13 не получается связать с индикатором OPK-1.3.1
+Компетенции [строка 294] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/1003010031_op-21.plm.plx.xlsx для дисциплины OPK-13 не получается связать с индикатором OPK-1.3.2
+Компетенции [строка 296] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/1003010031_op-21.plm.plx.xlsx для дисциплины OPK-13 не получается связать с индикатором OPK-1.3.2
+Компетенции [строка 299] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/1003010031_op-21.plm.plx.xlsx для дисциплины OPK-13 не получается связать с индикатором OPK-1.4.1
+Компетенции [строка 300] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/1003010031_op-21.plm.plx.xlsx для дисциплины OPK-13 не получается связать с индикатором OPK-1.4.1
+Компетенции [строка 301] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/1003010031_op-21.plm.plx.xlsx для дисциплины OPK-13 не получается связать с индикатором OPK-1.4.1
+Компетенции [строка 302] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/1003010031_op-21.plm.plx.xlsx для дисциплины OPK-13 не получается связать с индикатором OPK-1.4.1
+Компетенции [строка 304] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/1003010031_op-21.plm.plx.xlsx для дисциплины OPK-13 не получается связать с индикатором OPK-1.4.1
+Компетенции [строка 306] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/1003010031_op-21.plm.plx.xlsx для дисциплины OPK-13 не получается связать с индикатором OPK-1.4.2
+Компетенции [строка 308] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/1003010031_op-21.plm.plx.xlsx для дисциплины OPK-13 не получается связать с индикатором OPK-1.4.2
 - Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad/1003010031_op-21.plm.plx.xlsx обработан с недочётами
 
 Компетенции [строка 310] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad/1005010034_OP-21.pli.plx.xlsx для дисциплины OPK-17 не получается связать с индикатором OPK-4.1.1

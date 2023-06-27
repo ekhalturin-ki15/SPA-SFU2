@@ -94,7 +94,19 @@ void FSolve::CreateDiscTree(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageNum
 						if ((iIdName <= x) && (x < iIdComp) && (!bReadName))
 						{
 							bReadName = true;
-							ptrNewNode->wsName = wsData;
+
+							//Меняем на псевдоним из "Псевдонимы" файла config.xlsx
+							if (ptrGlobal->ptrConfig->fAlias.mapRename.count(wsData))
+							{
+								ptrNewNode->wsName = ptrGlobal->ptrConfig->fAlias.mapRename[wsData];
+							}
+							else
+							{
+								ptrNewNode->wsName = wsData;
+								ptrNewNode->wsName = ptrNewNode->wsName.substr(
+									0, ptrGlobal->ptrConfig->iMaxNameDiscLen);
+							}
+
 							ptrNewNode->bNotIgnore = !(ptrGlobal->ptrConfig->setIgnoreDisc.count(wsData));
 							continue;
 						}

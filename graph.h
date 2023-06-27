@@ -16,7 +16,7 @@ struct FGraph
 	void Create();
 
 	void CalculateDiametrAndComponent(); // Высчитываем диаметр и кол-во компонент связности за O(n log(n))
-	void CalculateMST(); // Высчитываем минимальное остовное дерево за O(m log(n))
+	void CalculateMST(double& dResult, auto cmp ); // Высчитываем минимальное остовное дерево за O(m log(n))
 
 	//Сопоставление id его названия (инициализируются в конструкторе)
 	vector<wstring> arrRel;
@@ -32,6 +32,7 @@ struct FGraph
 	double dDiametrStep;
 
 	double dMinSpanTree;
+	double dMaxSpanTree;
 
 	int iComponent;
 

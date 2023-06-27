@@ -27,7 +27,8 @@ void FOutData::Out(string sOutPath)
 	int x = 0; int y = 0;
 	arrHead = { L"Название учебного плана", L"Всего ЗЕ", L"Кол-во дисциплин"
 		, L"(Расш.) Общее кол-во ЗЕ в УП", L"(Расш.) Кол-во дисциплин в УП", L"Максимальное ЗЕ у дисциплины"
-		, L"Диаметр графа по расстоянию", L"Диаметр графа по количеству рёбер", L"Количество компонент связности", L"Минимальное оставное дерево"
+		, L"Диаметр графа по расстоянию", L"Диаметр графа по количеству рёбер", L"Количество компонент связности"
+		, L"Минимальное оставное дерево", L"Максимальное оставное дерево"
 	};
 
 	for (auto& sHeaderComp : ptrGlobal->ptrSolve->setHeaderComp)
@@ -58,26 +59,29 @@ void FOutData::Out(string sOutPath)
 
 	for (const auto& it : ptrGlobal->ptrSolve->arrDisc)
 	{
+		//Выводить короткое, или помное имя 
+		string sOutName = (ptrGlobal->ptrConfig->bOutShortNameCurr) ? it->sShortNamePlan : it->sNamePlan;
+
 		i = 1;
 		x = 1;
 
 		double dSumScoreExt = 0; int iAmountDiscExt = 0;
 		it->dFindAllScore(dSumScoreExt, iAmountDiscExt);
 
-		vector< double > arrResult = { 
+		arrResult = { 
 		it->dAllSumScore, double(it->iAmountDisc)
 		,dSumScoreExt, double(iAmountDiscExt), it->ptrGraph->dMaxDiscScore
 		,it->ptrGraph->dDiametrLen, it->ptrGraph->dDiametrStep
-		, double(it->ptrGraph->iComponent), it->ptrGraph->dMinSpanTree
+		, double(it->ptrGraph->iComponent), it->ptrGraph->dMinSpanTree, it->ptrGraph->dMaxSpanTree
 		};
 
-		fOutFile.workbook().addWorksheet(it->sNamePlan);
-		OutData(x, i, y,  it->sNamePlan.size(), it->sNamePlan, wks, it->sNamePlan);
-		//wks.cell(y, x++).value() = it->sNamePlan;
+		fOutFile.workbook().addWorksheet(sOutName);
+		OutData(x, i, y, sOutName.size(), sOutName, wks, sOutName);
+		//wks.cell(y, x++).value() = sOutName;
 
 		for (const auto& dValue : arrResult)
 		{
-			OutData(x, i, y, dValue, it->sNamePlan, wks, to_string(dValue));
+			OutData(x, i, y, dValue, sOutName, wks, to_string(dValue));
 		}
 
 		for (auto& sHeaderComp : ptrGlobal->ptrSolve->setHeaderComp)
@@ -91,7 +95,7 @@ void FOutData::Out(string sOutPath)
 				
 				if (dRes > ptrGlobal->ptrConfig->dMinComp)
 				{
-					OutData(x, i, y,  dRes * 100, it->sNamePlan, wks, to_string(dRes * 100) + "%");
+					OutData(x, i, y,  dRes * 100, sOutName, wks, to_string(dRes * 100) + "%");
 				}
 				else
 				{
@@ -150,9 +154,12 @@ void FOutData::Out(string sOutPath)
 	}
 
 
-	for (const auto& it : ptrGlobal->ptrSolve->arrDisc)
+	for (auto& it : ptrGlobal->ptrSolve->arrDisc)
 	{
-		string sNewFile = sOutPath + "/" + it->sNamePlan;
+		//Выводить короткое, или помное имя 
+		string sOutName = (ptrGlobal->ptrConfig->bOutShortNameCurr) ? it->sShortNamePlan : it->sNamePlan;
+
+		string sNewFile = sOutPath + "/" + sOutName;
 
 		if (!filesystem::exists(sNewFile))
 		{
@@ -163,10 +170,13 @@ void FOutData::Out(string sOutPath)
 			catch (...)
 			{
 				ptrGlobal->ptrError->ErrorOutFileCreate(sNewFile);
+				continue;//Продолжаем работать, но с другим файлом
 			}
 		}
 
-		CreateAndTake(it->sNamePlan, sOutPath);
+		OutGephiData(sOutName, sOutPath , it);
+
+		CreateAndTake(sOutName, sOutPath);
 	}
 	
 
@@ -192,6 +202,69 @@ OpenXLSX::XLWorksheet FOutData::CreateAndTake(string sName, string sPath)
 		fFile.workbook().deleteSheet("Sheet1"); // Стартовая страница не нужна
 		fFile.save();
 		return fFile.workbook().worksheet("Total Data");
+	}
+}
+void FOutData::OutGephiData(string sName, string sPath, FTreeDisc* fTree)
+{
+	OutGephiLable(sName, sPath, fTree);
+	OutGephiRib(sName, sPath, fTree);
+}
+
+void FOutData::OutGephiLable(string sName, string sPath, FTreeDisc* fTree)
+{
+	ofstream outLabel(sPath + "/" + sName + "/" + sName + "Lable.csv");
+
+	outLabel << ptrGlobal->ptrConfig->sNameLableHeader << "\n";
+
+	//Сначало id, потом имя
+	int i = -1;for (auto& it : fTree->ptrGraph->arrRel)
+	{
+		++i;
+		outLabel << i << ";";
+		FTreeElement* fThis = fTree->mapDisc[it];
+
+		wstring wsNameRaw = fThis->wsName;
+		string sName = ptrGlobal->ReversUTF16RU(ptrGlobal->ConwertToString(wsNameRaw));
+		//Выводим ещё и компетенции
+		if (ptrGlobal->ptrConfig->bOutCompWithName)
+		{
+			sName += "(";
+
+			int j = -1;for (const auto& [sNameComp, arrIndicator] : fThis->mapComp)
+			{
+				++j;
+				if (j) sName += ",";
+				sName += sNameComp;
+			}
+
+			sName += ")";
+		}
+		outLabel << sName << "";
+		outLabel << "\n";
+	}
+}
+
+void FOutData::OutGephiRib(string sName, string sPath, FTreeDisc* fTree)
+{
+	ofstream outLabel(sPath + "/" + sName + "/" + sName + "Rib.csv");
+
+	outLabel << ptrGlobal->ptrConfig->sNameRibHeader << "\n";
+
+	//Откуда, куда, тип (неориентированный), Вес
+	for (int l = 0; l < fTree->ptrGraph->fAdjacency.size(); ++l)
+	{
+		for (auto [r, dLen] : fTree->ptrGraph->fAdjacency[l])
+		{
+			//Чтобы не дублировать, он же неориентированный
+			if ((l < r) || (!ptrGlobal->ptrConfig->bIsUnDirected))
+			{
+				outLabel << l << ";";
+				outLabel << r << ";";
+				outLabel << ptrGlobal->ptrConfig->sNameRibDir << ";";
+				outLabel << dLen << "";
+				outLabel << "\n";
+			}
+		}
 	}
 }
 

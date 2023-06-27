@@ -78,7 +78,7 @@ bool FSolve::Read(string _sInPath, string sNamePlan)
 			throw std::logic_error(FError::sNotEqualSum);
 		}
 		arrDisc.back()->sNamePlan = sNamePlan;
-
+		arrDisc.back()->sShortNamePlan = sNamePlan.substr(0,sNamePlan.find('.'));
 		++iCurrentPage;
 	}
 	catch (logic_error eError)

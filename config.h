@@ -33,8 +33,9 @@ struct FConfig
 
     set<char> setIgnoreCharCompHeader;
 
-    wstring wsNameLableFile;
-    wstring wsNameRibFile;
+    string sNameLableHeader;
+    string sNameRibHeader;
+    string sNameRibDir;
 
     string sRegexComp;
     string sRegexHeaderComp;
@@ -48,11 +49,14 @@ struct FConfig
     bool bReloadLogFile;
     bool bMultiIndicator;
     bool bCompInterDelete;
+    bool bOutCompWithName;
+    bool bOutShortNameCurr;
+    bool bIsUnDirected;
 
     double dMinWeigthRib;
     double dMinComp;
 
-    int iMaxLen;
+    int iMaxNameDiscLen;
     int iWeigthRib;
     int iCourseLen;
     int iIgnoreEmptyLine;
