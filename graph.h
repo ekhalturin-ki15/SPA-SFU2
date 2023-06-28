@@ -20,21 +20,26 @@ struct FGraph
 
 	//Сопоставление id его названия (инициализируются в конструкторе)
 	vector<wstring> arrRel;
+	vector<pair<wstring, int>> arrAltRel;
 
 	//Сопоставление названию его id (инициализируются в конструкторе)
 	map < wstring, int> mapReversRel;
+	map < pair<wstring, int>, int> mapAltReversRel;
 
-	vector< vector <pair<int, double>>> fAdjLust;
+	vector< vector <pair<int, double>>> fAdjList;
+	//Второй вариант графа, где дисциплины связаны либо по курсам, 
+	//либо +- 1 сама с собой, но разнй курс
+	vector< vector <pair<int, double>>> fAltAdjList; 
+	
+	double dMaxDiscScore, dAltMaxDiscScore;
 
-	double dMaxDiscScore;
+	double dDiametrLen, dAltDiametrLen;
+	double dDiametrStep, dAltDiametrStep;
 
-	double dDiametrLen;
-	double dDiametrStep;
+	double dMinSpanTree, dAltMinSpanTree;
+	double dMaxSpanTree, dAltMaxSpanTree;
 
-	double dMinSpanTree;
-	double dMaxSpanTree;
-
-	int iComponent;
+	int iComponent, iAltComponent;
 
 private:
 	FTreeDisc* ptrTree; 
@@ -49,4 +54,8 @@ private:
 	//Передача выходных результатов через аргументы
 	//Флаг IsСonsDist отвечает за то, будем ли мы учитывать растояние, или же только кол-во рёбер в пути
 	void MaxDist(double& dMaxDist, int& iIdNode, vector<int>& arrColor, int iIdStart, bool IsСonsDist, const vector< vector <pair<int, double>>>& fCurrentAdj);
+
+	void GenerateGraph();
+	void GenerateAltGraph();
+
 };

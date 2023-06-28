@@ -8,88 +8,190 @@
 //Инверсия зависимости
 FGraph::FGraph(FTreeDisc* _ptrTree) : ptrTree(_ptrTree), iComponent(0)
 , dMaxDiscScore(0.), dDiametrLen(0.), dDiametrStep(0.), dMinSpanTree(0.), dMaxSpanTree(0.)
+, dAltMaxDiscScore(0.), dAltDiametrLen(0.), dAltDiametrStep(0.), dAltMinSpanTree(0.), dAltMaxSpanTree(0.)
 {
 	mapAllowDisc = _ptrTree->GewMapAllowDisc(true, true);
-	int n = mapAllowDisc.size(); //Кол-во вершин в графе (У нас несколько графов, убрал из полей)
-	arrRel.resize(n);
-	fAdjLust.resize(n);
-	//arrColor.resize(n);
-
-	int i = 0;
-	for (auto& [key, it] : mapAllowDisc)
-	{
-		arrRel[i] = key;
-		mapReversRel[key] = i;
-		++i;
-	}
 }
 
 void FGraph::Create()
 {
-	FormulaParser fFormulaParser(
-		ptrTree->ptrGlobal->ptrConfig->sFormula
-		, ptrTree->dAllSumScore, ptrTree->iAmountDisc);
+	//Генерируем основной граф
+	GenerateGraph();
 
-	int iL = -1;
-	for (auto& [keyL, L] : mapAllowDisc)
-	{
-		++iL;
+	//Теперь генерируем альтернативный граф
+	GenerateAltGraph();
 
-		if (!L->bAllow) continue;
-		if (L->arrChild.size()) continue;
-
-		int iR = -1;
-		for (auto& [keyR, R] : mapAllowDisc)
-		{
-			++iR;
-
-			if (!R->bAllow) continue;
-			if (R->arrChild.size()) continue;
-
-			if (dMaxDiscScore < R->dSumScore) dMaxDiscScore = R->dSumScore;
-
-			if (iL != iR)
-			{
-				int iPowerComp = 0; //Сколько компетенций совпало
-
-				for (auto& [keyCompL, arrCompL] : L->mapComp)
-				{
-					if (R->mapComp.count(keyCompL)) ++iPowerComp; // Совпала компетенция
-				}
-
-				try
-				{
-
-					double dRibWeight = fFormulaParser.TakeResult(L->dSumScore, R->dSumScore, iPowerComp);
-
-					if (dRibWeight > ptrTree->ptrGlobal->ptrConfig->dMinWeigthRib)
-					{
-						fAdjLust[iL].push_back({ iR, dRibWeight });
-					}
-				}
-				catch (runtime_error eError)
-				{
-					ptrTree->ptrGlobal->ptrError->ErrorBadFormula();
-					return;
-				}
-				catch (...)
-				{
-					//Игнорируем ошибки, работаем как ни в чём не бывало
-				}
-			
-			}
-		}
-	}
 	try
 	{
-		CalcDiametrAndComp(dDiametrLen, iComponent, fAdjLust, true);
-		CalcDiametrAndComp(dDiametrStep, iComponent, fAdjLust, false);
-		CalculateMST(dMinSpanTree, fAdjLust, std::less<pair<double, pair<int, int>>>());
-		CalculateMST(dMaxSpanTree, fAdjLust, std::greater<pair<double, pair<int, int>>>());
+		CalcDiametrAndComp(dDiametrLen, iComponent, fAdjList, true);
+		CalcDiametrAndComp(dDiametrStep, iComponent, fAdjList, false);
+		CalculateMST(dMinSpanTree, fAdjList, std::less<pair<double, pair<int, int>>>());
+		CalculateMST(dMaxSpanTree, fAdjList, std::greater<pair<double, pair<int, int>>>());
 	}
 	catch (...)
 	{
 		//Игнорируем ошибки, работаем как ни в чём не бывало
+	}
+}
+
+void FGraph::GenerateGraph()
+{
+	int i;
+
+	i = -1;
+	for (const auto& [key, it] : mapAllowDisc)
+	{
+		++i;
+		//arrRel[i] = key;
+		mapReversRel[key] = i;
+	}
+	int n;
+
+	n = mapReversRel.size(); //Кол-во вершин в графе (У нас несколько графов, убрал из полей)
+	arrRel.resize(n);
+	fAdjList.resize(n);
+	for (auto& [key, val] : mapReversRel)
+		arrRel[val] = key;
+
+	FormulaParser fFormulaParser(
+		ptrTree->ptrGlobal->ptrConfig->sFormula
+		, ptrTree->dAllSumScore, ptrTree->iAmountDisc);
+
+	for (int iL = 0; iL < n - 1; ++iL)
+	{
+		const auto& L = ptrTree->mapDisc[arrRel[iL]];
+
+		if (dMaxDiscScore < L->dSumScore) dMaxDiscScore = L->dSumScore;
+
+		for (int iR = iL + 1; iR < n; ++iR)
+		{
+			const auto& R = ptrTree->mapDisc[arrRel[iR]];
+
+			int iPowerComp = 0; //Сколько компетенций совпало
+
+			for (auto& [keyCompL, arrCompL] : L->mapComp)
+			{
+				if (R->mapComp.count(keyCompL)) ++iPowerComp; // Совпала компетенция
+			}
+
+			try
+			{
+				double dRibWeight = fFormulaParser.TakeResult(L->dSumScore, R->dSumScore, iPowerComp);
+
+				if (dRibWeight > ptrTree->ptrGlobal->ptrConfig->dMinWeigthRib)
+				{
+					fAdjList[iL].push_back({ iR, dRibWeight });
+					fAdjList[iR].push_back({ iL, dRibWeight });
+				}
+			}
+			catch (runtime_error eError)
+			{
+				ptrTree->ptrGlobal->ptrError->ErrorBadFormula();
+				return;
+			}
+			catch (...)
+			{
+				//Игнорируем ошибки, работаем как ни в чём не бывало
+			}
+		}
+	}
+}
+
+void FGraph::GenerateAltGraph()
+{
+	int i;
+	i = -1;
+	for (const auto& [key, it] : mapAllowDisc)
+	{
+		for (const auto& [iCourse, val] : it->mapCourseScore)
+		{
+			++i;
+			mapAltReversRel[{key, iCourse}] = i;
+		}
+	}
+
+	int n;
+	n = mapAltReversRel.size(); //Для альтернативного графа аналогично
+	arrAltRel.resize(n);
+	fAltAdjList.resize(n);
+	for (auto& [key, val] : mapAltReversRel)
+		arrAltRel[val] = key;
+
+	FormulaParser fFormulaParser(
+		ptrTree->ptrGlobal->ptrConfig->sFormula
+		, ptrTree->dAllSumScore, ptrTree->iAmountDisc);
+
+	for (int iL = 0; iL < n - 1; ++iL)
+	{
+		const auto& L = ptrTree->mapDisc[arrAltRel[iL].first];
+		const auto& iCourseL = arrAltRel[iL].second;
+		if (dAltMaxDiscScore < L->mapCourseScore[iCourseL])
+			dAltMaxDiscScore = L->mapCourseScore[iCourseL];
+
+		for (int iR = iL + 1; iR < n; ++iR)
+		{
+			const auto& R = ptrTree->mapDisc[arrAltRel[iR].first];
+			const auto& iCourseR = arrAltRel[iR].second;
+
+			if (iCourseL != iCourseR) continue; // Только одинаковые курсы
+
+			int iPowerComp = 0; //Сколько компетенций совпало
+
+			for (auto& [keyCompL, arrCompL] : L->mapComp)
+			{
+				if (R->mapComp.count(keyCompL)) ++iPowerComp; // Совпала компетенция
+			}
+
+			try
+			{
+				double dRibWeight = fFormulaParser.TakeResult(L->mapCourseScore[iCourseL], R->mapCourseScore[iCourseR], iPowerComp);
+
+				if (dRibWeight > ptrTree->ptrGlobal->ptrConfig->dMinWeigthRib)
+				{
+					fAltAdjList[iL].push_back({ iR, dRibWeight });
+					fAltAdjList[iR].push_back({ iL, dRibWeight });
+				}
+			}
+			catch (runtime_error eError)
+			{
+				//Нет смысла выводить повторно ошибку
+				//ptrTree->ptrGlobal->ptrError->ErrorBadFormula();
+				return;
+			}
+			catch (...)
+			{
+				//Игнорируем ошибки, работаем как ни в чём не бывало
+			}
+		}
+		if (mapAltReversRel.count({ arrAltRel[iL].first , iCourseL - 1})) //То есть, если есть предыдущий курс
+		{
+			int iR = mapAltReversRel[{ arrAltRel[iL].first, iCourseL - 1}];
+			const auto& R = ptrTree->mapDisc[arrAltRel[iR].first];
+			const auto& iCourseR = arrAltRel[iR].second;
+
+			int iPowerComp = L->mapComp.size(); //С сами собой все совпали
+
+			try
+			{
+				double dRibWeight = fFormulaParser.TakeResult(L->mapCourseScore[iCourseL], R->mapCourseScore[iCourseR], iPowerComp);
+
+				if (dRibWeight > ptrTree->ptrGlobal->ptrConfig->dMinWeigthRib)
+				{
+					fAltAdjList[iL].push_back({ iR, dRibWeight });
+					fAltAdjList[iR].push_back({ iL, dRibWeight });
+				}
+			}
+			catch (runtime_error eError)
+			{
+				//Нет смысла выводить повторно ошибку
+				//ptrTree->ptrGlobal->ptrError->ErrorBadFormula();
+				return;
+			}
+			catch (...)
+			{
+				//Игнорируем ошибки, работаем как ни в чём не бывало
+			}
+		}
 	}
 }
 

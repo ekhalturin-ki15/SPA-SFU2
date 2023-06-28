@@ -114,7 +114,7 @@ void FSolveSecondPage::AddDiscScore(const OpenXLSX::XLWorksheet& fSheet, int iKe
 		throw std::logic_error(FError::sNotFoundKeyCol); // Неудалось найти ключевой столбец
 	}
 
-	ptrGlobal->ptrSolve->arrDisc.back()->iAmountCourse = (iIdRScore - iIdLScore) / ptrGlobal->ptrConfig->iCourseLen;
+	ptrGlobal->ptrSolve->arrDisc.back()->iAmountCourse = ((iIdRScore - iIdLScore) / ptrGlobal->ptrConfig->iCourseLen);
 
 }
 

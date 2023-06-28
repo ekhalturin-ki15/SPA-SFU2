@@ -101,10 +101,24 @@ void FOutData::Out(string sOutPath)
 			{
 				double dRes =
 					(ptrGlobal->ptrConfig->bCompInterDelete) ?
-					it->ptrMetric->mapCompDistr[sHeaderComp] / double(it->ptrMetric->iBalancAmountComp) :
-					it->ptrMetric->mapCompDistr[sHeaderComp] / double(it->iAmountDisc);
+					it->ptrMetric->mapCompDistr[FMetric::iAllMetric][sHeaderComp] / double(it->ptrMetric->mapBalancAmountComp[FMetric::iAllMetric]) :
+					it->ptrMetric->mapCompDistr[FMetric::iAllMetric][sHeaderComp] / double(it->iAmountDisc);
 
-				OutData(x, i, y, it->ptrMetric->mapCompDistr[sHeaderComp], sOutName, wks, to_string(it->ptrMetric->mapCompDistr[sHeaderComp]));
+				
+				//Если ЗЕ равно 0, то и не выводить
+				if (it->ptrMetric->mapCompDistr[FMetric::iAllMetric][sHeaderComp] > 0)
+				{
+					OutData(x, i, y, it->ptrMetric->mapCompDistr[FMetric::iAllMetric][sHeaderComp], sOutName, wks, to_string(it->ptrMetric->mapCompDistr[FMetric::iAllMetric][sHeaderComp]));
+				}
+				else
+				{
+					if (arrOutColm[i])
+					{
+						wks.cell(y, x++).value() = "-";
+					}
+					i++;
+				}
+			
 
 				if (dRes > ptrGlobal->ptrConfig->dMinComp)
 				{
@@ -112,15 +126,15 @@ void FOutData::Out(string sOutPath)
 				}
 				else
 				{
-					i++;
 					wks.cell(y, x++).value() = "-";
+					i++;
 				}
 
 			}
 			else
 			{
-				i++;
 				x++; //В холостую пропускаем столбцы, они не будут заполнены
+				i++;
 			}
 		}
 
@@ -265,9 +279,9 @@ void FOutData::OutGephiRib(string sName, string sPath, FTreeDisc* fTree)
 	outLabel << ptrGlobal->ptrConfig->sNameRibHeader << "\n";
 
 	//Откуда, куда, тип (неориентированный), Вес
-	for (int l = 0; l < fTree->ptrGraph->fAdjLust.size(); ++l)
+	for (int l = 0; l < fTree->ptrGraph->fAdjList.size(); ++l)
 	{
-		for (auto [r, dLen] : fTree->ptrGraph->fAdjLust[l])
+		for (auto [r, dLen] : fTree->ptrGraph->fAdjList[l])
 		{
 			//Чтобы не дублировать, он же неориентированный
 			if ((l < r) || (!ptrGlobal->ptrConfig->bIsUnDirected))

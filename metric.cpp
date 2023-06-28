@@ -5,6 +5,8 @@
 
 #include "formulaParser.h"
 
+const int FMetric::iAllMetric = -1;
+
 //Инверсия зависимости
 FMetric::FMetric(FTreeDisc* _ptrTree) : ptrTree(_ptrTree)
 {
@@ -17,16 +19,11 @@ FMetric::FMetric(FTreeDisc* _ptrTree) : ptrTree(_ptrTree)
 		_ptrTree->ptrGlobal->ptrError->ErrorBadRegex("Регулярное выражение поиска заголовка компетенции");
 	}
 
-	iBalancAmountComp = _ptrTree->mapDisc.size();
-
 	mapAllowDisc = _ptrTree->GewMapAllowDisc(true, true);
 }
 
 void FMetric::Create()
 {
-
-	iBalancAmountComp = 0;
-
 	int iL = -1;
 	for (auto& [key, it] : mapAllowDisc)
 	{
@@ -49,12 +46,24 @@ void FMetric::Create()
 		}
 
 		//Пересечение компетенций учитываем несколько раз, чтобы получилось 100%
-		iBalancAmountComp += setComp.size();
-		for (auto& it : setComp)
+		mapBalancAmountComp[iAllMetric] += setComp.size() * it->dSumScore;
+		for (auto& et : setComp)
 		{
-			mapCompDistr[it]++;
-
+			mapCompDistr[iAllMetric][et] += it->dSumScore;
 		}
+
+		//Теперь высчитываем по каждому курсу по отдельности
+		for (int iCourse = 0; iCourse < ptrTree->iAmountCourse; ++iCourse)
+		{
+			if (!it->mapCourseScore.count(iCourse)) continue; // Чтобы не забивать map нулями
+			//Пересечение компетенций учитываем несколько раз, чтобы получилось 100%
+			mapBalancAmountComp[iCourse] += setComp.size() * it->mapCourseScore[iCourse];
+			for (auto& et : setComp)
+			{
+				mapCompDistr[iCourse][et] += it->mapCourseScore[iCourse];
+			}
+		}
+
 	}
 
 }
