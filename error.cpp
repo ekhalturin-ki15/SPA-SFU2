@@ -82,7 +82,7 @@ void FError::ErrorOutFileCreate(string sPathName)
 void FError::ErrorBadConfigSizeParams(string sNameParams, string sInfo)
 {
 	ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
-	out << "!!! Ошибка при считывании параметра config.xlsx " + sNameParams + "  " + sInfo;
+	out << "!!! Ошибка при считывании параметра config.xlsx " + ptrGlobal->ReversUTF16RU(sNameParams) + "  " + sInfo;
 	out << END;
 	out.close();
 }

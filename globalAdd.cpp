@@ -35,7 +35,7 @@ void FGlobal::TakeData(vector<wstring>& outArrData, const OpenXLSX::XLRow& row, 
         if (i)
             outArrData.push_back(GetValue(it));
     }
-    if (iSize) if (i != (iSize - 1)) throw std::out_of_range("No equeal " + to_string(i) + "!+");
+    if (iSize) if (i != (iSize - 1)) throw std::out_of_range("No equeal " + to_string(i));
 }
 
 void FGlobal::TakeData(wstring& outWsData, const OpenXLSX::XLRow& row)

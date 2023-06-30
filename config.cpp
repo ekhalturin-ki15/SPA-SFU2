@@ -10,7 +10,7 @@ FConfig::FConfig(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
 , bOutShortNameCurr(true), bIsUnDirected(true)
 ,wsNameConfig(L"./config.xlsx"), wsNamePage(L"Параметры")
 , sNameLableHeader("Id;Label"), sNameRibHeader("Source;Target;Type;Weight"), sNameRibDir("Undirected")
-, arrNameFileIn({ L"plans/grad" }), arrNameFileOut({ L"result/grad" })
+, arrNameFileIn(), arrNameFileOut()
 , wsNameDebugFile(L"debugFile.txt"), wsNameLogFile(L"logFile.txt")
 , sOutPrefMinMax("Предлог перед выводом результата мин. макс.")
 , sRegexComp("{0, 1}(.{0, } ? ); "), sRegexHeaderComp("(.{1,})-"), sFormula("((L + R) / 2) * K")
@@ -83,7 +83,9 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
         wsPatern = L"Каталог данных УП";
         if (wsKey == wsPatern)
         {
-            ptrGlobal->TakeData(arrNameFileIn, row, 3);
+            int iSize = 0;
+            if (arrNameFileOut.size() != 0) iSize = arrNameFileOut.size() + 1;
+            ptrGlobal->TakeData(arrNameFileIn, row, iSize);
             return true;
         }
 
@@ -91,7 +93,9 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
         wsPatern = L"Каталог вывода результата";
         if (wsKey == wsPatern)
         {
-            ptrGlobal->TakeData(arrNameFileOut, row, 3);
+            int iSize = 0;
+            if (arrNameFileIn.size() != 0) iSize = arrNameFileIn.size() + 1;
+            ptrGlobal->TakeData(arrNameFileOut, row, iSize);
             return true;
         }
 
