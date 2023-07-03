@@ -15,10 +15,10 @@ struct FError
     explicit FError(FGlobal* _ptrGlobal);
     ~FError();
     bool Init();
-        
-    void ErrorInFileNotFind(string sPathName);// Если ошибки при открытии файла в виде zip
-    void ErrorInFileNotFind(wstring wsPathName);// Если ошибки при открытии файла в виде zip
-    
+
+    void ErrorInFileNotFind(string sPathName);      // Если ошибки при открытии файла в виде zip
+    void ErrorInFileNotFind(wstring wsPathName);    // Если ошибки при открытии файла в виде zip
+
     void ErrorOutFileNotFind(string wsPathName);
     void ErrorOutFileNotFind(wstring wsPathName);
 
@@ -31,11 +31,11 @@ struct FError
 
     void ErrorUncorrectExtension();
 
-    void ErrorBadTree(); // Если ошибки при построении дерева дисциплин
+    void ErrorBadTree();    // Если ошибки при построении дерева дисциплин
 
-    void ErrorNotFoundKeyCol(); // Если ошибки при нахождении ключевого поля
+    void ErrorNotFoundKeyCol();    // Если ошибки при нахождении ключевого поля
 
-    void ErrorToMuchColums(); // Если ошибки при построении дерева дисциплин
+    void ErrorToMuchColums();    // Если ошибки при построении дерева дисциплин
 
     void ErrorNotEqualSum();
 
@@ -44,9 +44,9 @@ struct FError
     void ErrorBadParser();
 
     void ErrorBadFormula();
-    bool bIsPrint; // Выводим один раз (пока false)
+    bool bIsPrint;    // Выводим один раз (пока false)
 
-    void ErrorBadRegex(string sName);
+    void        ErrorBadRegex(string sName);
     set<string> setBadRegexName;
 
     void ErrorEmptyLine();
@@ -62,13 +62,12 @@ struct FError
 
     void OKParsing();
 
-    void WAParsing(); // WA - wrong answer
+    void WAParsing();    // WA - wrong answer
 
 private:
-
     static int iSinglControll;
 
     ofstream OutHeader();
 
-    FGlobal* ptrGlobal; //Синглтон
+    FGlobal* ptrGlobal;    // Синглтон
 };

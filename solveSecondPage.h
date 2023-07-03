@@ -7,13 +7,13 @@ struct FTreeElement;
 
 struct FSolveSecondPage
 {
-	explicit FSolveSecondPage(FGlobal* _ptrGlobal);
+    explicit FSolveSecondPage(FGlobal* _ptrGlobal);
 
-	void AddDiscScore(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageNumber);
-	double DFSCountingScore(FTreeElement* ptrThis);
+    void   AddDiscScore(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageNumber);
+    double DFSCountingScore(FTreeElement* ptrThis);
 
 private:
-	//FSolve* ptrSolve; //Позднее связывание, но не требуется, так как могу обратиться через Global
+    // FSolve* ptrSolve; //Позднее связывание, но не требуется, так как могу обратиться через Global
 
-	FGlobal* ptrGlobal; //Синглтон
+    FGlobal* ptrGlobal;    // Синглтон
 };

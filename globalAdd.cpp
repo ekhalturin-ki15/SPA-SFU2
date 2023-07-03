@@ -1,11 +1,11 @@
-﻿#include "global.h"
+﻿#include "config.h"
 #include "error.h"
-#include "config.h"
+#include "global.h"
 
 void FGlobal::DeleteSpechChars(string& sData)
 {
     if (ptrConfig == nullptr) return;
-   
+
     string sNewData;
     for (const auto& it : sData)
     {
@@ -14,62 +14,62 @@ void FGlobal::DeleteSpechChars(string& sData)
     }
     sData = sNewData;
     return;
-    
 }
 
 void FGlobal::TakeData(bool& outBData, const OpenXLSX::XLRow& row)
 {
-    for (auto& it : row.cells(2,2)) // Считываем только вторую ячейку
+    for (auto& it : row.cells(2, 2))    // Считываем только вторую ячейку
     {
         wstring wsLine = GetValue(it);
-        outBData = (wsLine.find(L"да") != wstring::npos);
+        outBData       = (wsLine.find(L"да") != wstring::npos);
     }
 }
 
 void FGlobal::TakeData(vector<wstring>& outArrData, const OpenXLSX::XLRow& row, int iSize)
 {
     outArrData.clear();
-    int i = -1; for (auto& it : row.cells()) // Считываем, начиная со 2 ячейки
+    int i = -1;
+    for (auto& it : row.cells())    // Считываем, начиная со 2 ячейки
     {
         i++;
-        if (i)
-            outArrData.push_back(GetValue(it));
+        if (i) outArrData.push_back(GetValue(it));
     }
-    if (iSize) if (i != (iSize - 1)) throw std::out_of_range("No equeal " + to_string(i));
+    if (iSize)
+        if (i != (iSize - 1)) throw std::out_of_range("No equeal " + to_string(i));
 }
 
 void FGlobal::TakeData(wstring& outWsData, const OpenXLSX::XLRow& row)
 {
-    for (auto& it : row.cells(2, 2)) // Считываем только вторую ячейку
-        outWsData = GetValue(it); // Так как нет value().get<wstring>
+    for (auto& it : row.cells(2, 2))    // Считываем только вторую ячейку
+        outWsData = GetValue(it);       // Так как нет value().get<wstring>
 }
 
 void FGlobal::TakeData(string& outWsData, const OpenXLSX::XLRow& row)
 {
-    for (auto& it : row.cells(2, 2)) // Считываем только вторую ячейку
+    for (auto& it : row.cells(2, 2))    // Считываем только вторую ячейку
         outWsData = it.value().get<string>();
 }
 
 void FGlobal::TakeData(int& outIData, const OpenXLSX::XLRow& row)
 {
-    for (auto& it : row.cells(2, 2)) // Считываем только вторую ячейку
-        outIData = it.value().get<int>();       
+    for (auto& it : row.cells(2, 2))    // Считываем только вторую ячейку
+        outIData = it.value().get<int>();
 }
 
 void FGlobal::TakeData(double& outIData, const OpenXLSX::XLRow& row)
 {
-    for (auto& it : row.cells(2, 2)) // Считываем только вторую ячейку
+    for (auto& it : row.cells(2, 2))    // Считываем только вторую ячейку
         outIData = it.value().get<double>();
 }
 
-vector<pair<wstring, vector<wstring> >> FGlobal::SetMapParams(const OpenXLSX::XLWorksheet& fPage, int iSize)
+vector<pair<wstring, vector<wstring>>> FGlobal::SetMapParams(const OpenXLSX::XLWorksheet& fPage, int iSize)
 {
     vector<pair<wstring, vector<wstring>>> arrReturn;
-    int y = -1;
+    int                                    y = -1;
     for (auto row : fPage.rows())
     {
         y++;
-        if (y) //Игнорируем первую строку, в ней описание столбцов
+        if (y)    // Игнорируем первую строку, в ней описание столбцов
         {
             wstring wsKeyName;
             wstring wsRename;
@@ -81,15 +81,16 @@ vector<pair<wstring, vector<wstring> >> FGlobal::SetMapParams(const OpenXLSX::XL
                 if (i == 0)
                 {
                     wsKeyName = GetValue(column);
-                    arrReturn.push_back({ wsKeyName, vector< wstring >() });
+                    arrReturn.push_back({ wsKeyName, vector<wstring>() });
                 }
                 else
                 {
                     wsRename = GetValue(column);
-                    arrReturn.back().second.push_back( wsRename );
+                    arrReturn.back().second.push_back(wsRename);
                 }
             }
-            if (iSize) if (i != (iSize - 1)) throw std::out_of_range("No equeal " + to_string(i) + "!+");
+            if (iSize)
+                if (i != (iSize - 1)) throw std::out_of_range("No equeal " + to_string(i) + "!+");
         }
     }
 
@@ -98,12 +99,9 @@ vector<pair<wstring, vector<wstring> >> FGlobal::SetMapParams(const OpenXLSX::XL
 
 int FGlobal::HeightPage(const OpenXLSX::XLWorksheet& fSheet)
 {
-    if (ptrConfig == nullptr)
-    {
-        throw std::logic_error(FError::sNotInitConfig);
-    }
+    if (ptrConfig == nullptr) { throw std::logic_error(FError::sNotInitConfig); }
 
-    int h = 0;
+    int         h = 0;
     vector<int> arrEmptyRow;
 
     for (auto row : fSheet.rows())
@@ -124,9 +122,8 @@ int FGlobal::HeightPage(const OpenXLSX::XLWorksheet& fSheet)
             arrEmptyRow.push_back(h);
             if (arrEmptyRow.size() >= ptrConfig->iIgnoreEmptyLine)
             {
-                if (arrEmptyRow[arrEmptyRow.size() - ptrConfig->iIgnoreEmptyLine]
-                    ==
-                    (h - ptrConfig->iIgnoreEmptyLine + 1)) // Нашли iIgnoreEmptyLine подряд идущих пустых строк
+                if (arrEmptyRow[arrEmptyRow.size() - ptrConfig->iIgnoreEmptyLine] ==
+                    (h - ptrConfig->iIgnoreEmptyLine + 1))    // Нашли iIgnoreEmptyLine подряд идущих пустых строк
                 {
                     return h - ptrConfig->iIgnoreEmptyLine + 1;
                 }
@@ -143,10 +140,7 @@ int FGlobal::HeightPage(const OpenXLSX::XLWorksheet& fSheet)
             --h;
             arrEmptyRow.pop_back();
         }
-        else
-        {
-            break;
-        }
+        else { break; }
     }
 
     return h;

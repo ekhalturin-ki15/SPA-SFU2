@@ -5,17 +5,15 @@ struct FGlobal;
 //
 struct FPageInfo
 {
-    wstring wsName;
-    string sName; // Лучше один раз конвертировать (быстрее по времени)
-    vector<set<wstring>> arrHeader; // Для каждого столбца есть множество синонимов
+    wstring              wsName;
+    string               sName;        // Лучше один раз конвертировать (быстрее по времени)
+    vector<set<wstring>> arrHeader;    // Для каждого столбца есть множество синонимов
 };
 
 struct Alias
 {
     map<wstring, wstring> mapRename;
 };
-
-
 
 struct FConfig
 {
@@ -26,10 +24,10 @@ struct FConfig
 
     vector<wstring> arrNameFileIn;
 
-    vector<wstring> arrNameFileOut;
-    map< wstring, vector<wstring> > mapArrOutParams;
-    set< wstring > setIgnoreDisc;
-    set< string > setIgnoreСurriculum; //Какие УП игнорировать впринципе
+    vector<wstring>               arrNameFileOut;
+    map<wstring, vector<wstring>> mapArrOutParams;
+    set<wstring>                  setIgnoreDisc;
+    set<string>                   setIgnoreСurriculum;    // Какие УП игнорировать впринципе
 
     set<char> setIgnoreCharCompHeader;
 
@@ -63,19 +61,18 @@ struct FConfig
     int iCourseLen;
     int iIgnoreEmptyLine;
 
-    std::wstring wsNameConfig; // "Параметры"
-    std::wstring wsNamePage; 
+    std::wstring wsNameConfig;    // "Параметры"
+    std::wstring wsNamePage;
 
     bool Init();
 
-    Alias fAlias; //Явная композиция
+    Alias fAlias;    // Явная композиция
 
 private:
-
     static int iSinglControll;
 
-    bool SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XLRow row);
+    bool                 SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XLRow row);
     vector<set<wstring>> SetParsingParams(OpenXLSX::XLWorksheet& fPage);
 
-    FGlobal* ptrGlobal; //Синглтон
+    FGlobal* ptrGlobal;    // Синглтон
 };

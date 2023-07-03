@@ -3,20 +3,36 @@
 
 int FConfig::iSinglControll = 0;
 
-FConfig::FConfig(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
-,iCourseLen(2), iMaxNameDiscLen(15), iIgnoreEmptyLine(5) ,iWeigthRib(10), dMinWeigthRib(0.01)
-,bCreateFolder(true), bCompactOutput(true), bReloadLogFile(true)
-, bMultiIndicator(true), bCompInterDelete(true), bOutCompWithName(true)
-, bOutShortNameCurr(true), bIsUnDirected(true)
-,wsNameConfig(L"./config.xlsx"), wsNamePage(L"Параметры")
-, sNameLableHeader("Id;Label"), sNameRibHeader("Source;Target;Type;Weight"), sNameRibDir("Undirected")
-, arrNameFileIn(), arrNameFileOut()
-, wsNameDebugFile(L"debugFile.txt"), wsNameLogFile(L"logFile.txt")
-, sOutPrefMinMax("Предлог перед выводом результата мин. макс.")
-, sRegexComp("{0, 1}(.{0, } ? ); "), sRegexHeaderIndicator("(.{1,})-(.{1,})\.(.{1,})"), sFormula("((L + R) / 2) * K")
+FConfig::FConfig(FGlobal* _ptrGlobal)
+    : ptrGlobal(_ptrGlobal),
+      iCourseLen(2),
+      iMaxNameDiscLen(15),
+      iIgnoreEmptyLine(5),
+      iWeigthRib(10),
+      dMinWeigthRib(0.01),
+      bCreateFolder(true),
+      bCompactOutput(true),
+      bReloadLogFile(true),
+      bMultiIndicator(true),
+      bCompInterDelete(true),
+      bOutCompWithName(true),
+      bOutShortNameCurr(true),
+      bIsUnDirected(true),
+      wsNameConfig(L"./config.xlsx"),
+      wsNamePage(L"Параметры"),
+      sNameLableHeader("Id;Label"),
+      sNameRibHeader("Source;Target;Type;Weight"),
+      sNameRibDir("Undirected"),
+      arrNameFileIn(),
+      arrNameFileOut(),
+      wsNameDebugFile(L"debugFile.txt"),
+      wsNameLogFile(L"logFile.txt"),
+      sOutPrefMinMax("Предлог перед выводом результата мин. макс."),
+      sRegexComp("{0, 1}(.{0, } ? ); "),
+      sRegexHeaderIndicator("(.{1,})-(.{1,})\.(.{1,})"),
+      sFormula("((L + R) / 2) * K")
 {
-    if (iSinglControll > 0)
-        throw std::runtime_error("Re-creation Singleton");
+    if (iSinglControll > 0) throw std::runtime_error("Re-creation Singleton");
     ++iSinglControll;
 }
 
@@ -33,13 +49,13 @@ bool FConfig::Init()
         ptrGlobal->ptrError->ErrorNotFoundConfig();
         return false;
     }
-    fBook = fDoc.workbook();
+    fBook            = fDoc.workbook();
     auto arrNamePage = fBook.worksheetNames();
 
     auto fMainPage = fBook.worksheet(ptrGlobal->ConwertToString(wsNamePage));
     for (auto& row : fMainPage.rows())
     {
-        auto it = row.cells().begin();
+        auto    it        = row.cells().begin();
         wstring sDescript = ptrGlobal->GetValue(*it);
 
         if (!SetParams(fBook, sDescript, row)) return false;
@@ -59,17 +75,18 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
 
         // Названия анализируемых страниц
         wsPatern = L"Названия анализируемых страниц";
-        //Не обобщить, сложная логика
+        // Не обобщить, сложная логика
         if (wsKey == wsPatern)
         {
             arrKeyPage.clear();
-            int i = -1; for (auto& page : row.cells())
+            int i = -1;
+            for (auto& page : row.cells())
             {
                 i++;
                 if (i)
                 {
                     wstring wsNamePage = ptrGlobal->GetValue(page);
-                    string sNamePage = ptrGlobal->ConwertToString(wsNamePage);
+                    string  sNamePage  = ptrGlobal->ConwertToString(wsNamePage);
 
                     OpenXLSX::XLWorksheet fExtraPage = fBook.worksheet(sNamePage);
 
@@ -79,7 +96,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
             return true;
         }
 
-        //Каталог данных УП
+        // Каталог данных УП
         wsPatern = L"Каталог данных УП";
         if (wsKey == wsPatern)
         {
@@ -89,7 +106,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
             return true;
         }
 
-        //Каталог вывода результата
+        // Каталог вывода результата
         wsPatern = L"Каталог вывода результата";
         if (wsKey == wsPatern)
         {
@@ -197,7 +214,6 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
             return true;
         }
 
-
         wsPatern = L"Выводить короткое имя для УП";
         if (wsKey == wsPatern)
         {
@@ -231,8 +247,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
         {
             string sData;
             ptrGlobal->TakeData(sData, row);
-            for (auto& it : sData)
-                setIgnoreCharCompHeader.insert(it);
+            for (auto& it : sData) setIgnoreCharCompHeader.insert(it);
             return true;
         }
 
@@ -243,7 +258,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
             return true;
         }
 
-        wsPatern = L"Регулярное выражение поиска заголовка компетенции";
+        wsPatern = L"Регулярное выражение разбивки индикатора";
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(sRegexHeaderIndicator, row);
@@ -275,15 +290,14 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
         if (wsKey == wsPatern)
         {
             fAlias.mapRename.clear();
-            int i = -1; for (auto& page : row.cells())
+            int i = -1;
+            for (auto& page : row.cells())
             {
                 i++;
                 if (i)
                 {
                     wstring wsNamePage = ptrGlobal->GetValue(page);
-                    for (auto& [key, val] :
-                        ptrGlobal->SetMapParams(fBook.worksheet(ptrGlobal->ConwertToString(wsNamePage)), 2)
-                        )
+                    for (auto& [key, val] : ptrGlobal->SetMapParams(fBook.worksheet(ptrGlobal->ConwertToString(wsNamePage)), 2))
                     {
                         fAlias.mapRename[key] = val.at(0);
                     }
@@ -296,37 +310,34 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
         if (wsKey == wsPatern)
         {
             mapArrOutParams.clear();
-            int i = -1; for (auto& page : row.cells())
+            int i = -1;
+            for (auto& page : row.cells())
             {
                 i++;
                 if (i)
                 {
                     wstring wsNamePage = ptrGlobal->GetValue(page);
-                    for (auto& [key, val] :
-                        ptrGlobal->SetMapParams(fBook.worksheet(ptrGlobal->ConwertToString(wsNamePage)), 4)
-                        )
+                    for (auto& [key, val] : ptrGlobal->SetMapParams(fBook.worksheet(ptrGlobal->ConwertToString(wsNamePage)), 4))
                     {
                         mapArrOutParams[key] = val;
                     }
                 }
             }
             return true;
-
         }
 
         wsPatern = L"Игнорируемые предметы (название страницы)";
         if (wsKey == wsPatern)
         {
             setIgnoreDisc.clear();
-            int i = -1; for (auto& page : row.cells())
+            int i = -1;
+            for (auto& page : row.cells())
             {
                 i++;
                 if (i)
                 {
                     wstring wsNamePage = ptrGlobal->GetValue(page);
-                    for (auto& [key, val] :
-                        ptrGlobal->SetMapParams(fBook.worksheet(ptrGlobal->ConwertToString(wsNamePage)), 1)
-                        )
+                    for (auto& [key, val] : ptrGlobal->SetMapParams(fBook.worksheet(ptrGlobal->ConwertToString(wsNamePage)), 1))
                     {
                         setIgnoreDisc.insert(key);
                     }
@@ -339,15 +350,14 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
         if (wsKey == wsPatern)
         {
             setIgnoreСurriculum.clear();
-            int i = -1; for (auto& page : row.cells())
+            int i = -1;
+            for (auto& page : row.cells())
             {
                 i++;
                 if (i)
                 {
                     wstring wsNamePage = ptrGlobal->GetValue(page);
-                    for (auto& [key, val] :
-                        ptrGlobal->SetMapParams(fBook.worksheet(ptrGlobal->ConwertToString(wsNamePage)), 1)
-                        )
+                    for (auto& [key, val] : ptrGlobal->SetMapParams(fBook.worksheet(ptrGlobal->ConwertToString(wsNamePage)), 1))
                     {
                         setIgnoreСurriculum.insert(ptrGlobal->ConwertToString(key));
                     }
@@ -358,10 +368,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
     }
     catch (out_of_range eError)
     {
-        if (ptrGlobal->ptrError)
-        {
-            ptrGlobal->ptrError->ErrorBadConfigSizeParams(ptrGlobal->ConwertToString(wsPatern), eError.what());
-        }
+        if (ptrGlobal->ptrError) { ptrGlobal->ptrError->ErrorBadConfigSizeParams(ptrGlobal->ConwertToString(wsPatern), eError.what()); }
         return false;
     }
     catch (...)
@@ -371,7 +378,6 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
     return true;
 }
 
-
 vector<set<wstring>> FConfig::SetParsingParams(OpenXLSX::XLWorksheet& fPage)
 {
     vector<set<wstring>> arrResult(fPage.rows().begin()->cells().size());
@@ -379,16 +385,13 @@ vector<set<wstring>> FConfig::SetParsingParams(OpenXLSX::XLWorksheet& fPage)
     int y = 0;
     for (auto row : fPage.rows())
     {
-        if (y++) //Игнорируем первую строку, в ней описание столбцов
+        if (y++)    // Игнорируем первую строку, в ней описание столбцов
         {
             int i = 0;
             for (auto& column : row.cells())
             {
                 wstring wsData = ptrGlobal->GetValue(column);
-                if (wsData != L"")
-                {
-                    arrResult[i].insert(wsData);
-                }
+                if (wsData != L"") { arrResult[i].insert(wsData); }
                 ++i;
             }
         }
@@ -396,8 +399,4 @@ vector<set<wstring>> FConfig::SetParsingParams(OpenXLSX::XLWorksheet& fPage)
     return arrResult;
 }
 
-
-FConfig::~FConfig()
-{
-    --iSinglControll;
-}
+FConfig::~FConfig() { --iSinglControll; }

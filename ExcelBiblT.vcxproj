@@ -178,6 +178,7 @@
     <ClCompile Include="solveZeroPage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".clang-format" />
     <None Include="0903010030-21.plm.plx.xlsx" />
   </ItemGroup>
   <ItemGroup>

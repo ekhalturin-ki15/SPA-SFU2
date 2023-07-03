@@ -70,6 +70,9 @@
     <None Include="0903010030-21.plm.plx.xlsx">
       <Filter>Файлы ресурсов</Filter>
     </None>
+    <None Include=".clang-format">
+      <Filter>Файлы ресурсов</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h">

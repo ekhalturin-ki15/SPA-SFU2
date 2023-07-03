@@ -1,40 +1,38 @@
-﻿//Описание переменных в стиле unreal engine
-// Префикс f - сложная структура
-// Префикс s - строка (string)
-// Префикс ws - строка UTF 16 (wstring)
-// Префикс arr - массив элементов (vector)
-// Префикс map - словарь (map)
-// Префикс set - множество (set)
-// Префикс list - список
-// Префикс b - флаг (bool)
-// Префикс i - число (int)
-// Префикс d - вещественное число (double)
-// Префикс ptr - указатель
+﻿// Описание переменных в стиле unreal engine
+//  Префикс f - сложная структура
+//  Префикс s - строка (string)
+//  Префикс ws - строка UTF 16 (wstring)
+//  Префикс arr - массив элементов (vector)
+//  Префикс map - словарь (map)
+//  Префикс set - множество (set)
+//  Префикс list - список
+//  Префикс b - флаг (bool)
+//  Префикс i - число (int)
+//  Префикс d - вещественное число (double)
+//  Префикс ptr - указатель
 
 #include "config.h"
-#include "global.h"
 #include "error.h"
-#include "solve.h"
+#include "global.h"
 #include "outData.h"
+#include "solve.h"
 
 #ifdef DEBUG
-    #define _CRTDBG_MAP_ALLOC
-    #include <stdlib.h>
-    #include <crtdbg.h>
+#    define _CRTDBG_MAP_ALLOC
+#    include <crtdbg.h>
+#    include <stdlib.h>
 #endif
 
 using namespace std;
-//using namespace OpenXLSX;
+// using namespace OpenXLSX;
 
-//ofstream logFile;// ("logFile.txt"); //Сообщаем об ошибках пользователя
-//ofstream debugFile("debugFile.txt"); //Для отладки
-
-
+// ofstream logFile;// ("logFile.txt"); //Сообщаем об ошибках пользователя
+// ofstream debugFile("debugFile.txt"); //Для отладки
 
 /// <summary>
-/// Данная структура описывает учебный модуль 
+/// Данная структура описывает учебный модуль
 /// (или дисциплину, если нет наследников)
-/// 
+///
 /// В структуре перечислено:
 /// id модуля, как в УП
 /// название модуля
@@ -48,22 +46,18 @@ struct Disc
     string sName;
 
     map<string, set<int>> mapCompet;
-    vector<Disc*> arrChild;
+    vector<Disc*>         arrChild;
 
-    int iSumZU;
+    int           iSumZU;
     map<int, int> mapAllZU;
 
-    Disc(string _sNoIdentity) :iSumZU(0), sName(_sNoIdentity),
-        sId(_sNoIdentity) {}
+    Disc(string _sNoIdentity) : iSumZU(0), sName(_sNoIdentity), sId(_sNoIdentity) {}
 };
 
-FGlobal* ptrGlobal; //Синглтон
-bool Create();
+FGlobal* ptrGlobal;    // Синглтон
+bool     Create();
 
-void Delete()
-{
-    delete ptrGlobal;
-}
+void Delete() { delete ptrGlobal; }
 
 bool Create()
 {
@@ -80,25 +74,25 @@ int main()
 {
     try
     {
-        if (!Create()) 
+        if (!Create())
 #ifdef DEBUG
-            return 4; //Аварийное завершение
+            return 4;    // Аварийное завершение
 #else
-            return 0; //Аварийное завершение
+            return 0;    // Аварийное завершение
 #endif
 
         if (ptrGlobal->ptrConfig->arrKeyPage.size() < 3)
         {
-            ptrGlobal->ptrError->FatalErrorFewConfigPages(); // Не хватает данных для парсинга УП
+            ptrGlobal->ptrError->FatalErrorFewConfigPages();    // Не хватает данных для парсинга УП
             Delete();
 #ifdef DEBUG
-            return 3; //Аварийное завершение
+            return 3;    // Аварийное завершение
 #else
-            return 0; //Аварийное завершение
+            return 0;    // Аварийное завершение
 #endif
         }
 
-        auto fFile = filesystem::current_path(); //Взятие пути директории расположения exe файла
+        auto fFile = filesystem::current_path();    // Взятие пути директории расположения exe файла
 
         for (int category = 0; category < ptrGlobal->ptrConfig->arrNameFileIn.size(); ++category)
         {
@@ -106,7 +100,7 @@ int main()
             if (!filesystem::exists(fInFile))
             {
                 ptrGlobal->ptrError->ErrorInFileNotFind(fInFile);
-                continue; //Код ошибки - нет файлов указанного формата, из которых ожидалось считывание 
+                continue;    // Код ошибки - нет файлов указанного формата, из которых ожидалось считывание
             }
             auto fOutFile = fFile / ptrGlobal->ptrConfig->arrNameFileOut[category];
             if (!filesystem::exists(fOutFile))
@@ -126,7 +120,7 @@ int main()
                 {
                     ptrGlobal->ptrError->ErrorOutFileNotFind(fOutFile);
                     continue;
-                    //exit(0); //Код ошибки - не удаётся создать папку для вывода
+                    // exit(0); //Код ошибки - не удаётся создать папку для вывода
                 }
             }
 
@@ -136,16 +130,15 @@ int main()
                 {
                     if (ptrGlobal->ptrConfig->setIgnoreСurriculum.count(it.path().filename().string())) continue;
                     auto sOutName = fOutFile / it.path().filename();
-                    ptrGlobal->ptrSolve->Read(it.path().string(), it.path().filename().string());                
+                    ptrGlobal->ptrSolve->Read(it.path().string(), it.path().filename().string());
                 }
             }
 
             ptrGlobal->ptrSolve->CreateAllGraph();
-            ptrGlobal->ptrSolve->CreateAllMetric(); // Метрики не связаны с графом
+            ptrGlobal->ptrSolve->CreateAllMetric();    // Метрики не связаны с графом
 
-            auto sTotalOutName = fFile / ptrGlobal->ptrConfig->arrNameFileOut[category];// / "TotalData.xlsx";
+            auto sTotalOutName = fFile / ptrGlobal->ptrConfig->arrNameFileOut[category];    // / "TotalData.xlsx";
             ptrGlobal->ptrOutData->Out(sTotalOutName.string());
-
         }
 
         Delete();
@@ -154,15 +147,14 @@ int main()
     {
         Delete();
 #ifdef DEBUG
-        return 2; //Аварийное завершение
+        return 2;    // Аварийное завершение
 #else
-        return 0; //Аварийное завершение
+        return 0;        // Аварийное завершение
 #endif
     }
 
-
 #ifdef DEBUG
-    //Будет ругаться на Статические поля в error.h
+    // Будет ругаться на Статические поля в error.h
     _CrtDumpMemoryLeaks();
-#endif // DEBUG
+#endif    // DEBUG
 }
