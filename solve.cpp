@@ -29,13 +29,21 @@ bool FSolve::Init()
 
     try
     {
-        fRegexHeaderIndicator = ptrGlobal->ptrConfig->sRegexHeaderIndicator;
+        fRegexHeaderComp = ptrGlobal->ptrConfig->sRegexHeaderComp;
     }
     catch (...)
     {
         ptrGlobal->ptrError->ErrorBadRegex("Регулярное выражение поиска заголовка компетенции");
     }
 
+    try
+    {
+        fRegexHeaderInd = ptrGlobal->ptrConfig->sRegexHeaderIndicator;
+    }
+    catch (...)
+    {
+        ptrGlobal->ptrError->ErrorBadRegex("Регулярное выражение поиска заголовка индикатора");
+    }
     return true;
 }
 

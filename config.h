@@ -37,6 +37,7 @@ struct FConfig
 
     string sRegexComp;
     string sRegexHeaderIndicator;
+    string sRegexHeaderComp;
     string sFormula;
 
     string sOutPrefMinMax;

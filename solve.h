@@ -111,5 +111,6 @@ private:
     FSolveSecondPage* ptrSolveSecondPage;    // Композиция (вынес в отдельный класс, так как много методов)
     FGlobal* ptrGlobal;                      // Синглтон
     regex    fRegexComp;
-    regex    fRegexHeaderIndicator;
+    regex    fRegexHeaderComp;
+    regex    fRegexHeaderInd;
 };

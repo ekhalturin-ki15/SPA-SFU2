@@ -265,6 +265,13 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
             return true;
         }
 
+        wsPatern = L"Регулярное выражение разбивки компетенции";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(sRegexHeaderComp, row);
+            return true;
+        }
+
         wsPatern = L"Формула расчёта весов рёбер";
         if (wsKey == wsPatern)
         {

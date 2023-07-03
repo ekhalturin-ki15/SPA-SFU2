@@ -52,7 +52,8 @@ private:
     void UpdateMetricBranch(FTreeMetric* ptrNowTree, set<vector<string>>& setIsTakenScore, const string& sName, const double& dScore);
 
     FTreeDisc* ptrTree;
-    regex      fRegexHeaderIndicator;
+    regex      fRegexHeaderInd;
+    regex      fRegexHeaderComp;
 
     map<wstring, FTreeElement*> mapAllowDisc;    // Оставляем только разрешённые дисциплины (без модулей) для анализа
 };

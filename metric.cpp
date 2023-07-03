@@ -45,13 +45,21 @@ FMetric::FMetric(FTreeDisc* _ptrTree) : ptrTree(_ptrTree)
 {
     try
     {
-        fRegexHeaderIndicator = _ptrTree->ptrGlobal->ptrConfig->sRegexHeaderIndicator;
+        fRegexHeaderComp = _ptrTree->ptrGlobal->ptrConfig->sRegexHeaderComp;
     }
     catch (...)
     {
         _ptrTree->ptrGlobal->ptrError->ErrorBadRegex("Регулярное выражение поиска заголовка компетенции");
     }
 
+    try
+    {
+        fRegexHeaderInd = _ptrTree->ptrGlobal->ptrConfig->sRegexHeaderIndicator;
+    }
+    catch (...)
+    {
+        _ptrTree->ptrGlobal->ptrError->ErrorBadRegex("Регулярное выражение поиска заголовка индикатора");
+    }
     mapAllowDisc = _ptrTree->GewMapAllowDisc(true, true);
 
     ptrTreeMetric            = new FTreeMetric;
@@ -121,14 +129,14 @@ void FMetric::Create()
         {
             for (const auto& ind : arrInd)
             {
-                vector<smatch> matches { sregex_iterator { ALL(ind), fRegexHeaderIndicator }, sregex_iterator {} };
+                vector<smatch> matchesInd { sregex_iterator { ALL(ind), fRegexHeaderInd }, sregex_iterator {} };
                 
                 string         sCompName;
                 string         sCompNumber;
                 string         sIndicatorNumber;
-                if (matches.size() > 0)
+                if (matchesInd.size() > 0)
                 {
-                    for (auto sData : matches)
+                    for (auto sData : matchesInd)
                     {
                         sCompName = sData[1].str();
                         sCompNumber = sData[2].str();
@@ -137,9 +145,8 @@ void FMetric::Create()
                 }
                 else 
                 { 
-                    string         sSurrogatInd = comp + ".";
-                    vector<smatch> matches2 { sregex_iterator { ALL(sSurrogatInd), fRegexHeaderIndicator }, sregex_iterator {} };
-                    for (auto sData : matches2)
+                    vector<smatch> matchesComp { sregex_iterator { ALL(comp), fRegexHeaderComp }, sregex_iterator {} };
+                    for (auto sData : matchesComp)
                     {
                         sCompName = sData[1].str();
                         sCompNumber = sData[2].str();

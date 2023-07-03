@@ -75,12 +75,12 @@ void FSolve::AddCompIndicator(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageN
 
                             ptrThis->mapComp[sLastComp].push_back(sLastIndicator);
 
-                            vector<smatch> matchesHeader { sregex_iterator { ALL(sLastIndicator), fRegexHeaderIndicator },
+                            vector<smatch> matchesHeaderComp { sregex_iterator { ALL(sLastComp), fRegexHeaderComp },
                                                            sregex_iterator {} };
                             
-                            if (matchesHeader.size() > 0)
+                            if (matchesHeaderComp.size() > 0)
                             {
-                                for (auto sData : matchesHeader)
+                                for (auto sData : matchesHeaderComp)
                                 {
                                     string sCompHeaderName = sData[1].str();
                                     setHeaderComp.insert(sCompHeaderName);
@@ -88,10 +88,9 @@ void FSolve::AddCompIndicator(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageN
                             }
                             else
                             {
-                                string sParserIndicator = sLastComp + '.';
-                                vector<smatch> matchesHeader2 { sregex_iterator { ALL(sParserIndicator), fRegexHeaderIndicator },
+                                vector<smatch> matchesHeaderInd { sregex_iterator { ALL(sLastIndicator), fRegexHeaderInd },
                                                                sregex_iterator {} };
-                                for (auto sData : matchesHeader2)
+                                for (auto sData : matchesHeaderInd)
                                 {
                                     string sCompHeaderName = sData[1].str();
                                     setHeaderComp.insert(sCompHeaderName);
