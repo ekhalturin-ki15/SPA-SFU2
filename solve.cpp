@@ -30,7 +30,7 @@ bool FSolve::Init()
 
 	try
 	{
-		fRegexHeaderComp = ptrGlobal->ptrConfig->sRegexHeaderComp;
+		fRegexHeaderIndicator = ptrGlobal->ptrConfig->sRegexHeaderIndicator;
 	}
 	catch (...)
 	{

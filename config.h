@@ -38,7 +38,7 @@ struct FConfig
     string sNameRibDir;
 
     string sRegexComp;
-    string sRegexHeaderComp;
+    string sRegexHeaderIndicator;
     string sFormula;
 
     string sOutPrefMinMax;

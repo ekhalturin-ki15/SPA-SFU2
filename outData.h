@@ -32,8 +32,11 @@ private:
 
 	map< int, FСorridor > mapSaveData;
 	void RetakeMinMax(FСorridor& fSaveData, const double& dNewData, const string& sNewData);
-	void OutData(int& x, int& index, const int& y, double dDate, string sDate, OpenXLSX::XLWorksheet& wks, string sOutData);
+	void OutData(int& x, int& index, const int& y, double dDate, string sDate, 
+		OpenXLSX::XLWorksheet& wks, string sOutData, const bool& bIsConsider, const int& iXShift, const int& iYShift);
 
 	void OutGephiLable(string sName, string sPath, FTreeDisc* fTree); //Вывод данных о графе для Gephi в формате csv
 	void OutGephiRib(string sName, string sPath, FTreeDisc* fTree); //Вывод данных о графе для Gephi в формате csv
+
+	int iXShift, iYShift;
 };

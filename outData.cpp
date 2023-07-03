@@ -41,6 +41,7 @@ void FOutData::Out(string sOutPath)
 
 	arrOutColm.assign(arrHead.size() + 1, true); // Так как нумерация с 1, поэтому и +1
 	
+	//Вывод заголовка
 	x = 1, i = 1;for (const auto& it : arrHead)
 	{
 		if (ptrGlobal->ptrConfig->mapArrOutParams.count(it))
@@ -66,8 +67,11 @@ void FOutData::Out(string sOutPath)
 		}
 	
 	}
-	x = 1; y = 2;
-
+	
+	//Вывод данных
+	iXShift = 0;
+	iYShift = 1;
+	x = 1; y = 1;
 	for (const auto& it : ptrGlobal->ptrSolve->arrDisc)
 	{
 		//Выводить короткое, или помное имя 
@@ -81,53 +85,73 @@ void FOutData::Out(string sOutPath)
 
 		arrResult = { 
 		it->dAllSumScore, double(it->iAmountDisc)
-		,dSumScoreExt, double(iAmountDiscExt), it->ptrGraph->dMaxDiscScore
-		,it->ptrGraph->dDiametrLen, it->ptrGraph->dDiametrStep
-		, double(it->ptrGraph->iComponent), it->ptrGraph->dMinSpanTree, it->ptrGraph->dMaxSpanTree
+		,dSumScoreExt, double(iAmountDiscExt), it->ptrGraph->mapGraph[FGraph::iCommon].dMaxDiscScore
+		,it->ptrGraph->mapGraph[FGraph::iCommon].dDiametrLen,
+			it->ptrGraph->mapGraph[FGraph::iCommon].dDiametrStep
+		, double(it->ptrGraph->mapGraph[FGraph::iCommon].iComponent),
+			it->ptrGraph->mapGraph[FGraph::iCommon].dMinSpanTree,
+			it->ptrGraph->mapGraph[FGraph::iCommon].dMaxSpanTree
 		};
 
 		fOutFile.workbook().addWorksheet(sOutName);
-		OutData(x, i, y, sOutName.size(), sOutName, wks, sOutName);
-		//wks.cell(y, x++).value() = sOutName;
+		OutData(x, i, y, sOutName.size(), sOutName, wks, sOutName, false, iXShift, iYShift);
 
 		for (const auto& dValue : arrResult)
 		{
-			OutData(x, i, y, dValue, sOutName, wks, to_string(dValue));
+			OutData(x, i, y, dValue, sOutName, wks, to_string(dValue), true, iXShift, iYShift);
 		}
 
 		for (auto& sHeaderComp : ptrGlobal->ptrSolve->setHeaderComp)
 		{
 			if (it->ptrMetric)
 			{
-				double dRes =
-					(ptrGlobal->ptrConfig->bCompInterDelete) ?
-					it->ptrMetric->mapCompDistr[FMetric::iAllMetric][sHeaderComp] / double(it->ptrMetric->mapBalancAmountComp[FMetric::iAllMetric]) :
-					it->ptrMetric->mapCompDistr[FMetric::iAllMetric][sHeaderComp] / double(it->iAmountDisc);
+				auto ptrTreeMetric = it->ptrMetric->ptrTreeMetric->mapChild[FMetric::sAllMetric];
+				double dScore = 0.;
+				double dRes = 0.;
+				if (ptrTreeMetric->mapChild.count(sHeaderComp))
+				{ 
+					dScore =
+						(ptrGlobal->ptrConfig->bCompInterDelete) ?
+						ptrTreeMetric->mapChild[sHeaderComp]->dBalanceSum
+						:
+						ptrTreeMetric->mapChild[sHeaderComp]->dNoBalanceSum;
 
-				
-				//Если ЗЕ равно 0, то и не выводить
-				if (it->ptrMetric->mapCompDistr[FMetric::iAllMetric][sHeaderComp] > 0)
-				{
-					OutData(x, i, y, it->ptrMetric->mapCompDistr[FMetric::iAllMetric][sHeaderComp], sOutName, wks, to_string(it->ptrMetric->mapCompDistr[FMetric::iAllMetric][sHeaderComp]));
+
+					dRes =
+						(ptrGlobal->ptrConfig->bCompInterDelete) ?
+						dScore / ptrTreeMetric->dBalanceSum
+						:
+						dScore / it->dAllSumScore;
+					
 				}
 				else
 				{
-					if (arrOutColm[i])
-					{
-						wks.cell(y, x++).value() = "-";
-					}
-					i++;
+					dScore = 0.;
+					dRes = 0.;
+				}
+
+				//Если ЗЕ равно 0, то и не выводить
+				if (dScore > 0)
+				{
+					OutData(x, i, y, 
+						dScore,
+						sOutName, wks,
+						to_string(dScore)
+						, true, iXShift, iYShift);
+				}
+				else
+				{
+					OutData(x, i, y, 0, sOutName, wks, "-", false, iXShift, iYShift);
 				}
 			
 
 				if (dRes > ptrGlobal->ptrConfig->dMinComp)
 				{
-					OutData(x, i, y,  dRes * 100, sOutName, wks, to_string(dRes * 100) + "%");
+					OutData(x, i, y,  dRes * 100, sOutName, wks, to_string(dRes * 100) + "%", true, iXShift, iYShift);
 				}
 				else
 				{
-					wks.cell(y, x++).value() = "-";
-					i++;
+					OutData(x, i, y, 0, sOutName, wks, "-", false, iXShift, iYShift);
 				}
 
 			}
@@ -141,41 +165,36 @@ void FOutData::Out(string sOutPath)
 		++y; //Перевод строки
 	}
 
+	iYShift += y;
 	//Вывод коридора минимума максимума
 	{
 		if (ptrGlobal->ptrConfig->mapArrOutParams.count(L"Максимальные значения:"))
 		{
 			if (ptrGlobal->ptrConfig->mapArrOutParams[L"Максимальные значения:"].at(1) == L"да")
 			{
+				wks.cell(iYShift, 1 + iXShift).value() = ptrGlobal->ConwertToString(
+					ptrGlobal->ptrConfig->mapArrOutParams[L"Максимальные значения:"].at(0));
 				for (auto& [id, fСorridor] : mapSaveData)
 				{
-					if (id == 1)
-					{
-						wks.cell(y, id).value() = ptrGlobal->ConwertToString(
-							ptrGlobal->ptrConfig->mapArrOutParams[L"Максимальные значения:"].at(0));
-					}
-					else
-						wks.cell(y, id).value() = to_string(fСorridor.dMax) + " (" + fСorridor.sMax + ")";
+					wks.cell(iYShift, id + iXShift).value() = to_string(fСorridor.dMax)
+					+ " (" + ptrGlobal->ptrConfig->sOutPrefMinMax + fСorridor.sMax + ")";
 				}
-				++y;
+				++iYShift;
 			}
 		}
 		if (ptrGlobal->ptrConfig->mapArrOutParams.count(L"Минимальные значения:"))
 		{
 			if (ptrGlobal->ptrConfig->mapArrOutParams[L"Минимальные значения:"].at(1) == L"да")
 			{
+				wks.cell(iYShift, 1 + iXShift).value() = ptrGlobal->ConwertToString(
+					ptrGlobal->ptrConfig->mapArrOutParams[L"Минимальные значения:"].at(0));
+
 				for (auto& [id, fСorridor] : mapSaveData)
 				{
-					if (id == 1)
-					{
-						wks.cell(y, id).value() = ptrGlobal->ConwertToString(
-							ptrGlobal->ptrConfig->mapArrOutParams[L"Минимальные значения:"].at(0));
-					}
-					else
-						wks.cell(y, id).value() = to_string(fСorridor.dMin) 
-						+ " (" + ptrGlobal->ptrConfig->sOutPrefMinMax + fСorridor.sMin + ")";
+					wks.cell(iYShift, id + iXShift).value() = to_string(fСorridor.dMin)
+					+ " (" + ptrGlobal->ptrConfig->sOutPrefMinMax + fСorridor.sMin + ")";
 				}
-				++y;
+				++iYShift;;
 			}
 		}
 
@@ -245,11 +264,11 @@ void FOutData::OutGephiLable(string sName, string sPath, FTreeDisc* fTree)
 	outLabel << ptrGlobal->ptrConfig->sNameLableHeader << "\n";
 
 	//Сначало id, потом имя
-	int i = -1;for (auto& it : fTree->ptrGraph->arrRel)
+	int i = -1;for (auto& it : fTree->ptrGraph->mapGraph[FGraph::iCommon].arrRel)
 	{
 		++i;
 		outLabel << i << ";";
-		FTreeElement* fThis = fTree->mapDisc[it];
+		FTreeElement* fThis = fTree->mapDisc[it.first];
 
 		wstring wsNameRaw = fThis->wsName;
 		string sName = ptrGlobal->ReversUTF16RU(ptrGlobal->ConwertToString(wsNameRaw));
@@ -279,9 +298,9 @@ void FOutData::OutGephiRib(string sName, string sPath, FTreeDisc* fTree)
 	outLabel << ptrGlobal->ptrConfig->sNameRibHeader << "\n";
 
 	//Откуда, куда, тип (неориентированный), Вес
-	for (int l = 0; l < fTree->ptrGraph->fAdjList.size(); ++l)
+	for (int l = 0; l < fTree->ptrGraph->mapGraph[FGraph::iCommon].fAdjList.size(); ++l)
 	{
-		for (auto [r, dLen] : fTree->ptrGraph->fAdjList[l])
+		for (auto [r, dLen] : fTree->ptrGraph->mapGraph[FGraph::iCommon].fAdjList[l])
 		{
 			//Чтобы не дублировать, он же неориентированный
 			if ((l < r) || (!ptrGlobal->ptrConfig->bIsUnDirected))
@@ -313,11 +332,14 @@ void FOutData::RetakeMinMax(FСorridor& fSaveData, const double& dNewData, const
 	return;
 }
 
-void FOutData::OutData(int& x, int& index, const int& y, double dDate, string sDate, OpenXLSX::XLWorksheet& wks, string sOutData)
+void FOutData::OutData(int& x, int& index, const int& y, double dDate, string sDate, OpenXLSX::XLWorksheet& wks,
+	string sOutData, const bool& bIsConsider, const int& iXShift, const int& iYShift)
 {
 	if (arrOutColm[index++])
 	{
-		RetakeMinMax(mapSaveData[x], dDate, sDate);
-		wks.cell(y, x++).value() = ptrGlobal->ConwertUTF16RU(sOutData);
+		if (bIsConsider)
+			RetakeMinMax(mapSaveData[x], dDate, sDate);
+
+		wks.cell(iYShift + y, iXShift + x++).value() = ptrGlobal->ConwertUTF16RU(sOutData);
 	}
 }

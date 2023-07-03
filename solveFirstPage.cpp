@@ -80,6 +80,16 @@ void FSolve::AddCompIndicator(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageN
 
 							ptrThis->mapComp[sLastComp].push_back(sLastIndicator);
 
+							vector<smatch> matchesHeader{
+							sregex_iterator{ALL(sLastIndicator), fRegexHeaderIndicator},
+								sregex_iterator{}};
+
+							for (auto sData : matchesHeader)
+							{
+								string sCompHeaderName = sData[1].str();
+								setHeaderComp.insert(sCompHeaderName);
+							}
+
 							break;
 						}
 						//Иначе это индикатор

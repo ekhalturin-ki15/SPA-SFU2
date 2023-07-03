@@ -5,10 +5,11 @@
 
 #include "formulaParser.h"
 
+const int FGraph::iCommon = 0;
+const int FGraph::iAlt = 1;
+
 //Инверсия зависимости
-FGraph::FGraph(FTreeDisc* _ptrTree) : ptrTree(_ptrTree), iComponent(0)
-, dMaxDiscScore(0.), dDiametrLen(0.), dDiametrStep(0.), dMinSpanTree(0.), dMaxSpanTree(0.)
-, dAltMaxDiscScore(0.), dAltDiametrLen(0.), dAltDiametrStep(0.), dAltMinSpanTree(0.), dAltMaxSpanTree(0.)
+FGraph::FGraph(FTreeDisc* _ptrTree) : ptrTree(_ptrTree)
 {
 	mapAllowDisc = _ptrTree->GewMapAllowDisc(true, true);
 }
@@ -23,10 +24,10 @@ void FGraph::Create()
 
 	try
 	{
-		CalcDiametrAndComp(dDiametrLen, iComponent, fAdjList, true);
-		CalcDiametrAndComp(dDiametrStep, iComponent, fAdjList, false);
-		CalculateMST(dMinSpanTree, fAdjList, std::less<pair<double, pair<int, int>>>());
-		CalculateMST(dMaxSpanTree, fAdjList, std::greater<pair<double, pair<int, int>>>());
+		CalcDiametrAndComp(mapGraph[iCommon].dDiametrLen, mapGraph[iCommon].iComponent, mapGraph[iCommon].fAdjList, true);
+		CalcDiametrAndComp(mapGraph[iCommon].dDiametrStep, mapGraph[iCommon].iComponent, mapGraph[iCommon].fAdjList, false);
+		CalculateMST(mapGraph[iCommon].dMinSpanTree, mapGraph[iCommon].fAdjList, std::less<pair<double, pair<int, int>>>());
+		CalculateMST(mapGraph[iCommon].dMaxSpanTree, mapGraph[iCommon].fAdjList, std::greater<pair<double, pair<int, int>>>());
 	}
 	catch (...)
 	{
@@ -43,15 +44,15 @@ void FGraph::GenerateGraph()
 	{
 		++i;
 		//arrRel[i] = key;
-		mapReversRel[key] = i;
+		mapGraph[iCommon].mapReversRel[{key, 0}] = i; // 0 - это заглушка (или некий коментарий к дисциплине)
 	}
 	int n;
 
-	n = mapReversRel.size(); //Кол-во вершин в графе (У нас несколько графов, убрал из полей)
-	arrRel.resize(n);
-	fAdjList.resize(n);
-	for (auto& [key, val] : mapReversRel)
-		arrRel[val] = key;
+	n = mapGraph[iCommon].mapReversRel.size(); //Кол-во вершин в графе (У нас несколько графов, убрал из полей)
+	mapGraph[iCommon].arrRel.resize(n);
+	mapGraph[iCommon].fAdjList.resize(n);
+	for (auto& [key, val] : mapGraph[iCommon].mapReversRel)
+		mapGraph[iCommon].arrRel[val] = key;
 
 	FormulaParser fFormulaParser(
 		ptrTree->ptrGlobal->ptrConfig->sFormula
@@ -59,13 +60,14 @@ void FGraph::GenerateGraph()
 
 	for (int iL = 0; iL < n - 1; ++iL)
 	{
-		const auto& L = ptrTree->mapDisc[arrRel[iL]];
+		const auto& L = ptrTree->mapDisc[mapGraph[iCommon].arrRel[iL].first];
 
-		if (dMaxDiscScore < L->dSumScore) dMaxDiscScore = L->dSumScore;
+		if (mapGraph[iCommon].dMaxDiscScore < L->dSumScore)
+			mapGraph[iCommon].dMaxDiscScore = L->dSumScore;
 
 		for (int iR = iL + 1; iR < n; ++iR)
 		{
-			const auto& R = ptrTree->mapDisc[arrRel[iR]];
+			const auto& R = ptrTree->mapDisc[mapGraph[iCommon].arrRel[iR].first];
 
 			int iPowerComp = 0; //Сколько компетенций совпало
 
@@ -80,8 +82,8 @@ void FGraph::GenerateGraph()
 
 				if (dRibWeight > ptrTree->ptrGlobal->ptrConfig->dMinWeigthRib)
 				{
-					fAdjList[iL].push_back({ iR, dRibWeight });
-					fAdjList[iR].push_back({ iL, dRibWeight });
+					mapGraph[iCommon].fAdjList[iL].push_back({ iR, dRibWeight });
+					mapGraph[iCommon].fAdjList[iR].push_back({ iL, dRibWeight });
 				}
 			}
 			catch (runtime_error eError)
@@ -106,16 +108,16 @@ void FGraph::GenerateAltGraph()
 		for (const auto& [iCourse, val] : it->mapCourseScore)
 		{
 			++i;
-			mapAltReversRel[{key, iCourse}] = i;
+			mapGraph[iAlt].mapReversRel[{key, iCourse}] = i;
 		}
 	}
 
 	int n;
-	n = mapAltReversRel.size(); //Для альтернативного графа аналогично
-	arrAltRel.resize(n);
-	fAltAdjList.resize(n);
-	for (auto& [key, val] : mapAltReversRel)
-		arrAltRel[val] = key;
+	n = mapGraph[iAlt].mapReversRel.size(); //Для альтернативного графа аналогично
+	mapGraph[iAlt].arrRel.resize(n);
+	mapGraph[iAlt].fAdjList.resize(n);
+	for (auto& [key, val] : mapGraph[iAlt].mapReversRel)
+		mapGraph[iAlt].arrRel[val] = key;
 
 	FormulaParser fFormulaParser(
 		ptrTree->ptrGlobal->ptrConfig->sFormula
@@ -123,15 +125,15 @@ void FGraph::GenerateAltGraph()
 
 	for (int iL = 0; iL < n - 1; ++iL)
 	{
-		const auto& L = ptrTree->mapDisc[arrAltRel[iL].first];
-		const auto& iCourseL = arrAltRel[iL].second;
-		if (dAltMaxDiscScore < L->mapCourseScore[iCourseL])
-			dAltMaxDiscScore = L->mapCourseScore[iCourseL];
+		const auto& L = ptrTree->mapDisc[mapGraph[iAlt].arrRel[iL].first];
+		const auto& iCourseL = mapGraph[iAlt].arrRel[iL].second;
+		if (mapGraph[iAlt].dMaxDiscScore < L->mapCourseScore[iCourseL])
+			mapGraph[iAlt].dMaxDiscScore = L->mapCourseScore[iCourseL];
 
 		for (int iR = iL + 1; iR < n; ++iR)
 		{
-			const auto& R = ptrTree->mapDisc[arrAltRel[iR].first];
-			const auto& iCourseR = arrAltRel[iR].second;
+			const auto& R = ptrTree->mapDisc[mapGraph[iAlt].arrRel[iR].first];
+			const auto& iCourseR = mapGraph[iAlt].arrRel[iR].second;
 
 			if (iCourseL != iCourseR) continue; // Только одинаковые курсы
 
@@ -148,8 +150,8 @@ void FGraph::GenerateAltGraph()
 
 				if (dRibWeight > ptrTree->ptrGlobal->ptrConfig->dMinWeigthRib)
 				{
-					fAltAdjList[iL].push_back({ iR, dRibWeight });
-					fAltAdjList[iR].push_back({ iL, dRibWeight });
+					mapGraph[iAlt].fAdjList[iL].push_back({ iR, dRibWeight });
+					mapGraph[iAlt].fAdjList[iR].push_back({ iL, dRibWeight });
 				}
 			}
 			catch (runtime_error eError)
@@ -163,11 +165,11 @@ void FGraph::GenerateAltGraph()
 				//Игнорируем ошибки, работаем как ни в чём не бывало
 			}
 		}
-		if (mapAltReversRel.count({ arrAltRel[iL].first , iCourseL - 1})) //То есть, если есть предыдущий курс
+		if (mapGraph[iAlt].mapReversRel.count({ mapGraph[iAlt].arrRel[iL].first , iCourseL - 1})) //То есть, если есть предыдущий курс
 		{
-			int iR = mapAltReversRel[{ arrAltRel[iL].first, iCourseL - 1}];
-			const auto& R = ptrTree->mapDisc[arrAltRel[iR].first];
-			const auto& iCourseR = arrAltRel[iR].second;
+			int iR = mapGraph[iAlt].mapReversRel[{ mapGraph[iAlt].arrRel[iL].first, iCourseL - 1}];
+			const auto& R = ptrTree->mapDisc[mapGraph[iAlt].arrRel[iR].first];
+			const auto& iCourseR = mapGraph[iAlt].arrRel[iR].second;
 
 			int iPowerComp = L->mapComp.size(); //С сами собой все совпали
 
@@ -177,8 +179,8 @@ void FGraph::GenerateAltGraph()
 
 				if (dRibWeight > ptrTree->ptrGlobal->ptrConfig->dMinWeigthRib)
 				{
-					fAltAdjList[iL].push_back({ iR, dRibWeight });
-					fAltAdjList[iR].push_back({ iL, dRibWeight });
+					mapGraph[iAlt].fAdjList[iL].push_back({ iR, dRibWeight });
+					mapGraph[iAlt].fAdjList[iR].push_back({ iL, dRibWeight });
 				}
 			}
 			catch (runtime_error eError)

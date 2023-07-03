@@ -7,8 +7,35 @@
 using namespace std;
 struct FTreeDisc;
 
+
+struct FGraphType
+{
+	//Сопоставление id его названия (инициализируются в конструкторе)
+	vector<pair<wstring, int>> arrRel;
+
+	//Сопоставление названию его id (инициализируются в конструкторе)
+	map < pair<wstring, int>, int> mapReversRel;
+
+	//Второй вариант графа, где дисциплины связаны либо по курсам, 
+	//либо +- 1 сама с собой, но разнй курс
+	vector< vector <pair<int, double>>> fAdjList;
+
+	double dMaxDiscScore;
+
+	double dDiametrLen;
+	double dDiametrStep;
+
+	double dMinSpanTree;
+	double dMaxSpanTree;
+
+	int iComponent;
+};
+
 struct FGraph
 {
+	static const int iCommon;
+	static const int iAlt;
+
 	//Инверсия зависимости
 	explicit FGraph(FTreeDisc* _ptrTree);
 
@@ -18,28 +45,7 @@ struct FGraph
 	void CalcDiametrAndComp(double& dResult, int& iComponent, const vector< vector <pair<int, double>>>& fCurrentAdj, bool IsConsLen); // Высчитываем диаметр и кол-во компонент связности за O(n log(n))
 	void CalculateMST(double& dResult, const vector< vector <pair<int, double>>>& fCurrentAdj, auto cmp); // Высчитываем минимальное остовное дерево за O(m log(n))
 
-	//Сопоставление id его названия (инициализируются в конструкторе)
-	vector<wstring> arrRel;
-	vector<pair<wstring, int>> arrAltRel;
-
-	//Сопоставление названию его id (инициализируются в конструкторе)
-	map < wstring, int> mapReversRel;
-	map < pair<wstring, int>, int> mapAltReversRel;
-
-	vector< vector <pair<int, double>>> fAdjList;
-	//Второй вариант графа, где дисциплины связаны либо по курсам, 
-	//либо +- 1 сама с собой, но разнй курс
-	vector< vector <pair<int, double>>> fAltAdjList; 
-	
-	double dMaxDiscScore, dAltMaxDiscScore;
-
-	double dDiametrLen, dAltDiametrLen;
-	double dDiametrStep, dAltDiametrStep;
-
-	double dMinSpanTree, dAltMinSpanTree;
-	double dMaxSpanTree, dAltMaxSpanTree;
-
-	int iComponent, iAltComponent;
+	map<int, FGraphType> mapGraph; // Тип зависит от версии графа, сейчас iCommon - обычный, iAlt - альтернативный
 
 private:
 	FTreeDisc* ptrTree; 

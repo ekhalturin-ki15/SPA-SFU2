@@ -28,7 +28,11 @@ struct FTreeElement
 	
 	FTreeElement* ptrParent;
 	vector<FTreeElement*> arrChild;  //Дисциплины внутри модуля
+	//Указаны компетенции с индикаторами для дополнительной валидации УП (что у страницы Компетенции (2) есть весь перечень компетенций)
 	map<string, vector<string>> mapComp; // Компетенции, у каждой из которых перечень индикаторов
+
+	//vector<string> arrIndicator; // Индикаторы (из индикатора можно извлечь компетенцию)
+
 };
 
 struct FTreeDisc
@@ -91,7 +95,7 @@ public:
 
 	string sInPath; // Для отладки
 	string sOutPath;
-
+	//Не могу перенести в FMetric, так как это общее для всех УП сразу
 	set< string > setHeaderComp; //Все заголовки компетенций (УК, ПК, ОПК). Нужно для вывода
 
 private:
@@ -109,7 +113,7 @@ private:
 	FSolveSecondPage* ptrSolveSecondPage; //Композиция (вынес в отдельный класс, так как много методов)
 	FGlobal* ptrGlobal; //Синглтон
 	regex fRegexComp;
-	regex fRegexHeaderComp;
+	regex fRegexHeaderIndicator;
 };
 
 

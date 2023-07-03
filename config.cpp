@@ -13,7 +13,7 @@ FConfig::FConfig(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
 , arrNameFileIn(), arrNameFileOut()
 , wsNameDebugFile(L"debugFile.txt"), wsNameLogFile(L"logFile.txt")
 , sOutPrefMinMax("Предлог перед выводом результата мин. макс.")
-, sRegexComp("{0, 1}(.{0, } ? ); "), sRegexHeaderComp("(.{1,})-"), sFormula("((L + R) / 2) * K")
+, sRegexComp("{0, 1}(.{0, } ? ); "), sRegexHeaderIndicator("(.{1,})-(.{1,})\.(.{1,})"), sFormula("((L + R) / 2) * K")
 {
     if (iSinglControll > 0)
         throw std::runtime_error("Re-creation Singleton");
@@ -246,7 +246,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
         wsPatern = L"Регулярное выражение поиска заголовка компетенции";
         if (wsKey == wsPatern)
         {
-            ptrGlobal->TakeData(sRegexHeaderComp, row);
+            ptrGlobal->TakeData(sRegexHeaderIndicator, row);
             return true;
         }
 
