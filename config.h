@@ -26,6 +26,8 @@ struct FConfig
 
     vector<wstring>               arrNameFileOut;
     map<wstring, vector<wstring>> mapArrOutParams;
+    map<wstring, wstring>         mapAddOutParams;
+
     set<wstring>                  setIgnoreDisc;
     set<string>                   setIgnoreСurriculum;    // Какие УП игнорировать впринципе
 
@@ -43,6 +45,7 @@ struct FConfig
     string sFormula;
 
     wstring wsOutPrefMinMax;
+    wstring wsOutPrefAllCourse;
     wstring wsNameDebugFile;
     wstring wsNameLogFile;
 

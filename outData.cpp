@@ -44,7 +44,7 @@ void FOutData::Out(string sOutPath)
     arrOutColm.assign(arrHead.size() + 1, true);    // Так как нумерация с 1, поэтому и +1
 
     // Вывод заголовка
-    x = 1, i = 1;
+    y = 1, x = 1, i = 1;
     for (const auto& it : arrHead)
     {
         if (ptrGlobal->ptrConfig->mapArrOutParams.count(it))
@@ -52,7 +52,7 @@ void FOutData::Out(string sOutPath)
             arrOutColm[i] = (ptrGlobal->ptrConfig->mapArrOutParams[it].at(1) == L"да");
             if (arrOutColm[i++])
             {
-                wks.cell(1, x++).value() = ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->mapArrOutParams[it].at(0));
+                wks.cell(y, x++).value() = ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->mapArrOutParams[it].at(0));
             }
         }
         else
@@ -64,7 +64,7 @@ void FOutData::Out(string sOutPath)
             }
             if (arrOutColm[i++])
             {
-                wks.cell(1, x++).value() = ptrGlobal->ConwertToString(it);
+                wks.cell(y, x++).value() = ptrGlobal->ConwertToString(it);
             }
         }
     }
@@ -72,7 +72,6 @@ void FOutData::Out(string sOutPath)
     // Вывод данных
     iXShift = 0;
     iYShift = 1;
-    x       = 1;
     y       = 1;
     for (const auto& it : ptrGlobal->ptrSolve->arrDisc)
     {
@@ -165,10 +164,9 @@ void FOutData::Out(string sOutPath)
                     ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->mapArrOutParams[L"Максимальные значения:"].at(0));
                 for (auto& [id, fСorridor] : mapSaveData)
                 {
-                    wks.cell(iYShift, id + iXShift).value() =
-                        to_string(fСorridor.dMax) + " (" 
-                        + ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->wsOutPrefMinMax) 
-                        + fСorridor.sMax + ")";
+                    wks.cell(iYShift, id + iXShift).value() = to_string(fСorridor.dMax) + " (" +
+                                                              ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->wsOutPrefMinMax) +
+                                                              fСorridor.sMax + ")";
                 }
                 ++iYShift;
             }
@@ -182,16 +180,18 @@ void FOutData::Out(string sOutPath)
 
                 for (auto& [id, fСorridor] : mapSaveData)
                 {
-                    wks.cell(iYShift, id + iXShift).value() = 
-                        to_string(fСorridor.dMin) + " ("
-                        + ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->wsOutPrefMinMax) 
-                        + fСorridor.sMin + ")";
+                    wks.cell(iYShift, id + iXShift).value() = to_string(fСorridor.dMin) + " (" +
+                                                              ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->wsOutPrefMinMax) +
+                                                              fСorridor.sMin + ")";
                 }
                 ++iYShift;
                 ;
             }
         }
     }
+
+    fOutFile.save();
+    fOutFile.close();
 
     for (auto& it : ptrGlobal->ptrSolve->arrDisc)
     {
@@ -214,30 +214,79 @@ void FOutData::Out(string sOutPath)
         }
 
         OutGephiData(sOutName, sOutPath, it);
-
         CreateAndTake(sOutName, sOutPath);
+        OutAddInfo(it);
+        
+        fOpenFile.save();
+        fOpenFile.close();
+        
     }
 
-    fOutFile.save();
-    fOutFile.close();
 }
 
-OpenXLSX::XLWorksheet FOutData::CreateAndTake(string sName, string sPath)
+void FOutData::OutAddInfo(FTreeDisc* ptrTree)
 {
-    OpenXLSX::XLDocument fFile;
+    int x = 1;
+    int y = 1;
+
+    vector<wstring> arrHead = { L"За какой курс", L"Название компетенции", L"Компетенция", L"Индекс", L"Процент распределения" };
+    // Вывод заголовка
+    y = 1, x = 1;
+    for (const auto& it : arrHead)
+    {
+        if (ptrTree->ptrGlobal->ptrConfig->mapAddOutParams.count(it))
+        {
+            fOpenWKS.cell(y, x++).value() = ptrTree->ptrGlobal->ConwertToString(
+                ptrTree->ptrGlobal->ptrConfig->mapAddOutParams[it]);
+        }
+    }
+    ++y;
+    x = 1;
+
+    y = OutRectAddInfo(x, y, ptrTree->ptrMetric->ptrTreeMetric->mapChild[FMetric::sAllMetric]);
+}
+
+int FOutData::OutRectAddInfo(int x, int y, FTreeMetric* ptrMetric)
+{
+    if (ptrMetric->sName == FMetric::sEmptyIndicator)
+    {
+        return y + 1;
+    }
+
+    fOpenWKS.cell(y, x).value() = ptrMetric->sName;
+
+    if (ptrMetric->mapChild.size() == 0)
+    {
+        return y + 1;
+    }
+
+    for (auto& [sName, ptrChild] : ptrMetric->mapChild)
+    {
+        y = OutRectAddInfo(x + 1, y, ptrChild);
+    }
+    
+    return y;
+}
+
+void FOutData::CreateAndTake(string sName, string sPath)
+{
     if (ptrGlobal->ptrConfig->bCompactOutput)
     {
-        fFile.open(sPath + "/TotalData.xlsx");
-        fFile.workbook().addWorksheet(sName);
-        return fFile.workbook().worksheet(sName);
+        fOpenFile.open(sPath + "/TotalData.xlsx");
+        if (fOpenFile.workbook().worksheetExists(sName)) 
+            fOpenFile.workbook().deleteSheet(sName);  
+
+        fOpenFile.workbook().addWorksheet(sName);
+        fOpenWKS = fOpenFile.workbook().worksheet(sName);
+        return;
     }
     else
     {
-        fFile.create(sPath + "/" + sName + "/" + "Data.xlsx");
-        fFile.workbook().addWorksheet("Total Data");
-        fFile.workbook().deleteSheet("Sheet1");    // Стартовая страница не нужна
-        fFile.save();
-        return fFile.workbook().worksheet("Total Data");
+        fOpenFile.create(sPath + "/" + sName + "/" + "Data.xlsx");
+        fOpenFile.workbook().addWorksheet("Total Data");
+        fOpenFile.workbook().deleteSheet("Sheet1");    // Стартовая страница не нужна
+        fOpenFile.save();
+        fOpenWKS = fOpenFile.workbook().worksheet("Total Data");
     }
 }
 

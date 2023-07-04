@@ -30,7 +30,7 @@ struct FTreeMetric
 // Класс похож на FGraph по идеологии, но в нём другие данные
 struct FMetric
 {
-    static const string sAllMetric;
+    static string       sAllMetric;    // Плохо, что не статик, ну да ладно
     static const string sEmptyIndicator;
     // Инверсия зависимости
     explicit FMetric(FTreeDisc* _ptrTree);

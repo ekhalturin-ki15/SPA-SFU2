@@ -5,7 +5,7 @@
 
 #include "formulaParser.h"
 
-const string FMetric::sAllMetric      = "All";
+string FMetric::sAllMetric      = "All";
 const string FMetric::sEmptyIndicator = "-";
 
 void FTreeMetric::DeleteDFS(FTreeMetric* th)
@@ -43,6 +43,10 @@ void FMetric::InitBalanceScore() { ptrTreeMetric->InitBalanceScore(); }
 // Инверсия зависимости
 FMetric::FMetric(FTreeDisc* _ptrTree) : ptrTree(_ptrTree)
 {
+    sAllMetric = 
+        _ptrTree->ptrGlobal->ConwertToString
+        (_ptrTree->ptrGlobal->ptrConfig->wsOutPrefAllCourse);
+
     try
     {
         fRegexHeaderComp = _ptrTree->ptrGlobal->ptrConfig->sRegexHeaderComp;
@@ -68,7 +72,7 @@ FMetric::FMetric(FTreeDisc* _ptrTree) : ptrTree(_ptrTree)
 
     ptrTreeMetric->mapChild[sAllMetric]            = new FTreeMetric;
     ptrTreeMetric->mapChild[sAllMetric]->ptrParent = ptrTreeMetric;
-    ptrTreeMetric->mapChild[sAllMetric]->sName     = "sAllMetric";
+    ptrTreeMetric->mapChild[sAllMetric]->sName     = sAllMetric;
 
     for (int iCourse = 0; iCourse < _ptrTree->iAmountCourse; ++iCourse)
     {

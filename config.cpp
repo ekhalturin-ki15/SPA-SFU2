@@ -10,6 +10,7 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       iIgnoreEmptyLine(5),
       iWeigthRib(10),
       dMinWeigthRib(0.01),
+      dMinComp(0.01),
       bCreateFolder(true),
       bCompactOutput(true),
       bReloadLogFile(true),
@@ -28,6 +29,7 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       wsNameDebugFile(L"debugFile.txt"),
       wsNameLogFile(L"logFile.txt"),
       wsOutPrefMinMax(L"у УП "),
+      wsOutPrefAllCourse(L"Все курсы"),
       sPrefCourseNumber("_"),
       sSufAltGraphFile("Alt"),
       sRegexComp("{0, 1}(.{0, } ? ); "),
@@ -286,6 +288,13 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
             return true;
         }
 
+        wsPatern = L"Надпись при выводе информации о всех курсах";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(wsOutPrefAllCourse, row);
+            return true;
+        }
+
         wsPatern = L"Разделитель между названием дисциплины и её курсом";
         if (wsKey == wsPatern)
         {
@@ -321,6 +330,26 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
                     for (auto& [key, val] : ptrGlobal->SetMapParams(fBook.worksheet(ptrGlobal->ConwertToString(wsNamePage)), 2))
                     {
                         fAlias.mapRename[key] = val.at(0);
+                    }
+                }
+            }
+            return true;
+        }
+
+        wsPatern = L"Параметры расширенного вывода (название страницы)";
+        if (wsKey == wsPatern)
+        {
+            fAlias.mapRename.clear();
+            int i = -1;
+            for (auto& page : row.cells())
+            {
+                i++;
+                if (i)
+                {
+                    wstring wsNamePage = ptrGlobal->GetValue(page);
+                    for (auto& [key, val] : ptrGlobal->SetMapParams(fBook.worksheet(ptrGlobal->ConwertToString(wsNamePage)), 2))
+                    {
+                        mapAddOutParams[key] = val.at(0);
                     }
                 }
             }
