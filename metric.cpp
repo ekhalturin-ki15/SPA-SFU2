@@ -74,7 +74,7 @@ FMetric::FMetric(FTreeDisc* _ptrTree) : ptrTree(_ptrTree)
     ptrTreeMetric->mapChild[sAllMetric]->ptrParent = ptrTreeMetric;
     ptrTreeMetric->mapChild[sAllMetric]->sName     = sAllMetric;
 
-    for (int iCourse = 0; iCourse < _ptrTree->iAmountCourse; ++iCourse)
+    for (int iCourse = 1; iCourse <= _ptrTree->iAmountCourse; ++iCourse) //Делаем 1 нумерацию
     {
         ptrTreeMetric->mapChild[to_string(iCourse)]            = new FTreeMetric;
         ptrTreeMetric->mapChild[to_string(iCourse)]->ptrParent = ptrTreeMetric;
@@ -165,7 +165,7 @@ void FMetric::Create()
 
                 for (auto [iCourse, dScore] : it->mapCourseScore)
                 {
-                    string sCourse = to_string(iCourse);
+                    string sCourse = to_string(iCourse + 1);
                     UpdateCourseMetric(ptrTreeMetric->mapChild[sCourse],
                                         mapIsTakenScore,
                                         { sCompName, sCompNumber, sIndicatorNumber },

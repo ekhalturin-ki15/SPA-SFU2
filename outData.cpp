@@ -216,12 +216,10 @@ void FOutData::Out(string sOutPath)
         OutGephiData(sOutName, sOutPath, it);
         CreateAndTake(sOutName, sOutPath);
         OutAddInfo(it);
-        
+
         fOpenFile.save();
         fOpenFile.close();
-        
     }
-
 }
 
 void FOutData::OutAddInfo(FTreeDisc* ptrTree)
@@ -236,14 +234,28 @@ void FOutData::OutAddInfo(FTreeDisc* ptrTree)
     {
         if (ptrTree->ptrGlobal->ptrConfig->mapAddOutParams.count(it))
         {
-            fOpenWKS.cell(y, x++).value() = ptrTree->ptrGlobal->ConwertToString(
-                ptrTree->ptrGlobal->ptrConfig->mapAddOutParams[it]);
+            fOpenWKS.cell(1, x++).value() = ptrTree->ptrGlobal->ConwertToString(ptrTree->ptrGlobal->ptrConfig->mapAddOutParams[it]);
         }
     }
-    ++y;
-    x = 1;
 
-    y = OutRectAddInfo(x, y, ptrTree->ptrMetric->ptrTreeMetric->mapChild[FMetric::sAllMetric]);
+    y       = 2;
+    iXShift = 1;
+    iYShift = 1;
+    OutRectAddInfo(iXShift, y, ptrTree->ptrMetric->ptrTreeMetric->mapChild[FMetric::sAllMetric]);
+    for (auto& [sKey, ptrCurrentTree] : ptrTree->ptrMetric->ptrTreeMetric->mapChild)
+    {
+        if (sKey == FMetric::sAllMetric) continue;
+        //Заголовок дублируется
+        for (const auto& it : arrHead)
+        {
+            if (ptrTree->ptrGlobal->ptrConfig->mapAddOutParams.count(it))
+            {
+                fOpenWKS.cell(1, x++).value() = ptrTree->ptrGlobal->ConwertToString(ptrTree->ptrGlobal->ptrConfig->mapAddOutParams[it]);
+            }
+        }
+        iXShift += arrHead.size(); 
+        OutRectAddInfo(iXShift, y, ptrCurrentTree);
+    }
 }
 
 int FOutData::OutRectAddInfo(int x, int y, FTreeMetric* ptrMetric)
@@ -255,6 +267,8 @@ int FOutData::OutRectAddInfo(int x, int y, FTreeMetric* ptrMetric)
 
     fOpenWKS.cell(y, x).value() = ptrMetric->sName;
 
+    if (y > iYShift) iYShift = y;
+
     if (ptrMetric->mapChild.size() == 0)
     {
         return y + 1;
@@ -264,7 +278,7 @@ int FOutData::OutRectAddInfo(int x, int y, FTreeMetric* ptrMetric)
     {
         y = OutRectAddInfo(x + 1, y, ptrChild);
     }
-    
+
     return y;
 }
 
@@ -273,8 +287,7 @@ void FOutData::CreateAndTake(string sName, string sPath)
     if (ptrGlobal->ptrConfig->bCompactOutput)
     {
         fOpenFile.open(sPath + "/TotalData.xlsx");
-        if (fOpenFile.workbook().worksheetExists(sName)) 
-            fOpenFile.workbook().deleteSheet(sName);  
+        if (fOpenFile.workbook().worksheetExists(sName)) fOpenFile.workbook().deleteSheet(sName);
 
         fOpenFile.workbook().addWorksheet(sName);
         fOpenWKS = fOpenFile.workbook().worksheet(sName);
@@ -333,7 +346,7 @@ void FOutData::OutGephiData(string sName, string sPath, FTreeDisc* fTree)
             FTreeElement* fThis     = fTree->mapDisc[it.first];
             wstring       wsNameRaw = fThis->wsName;
             string        sName     = ptrGlobal->ReversUTF16RU(ptrGlobal->ConwertToString(wsNameRaw));
-            sName += ptrGlobal->ptrConfig->sPrefCourseNumber + to_string(it.second);
+            sName += ptrGlobal->ptrConfig->sPrefCourseNumber + to_string(it.second + 1); // Не забываем про нуль нумерацию курсов
             // Выводим ещё и компетенции
             if (ptrGlobal->ptrConfig->bOutCompWithName)
             {
