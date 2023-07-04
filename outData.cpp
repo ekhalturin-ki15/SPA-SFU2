@@ -50,7 +50,10 @@ void FOutData::Out(string sOutPath)
         if (ptrGlobal->ptrConfig->mapArrOutParams.count(it))
         {
             arrOutColm[i] = (ptrGlobal->ptrConfig->mapArrOutParams[it].at(1) == L"да");
-            if (arrOutColm[i++]) { wks.cell(1, x++).value() = ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->mapArrOutParams[it].at(0)); }
+            if (arrOutColm[i++])
+            {
+                wks.cell(1, x++).value() = ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->mapArrOutParams[it].at(0));
+            }
         }
         else
         {
@@ -59,7 +62,10 @@ void FOutData::Out(string sOutPath)
             {
                 if (ptrGlobal->ptrConfig->mapArrOutParams[L"ЗЕ у компетенции"].at(1) != L"да") arrOutColm[i] = false;
             }
-            if (arrOutColm[i++]) { wks.cell(1, x++).value() = ptrGlobal->ConwertToString(it); }
+            if (arrOutColm[i++])
+            {
+                wks.cell(1, x++).value() = ptrGlobal->ConwertToString(it);
+            }
         }
     }
 
@@ -94,7 +100,10 @@ void FOutData::Out(string sOutPath)
         fOutFile.workbook().addWorksheet(sOutName);
         OutData(x, i, y, sOutName.size(), sOutName, wks, sOutName, false, iXShift, iYShift);
 
-        for (const auto& dValue : arrResult) { OutData(x, i, y, dValue, sOutName, wks, to_string(dValue), true, iXShift, iYShift); }
+        for (const auto& dValue : arrResult)
+        {
+            OutData(x, i, y, dValue, sOutName, wks, to_string(dValue), true, iXShift, iYShift);
+        }
 
         for (auto& sHeaderComp : ptrGlobal->ptrSolve->setHeaderComp)
         {
@@ -117,14 +126,23 @@ void FOutData::Out(string sOutPath)
                 }
 
                 // Если ЗЕ равно 0, то и не выводить
-                if (dScore > 0) { OutData(x, i, y, dScore, sOutName, wks, to_string(dScore), true, iXShift, iYShift); }
-                else { OutData(x, i, y, 0, sOutName, wks, "-", false, iXShift, iYShift); }
+                if (dScore > 0)
+                {
+                    OutData(x, i, y, dScore, sOutName, wks, to_string(dScore), true, iXShift, iYShift);
+                }
+                else
+                {
+                    OutData(x, i, y, 0, sOutName, wks, "-", false, iXShift, iYShift);
+                }
 
                 if (dRes > ptrGlobal->ptrConfig->dMinComp)
                 {
                     OutData(x, i, y, dRes * 100, sOutName, wks, to_string(dRes * 100) + "%", true, iXShift, iYShift);
                 }
-                else { OutData(x, i, y, 0, sOutName, wks, "-", false, iXShift, iYShift); }
+                else
+                {
+                    OutData(x, i, y, 0, sOutName, wks, "-", false, iXShift, iYShift);
+                }
             }
             else
             {
@@ -148,7 +166,9 @@ void FOutData::Out(string sOutPath)
                 for (auto& [id, fСorridor] : mapSaveData)
                 {
                     wks.cell(iYShift, id + iXShift).value() =
-                        to_string(fСorridor.dMax) + " (" + ptrGlobal->ptrConfig->sOutPrefMinMax + fСorridor.sMax + ")";
+                        to_string(fСorridor.dMax) + " (" 
+                        + ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->wsOutPrefMinMax) 
+                        + fСorridor.sMax + ")";
                 }
                 ++iYShift;
             }
@@ -162,8 +182,10 @@ void FOutData::Out(string sOutPath)
 
                 for (auto& [id, fСorridor] : mapSaveData)
                 {
-                    wks.cell(iYShift, id + iXShift).value() =
-                        to_string(fСorridor.dMin) + " (" + ptrGlobal->ptrConfig->sOutPrefMinMax + fСorridor.sMin + ")";
+                    wks.cell(iYShift, id + iXShift).value() = 
+                        to_string(fСorridor.dMin) + " ("
+                        + ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->wsOutPrefMinMax) 
+                        + fСorridor.sMin + ")";
                 }
                 ++iYShift;
                 ;
@@ -218,58 +240,93 @@ OpenXLSX::XLWorksheet FOutData::CreateAndTake(string sName, string sPath)
         return fFile.workbook().worksheet("Total Data");
     }
 }
-void FOutData::OutGephiData(string sName, string sPath, FTreeDisc* fTree)
+
+string FOutData::AddCompString(const map<string, vector<string>>& mapComp)
 {
-    OutGephiLable(sName, sPath, fTree);
-    OutGephiRib(sName, sPath, fTree);
+    string sReturn = "(";
+    int    j       = -1;
+    for (const auto& [sNameComp, arrIndicator] : mapComp)
+    {
+        ++j;
+        if (j) sReturn += ",";
+        sReturn += sNameComp;
+    }
+    sReturn += ")";
+    return sReturn;
 }
 
-void FOutData::OutGephiLable(string sName, string sPath, FTreeDisc* fTree)
+void FOutData::OutGephiData(string sName, string sPath, FTreeDisc* fTree)
 {
-    ofstream outLabel(sPath + "/" + sName + "/" + sName + "Lable.csv");
+    {
+        // Выводим обычный граф
+        vector<string> arrCommonNameLabel;
+        for (auto& it : fTree->ptrGraph->mapGraph[FGraph::iCommon].arrRel)
+        {
+            FTreeElement* fThis     = fTree->mapDisc[it.first];
+            wstring       wsNameRaw = fThis->wsName;
+            string        sName     = ptrGlobal->ReversUTF16RU(ptrGlobal->ConwertToString(wsNameRaw));
+            // Выводим ещё и компетенции
+            if (ptrGlobal->ptrConfig->bOutCompWithName)
+            {
+                sName += AddCompString(fThis->mapComp);
+            }
+            arrCommonNameLabel.push_back(sName);
+        }
+        OutGephiLable(sName, sName, sPath, arrCommonNameLabel);
+        OutGephiRib(sName, sName, sPath, fTree->ptrGraph->mapGraph[FGraph::iCommon].fAdjList);
+    }
+
+    {
+        // Выводим альтернативный граф
+        vector<string> arrCommonNameLabel;
+        for (auto& it : fTree->ptrGraph->mapGraph[FGraph::iAlt].arrRel)
+        {
+            FTreeElement* fThis     = fTree->mapDisc[it.first];
+            wstring       wsNameRaw = fThis->wsName;
+            string        sName     = ptrGlobal->ReversUTF16RU(ptrGlobal->ConwertToString(wsNameRaw));
+            sName += ptrGlobal->ptrConfig->sPrefCourseNumber + to_string(it.second);
+            // Выводим ещё и компетенции
+            if (ptrGlobal->ptrConfig->bOutCompWithName)
+            {
+                sName += AddCompString(fThis->mapComp);
+            }
+            arrCommonNameLabel.push_back(sName);
+        }
+        OutGephiLable(sName, sName + ptrGlobal->ptrConfig->sSufAltGraphFile, sPath, arrCommonNameLabel);
+        OutGephiRib(sName, sName + ptrGlobal->ptrConfig->sSufAltGraphFile, sPath, fTree->ptrGraph->mapGraph[FGraph::iAlt].fAdjList);
+    }
+}
+
+void FOutData::OutGephiLable(const string& sName, const string& sNameFile, const string& sPath, const vector<string>& arrNameLabel)
+{
+    ofstream outLabel(sPath + "/" + sName + "/" + sNameFile + "Lable.csv");
 
     outLabel << ptrGlobal->ptrConfig->sNameLableHeader << "\n";
 
     // Сначало id, потом имя
     int i = -1;
-    for (auto& it : fTree->ptrGraph->mapGraph[FGraph::iCommon].arrRel)
+    for (auto& it : arrNameLabel)
     {
         ++i;
         outLabel << i << ";";
-        FTreeElement* fThis = fTree->mapDisc[it.first];
-
-        wstring wsNameRaw = fThis->wsName;
-        string  sName     = ptrGlobal->ReversUTF16RU(ptrGlobal->ConwertToString(wsNameRaw));
-        // Выводим ещё и компетенции
-        if (ptrGlobal->ptrConfig->bOutCompWithName)
-        {
-            sName += "(";
-
-            int j = -1;
-            for (const auto& [sNameComp, arrIndicator] : fThis->mapComp)
-            {
-                ++j;
-                if (j) sName += ",";
-                sName += sNameComp;
-            }
-
-            sName += ")";
-        }
-        outLabel << sName << "";
+        outLabel << it << "";
         outLabel << "\n";
     }
 }
 
-void FOutData::OutGephiRib(string sName, string sPath, FTreeDisc* fTree)
+void FOutData::OutGephiRib(const string&                            sName,
+                           const string&                            sNameFile,
+                           const string&                            sPath,
+                           const vector<vector<pair<int, double>>>& fAdjList)
 {
-    ofstream outLabel(sPath + "/" + sName + "/" + sName + "Rib.csv");
+    ofstream outLabel(sPath + "/" + sName + "/" + sNameFile + "Rib.csv");
 
     outLabel << ptrGlobal->ptrConfig->sNameRibHeader << "\n";
 
     // Откуда, куда, тип (неориентированный), Вес
-    for (int l = 0; l < fTree->ptrGraph->mapGraph[FGraph::iCommon].fAdjList.size(); ++l)
+    for (int l = 0; l < fAdjList.size(); ++l)
     {
-        for (auto [r, dLen] : fTree->ptrGraph->mapGraph[FGraph::iCommon].fAdjList[l])
+        for (auto [r, dLen] : fAdjList[l])
         {
             // Чтобы не дублировать, он же неориентированный
             if ((l < r) || (!ptrGlobal->ptrConfig->bIsUnDirected))

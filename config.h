@@ -34,14 +34,15 @@ struct FConfig
     string sNameLableHeader;
     string sNameRibHeader;
     string sNameRibDir;
+    string sPrefCourseNumber;
+    string sSufAltGraphFile;
 
     string sRegexComp;
     string sRegexHeaderIndicator;
     string sRegexHeaderComp;
     string sFormula;
 
-    string sOutPrefMinMax;
-
+    wstring wsOutPrefMinMax;
     wstring wsNameDebugFile;
     wstring wsNameLogFile;
 

@@ -139,6 +139,16 @@ int main()
 
             auto sTotalOutName = fFile / ptrGlobal->ptrConfig->arrNameFileOut[category];    // / "TotalData.xlsx";
             ptrGlobal->ptrOutData->Out(sTotalOutName.string());
+
+            //Пересоздание
+            Delete();
+            if (!Create())
+#ifdef DEBUG
+                return 4;    // Аварийное завершение
+#else
+                return 0;    // Аварийное завершение
+#endif
+
         }
 
         Delete();

@@ -43,8 +43,17 @@ private:
                                 const int&             iXShift,
                                 const int&             iYShift);
 
-    void OutGephiLable(string sName, string sPath, FTreeDisc* fTree);    // Вывод данных о графе для Gephi в формате csv
-    void OutGephiRib(string sName, string sPath, FTreeDisc* fTree);    // Вывод данных о графе для Gephi в формате csv
+    void OutGephiLable(const string&         sName,
+                       const string&         sNameFile,
+                       const string&         sPath,
+                       const vector<string>& arrNameLabel);    // Вывод данных о графе для Gephi в формате csv
+
+    void OutGephiRib(const string& sName,
+                     const string& sNameFile,
+                     const string& sPath,
+                     const vector<vector<pair<int, double>>>& fAdjList);    // Вывод данных о графе для Gephi в формате csv
+
+    string AddCompString(const map<string, vector<string>>& mapComp);
 
     int iXShift, iYShift;
 };

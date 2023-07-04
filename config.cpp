@@ -23,11 +23,13 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       sNameLableHeader("Id;Label"),
       sNameRibHeader("Source;Target;Type;Weight"),
       sNameRibDir("Undirected"),
-      arrNameFileIn(),
-      arrNameFileOut(),
+      arrNameFileIn({ L"plans\grad", L"plans\spec" }),
+      arrNameFileOut({ L"result\grad", L"result\spec" }),
       wsNameDebugFile(L"debugFile.txt"),
       wsNameLogFile(L"logFile.txt"),
-      sOutPrefMinMax("Предлог перед выводом результата мин. макс."),
+      wsOutPrefMinMax(L"у УП "),
+      sPrefCourseNumber("_"),
+      sSufAltGraphFile("Alt"),
       sRegexComp("{0, 1}(.{0, } ? ); "),
       sRegexHeaderIndicator("(.{1,})-(.{1,})\.(.{1,})"),
       sFormula("((L + R) / 2) * K")
@@ -97,17 +99,15 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
         }
 
         // Каталог данных УП
-        wsPatern = L"Каталог данных УП";
+        wsPatern = L"Каталоги данных УП";
         if (wsKey == wsPatern)
         {
-            int iSize = 0;
-            if (arrNameFileOut.size() != 0) iSize = arrNameFileOut.size() + 1;
-            ptrGlobal->TakeData(arrNameFileIn, row, iSize);
+            ptrGlobal->TakeData(arrNameFileIn, row, 0);
             return true;
         }
 
         // Каталог вывода результата
-        wsPatern = L"Каталог вывода результата";
+        wsPatern = L"Каталоги вывода результата";
         if (wsKey == wsPatern)
         {
             int iSize = 0;
@@ -282,7 +282,21 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
         wsPatern = L"Предлог перед выводом результата мин. макс.";
         if (wsKey == wsPatern)
         {
-            ptrGlobal->TakeData(sOutPrefMinMax, row);
+            ptrGlobal->TakeData(wsOutPrefMinMax, row);
+            return true;
+        }
+
+        wsPatern = L"Разделитель между названием дисциплины и её курсом";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(sPrefCourseNumber, row);
+            return true;
+        }
+        
+        wsPatern = L"Суффикс названия альтернативного графа при выводе";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(sSufAltGraphFile, row);
             return true;
         }
 
