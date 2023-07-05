@@ -227,9 +227,30 @@ wstring FGlobal::ConwertPathFormat(wstring wsFileName, bool bRename)
 FGlobal::~FGlobal()
 {
     delete ptrError;
+    ptrError = nullptr;
     delete ptrConfig;
+    ptrConfig = nullptr;
     delete ptrSolve;
+    ptrSolve = nullptr;
     delete ptrOutData;
+    ptrOutData = nullptr;
     --iSinglControll;
     // delete ptrGraph;
+}
+
+bool FGlobal::ReCreate()
+{
+    //Всё, кроме ptrError и ptrConfig нужно пересоздать
+    delete ptrSolve;
+    ptrSolve = nullptr;
+    delete ptrOutData;
+    ptrOutData = nullptr;
+
+    ptrSolve   = new FSolve(this);
+    ptrOutData = new FOutData(this);
+
+    if (!ptrSolve->Init()) return false;
+    if (!ptrOutData->Init()) return false;
+
+    return true;
 }

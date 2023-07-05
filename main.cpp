@@ -57,7 +57,11 @@ struct Disc
 FGlobal* ptrGlobal;    // Синглтон
 bool     Create();
 
-void Delete() { delete ptrGlobal; }
+void Delete()
+{
+    delete ptrGlobal;
+    ptrGlobal = nullptr;
+}
 
 bool Create()
 {
@@ -141,8 +145,7 @@ int main()
             ptrGlobal->ptrOutData->Out(sTotalOutName.string());
 
             //Пересоздание
-            Delete();
-            if (!Create())
+            if (!ptrGlobal->ReCreate())
 #ifdef DEBUG
                 return 4;    // Аварийное завершение
 #else

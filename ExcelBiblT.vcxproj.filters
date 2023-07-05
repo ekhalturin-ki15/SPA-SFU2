@@ -73,6 +73,9 @@
     <None Include=".clang-format">
       <Filter>Файлы ресурсов</Filter>
     </None>
+    <None Include=".gitignore">
+      <Filter>Файлы ресурсов</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h">

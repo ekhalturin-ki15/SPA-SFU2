@@ -30,6 +30,7 @@ struct FGlobal
     explicit FGlobal();
     ~FGlobal();
 
+    bool ReCreate();
     bool Init();
 
     wstring GetValue(const OpenXLSX::XLCell& cell);
