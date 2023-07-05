@@ -118,6 +118,11 @@ void FMetric::UpdateCourseMetric(FTreeMetric*          ptrRootTree,
         UpdateMetricBranch(ptrNowTree, setIsTakenScore, sCurName, dScore);
         ptrNowTree = ptrNowTree->mapChild[sCurName];
     }
+    if (!setIsTakenScore.count({ ptrRootTree->sName }))
+    {
+        ptrRootTree->dNoBalanceSum += dScore;
+        setIsTakenScore.insert({ ptrRootTree->sName });
+    }
 }
 void FMetric::Create()
 {

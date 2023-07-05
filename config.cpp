@@ -16,6 +16,7 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       bReloadLogFile(true),
       bMultiIndicator(true),
       bCompInterDelete(true),
+      bIsPercentRegAll(true),
       bOutCompWithName(true),
       bOutShortNameCurr(true),
       bIsUnDirected(true),
@@ -206,6 +207,13 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(bCompInterDelete, row);
+            return true;
+        }
+
+        wsPatern = L"Выводить процентную долю индикатора от всех ЗЕ УП";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(bIsPercentRegAll, row);
             return true;
         }
 

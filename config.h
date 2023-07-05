@@ -54,6 +54,7 @@ struct FConfig
     bool bReloadLogFile;
     bool bMultiIndicator;
     bool bCompInterDelete;
+    bool bIsPercentRegAll;
     bool bOutCompWithName;
     bool bOutShortNameCurr;
     bool bIsUnDirected;
