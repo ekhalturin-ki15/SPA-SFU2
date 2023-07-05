@@ -34,6 +34,7 @@ private:
    
     void CreateAndTake(string sName, string sPath);    // Вывод через глобальные fOpenFile и fOpenWKS
     void OutAddInfo(FTreeDisc* ptrTree);
+    void OutAddTotalInfo(FTreeDisc* ptrTree, int y);
 
     int OutRectAddInfo(int x, int y, FTreeMetric* ptrMetric, bool bIsCourse, const double dAllSum);    // Возвращает Актуальное занчение y
 

@@ -96,7 +96,7 @@ void FOutData::Out(string sOutPath)
                       it->ptrGraph->mapGraph[FGraph::iCommon].dMinSpanTree,
                       it->ptrGraph->mapGraph[FGraph::iCommon].dMaxSpanTree };
 
-        //fOutFile.workbook().addWorksheet(sOutName);
+        // fOutFile.workbook().addWorksheet(sOutName);
         OutData(x, i, y, sOutName.size(), sOutName, wks, sOutName, false, iXShift, iYShift);
 
         for (const auto& dValue : arrResult)
@@ -252,9 +252,7 @@ void FOutData::OutAddInfo(FTreeDisc* ptrTree)
     iYShift               = 1;
     auto&  ptrCurrentTree = ptrTree->ptrMetric->ptrTreeMetric->mapChild[FMetric::sAllMetric];
     double dAllSum        = 1.;
-    dAllSum               = (ptrGlobal->ptrConfig->bCompInterDelete) ? 
-        ptrCurrentTree->dBalanceSum : 
-        ptrCurrentTree->dNoBalanceSum;
+    dAllSum               = (ptrGlobal->ptrConfig->bCompInterDelete) ? ptrCurrentTree->dBalanceSum : ptrCurrentTree->dNoBalanceSum;
 
     OutRectAddInfo(iOldX, y, ptrCurrentTree, true, dAllSum);
     for (auto& [sKey, ptrCurrentTree] : ptrTree->ptrMetric->ptrTreeMetric->mapChild)
@@ -272,11 +270,41 @@ void FOutData::OutAddInfo(FTreeDisc* ptrTree)
         iOldX = iXShift;
         iXShift += arrHead.size();
 
-        dAllSum = (ptrGlobal->ptrConfig->bCompInterDelete) ? 
-            ptrCurrentTree->dBalanceSum : 
-            ptrCurrentTree->dNoBalanceSum;
+        dAllSum = (ptrGlobal->ptrConfig->bCompInterDelete) ? ptrCurrentTree->dBalanceSum : ptrCurrentTree->dNoBalanceSum;
 
         OutRectAddInfo(iOldX, y, ptrCurrentTree, true, dAllSum);
+    }
+
+    OutAddTotalInfo(ptrTree, iYShift);
+}
+
+void FOutData::OutAddTotalInfo(FTreeDisc* ptrTree, int y)
+{
+    double dSumScoreExt   = 0;
+    int    iAmountDiscExt = 0;
+    ptrTree->dFindAllScore(dSumScoreExt, iAmountDiscExt);
+    arrResult = { 0.,
+                  ptrTree->dAllSumScore,
+                  double(ptrTree->iAmountDisc),
+                  dSumScoreExt,
+                  double(iAmountDiscExt),
+                  ptrTree->ptrGraph->mapGraph[FGraph::iCommon].dMaxDiscScore,
+                  ptrTree->ptrGraph->mapGraph[FGraph::iCommon].dDiametrLen,
+                  ptrTree->ptrGraph->mapGraph[FGraph::iCommon].dDiametrStep,
+                  double(ptrTree->ptrGraph->mapGraph[FGraph::iCommon].iComponent),
+                  ptrTree->ptrGraph->mapGraph[FGraph::iCommon].dMinSpanTree,
+                  ptrTree->ptrGraph->mapGraph[FGraph::iCommon].dMaxSpanTree };
+
+    for (int i = 1; i < arrHead.size(); ++i)
+    {
+        if (ptrGlobal->ptrConfig->mapArrOutParams.count(arrHead[i]))
+        {
+            if (ptrGlobal->ptrConfig->mapArrOutParams[arrHead[i]].at(2) != L"да") continue;
+
+            arrOpenWKS.back().cell(y, 1).value() = ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->mapArrOutParams[arrHead[i]].at(0));
+            arrOpenWKS.back().cell(y, 2).value() = arrResult[i];
+            ++y;
+        }
     }
 }
 
@@ -301,15 +329,12 @@ int FOutData::OutRectAddInfo(int x, int y, FTreeMetric* ptrMetric, bool bIsCours
         double dRes = 0.;
         if (ptrGlobal->ptrConfig->bIsPercentRegAll)
         {
-            dRes = (ptrGlobal->ptrConfig->bCompInterDelete) ?
-                ptrMetric->dBalanceSum / dAllSum :
-                ptrMetric->dNoBalanceSum / dAllSum;
+            dRes = (ptrGlobal->ptrConfig->bCompInterDelete) ? ptrMetric->dBalanceSum / dAllSum : ptrMetric->dNoBalanceSum / dAllSum;
         }
         else
         {
-            dRes = (ptrGlobal->ptrConfig->bCompInterDelete) ?
-                ptrMetric->dBalanceSum / ptrMetric->ptrParent->dBalanceSum:
-                ptrMetric->dNoBalanceSum / ptrMetric->ptrParent->dNoBalanceSum;
+            dRes = (ptrGlobal->ptrConfig->bCompInterDelete) ? ptrMetric->dBalanceSum / ptrMetric->ptrParent->dBalanceSum
+                                                            : ptrMetric->dNoBalanceSum / ptrMetric->ptrParent->dNoBalanceSum;
         }
         arrOpenWKS.back().cell(y, x).value() = dRes;
     }
