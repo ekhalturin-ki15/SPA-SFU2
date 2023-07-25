@@ -435,6 +435,55 @@ void FOutData::OutGephiData(string sName, string sPath, FTreeDisc* fTree)
         OutGephiLable(sName, sName + ptrGlobal->ptrConfig->sSufAltGraphFile, sPath, arrCommonNameLabel);
         OutGephiRib(sName, sName + ptrGlobal->ptrConfig->sSufAltGraphFile, sPath, fTree->ptrGraph->mapGraph[FGraph::iAlt].fAdjList);
     }
+
+
+    for (int iCourse = 0; iCourse < fTree->iAmountCourse; ++iCourse)
+    {
+        // Выводим  граф по курсам
+        vector<vector<pair<int, double>>> fLocalAdjList;
+        vector<string> arrCommonNameLabel;
+        map<int, int>                     mapLableAccordance;
+        int iRealNumber = -1;
+        for (auto& it : fTree->ptrGraph->mapGraph[FGraph::iAlt].arrRel)
+        {
+            ++iRealNumber;
+            if (it.second != iCourse) continue;
+            mapLableAccordance[iRealNumber] = arrCommonNameLabel.size();
+
+            FTreeElement* fThis     = fTree->mapDisc[it.first];
+            wstring       wsNameRaw = fThis->wsName;
+            string        sName     = ptrGlobal->ReversUTF16RU(ptrGlobal->ConwertToString(wsNameRaw));
+            // Выводим ещё и компетенции
+            if (ptrGlobal->ptrConfig->bOutCompWithName)
+            {
+                sName += AddCompString(fThis->mapComp);
+            }
+            arrCommonNameLabel.push_back(sName);
+        }
+
+
+        fLocalAdjList.resize(arrCommonNameLabel.size());
+
+        for (auto& it : mapLableAccordance)
+        {
+            for (auto& et : fTree->ptrGraph->mapGraph[FGraph::iAlt].fAdjList[it.first])
+            {
+                if (mapLableAccordance.count(et.first))
+                {
+                    fLocalAdjList[it.second].push_back({
+                        mapLableAccordance[et.first], et.second
+                    });
+                }
+            }
+
+
+
+        }
+
+
+        OutGephiLable(sName, sName + "(" + to_string(iCourse + 1) + ")", sPath, arrCommonNameLabel);
+        OutGephiRib(sName, sName + "(" + to_string(iCourse + 1) + ")", sPath, fLocalAdjList);
+    }
 }
 
 void FOutData::OutGephiLable(const string& sName, const string& sNameFile, const string& sPath, const vector<string>& arrNameLabel)
