@@ -13,6 +13,7 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       dMinComp(0.01),
       bCreateFolder(true),
       bCompactOutput(true),
+      bCourseOutput(true),
       bReloadLogFile(true),
       bMultiIndicator(true),
       bCompInterDelete(true),
@@ -200,6 +201,13 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(bCompactOutput, row);
+            return true;
+        }
+
+        wsPatern = L"Выводить графы по курсам";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(bCourseOutput, row);
             return true;
         }
 

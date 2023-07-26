@@ -51,6 +51,7 @@ struct FConfig
 
     bool bCreateFolder;
     bool bCompactOutput;
+    bool bCourseOutput;
     bool bReloadLogFile;
     bool bMultiIndicator;
     bool bCompInterDelete;

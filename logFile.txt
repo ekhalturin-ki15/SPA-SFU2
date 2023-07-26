@@ -127,6 +127,25 @@
 Компетенции [строка 329] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/test1/1005010034_OP-21.pli.plx.xlsx для дисциплины OPK-17 не получается связать с индикатором OPK-4.3.2
 - Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/test1/1005010034_OP-21.pli.plx.xlsx обработан с недочётами
 
+Компетенции [строка 321] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/test1/1005030035_OP-21.pli.plx.xlsx для дисциплины OPK-16 не получается связать с индикатором OPK-5.1.1
+Компетенции [строка 322] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/test1/1005030035_OP-21.pli.plx.xlsx для дисциплины OPK-16 не получается связать с индикатором OPK-5.1.1
+Компетенции [строка 323] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/test1/1005030035_OP-21.pli.plx.xlsx для дисциплины OPK-16 не получается связать с индикатором OPK-5.1.1
+Компетенции [строка 324] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/test1/1005030035_OP-21.pli.plx.xlsx для дисциплины OPK-16 не получается связать с индикатором OPK-5.1.1
+Компетенции [строка 325] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/test1/1005030035_OP-21.pli.plx.xlsx для дисциплины OPK-16 не получается связать с индикатором OPK-5.1.1
+Компетенции [строка 326] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/test1/1005030035_OP-21.pli.plx.xlsx для дисциплины OPK-16 не получается связать с индикатором OPK-5.1.1
+Компетенции [строка 328] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/test1/1005030035_OP-21.pli.plx.xlsx для дисциплины OPK-16 не получается связать с индикатором OPK-5.1.1
+Компетенции [строка 330] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/test1/1005030035_OP-21.pli.plx.xlsx для дисциплины OPK-16 не получается связать с индикатором OPK-5.1.2
+Компетенции [строка 331] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/test1/1005030035_OP-21.pli.plx.xlsx для дисциплины OPK-16 не получается связать с индикатором OPK-5.1.2
+Компетенции [строка 332] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/test1/1005030035_OP-21.pli.plx.xlsx для дисциплины OPK-16 не получается связать с индикатором OPK-5.1.2
+Компетенции [строка 333] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/test1/1005030035_OP-21.pli.plx.xlsx для дисциплины OPK-16 не получается связать с индикатором OPK-5.1.2
+Компетенции [строка 334] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/test1/1005030035_OP-21.pli.plx.xlsx для дисциплины OPK-16 не получается связать с индикатором OPK-5.1.2
+Компетенции [строка 335] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/test1/1005030035_OP-21.pli.plx.xlsx для дисциплины OPK-16 не получается связать с индикатором OPK-5.1.2
+Компетенции [строка 337] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/test1/1005030035_OP-21.pli.plx.xlsx для дисциплины OPK-16 не получается связать с индикатором OPK-5.1.2
+Компетенции [строка 340] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/test1/1005030035_OP-21.pli.plx.xlsx для дисциплины OPK-16 не получается связать с индикатором OPK-5.2.1
+Компетенции [строка 341] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/test1/1005030035_OP-21.pli.plx.xlsx для дисциплины OPK-16 не получается связать с индикатором OPK-5.2.1
+Компетенции [строка 342] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/test1/1005030035_OP-21.pli.plx.xlsx для дисциплины OPK-16 не получается связать с индикатором OPK-5.2.1
+Компетенции [строка 343] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/test1/1005030035_OP-21.pli.plx.xlsx для дисциплины OPK-16 не получается связать с индикатором OPK-5.2.1
+Компетенции [строка 344] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/test1/1005030035_OP-21.pli.plx.xlsx для дисциплины OPK-16 не получается связать с индикатором OPK-5.2.1
 Компетенции [строка 346] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/test1/1005030035_OP-21.pli.plx.xlsx для дисциплины OPK-16 не получается связать с индикатором OPK-5.2.1
 Компетенции [строка 348] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/test1/1005030035_OP-21.pli.plx.xlsx для дисциплины OPK-16 не получается связать с индикатором OPK-5.2.2
 Компетенции [строка 349] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/test1/1005030035_OP-21.pli.plx.xlsx для дисциплины OPK-16 не получается связать с индикатором OPK-5.2.2
