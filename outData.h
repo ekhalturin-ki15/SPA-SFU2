@@ -29,14 +29,18 @@ private:
     // Пропроска страницы Excel для вывода данных (например, при помощи OutAddInfo)
 
     // Библиотека OpenXLSX кривая, объекты XLDocument не очищаются после close, поэтому, делаем дубликаты
-    vector<OpenXLSX::XLDocument>  arrOpenFile;
-    vector<OpenXLSX::XLWorksheet> arrOpenWKS;
-   
+    // Синглтон использование
+    vector<OpenXLSX::XLDocument>  arrSinglOpenFile;
+    vector<OpenXLSX::XLWorksheet> arrSinglOpenWKS;
+
+    vector<OpenXLSX::XLDocument>  arrSinglLocalCurrentCourseOpenFile;
+    vector<OpenXLSX::XLWorksheet> arrSinglLocalCurrentCourseOpenWKS;
+
     void CreateAndTake(string sName, string sPath);    // Вывод через глобальные fOpenFile и fOpenWKS
-    void OutAddInfo(FTreeDisc* ptrTree);
+    void OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree);
     void OutAddTotalInfo(FTreeDisc* ptrTree, int y);
 
-    int OutRectAddInfo(int x, int y, FTreeMetric* ptrMetric, bool bIsCourse, const double dAllSum);    // Возвращает Актуальное занчение y
+    int OutRectAddInfo(int x, int y, FTreeMetric* ptrMetric, bool bIsCourse, const double dAllSum, bool bIsLocal = false);    // Возвращает Актуальное занчение y
 
     void OutGephiData(string sName, string sPath, FTreeDisc* fTree);    // Вывод данных о графе для Gephi в формате csv
 

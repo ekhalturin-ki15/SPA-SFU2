@@ -215,14 +215,11 @@ void FOutData::Out(string sOutPath)
 
         OutGephiData(sOutName, sOutPath, it);
         CreateAndTake(sOutName, sOutPath);
-        OutAddInfo(it);
-
-        arrOpenFile.back().save();
-        arrOpenFile.back().close();
+        OutAddInfo(sOutName, sOutPath, it);
     }
 }
 
-void FOutData::OutAddInfo(FTreeDisc* ptrTree)
+void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
 {
     int x = 1;
     int y = 1;
@@ -240,7 +237,7 @@ void FOutData::OutAddInfo(FTreeDisc* ptrTree)
     {
         if (ptrTree->ptrGlobal->ptrConfig->mapAddOutParams.count(it))
         {
-            arrOpenWKS.back().cell(1, x++).value() =
+            arrSinglOpenWKS.back().cell(1, x++).value() =
                 ptrTree->ptrGlobal->ConwertToString(ptrTree->ptrGlobal->ptrConfig->mapAddOutParams[it]);
         }
     }
@@ -263,7 +260,7 @@ void FOutData::OutAddInfo(FTreeDisc* ptrTree)
         {
             if (ptrTree->ptrGlobal->ptrConfig->mapAddOutParams.count(it))
             {
-                arrOpenWKS.back().cell(1, x++).value() =
+                arrSinglOpenWKS.back().cell(1, x++).value() =
                     ptrTree->ptrGlobal->ConwertToString(ptrTree->ptrGlobal->ptrConfig->mapAddOutParams[it]);
             }
         }
@@ -273,9 +270,49 @@ void FOutData::OutAddInfo(FTreeDisc* ptrTree)
         dAllSum = (ptrGlobal->ptrConfig->bCompInterDelete) ? ptrCurrentTree->dBalanceSum : ptrCurrentTree->dNoBalanceSum;
 
         OutRectAddInfo(iOldX, y, ptrCurrentTree, true, dAllSum);
+
+       
+        {
+            arrSinglLocalCurrentCourseOpenFile.clear();
+            arrSinglLocalCurrentCourseOpenFile.resize(1);
+            arrSinglLocalCurrentCourseOpenWKS.clear();
+            arrSinglLocalCurrentCourseOpenWKS.resize(1);
+            arrSinglLocalCurrentCourseOpenFile[0].create(sPath + "/" + sName + "/" + "Data_" + sKey + ".xlsx");
+            arrSinglLocalCurrentCourseOpenFile[0].workbook().addWorksheet(sName);
+            arrSinglLocalCurrentCourseOpenFile[0].workbook().deleteSheet("Sheet1");    // Стартовая страница не нужна
+            arrSinglLocalCurrentCourseOpenFile[0].save();
+            arrSinglLocalCurrentCourseOpenWKS[0] = arrSinglLocalCurrentCourseOpenFile[0].workbook().worksheet(sName);
+          
+            // Заголовок дублируется
+            int iLocalX = 1;
+            for (const auto& it : arrHead)
+            {
+                if (ptrTree->ptrGlobal->ptrConfig->mapAddOutParams.count(it))
+                {
+                    arrSinglLocalCurrentCourseOpenWKS.back().cell(1, iLocalX++).value() =
+                        ptrTree->ptrGlobal->ConwertToString(ptrTree->ptrGlobal->ptrConfig->mapAddOutParams[it]);
+                }
+            }
+
+            OutRectAddInfo(1, y, ptrCurrentTree, true, dAllSum, true);
+
+            arrSinglLocalCurrentCourseOpenFile.back().save();
+            arrSinglLocalCurrentCourseOpenFile.back().close();
+
+            // Очищаем память от использованных объектов
+            arrSinglLocalCurrentCourseOpenFile.clear();
+            arrSinglLocalCurrentCourseOpenWKS.clear();
+        }
     }
 
     OutAddTotalInfo(ptrTree, iYShift);
+
+    arrSinglOpenFile.back().save();
+    arrSinglOpenFile.back().close();
+
+    // Очищаем память от использованных объектов
+    arrSinglOpenFile.clear();
+    arrSinglOpenWKS.clear();
 }
 
 void FOutData::OutAddTotalInfo(FTreeDisc* ptrTree, int y)
@@ -301,14 +338,14 @@ void FOutData::OutAddTotalInfo(FTreeDisc* ptrTree, int y)
         {
             if (ptrGlobal->ptrConfig->mapArrOutParams[arrHead[i]].at(2) != L"да") continue;
 
-            arrOpenWKS.back().cell(y, 1).value() = ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->mapArrOutParams[arrHead[i]].at(0));
-            arrOpenWKS.back().cell(y, 2).value() = arrResult[i];
+            arrSinglOpenWKS.back().cell(y, 1).value() = ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->mapArrOutParams[arrHead[i]].at(0));
+            arrSinglOpenWKS.back().cell(y, 2).value() = arrResult[i];
             ++y;
         }
     }
 }
 
-int FOutData::OutRectAddInfo(int x, int y, FTreeMetric* ptrMetric, bool bIsCourse, const double dAllSum)
+int FOutData::OutRectAddInfo(int x, int y, FTreeMetric* ptrMetric, bool bIsCourse, const double dAllSum, bool bIsLocal)
 {
     // Достигнут лимит глубины вывода
     if (x >= iXShift)
@@ -320,8 +357,14 @@ int FOutData::OutRectAddInfo(int x, int y, FTreeMetric* ptrMetric, bool bIsCours
     {
         return y + 1;
     }
-
-    arrOpenWKS.back().cell(y, x).value() = ptrMetric->sName;
+    if (bIsLocal)
+    {
+        arrSinglLocalCurrentCourseOpenWKS.back().cell(y, x).value() = ptrMetric->sName;
+    }
+    else
+    {
+        arrSinglOpenWKS.back().cell(y, x).value() = ptrMetric->sName;
+    }
     // Выводим процент распределения
     if (!bIsCourse)
     {
@@ -336,7 +379,14 @@ int FOutData::OutRectAddInfo(int x, int y, FTreeMetric* ptrMetric, bool bIsCours
             dRes = (ptrGlobal->ptrConfig->bCompInterDelete) ? ptrMetric->dBalanceSum / ptrMetric->ptrParent->dBalanceSum
                                                             : ptrMetric->dNoBalanceSum / ptrMetric->ptrParent->dNoBalanceSum;
         }
-        arrOpenWKS.back().cell(y, x).value() = dRes;
+        if (bIsLocal)
+        {
+            arrSinglLocalCurrentCourseOpenWKS.back().cell(y, x).value() = dRes;
+        }
+        else
+        {
+            arrSinglOpenWKS.back().cell(y, x).value() = dRes;
+        }
     }
 
     if (y > iYShift) iYShift = y;    // Ищем максимум, чтобы отмерить отступ
@@ -348,7 +398,7 @@ int FOutData::OutRectAddInfo(int x, int y, FTreeMetric* ptrMetric, bool bIsCours
 
     for (auto& [sName, ptrChild] : ptrMetric->mapChild)
     {
-        y = OutRectAddInfo(x + 1, y, ptrChild, false, dAllSum);
+        y = OutRectAddInfo(x + 1, y, ptrChild, false, dAllSum, bIsLocal);
     }
 
     return y;
@@ -356,28 +406,28 @@ int FOutData::OutRectAddInfo(int x, int y, FTreeMetric* ptrMetric, bool bIsCours
 
 void FOutData::CreateAndTake(string sName, string sPath)
 {
-    arrOpenFile.clear();
-    arrOpenFile.resize(1);
+    arrSinglOpenFile.clear();
+    arrSinglOpenFile.resize(1);
 
-    arrOpenWKS.clear();
-    arrOpenWKS.resize(1);
+    arrSinglOpenWKS.clear();
+    arrSinglOpenWKS.resize(1);
 
     if (ptrGlobal->ptrConfig->bCompactOutput)
     {
-        arrOpenFile[0].open(sPath + "/TotalData.xlsx");
-        if (arrOpenFile[0].workbook().worksheetExists(sName)) arrOpenFile[0].workbook().deleteSheet(sName);
+        arrSinglOpenFile[0].open(sPath + "/TotalData.xlsx");
+        if (arrSinglOpenFile[0].workbook().worksheetExists(sName)) arrSinglOpenFile[0].workbook().deleteSheet(sName);
 
-        arrOpenFile[0].workbook().addWorksheet(sName);
-        arrOpenWKS[0] = arrOpenFile[0].workbook().worksheet(sName);
+        arrSinglOpenFile[0].workbook().addWorksheet(sName);
+        arrSinglOpenWKS[0] = arrSinglOpenFile[0].workbook().worksheet(sName);
         return;
     }
     else
     {
-        arrOpenFile[0].create(sPath + "/" + sName + "/" + "Data.xlsx");
-        arrOpenFile[0].workbook().addWorksheet("Total Data");
-        arrOpenFile[0].workbook().deleteSheet("Sheet1");    // Стартовая страница не нужна
-        arrOpenFile[0].save();
-        arrOpenWKS[0] = arrOpenFile[0].workbook().worksheet("Total Data");
+        arrSinglOpenFile[0].create(sPath + "/" + sName + "/" + "Data.xlsx");
+        arrSinglOpenFile[0].workbook().addWorksheet(sName);
+        arrSinglOpenFile[0].workbook().deleteSheet("Sheet1");    // Стартовая страница не нужна
+        arrSinglOpenFile[0].save();
+        arrSinglOpenWKS[0] = arrSinglOpenFile[0].workbook().worksheet(sName);
     }
 }
 
