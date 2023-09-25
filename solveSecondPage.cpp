@@ -85,6 +85,10 @@ void FSolveSecondPage::AddDiscScore(const OpenXLSX::XLWorksheet& fSheet, int iKe
 
                         if ((bIsAllow) && (ptrThis->arrChild.size() == 0))    // Т.е разрешён и является дисциплиной (не модулем)
                         {
+                            if (dScore > ptrGlobal->ptrConfig->dAnomalBigScore)
+                            {
+                                ptrGlobal->ptrError->ErrorAnomalBigScore(dScore);
+                            }
                             ptrGlobal->ptrSolve->arrDisc.back()->dAllSumScore += dScore;
                         }
                     }

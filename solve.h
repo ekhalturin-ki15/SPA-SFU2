@@ -13,6 +13,14 @@ struct FMetric;
 //	double dScore;
 // };
 
+//Тип дисциплины (основная, по выбору, факультатив)
+enum ETagDisc : int
+{
+    ETD_Common,
+    ETD_Chosen,
+    ETD_Elective
+};
+
 struct FTreeElement
 {
     explicit FTreeElement();
@@ -31,7 +39,11 @@ struct FTreeElement
     // Указаны компетенции с индикаторами для дополнительной валидации УП (что у страницы Компетенции (2) есть весь перечень компетенций)
     map<string, vector<string>> mapComp;    // Компетенции, у каждой из которых перечень индикаторов
 
+    ETagDisc eTagDisc = ETagDisc::ETD_Common;
+
     // vector<string> arrIndicator; // Индикаторы (из индикатора можно извлечь компетенцию)
+
+
 };
 
 struct FTreeDisc
@@ -50,13 +62,16 @@ struct FTreeDisc
     string                      sShortNamePlan;    // Имя УП без расширения
 
     int iAmountCourse;    // Количество курсов (именно курсов, не семестров)
-    double dAllSumScore;    // Общее кол-во ЗЕ курса (только дисциплин, и только основный (не по выбору))
-    int iAmountDisc;    // Количество основных дисциплин (не по выбору)
+    double dAllSumScore;    // Общее кол-во ЗЕ курса (только дисциплин, и только тех, что учитываются)
+    int iAmountDisc;    // Количество учитываемых дисциплин (не по выбору)
+    int iExtendedAmountDisc;    // Количество всех дисциплин (не модулей)
+    map<ETagDisc, int> mapAmountTagDisc; // Количество дисциплин по типу (основные, по выбору, факультативы)
 
     set<string> fAllComp;    // Множество всех компетенций, присутствующих в учебном плане (УП)
 
-    void dFindAllScore(double& outDSum, int& outIAmountDisc);    // Вывод через параметры
-    void dFindAllScore(double& outDSum);
+    //Не нужно, так как эти значения хранятся в iAmountDisc iExtendedAmountDisc и mapAmountTagDisc
+    //void FindAllScore(double& outDSum, int& outIAmountDisc);    // Вывод через параметры
+    //void FindAllScore(double& outDSum);
 
     FMetric* ptrMetric;    // У каждого УП свой объект класса FMetric
     FGraph*  ptrGraph;     // У каждого УП свой объект класса FGraph

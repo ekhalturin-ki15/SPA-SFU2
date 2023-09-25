@@ -11,6 +11,7 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       iWeigthRib(10),
       dMinWeigthRib(0.01),
       dMinComp(0.01),
+      dAnomalBigScore(40.0),
       bCreateFolder(true),
       bCompactOutput(true),
       bCourseOutput(true),
@@ -102,6 +103,29 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
             return true;
         }
 
+         // Каталог данных УП
+        wsPatern = L"Считать ли метрики";
+        if (wsKey == wsPatern)
+        {
+            vector<wstring> arrBool;
+            ptrGlobal->TakeData(arrBool, row, 0);
+            bArrIsSolveGraphMetric.resize(arrBool.size());
+            for (int i = 0; i < arrBool.size(); ++i) bArrIsSolveGraphMetric[i] 
+                                   = (arrBool[i].find(L"да") != wstring::npos);
+
+            return true;
+        }
+
+         // Категории дисциплин (основные, по выбору, факультативы)
+        wsPatern = L"Определение вида дисциплины";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(arrTagDisc, row, 0); //Нет ограничение на кол-во тегов, 
+            // но считается, что 0 - основной, 1 - по выбору, 2 - факультатив (используется enum)
+            // Далее используется ETagDisc из solve.h
+            return true;
+        }
+
         // Каталог данных УП
         wsPatern = L"Каталоги данных УП";
         if (wsKey == wsPatern)
@@ -109,6 +133,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
             ptrGlobal->TakeData(arrNameFileIn, row, 0);
             return true;
         }
+
 
         // Каталог вывода результата
         wsPatern = L"Каталоги вывода результата";
@@ -166,6 +191,13 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(dMinComp, row);
+            return true;
+        }
+
+         wsPatern = L"Считать кол-во ЗЕ аномально большим, если его значение больше X=";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(dAnomalBigScore, row);
             return true;
         }
 

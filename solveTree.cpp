@@ -26,31 +26,31 @@ void FTreeDisc::DeleteDFS(FTreeElement* ptrThis)
     for (auto it : ptrThis->arrChild) { DeleteDFS(it); }
     delete ptrThis;
 }
-
-void FTreeDisc::dFindAllScore(double& outDSum, int& outIAmountDisc)
-{
-    outDSum        = 0;
-    outIAmountDisc = 0;
-    for (const auto& [key, it] : mapDisc)
-    {
-        if (it->arrChild.size() == 0)
-        {
-            outDSum += it->dSumScore;
-            outIAmountDisc++;
-        }
-    }
-    return;
-}
-
-void FTreeDisc::dFindAllScore(double& outDSum)
-{
-    outDSum = 0;
-    for (const auto& [key, it] : mapDisc)
-    {
-        if (it->arrChild.size() == 0) { outDSum += it->dSumScore; }
-    }
-    return;
-}
+//
+//void FTreeDisc::FindAllScore(double& outDSum, int& outIAmountDisc)
+//{
+//    outDSum        = 0;
+//    outIAmountDisc = 0;
+//    for (const auto& [key, it] : mapDisc)
+//    {
+//        if (it->arrChild.size() == 0)
+//        {
+//            outDSum += it->dSumScore;
+//            outIAmountDisc++;
+//        }
+//    }
+//    return;
+//}
+//
+//void FTreeDisc::FindAllScore(double& outDSum)
+//{
+//    outDSum = 0;
+//    for (const auto& [key, it] : mapDisc)
+//    {
+//        if (it->arrChild.size() == 0) { outDSum += it->dSumScore; }
+//    }
+//    return;
+//}
 
 void FTreeDisc::CountDisc()
 {
@@ -58,6 +58,12 @@ void FTreeDisc::CountDisc()
     for (const auto& [key, it] : mapDisc)
     {
         if ((it->arrChild.size() == 0) && (it->bAllow)) { this->iAmountDisc++; }
+
+        if (it->arrChild.size() == 0)
+        {
+            this->iExtendedAmountDisc++;
+            mapAmountTagDisc[it->eTagDisc]++;
+        }
     }
     return;
 }

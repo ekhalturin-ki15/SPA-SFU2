@@ -94,6 +94,46 @@ void FError::ErrorNotFoundConfig()
 
 void FError::ErrorOutFileCreate(wstring wsPathName) { ErrorOutFileCreate(ptrGlobal->ConwertToString(wsPathName)); }
 
+
+void FError::ErrorGraphNoInitWeightDisc(string sNamePlan, wstring wsNameIndex)
+{
+    ErrorGraphNoInitWeightDisc(sNamePlan,
+                               ptrGlobal->ConwertToString(wsNameIndex));
+}
+
+void FError::ErrorGraphNoInitWeightDisc(string sNamePlan, string sNameIndex)
+{
+    ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
+    out << "В графе УП " + sNamePlan + " ";
+    out << "У дисциплины " + sNameIndex + " неправильно расчитан вес";
+    out << END;
+    out.close();
+}
+void FError::ErrorGraphZeroValue(string sNamePlan, wstring wsNameIndex)
+{
+    ErrorGraphZeroValue(sNamePlan, ptrGlobal->ConwertToString(wsNameIndex));
+}
+
+//void FError::ErrorGraphBadAllScore(string sNamePlan, int iTypeGraph,
+//                                   int iTypeError)
+//{
+//    ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
+//    out << "В графе УП " + sNamePlan + " ";
+//    out << "неправильный суммарный вес у графа с кодом " << iTypeGraph 
+//        << " и типом ошибки " << iTypeError;
+//    out << END;
+//    out.close();
+//}
+
+void FError::ErrorGraphZeroValue(string sNamePlan, string sNameIndex)
+{
+    ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
+    out << "В графе УП " + sNamePlan + " ";
+    out << "нулевое кол-во ЗЕ у дисциплины " << sNameIndex;
+    out << END;
+    out.close();
+}
+
 void FError::ErrorOutFileNotFind(string sPathName)
 {
     ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
@@ -157,6 +197,16 @@ void FError::ErrorBadParser()
     out.close();
 }
 
+void FError::ErrorAnomalBigScore(double dAmount)
+{
+    ofstream out = OutHeader();
+
+    out << "В учебном плане " + ptrGlobal->ptrSolve->sInPath 
+        + " указано аномально большое кол-во ЗЕ " + to_string(dAmount);
+    out << END;
+    out.close();
+}
+
 void FError::ErrorBadRegex(string sName)
 {
     if (!setBadRegexName.count(sName))
@@ -181,6 +231,7 @@ void FError::ErrorBadFormula()
         out.close();
     }
 }
+
 
 void FError::ErrorEmptyLine()
 {

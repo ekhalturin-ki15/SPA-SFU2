@@ -78,6 +78,20 @@ void FSolve::CreateDiscTree(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageNum
                         ptrThis               = ptrNewNode;
 
                         ptrNewNode->wsIndexName  = wsData;
+
+                        //Смотрим, что это за дисциплина (основная, по выбору или факультатив)
+                        int iTagNumber = 0;
+                        for (const auto& wsTag : ptrGlobal->ptrConfig->arrTagDisc)
+                        {
+                            if (wsData.find(wsTag) != wstring::npos)
+                            {
+                                ptrNewNode->eTagDisc = ETagDisc(iTagNumber);
+                                break;
+                            }
+                            ++iTagNumber;
+                        }
+                        //
+
                         ptrTree->mapDisc[wsData] = ptrNewNode;
                         continue;
                     }

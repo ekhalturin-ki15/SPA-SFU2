@@ -22,9 +22,11 @@ struct FConfig
 
     vector<FPageInfo> arrKeyPage;
 
-    vector<wstring> arrNameFileIn;
+    vector<wstring>               arrTagDisc;
 
+    vector<wstring>               arrNameFileIn;
     vector<wstring>               arrNameFileOut;
+
     map<wstring, vector<wstring>> mapArrOutParams;
     map<wstring, wstring>         mapAddOutParams;
 
@@ -60,8 +62,12 @@ struct FConfig
     bool bOutShortNameCurr;
     bool bIsUnDirected;
 
+    vector<bool> bArrIsSolveGraphMetric;
+
     double dMinWeigthRib;
     double dMinComp;
+
+    double dAnomalBigScore;
 
     int iMaxNameDiscLen;
     int iWeigthRib;

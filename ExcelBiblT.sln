@@ -7,7 +7,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExcelBiblT", "ExcelBiblT.vc
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Testing", "..\Testing\Testing.vcxproj", "{384EAD67-A940-4B8E-8CD0-7E7000AADF75}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Install-SPA-SFU-2", "..\Install-SPA-SFU\Install-SPA-SFU.vdproj", "{AD60ED76-975D-4EF8-99AB-3D01539753C0}"
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Install-SPA-SFU-2", "..\Install-SPA-SFU-2\Install-SPA-SFU-2.vdproj", "{19DD63E9-1D05-49AA-8782-CA9C904FEBC2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,10 +33,10 @@ Global
 		{384EAD67-A940-4B8E-8CD0-7E7000AADF75}.Release|x64.Build.0 = Release|x64
 		{384EAD67-A940-4B8E-8CD0-7E7000AADF75}.Release|x86.ActiveCfg = Release|Win32
 		{384EAD67-A940-4B8E-8CD0-7E7000AADF75}.Release|x86.Build.0 = Release|Win32
-		{AD60ED76-975D-4EF8-99AB-3D01539753C0}.Debug|x64.ActiveCfg = Debug
-		{AD60ED76-975D-4EF8-99AB-3D01539753C0}.Debug|x86.ActiveCfg = Debug
-		{AD60ED76-975D-4EF8-99AB-3D01539753C0}.Release|x64.ActiveCfg = Release
-		{AD60ED76-975D-4EF8-99AB-3D01539753C0}.Release|x86.ActiveCfg = Release
+		{19DD63E9-1D05-49AA-8782-CA9C904FEBC2}.Debug|x64.ActiveCfg = Debug
+		{19DD63E9-1D05-49AA-8782-CA9C904FEBC2}.Debug|x86.ActiveCfg = Debug
+		{19DD63E9-1D05-49AA-8782-CA9C904FEBC2}.Release|x64.ActiveCfg = Release
+		{19DD63E9-1D05-49AA-8782-CA9C904FEBC2}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

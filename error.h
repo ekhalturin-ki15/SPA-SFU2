@@ -44,6 +44,15 @@ struct FError
     void ErrorBadParser();
 
     void ErrorBadFormula();
+
+    void ErrorGraphNoInitWeightDisc(string sNamePlan, wstring wsNameIndex);
+    void ErrorGraphNoInitWeightDisc(string sNamePlan, string sNameIndex);
+
+    //void ErrorGraphBadAllScore(string sNamePlan, int iTypeGraph, int iTypeError);
+    void ErrorGraphZeroValue(string sNamePlan, wstring wsNameIndex);
+    void ErrorGraphZeroValue(string sNamePlan, string sNameIndex);
+
+
     bool bIsPrint;    // Выводим один раз (пока false)
 
     void        ErrorBadRegex(string sName);
@@ -59,6 +68,8 @@ struct FError
 
     void ErrorBadIndicatorBind(wstring wsIndexName, wstring wsIndicator);
     void ErrorBadIndicatorBind(string sIndexName, string sIndicator);
+
+    void ErrorAnomalBigScore(double dAmount);
 
     void OKParsing();
 

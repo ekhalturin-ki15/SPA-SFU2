@@ -53,13 +53,31 @@ void FGlobal::TakeData(string& outWsData, const OpenXLSX::XLRow& row)
 void FGlobal::TakeData(int& outIData, const OpenXLSX::XLRow& row)
 {
     for (auto& it : row.cells(2, 2))    // Считываем только вторую ячейку
-        outIData = it.value().get<int>();
+    {
+        try
+        {
+            outIData = it.value().get<int>();
+        }
+        catch (...)
+        {
+            outIData = it.value().get<double>();
+        }
+    }
 }
 
 void FGlobal::TakeData(double& outIData, const OpenXLSX::XLRow& row)
 {
     for (auto& it : row.cells(2, 2))    // Считываем только вторую ячейку
-        outIData = it.value().get<double>();
+    {
+        try
+        {
+            outIData = it.value().get<double>();
+        }
+        catch (...)
+        {
+            outIData = it.value().get<int>();
+        }
+    }
 }
 
 vector<pair<wstring, vector<wstring>>> FGlobal::SetMapParams(const OpenXLSX::XLWorksheet& fPage, int iSize)
