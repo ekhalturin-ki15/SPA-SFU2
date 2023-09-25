@@ -23,6 +23,7 @@ struct FConfig
     vector<FPageInfo> arrKeyPage;
 
     vector<wstring>               arrTagDisc;
+    vector<wstring>               arrNameTagDisc;
 
     vector<wstring>               arrNameFileIn;
     vector<wstring>               arrNameFileOut;
@@ -61,6 +62,7 @@ struct FConfig
     bool bOutCompWithName;
     bool bOutShortNameCurr;
     bool bIsUnDirected;
+    bool bDeletingSpecCharDiscName;
 
     vector<bool> bArrIsSolveGraphMetric;
 

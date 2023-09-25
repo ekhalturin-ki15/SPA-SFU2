@@ -119,14 +119,49 @@ void FSolve::CreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
                         if (ptrGlobal->ptrConfig->fAlias.mapRename.count(
                                 wsData))
                         {
-                            ptrNewNode->wsName =
-                                ptrGlobal->ptrConfig->fAlias.mapRename[wsData];
+                            /*ptrNewNode->wsName =
+                                ptrGlobal->ptrConfig->fAlias.mapRename[wsData];*/
+
+                            ptrNewNode->sName =
+                            ptrGlobal->ReversUTF16RU(ptrGlobal->ConwertToString(
+                                ptrGlobal->ptrConfig->fAlias
+                                    .mapRename[wsData]));
                         }
                         else
                         {
-                            ptrNewNode->wsName = wsData;
+                          /*  ptrNewNode->wsName = wsData;
                             ptrNewNode->wsName = ptrNewNode->wsName.substr(
-                                0, ptrGlobal->ptrConfig->iMaxNameDiscLen);
+                                0, ptrGlobal->ptrConfig->iMaxNameDiscLen);*/
+
+                             // Удаляем лишние пробелы
+                            wsData =
+                                std::regex_replace(wsData,
+                                                   std::wregex(L" {2,}"),
+                                                   L" ");
+
+                             ptrNewNode->sName = ptrGlobal->ReversUTF16RU(
+                                ptrGlobal->ConwertToString(wsData));
+
+                             ptrNewNode->sName = ptrNewNode->sName.substr(
+                                 0, ptrGlobal->ptrConfig->iMaxNameDiscLen);
+                            
+                             //Убираем лишние пробелы в конце
+                             while (ptrNewNode->sName.size() > 1)
+                             {
+                                if (ptrNewNode->sName.back() == ' ')
+                                    ptrNewNode->sName.pop_back();
+                                else
+                                    break;
+                                 
+                             }
+
+                             if (ptrGlobal->ptrConfig->bDeletingSpecCharDiscName)
+                             {
+                                ptrNewNode->sName =
+                                    std::regex_replace(ptrNewNode->sName,
+                                                       std::regex("[(),.-]"),
+                                                       "");
+                             }
                         }
 
                         ptrNewNode->bNotIgnore = !(

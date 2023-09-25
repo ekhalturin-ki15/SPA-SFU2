@@ -124,10 +124,19 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
         wsPatern = L"Определение вида дисциплины";
         if (wsKey == wsPatern)
         {
-            ptrGlobal->TakeData(arrTagDisc, row,
-                                0);    // Нет ограничение на кол-во тегов,
+            ptrGlobal->TakeData(arrTagDisc, row, 0);    // Нет ограничение на кол-во тегов,
             // но считается, что 0 - основной, 1 - по выбору, 2 - факультатив
             // (используется enum) Далее используется ETagDisc из solve.h
+            return true;
+        }
+
+        // Проверка, что размер совпадает с arrTagDisc.size()
+        wsPatern = L"Названия видов дисциплин при выводе количества";
+        if (wsKey == wsPatern)
+        {
+            int iSize = 0;
+            if (arrTagDisc.size() != 0) iSize = arrTagDisc.size() + 1;
+            ptrGlobal->TakeData(arrNameTagDisc, row, iSize);
             return true;
         }
 
@@ -277,6 +286,13 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
+        wsPatern = L"Удалить спецсимволы из названия дисциплин (не влияет на игнорируемые)";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(bDeletingSpecCharDiscName, row);
+            return true;
+        }
+
         wsPatern = L"Граф неориентированный";
         if (wsKey == wsPatern)
         {
@@ -418,7 +434,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
-        wsPatern = L"Параметры выводы (название страницы)";
+        wsPatern = L"Параметры вывода (название страницы)";
         if (wsKey == wsPatern)
         {
             mapArrOutParams.clear();

@@ -7,7 +7,8 @@
 
 FTreeElement::FTreeElement()
     : dSumScore(0.),
-      wsName(L""),
+      //wsName(L""),
+      sName(""),
       wsIndexName(L""),
       ptrParent(nullptr),
       bAllow(true),
@@ -17,6 +18,7 @@ FTreeElement::FTreeElement()
 
 FTreeDisc::FTreeDisc(FGlobal* _ptrGlobal)
     : ptrGlobal(_ptrGlobal), iAmountCourse(0), dAllSumScore(0.), iAmountDisc(0)
+    , iExtendedAmountDisc(0)
 {
     ptrRoot = new FTreeElement;
     ptrGraph = nullptr;    // Только после Read можно строить граф
@@ -75,6 +77,8 @@ void FTreeDisc::CountDisc()
     this->iAmountDisc = 0;
     for (const auto& [key, it] : mapDisc)
     {
+        if (it->dSumScore <= 0) continue; // Баг в УП (ложные дисциплины из страницы Компетенции(2))
+
         if ((it->arrChild.size() == 0) && (it->bAllow))
         {
             this->iAmountDisc++;
@@ -103,7 +107,8 @@ map<wstring, FTreeElement*>
             if (IsNecessaryAllow)
                 if (!it->bAllow) continue;
 
-            mapReturn[key] = it;
+            if (it->dSumScore > 0) // Нулевые дисциплины тоде нужно убрать
+                mapReturn[key] = it;
         }
     }
     return mapReturn;

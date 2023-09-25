@@ -18,7 +18,8 @@ enum ETagDisc : int
 {
     ETD_Common,
     ETD_Chosen,
-    ETD_Elective
+    ETD_Elective,
+    ETD_Size
 };
 
 struct FTreeElement
@@ -31,7 +32,8 @@ struct FTreeElement
     double           dSumScore;         // Количество зачётных единиц (ЗЕ)
     map<int, double> mapCourseScore;    // В каком семестре (ключ) сколько ЗЕ (значение)
 
-    wstring wsName;
+    //wstring wsName;
+    string  sName;
     wstring wsIndexName;
 
     FTreeElement*         ptrParent;

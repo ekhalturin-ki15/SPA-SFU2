@@ -13,7 +13,7 @@ FOutData::FOutData(FGlobal* _ptrGlobal)
                           L"Компетенция", L"Процент распределения Компетенции",
                           L"Индекс", L"Процент распределения Индекса" }),
       arrMetricHead({ // L"Название учебного плана",
-                      L"Всего ЗЕ", L"Кол-во дисциплин",
+                      L"Всего ЗЕ в графе", L"Кол-во дисциплин в графе",
                       // L"(Расш.) Общее кол-во ЗЕ в УП",
                       // L"(Расш.) Кол-во дисциплин в УП",    // Включает те,
                       // что указаны в
@@ -70,14 +70,35 @@ void FOutData::Out(string sOutPath)
     int x = 0;
     int y = 0;
 
-    vector<wstring> arrAddedHead = {
-        L"Название учебного плана"
-    };    // Доп столбцы
+    vector<wstring> arrAddedHead;
+
+        //Параметры для всего УП целиком
+    vector<wstring> arrPrefixHead = {
+        L"Название учебного плана",
+        L"Общее кол-во ЗЕ в УП",
+        L"Общее кол-во дисциплин в УП"
+
+    };
+
+    for (auto& wsNameTag : ptrGlobal->ptrConfig->arrNameTagDisc)
+    {
+        arrPrefixHead.push_back(L"!" + wsNameTag);
+    }
+
+
+    arrAddedHead.insert(arrAddedHead.end(),
+                        arrPrefixHead.begin(),
+                        arrPrefixHead.end());
+
     arrAddedHead.insert(arrAddedHead.end(),
                         arrMetricHead.begin(),
                         arrMetricHead.end());
 
-    // arrMetricHead;
+    for (auto& wsNameTag : ptrGlobal->ptrConfig->arrNameTagDisc)
+    {
+        arrAddedHead.push_back(wsNameTag);
+    }
+
     for (auto& sHeaderComp : ptrGlobal->ptrSolve->setHeaderComp)
     {
         wstring wsCompScore = ptrGlobal->ConwertToWstring(sHeaderComp);
@@ -88,11 +109,13 @@ void FOutData::Out(string sOutPath)
         arrAddedHead.push_back(ptrGlobal->ConwertToWstring(sHeaderComp));
     }
 
+    //Вывод заголовка таблицы
     arrOutColm.assign(arrAddedHead.size() + 1,
                       true);    // Так как нумерация с 1, поэтому и +1
 
     // Вывод заголовка (на главной странице)
     y = 1, x = 1, i = 1;
+
 #pragma region OutHeader
     for (const auto& it : arrAddedHead)
     {
@@ -147,10 +170,46 @@ void FOutData::Out(string sOutPath)
                         &it->ptrGraph->mapGraph[FGraph::iCommon],
                         EOutType::EOT_Head);
 
+        vector<double> arrCurriculaAllResult;
+
+        //Вывод названия УП
         OutData(x, i, y, sOutName.size(), sOutName, wks, sOutName, false,
                 iXShift, iYShift);
 
-        for (const auto& dValue : arrResult)
+        //Общие для УП метрики (перечислены в arrPrefixHead)
+        arrCurriculaAllResult.push_back(it->dAllSumScore);
+        arrCurriculaAllResult.push_back(it->iAmountDisc);
+
+
+        //Дисциплин основных, по выбору, факультативов и т.д во всём УП
+        {
+            int iNumberTag = -1;
+            for (auto& wsNameTag : ptrGlobal->ptrConfig->arrNameTagDisc)
+            {
+                ++iNumberTag;
+                arrCurriculaAllResult.push_back(
+                    it->mapAmountTagDisc[ETagDisc(iNumberTag)]);
+            }
+        }
+
+        {
+            int iNumberTag = -1;
+            for (auto& wsNameTag : ptrGlobal->ptrConfig->arrNameTagDisc)
+            {
+                ++iNumberTag;
+                auto ptrTreeMetric = it->ptrGraph->mapGraph[FGraph::iCommon];
+
+                arrResult.push_back(
+                    ptrTreeMetric.mapGraphAmountTagDisc[ETagDisc(iNumberTag)]
+                    );
+            }
+        }
+
+        arrCurriculaAllResult.insert(arrCurriculaAllResult.end(),
+                                     arrResult.begin(),
+                                     arrResult.end());
+
+        for (const auto& dValue : arrCurriculaAllResult)
         {
             OutData(x, i, y, dValue, sOutName, wks, to_string(dValue), true,
                     iXShift, iYShift);
@@ -771,9 +830,9 @@ vector<string> FOutData::CreateCommonNameLabel(const int& iGraphType,
     for (auto& it : fTree->ptrGraph->mapGraph[iGraphType].arrRel)
     {
         FTreeElement* fThis     = fTree->mapDisc[it.first];
-        wstring       wsNameRaw = fThis->wsName;
-        string        sName =
-            ptrGlobal->ReversUTF16RU(ptrGlobal->ConwertToString(wsNameRaw));
+        //wstring       wsNameRaw = fThis->wsName;
+        string sName = fThis->sName;
+           // ptrGlobal->ReversUTF16RU(ptrGlobal->ConwertToString(wsNameRaw));
         // Выводим ещё и компетенции
         if (ptrGlobal->ptrConfig->bOutCompWithName)
         {
