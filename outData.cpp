@@ -12,18 +12,19 @@ FOutData::FOutData(FGlobal* _ptrGlobal)
                           L"Процент распределения Заголовка компетенции",
                           L"Компетенция", L"Процент распределения Компетенции",
                           L"Индекс", L"Процент распределения Индекса" }),
-      arrMetricHead(
-          { // L"Название учебного плана",
-            L"Всего ЗЕ", L"Кол-во дисциплин", 
-            //L"(Расш.) Общее кол-во ЗЕ в УП",
-            //L"(Расш.) Кол-во дисциплин в УП",    // Включает те, что указаны в
-                                                 // УП, как неучитываемые
-            L"Минимальное ЗЕ у дисциплины", L"Максимальное ЗЕ у дисциплины",
-            L"Минимальный вес ребра", L"Максимальный вес ребра",
-            L"Диаметр графа по расстоянию",
-            L"Диаметр графа по количеству рёбер",
-            L"Количество компонент связности", L"Минимальное оставное дерево",
-            L"Максимальное оставное дерево" })
+      arrMetricHead({ // L"Название учебного плана",
+                      L"Всего ЗЕ", L"Кол-во дисциплин",
+                      // L"(Расш.) Общее кол-во ЗЕ в УП",
+                      // L"(Расш.) Кол-во дисциплин в УП",    // Включает те,
+                      // что указаны в
+                      //  УП, как неучитываемые
+                      L"Минимальное ЗЕ у дисциплины",
+                      L"Максимальное ЗЕ у дисциплины", L"Минимальный вес ребра",
+                      L"Максимальный вес ребра", L"Диаметр графа по расстоянию",
+                      L"Диаметр графа по количеству рёбер",
+                      L"Количество компонент связности",
+                      L"Минимальное оставное дерево",
+                      L"Максимальное оставное дерево" })
 {
 }
 
@@ -34,18 +35,12 @@ void FOutData::CreateTotalInfo(vector<double>&   arrReturnDataMetrics,
     arrReturnDataMetrics.clear();
     vector<double> arrResult;    // Соответствует arrHead который
                                  // проинициализирован в конструкторе
-    arrResult = { fGraph->dGraphAllScore,
-                  double(fGraph->iGraphAmountDisc),
-                  //fGraph->dGraphAllScore,
-                  //double(fGraph->iGraphAmountDisc),
-                  fGraph->dMinDiscScore,
-                  fGraph->dMaxDiscScore,
-                  fGraph->dMinRib,
-                  fGraph->dMaxRib,
-                  fGraph->dDiametrLen,
-                  fGraph->dDiametrStep,
-                  double(fGraph->iComponent),
-                  fGraph->dMinSpanTree,
+    arrResult = { fGraph->dGraphAllScore, double(fGraph->iGraphAmountDisc),
+                  // fGraph->dGraphAllScore,
+                  // double(fGraph->iGraphAmountDisc),
+                  fGraph->dMinDiscScore, fGraph->dMaxDiscScore, fGraph->dMinRib,
+                  fGraph->dMaxRib, fGraph->dDiametrLen, fGraph->dDiametrStep,
+                  double(fGraph->iComponent), fGraph->dMinSpanTree,
                   fGraph->dMaxSpanTree };
 
     for (int y = 0; y < arrMetricHead.size(); ++y)
@@ -417,8 +412,8 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
                             &ptrTree->ptrGraph->mapGraph[sKey[0] - '1'],
                             EOutType::EOT_Added);
 
-            OutTableInfo(1,//Так как 1-индексация
-                         arrDataCourse.size() + 1, //Так как 1-индексация
+            OutTableInfo(1,    // Так как 1-индексация
+                         arrDataCourse.size() + 1,    // Так как 1-индексация
                          arrTotalCourseGraphData,
                          arrSinglLocalCurrentCourseOpenWKS.back());
 
@@ -435,8 +430,8 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
     CreateTotalInfo(arrTotalGraphData,
                     &ptrTree->ptrGraph->mapGraph[FGraph::iCommon],
                     EOutType::EOT_Added);
-    OutTableInfo(1, iYShift + 1,//Так как 1-индексация
-        arrTotalGraphData, arrSinglOpenWKS.back());
+    OutTableInfo(1, iYShift + 1,    // Так как 1-индексация
+                 arrTotalGraphData, arrSinglOpenWKS.back());
 
     arrSinglOpenFile.back().save();
     arrSinglOpenFile.back().close();

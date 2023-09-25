@@ -39,7 +39,8 @@ void FGraph::Create()
         if (bArrIsSolveGraphMetric.size() > 0)
         {
             if (bArrIsSolveGraphMetric[0]) CountAllMetric(FGraph::iCommon);
-            //Проверка будет выполнена только в том случае, если нет принудительно исключённых дисциплин
+            // Проверка будет выполнена только в том случае, если нет
+            // принудительно исключённых дисциплин
             /*if (ptrTree->dAllSumScore !=
                 mapGraph[FGraph::iCommon].dGraphAllScore)
                 this->ptrTree->ptrGlobal->ptrError->ErrorBadAllScore(

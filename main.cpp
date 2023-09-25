@@ -51,7 +51,10 @@ struct Disc
     int           iSumZU;
     map<int, int> mapAllZU;
 
-    Disc(string _sNoIdentity) : iSumZU(0), sName(_sNoIdentity), sId(_sNoIdentity) {}
+    Disc(string _sNoIdentity)
+        : iSumZU(0), sName(_sNoIdentity), sId(_sNoIdentity)
+    {
+    }
 };
 
 FGlobal* ptrGlobal;    // Синглтон
@@ -82,31 +85,39 @@ int main()
 #ifdef DEBUG
             return 4;    // Аварийное завершение
 #else
-            return 0;    // Аварийное завершение
+            return 0;        // Аварийное завершение
 #endif
 
         if (ptrGlobal->ptrConfig->arrKeyPage.size() < 3)
         {
-            ptrGlobal->ptrError->FatalErrorFewConfigPages();    // Не хватает данных для парсинга УП
+            ptrGlobal->ptrError
+                ->FatalErrorFewConfigPages();    // Не хватает данных для
+                                                 // парсинга УП
             Delete();
 #ifdef DEBUG
             return 3;    // Аварийное завершение
 #else
-            return 0;    // Аварийное завершение
+            return 0;        // Аварийное завершение
 #endif
         }
 
-        auto fFile = filesystem::current_path();    // Взятие пути директории расположения exe файла
+        auto fFile = filesystem::current_path();    // Взятие пути директории
+                                                    // расположения exe файла
 
-        for (int category = 0; category < ptrGlobal->ptrConfig->arrNameFileIn.size(); ++category)
+        for (int category = 0;
+             category < ptrGlobal->ptrConfig->arrNameFileIn.size();
+             ++category)
         {
-            auto fInFile = fFile / ptrGlobal->ptrConfig->arrNameFileIn[category];
+            auto fInFile =
+                fFile / ptrGlobal->ptrConfig->arrNameFileIn[category];
             if (!filesystem::exists(fInFile))
             {
                 ptrGlobal->ptrError->ErrorInFileNotFind(fInFile);
-                continue;    // Код ошибки - нет файлов указанного формата, из которых ожидалось считывание
+                continue;    // Код ошибки - нет файлов указанного формата, из
+                             // которых ожидалось считывание
             }
-            auto fOutFile = fFile / ptrGlobal->ptrConfig->arrNameFileOut[category];
+            auto fOutFile =
+                fFile / ptrGlobal->ptrConfig->arrNameFileOut[category];
             if (!filesystem::exists(fOutFile))
             {
                 if (ptrGlobal->ptrConfig->bCreateFolder)
@@ -124,7 +135,8 @@ int main()
                 {
                     ptrGlobal->ptrError->ErrorOutFileNotFind(fOutFile);
                     continue;
-                    // exit(0); //Код ошибки - не удаётся создать папку для вывода
+                    // exit(0); //Код ошибки - не удаётся создать папку для
+                    // вывода
                 }
             }
 
@@ -132,26 +144,32 @@ int main()
             {
                 if (!it.is_directory())
                 {
-                    if (ptrGlobal->ptrConfig->setIgnoreСurriculum.count(it.path().filename().string())) continue;
+                    if (ptrGlobal->ptrConfig->setIgnoreСurriculum.count(
+                            it.path().filename().string()))
+                        continue;
                     auto sOutName = fOutFile / it.path().filename();
-                    ptrGlobal->ptrSolve->Read(it.path().string(), it.path().filename().string());
+                    ptrGlobal->ptrSolve->Read(it.path().string(),
+                                              it.path().filename().string());
                 }
             }
 
             ptrGlobal->ptrSolve->CreateAllGraph();
-            ptrGlobal->ptrSolve->CreateAllMetric();    // Метрики не связаны с графом
+            ptrGlobal->ptrSolve
+                ->CreateAllMetric();    // Метрики не связаны с графом
 
-            auto sTotalOutName = fFile / ptrGlobal->ptrConfig->arrNameFileOut[category];    // / "TotalData.xlsx";
+            auto sTotalOutName =
+                fFile /
+                ptrGlobal->ptrConfig
+                    ->arrNameFileOut[category];    // / "TotalData.xlsx";
             ptrGlobal->ptrOutData->Out(sTotalOutName.string());
 
-            //Пересоздание
+            // Пересоздание
             if (!ptrGlobal->ReCreate())
 #ifdef DEBUG
                 return 4;    // Аварийное завершение
 #else
                 return 0;    // Аварийное завершение
 #endif
-
         }
 
         Delete();
@@ -162,7 +180,7 @@ int main()
 #ifdef DEBUG
         return 2;    // Аварийное завершение
 #else
-        return 0;        // Аварийное завершение
+        return 0;            // Аварийное завершение
 #endif
     }
 

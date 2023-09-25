@@ -25,7 +25,9 @@ void FGlobal::TakeData(bool& outBData, const OpenXLSX::XLRow& row)
     }
 }
 
-void FGlobal::TakeData(vector<wstring>& outArrData, const OpenXLSX::XLRow& row, int iSize)
+void FGlobal::TakeData(vector<wstring>&       outArrData,
+                       const OpenXLSX::XLRow& row,
+                       int                    iSize)
 {
     outArrData.clear();
     int i = -1;
@@ -35,13 +37,14 @@ void FGlobal::TakeData(vector<wstring>& outArrData, const OpenXLSX::XLRow& row, 
         if (i) outArrData.push_back(GetValue(it));
     }
     if (iSize)
-        if (i != (iSize - 1)) throw std::out_of_range("No equeal " + to_string(i));
+        if (i != (iSize - 1))
+            throw std::out_of_range("No equeal " + to_string(i));
 }
 
 void FGlobal::TakeData(wstring& outWsData, const OpenXLSX::XLRow& row)
 {
     for (auto& it : row.cells(2, 2))    // Считываем только вторую ячейку
-        outWsData = GetValue(it);       // Так как нет value().get<wstring>
+        outWsData = GetValue(it);    // Так как нет value().get<wstring>
 }
 
 void FGlobal::TakeData(string& outWsData, const OpenXLSX::XLRow& row)
@@ -80,7 +83,8 @@ void FGlobal::TakeData(double& outIData, const OpenXLSX::XLRow& row)
     }
 }
 
-vector<pair<wstring, vector<wstring>>> FGlobal::SetMapParams(const OpenXLSX::XLWorksheet& fPage, int iSize)
+vector<pair<wstring, vector<wstring>>>
+    FGlobal::SetMapParams(const OpenXLSX::XLWorksheet& fPage, int iSize)
 {
     vector<pair<wstring, vector<wstring>>> arrReturn;
     int                                    y = -1;
@@ -108,7 +112,8 @@ vector<pair<wstring, vector<wstring>>> FGlobal::SetMapParams(const OpenXLSX::XLW
                 }
             }
             if (iSize)
-                if (i != (iSize - 1)) throw std::out_of_range("No equeal " + to_string(i) + "!+");
+                if (i != (iSize - 1))
+                    throw std::out_of_range("No equeal " + to_string(i) + "!+");
         }
     }
 
@@ -117,7 +122,10 @@ vector<pair<wstring, vector<wstring>>> FGlobal::SetMapParams(const OpenXLSX::XLW
 
 int FGlobal::HeightPage(const OpenXLSX::XLWorksheet& fSheet)
 {
-    if (ptrConfig == nullptr) { throw std::logic_error(FError::sNotInitConfig); }
+    if (ptrConfig == nullptr)
+    {
+        throw std::logic_error(FError::sNotInitConfig);
+    }
 
     int         h = 0;
     vector<int> arrEmptyRow;
@@ -140,8 +148,10 @@ int FGlobal::HeightPage(const OpenXLSX::XLWorksheet& fSheet)
             arrEmptyRow.push_back(h);
             if (arrEmptyRow.size() >= ptrConfig->iIgnoreEmptyLine)
             {
-                if (arrEmptyRow[arrEmptyRow.size() - ptrConfig->iIgnoreEmptyLine] ==
-                    (h - ptrConfig->iIgnoreEmptyLine + 1))    // Нашли iIgnoreEmptyLine подряд идущих пустых строк
+                if (arrEmptyRow[arrEmptyRow.size() -
+                                ptrConfig->iIgnoreEmptyLine] ==
+                    (h - ptrConfig->iIgnoreEmptyLine +
+                     1))    // Нашли iIgnoreEmptyLine подряд идущих пустых строк
                 {
                     return h - ptrConfig->iIgnoreEmptyLine + 1;
                 }
@@ -158,7 +168,10 @@ int FGlobal::HeightPage(const OpenXLSX::XLWorksheet& fSheet)
             --h;
             arrEmptyRow.pop_back();
         }
-        else { break; }
+        else
+        {
+            break;
+        }
     }
 
     return h;

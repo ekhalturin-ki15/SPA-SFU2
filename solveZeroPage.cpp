@@ -3,7 +3,8 @@
 #include "global.h"
 #include "solve.h"
 
-void FSolve::CreateDiscTree(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageNumber)
+void FSolve::CreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
+                            int                          iKeyPageNumber)
 {
     int h = ptrGlobal->HeightPage(fSheet);
 
@@ -21,11 +22,20 @@ void FSolve::CreateDiscTree(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageNum
         int x = 0;
         for (auto it : fSheet.rows().begin()->cells())
         {
-            if (ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].arrHeader[0].count(ptrGlobal->GetValue(it))) iIdIndex = x;
+            if (ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber]
+                    .arrHeader[0]
+                    .count(ptrGlobal->GetValue(it)))
+                iIdIndex = x;
 
-            if (ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].arrHeader[1].count(ptrGlobal->GetValue(it))) iIdName = x;
+            if (ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber]
+                    .arrHeader[1]
+                    .count(ptrGlobal->GetValue(it)))
+                iIdName = x;
 
-            if (ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].arrHeader[2].count(ptrGlobal->GetValue(it))) iIdComp = x;
+            if (ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber]
+                    .arrHeader[2]
+                    .count(ptrGlobal->GetValue(it)))
+                iIdComp = x;
 
             ++x;
         }
@@ -35,7 +45,8 @@ void FSolve::CreateDiscTree(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageNum
     ofstream out(ptrGlobal->ptrConfig->wsNameDebugFile);
 #endif    // DEBUG
 
-    int iPreX = -1;    // Root вне учебного плана (в нём все модули) у него индекс вложенности -1
+    int iPreX = -1;    // Root вне учебного плана (в нём все модули) у него
+                       // индекс вложенности -1
 
     iCurrentRow = -1;
     for (auto row : fSheet.rows())
@@ -57,9 +68,12 @@ void FSolve::CreateDiscTree(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageNum
                 wstring wsData = ptrGlobal->GetValue(it);
                 if (wsData != L"")
                 {
-                    if ((iIdIndex <= x) && (x < iIdName) && (!bReadIndex))    // Ищем позицию в дереве для нового предмета
+                    if ((iIdIndex <= x) && (x < iIdName) &&
+                        (!bReadIndex))    // Ищем позицию в дереве для нового
+                                          // предмета
                     {
-                        bReadIndex = true;    // Чтобы повторно не находить индекс в строке
+                        bReadIndex = true;    // Чтобы повторно не находить
+                                              // индекс в строке
                         while (iPreX >= x)
                         {
                             if (ptrThis == nullptr)
@@ -77,11 +91,13 @@ void FSolve::CreateDiscTree(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageNum
                         ptrNewNode->ptrParent = ptrThis;
                         ptrThis               = ptrNewNode;
 
-                        ptrNewNode->wsIndexName  = wsData;
+                        ptrNewNode->wsIndexName = wsData;
 
-                        //Смотрим, что это за дисциплина (основная, по выбору или факультатив)
+                        // Смотрим, что это за дисциплина (основная, по выбору
+                        // или факультатив)
                         int iTagNumber = 0;
-                        for (const auto& wsTag : ptrGlobal->ptrConfig->arrTagDisc)
+                        for (const auto& wsTag :
+                             ptrGlobal->ptrConfig->arrTagDisc)
                         {
                             if (wsData.find(wsTag) != wstring::npos)
                             {
@@ -100,31 +116,44 @@ void FSolve::CreateDiscTree(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageNum
                         bReadName = true;
 
                         // Меняем на псевдоним из "Псевдонимы" файла config.xlsx
-                        if (ptrGlobal->ptrConfig->fAlias.mapRename.count(wsData))
+                        if (ptrGlobal->ptrConfig->fAlias.mapRename.count(
+                                wsData))
                         {
-                            ptrNewNode->wsName = ptrGlobal->ptrConfig->fAlias.mapRename[wsData];
+                            ptrNewNode->wsName =
+                                ptrGlobal->ptrConfig->fAlias.mapRename[wsData];
                         }
                         else
                         {
                             ptrNewNode->wsName = wsData;
-                            ptrNewNode->wsName = ptrNewNode->wsName.substr(0, ptrGlobal->ptrConfig->iMaxNameDiscLen);
+                            ptrNewNode->wsName = ptrNewNode->wsName.substr(
+                                0, ptrGlobal->ptrConfig->iMaxNameDiscLen);
                         }
 
-                        ptrNewNode->bNotIgnore = !(ptrGlobal->ptrConfig->setIgnoreDisc.count(wsData));
+                        ptrNewNode->bNotIgnore = !(
+                            ptrGlobal->ptrConfig->setIgnoreDisc.count(wsData));
                         continue;
                     }
                     else if ((iIdComp <= x) && (!bReadComp))
                     {
-                        bReadComp           = true;
-                        string sParsingData = ptrGlobal->ConwertToString(ptrGlobal->ConwertPathFormat(wsData)) + ";";
+                        bReadComp = true;
+                        string sParsingData =
+                            ptrGlobal->ConwertToString(
+                                ptrGlobal->ConwertPathFormat(wsData)) +
+                            ";";
 
-                        vector<smatch> matches { sregex_iterator { ALL(sParsingData), fRegexComp }, sregex_iterator {} };
+                        vector<smatch> matches {
+                            sregex_iterator { ALL(sParsingData), fRegexComp },
+                            sregex_iterator {}
+                        };
 
                         for (auto sData : matches)
                         {
                             string sCompName = sData[1].str();
-                            // Есть ошибка оператора: иногда вместо компетенции указан индикатор
-                            if (ptrGlobal->ptrConfig->bMultiIndicator) sCompName = sCompName.substr(0, sCompName.find('.'));
+                            // Есть ошибка оператора: иногда вместо компетенции
+                            // указан индикатор
+                            if (ptrGlobal->ptrConfig->bMultiIndicator)
+                                sCompName =
+                                    sCompName.substr(0, sCompName.find('.'));
 
                             ptrGlobal->DeleteSpechChars(sCompName);
 
@@ -132,8 +161,8 @@ void FSolve::CreateDiscTree(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageNum
                             ptrTree->fAllComp.insert(sCompName);
 
                             // vector<smatch> matchesHeader{
-                            //	sregex_iterator{ALL(sCompName), fRegexHeaderComp},
-                            //		sregex_iterator{}};
+                            //	sregex_iterator{ALL(sCompName),
+                            //fRegexHeaderComp}, 		sregex_iterator{}};
 
                             // for (auto sData : matchesHeader)
                             //{
@@ -149,24 +178,29 @@ void FSolve::CreateDiscTree(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageNum
             // Игнорируем неправильно оформленную дисциплины
             // Однозначного исправления нет
 
-            // Возможно, у нас пустая строка в самом конце страницы, поэтому, можем завершить считывание
-            // Дисциплин на данном моменте
+            // Возможно, у нас пустая строка в самом конце страницы, поэтому,
+            // можем завершить считывание Дисциплин на данном моменте
             if (!bReadIndex)
             {
                 ptrGlobal->ptrError->ErrorBadParser();
-                // throw std::logic_error(FError::sDontHaveIndex); // Неуказанный индекс, это критично
+                // throw std::logic_error(FError::sDontHaveIndex); //
+                // Неуказанный индекс, это критично
                 continue;
             }
             if (!bReadName)
             {
-                ptrGlobal->ptrError->ErrorBadParserName(ptrNewNode->wsIndexName);
-                // throw std::logic_error(FError::sNotAllData); // Щадящий режим, игнорируем неправильные дисциплины
+                ptrGlobal->ptrError->ErrorBadParserName(
+                    ptrNewNode->wsIndexName);
+                // throw std::logic_error(FError::sNotAllData); // Щадящий
+                // режим, игнорируем неправильные дисциплины
                 continue;
             }
             if (!bReadComp)    // Если не считали, значит не указаны
             {
-                ptrGlobal->ptrError->ErrorBadParserComp(ptrNewNode->wsIndexName);
-                // throw std::logic_error(FError::sNotAllData); // Щадящий режим, игнорируем неправильные дисциплины
+                ptrGlobal->ptrError->ErrorBadParserComp(
+                    ptrNewNode->wsIndexName);
+                // throw std::logic_error(FError::sNotAllData); // Щадящий
+                // режим, игнорируем неправильные дисциплины
                 continue;
             }
         }

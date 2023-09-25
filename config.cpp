@@ -73,7 +73,8 @@ bool FConfig::Init()
     return true;
 }
 
-bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XLRow row)
+bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
+                        OpenXLSX::XLRow row)
 {
     wstring wsPatern;
     try
@@ -95,34 +96,38 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
                     wstring wsNamePage = ptrGlobal->GetValue(page);
                     string  sNamePage  = ptrGlobal->ConwertToString(wsNamePage);
 
-                    OpenXLSX::XLWorksheet fExtraPage = fBook.worksheet(sNamePage);
+                    OpenXLSX::XLWorksheet fExtraPage =
+                        fBook.worksheet(sNamePage);
 
-                    arrKeyPage.push_back({ wsNamePage, sNamePage, SetParsingParams(fExtraPage) });
+                    arrKeyPage.push_back({ wsNamePage, sNamePage,
+                                           SetParsingParams(fExtraPage) });
                 }
             }
             return true;
         }
 
-         // Каталог данных УП
+        // Каталог данных УП
         wsPatern = L"Считать ли метрики";
         if (wsKey == wsPatern)
         {
             vector<wstring> arrBool;
             ptrGlobal->TakeData(arrBool, row, 0);
             bArrIsSolveGraphMetric.resize(arrBool.size());
-            for (int i = 0; i < arrBool.size(); ++i) bArrIsSolveGraphMetric[i] 
-                                   = (arrBool[i].find(L"да") != wstring::npos);
+            for (int i = 0; i < arrBool.size(); ++i)
+                bArrIsSolveGraphMetric[i] =
+                    (arrBool[i].find(L"да") != wstring::npos);
 
             return true;
         }
 
-         // Категории дисциплин (основные, по выбору, факультативы)
+        // Категории дисциплин (основные, по выбору, факультативы)
         wsPatern = L"Определение вида дисциплины";
         if (wsKey == wsPatern)
         {
-            ptrGlobal->TakeData(arrTagDisc, row, 0); //Нет ограничение на кол-во тегов, 
-            // но считается, что 0 - основной, 1 - по выбору, 2 - факультатив (используется enum)
-            // Далее используется ETagDisc из solve.h
+            ptrGlobal->TakeData(arrTagDisc, row,
+                                0);    // Нет ограничение на кол-во тегов,
+            // но считается, что 0 - основной, 1 - по выбору, 2 - факультатив
+            // (используется enum) Далее используется ETagDisc из solve.h
             return true;
         }
 
@@ -133,7 +138,6 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
             ptrGlobal->TakeData(arrNameFileIn, row, 0);
             return true;
         }
-
 
         // Каталог вывода результата
         wsPatern = L"Каталоги вывода результата";
@@ -194,7 +198,8 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
             return true;
         }
 
-         wsPatern = L"Считать кол-во ЗЕ аномально большим, если его значение больше X=";
+        wsPatern =
+            L"Считать кол-во ЗЕ аномально большим, если его значение больше X=";
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(dAnomalBigScore, row);
@@ -243,7 +248,8 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
             return true;
         }
 
-        wsPatern = L"Если у предмета несколько групп компетенций, учитывать пересечение дважды (для 100% суммы)";
+        wsPatern = L"Если у предмета несколько групп компетенций, учитывать "
+                   L"пересечение дважды (для 100% суммы)";
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(bCompInterDelete, row);
@@ -301,7 +307,8 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
             return true;
         }
 
-        wsPatern = L"Регулярное выражение разбивки строки ([Компетенции(2)] Формируемые компетенции)";
+        wsPatern = L"Регулярное выражение разбивки строки ([Компетенции(2)] "
+                   L"Формируемые компетенции)";
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(sRegexComp, row);
@@ -349,7 +356,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
             ptrGlobal->TakeData(sPrefCourseNumber, row);
             return true;
         }
-        
+
         wsPatern = L"Суффикс названия альтернативного графа при выводе";
         if (wsKey == wsPatern)
         {
@@ -357,7 +364,8 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
             return true;
         }
 
-        wsPatern = L"Игнорировать пустые строки в конце странице, если их не менее X =";
+        wsPatern = L"Игнорировать пустые строки в конце странице, если их не "
+                   L"менее X =";
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(iIgnoreEmptyLine, row);
@@ -375,7 +383,10 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
                 if (i)
                 {
                     wstring wsNamePage = ptrGlobal->GetValue(page);
-                    for (auto& [key, val] : ptrGlobal->SetMapParams(fBook.worksheet(ptrGlobal->ConwertToString(wsNamePage)), 2))
+                    for (auto& [key, val] : ptrGlobal->SetMapParams(
+                             fBook.worksheet(
+                                 ptrGlobal->ConwertToString(wsNamePage)),
+                             2))
                     {
                         fAlias.mapRename[key] = val.at(0);
                     }
@@ -395,7 +406,10 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
                 if (i)
                 {
                     wstring wsNamePage = ptrGlobal->GetValue(page);
-                    for (auto& [key, val] : ptrGlobal->SetMapParams(fBook.worksheet(ptrGlobal->ConwertToString(wsNamePage)), 2))
+                    for (auto& [key, val] : ptrGlobal->SetMapParams(
+                             fBook.worksheet(
+                                 ptrGlobal->ConwertToString(wsNamePage)),
+                             2))
                     {
                         mapAddOutParams[key] = val.at(0);
                     }
@@ -415,7 +429,10 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
                 if (i)
                 {
                     wstring wsNamePage = ptrGlobal->GetValue(page);
-                    for (auto& [key, val] : ptrGlobal->SetMapParams(fBook.worksheet(ptrGlobal->ConwertToString(wsNamePage)), 4))
+                    for (auto& [key, val] : ptrGlobal->SetMapParams(
+                             fBook.worksheet(
+                                 ptrGlobal->ConwertToString(wsNamePage)),
+                             4))
                     {
                         mapArrOutParams[key] = val;
                     }
@@ -435,7 +452,10 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
                 if (i)
                 {
                     wstring wsNamePage = ptrGlobal->GetValue(page);
-                    for (auto& [key, val] : ptrGlobal->SetMapParams(fBook.worksheet(ptrGlobal->ConwertToString(wsNamePage)), 1))
+                    for (auto& [key, val] : ptrGlobal->SetMapParams(
+                             fBook.worksheet(
+                                 ptrGlobal->ConwertToString(wsNamePage)),
+                             1))
                     {
                         setIgnoreDisc.insert(key);
                     }
@@ -455,9 +475,13 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
                 if (i)
                 {
                     wstring wsNamePage = ptrGlobal->GetValue(page);
-                    for (auto& [key, val] : ptrGlobal->SetMapParams(fBook.worksheet(ptrGlobal->ConwertToString(wsNamePage)), 1))
+                    for (auto& [key, val] : ptrGlobal->SetMapParams(
+                             fBook.worksheet(
+                                 ptrGlobal->ConwertToString(wsNamePage)),
+                             1))
                     {
-                        setIgnoreСurriculum.insert(ptrGlobal->ConwertToString(key));
+                        setIgnoreСurriculum.insert(
+                            ptrGlobal->ConwertToString(key));
                     }
                 }
             }
@@ -466,7 +490,11 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XL
     }
     catch (out_of_range eError)
     {
-        if (ptrGlobal->ptrError) { ptrGlobal->ptrError->ErrorBadConfigSizeParams(ptrGlobal->ConwertToString(wsPatern), eError.what()); }
+        if (ptrGlobal->ptrError)
+        {
+            ptrGlobal->ptrError->ErrorBadConfigSizeParams(
+                ptrGlobal->ConwertToString(wsPatern), eError.what());
+        }
         return false;
     }
     catch (...)
@@ -489,7 +517,10 @@ vector<set<wstring>> FConfig::SetParsingParams(OpenXLSX::XLWorksheet& fPage)
             for (auto& column : row.cells())
             {
                 wstring wsData = ptrGlobal->GetValue(column);
-                if (wsData != L"") { arrResult[i].insert(wsData); }
+                if (wsData != L"")
+                {
+                    arrResult[i].insert(wsData);
+                }
                 ++i;
             }
         }

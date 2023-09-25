@@ -7,7 +7,11 @@
 
 int FSolve::iSinglControll = 0;
 
-FSolve::FSolve(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal), bIsCorrectParsing(true), iCurrentPage(0), iCurrentRow(0)
+FSolve::FSolve(FGlobal* _ptrGlobal)
+    : ptrGlobal(_ptrGlobal),
+      bIsCorrectParsing(true),
+      iCurrentPage(0),
+      iCurrentRow(0)
 {
     if (iSinglControll > 0) throw std::runtime_error("Re-creation Singleton");
     ++iSinglControll;
@@ -24,7 +28,9 @@ bool FSolve::Init()
     }
     catch (...)
     {
-        ptrGlobal->ptrError->ErrorBadRegex("Регулярное выражение разбивки строки ([Компетенции(2)] Формируемые компетенции)");
+        ptrGlobal->ptrError->ErrorBadRegex(
+            "Регулярное выражение разбивки строки ([Компетенции(2)] "
+            "Формируемые компетенции)");
     }
 
     try
@@ -33,7 +39,8 @@ bool FSolve::Init()
     }
     catch (...)
     {
-        ptrGlobal->ptrError->ErrorBadRegex("Регулярное выражение поиска заголовка компетенции");
+        ptrGlobal->ptrError->ErrorBadRegex(
+            "Регулярное выражение поиска заголовка компетенции");
     }
 
     try
@@ -42,7 +49,8 @@ bool FSolve::Init()
     }
     catch (...)
     {
-        ptrGlobal->ptrError->ErrorBadRegex("Регулярное выражение поиска заголовка индикатора");
+        ptrGlobal->ptrError->ErrorBadRegex(
+            "Регулярное выражение поиска заголовка индикатора");
     }
     return true;
 }
@@ -64,22 +72,32 @@ bool FSolve::Read(string _sInPath, string sNamePlan)
     {
         fDoc.open(sInPath);
         fBook = fDoc.workbook();
-        CreateDiscTree(fBook.worksheet(ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].wsName)), iCurrentPage);
+        CreateDiscTree(
+            fBook.worksheet(ptrGlobal->ConwertToString(
+                ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].wsName)),
+            iCurrentPage);
         ++iCurrentPage;
 
-        AddCompIndicator(fBook.worksheet(ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].wsName)), iCurrentPage);
+        AddCompIndicator(
+            fBook.worksheet(ptrGlobal->ConwertToString(
+                ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].wsName)),
+            iCurrentPage);
         ++iCurrentPage;
 
-        ptrSolveSecondPage->AddDiscScore(fBook.worksheet(ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].wsName)),
-                                         iCurrentPage);
+        ptrSolveSecondPage->AddDiscScore(
+            fBook.worksheet(ptrGlobal->ConwertToString(
+                ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].wsName)),
+            iCurrentPage);
         arrDisc.back()->CountDisc();
 
-        if (ptrSolveSecondPage->DFSCountingScore(arrDisc.back()->ptrRoot) != arrDisc.back()->dAllSumScore)
+        if (ptrSolveSecondPage->DFSCountingScore(arrDisc.back()->ptrRoot) !=
+            arrDisc.back()->dAllSumScore)
         {
             throw std::logic_error(FError::sNotEqualSum);
         }
-        arrDisc.back()->sNamePlan      = sNamePlan;
-        arrDisc.back()->sShortNamePlan = sNamePlan.substr(0, sNamePlan.find('.'));
+        arrDisc.back()->sNamePlan = sNamePlan;
+        arrDisc.back()->sShortNamePlan =
+            sNamePlan.substr(0, sNamePlan.find('.'));
         ++iCurrentPage;
     }
     catch (logic_error eError)
@@ -91,17 +109,32 @@ bool FSolve::Read(string _sInPath, string sNamePlan)
                 ptrGlobal->ptrError->ErrorBadParser(sInPath);
         }
         else*/
-        if (FError::sBadTree == eError.what()) { ptrGlobal->ptrError->ErrorBadTree(); }
-        else if (FError::sNotFoundKeyCol == eError.what()) { ptrGlobal->ptrError->ErrorNotFoundKeyCol(); }
-        else if (FError::sNotEqualSum == eError.what()) { ptrGlobal->ptrError->ErrorNotEqualSum(); }
+        if (FError::sBadTree == eError.what())
+        {
+            ptrGlobal->ptrError->ErrorBadTree();
+        }
+        else if (FError::sNotFoundKeyCol == eError.what())
+        {
+            ptrGlobal->ptrError->ErrorNotFoundKeyCol();
+        }
+        else if (FError::sNotEqualSum == eError.what())
+        {
+            ptrGlobal->ptrError->ErrorNotEqualSum();
+        }
 
         fDoc.close();
         return false;    // Но продолжаем работать с другими файлами
     }
     catch (...)
     {
-        if (sInPath.find(".xlsx") == string::npos) { ptrGlobal->ptrError->ErrorUncorrectExtension(); }
-        else { ptrGlobal->ptrError->ErrorInFileNotFind(sInPath); }
+        if (sInPath.find(".xlsx") == string::npos)
+        {
+            ptrGlobal->ptrError->ErrorUncorrectExtension();
+        }
+        else
+        {
+            ptrGlobal->ptrError->ErrorInFileNotFind(sInPath);
+        }
         return false;    // Но продолжаем работать с другими файлами
     }
 
