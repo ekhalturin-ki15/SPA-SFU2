@@ -12,19 +12,20 @@ FOutData::FOutData(FGlobal* _ptrGlobal)
                           L"Процент распределения Заголовка компетенции",
                           L"Компетенция", L"Процент распределения Компетенции",
                           L"Индекс", L"Процент распределения Индекса" }),
-      arrMetricHead({ // L"Название учебного плана",
-                      L"Всего ЗЕ в графе", L"Кол-во дисциплин в графе",
-                      // L"(Расш.) Общее кол-во ЗЕ в УП",
-                      // L"(Расш.) Кол-во дисциплин в УП",    // Включает те,
-                      // что указаны в
-                      //  УП, как неучитываемые
-                      L"Минимальное ЗЕ у дисциплины",
-                      L"Максимальное ЗЕ у дисциплины", L"Минимальный вес ребра",
-                      L"Максимальный вес ребра", L"Диаметр графа по расстоянию",
-                      L"Диаметр графа по количеству рёбер",
-                      L"Количество компонент связности",
-                      L"Минимальное оставное дерево",
-                      L"Максимальное оставное дерево" })
+      arrMetricHead(
+          { // L"Название учебного плана",
+            L"Всего ЗЕ в графе", L"Кол-во дисциплин в графе",
+            // L"(Расш.) Общее кол-во ЗЕ в УП",
+            // L"(Расш.) Кол-во дисциплин в УП",    // Включает те,
+            // что указаны в
+            //  УП, как неучитываемые
+            L"Минимальное ЗЕ у дисциплины", L"Максимальное ЗЕ у дисциплины",
+            L"Минимальный вес ребра", L"Максимальный вес ребра",
+            L"Диаметр графа по расстоянию",
+            L"Диаметр графа по количеству рёбер",
+            L"Количество компонент связности", L"Минимальное оставное дерево",
+            L"Максимальное оставное дерево", L"Количество основных дисциплин",
+            L"Количество дисциплин по выбору", L"Количество факультативов" })
 {
 }
 
@@ -42,6 +43,18 @@ void FOutData::CreateTotalInfo(vector<double>&   arrReturnDataMetrics,
                   fGraph->dMaxRib, fGraph->dDiametrLen, fGraph->dDiametrStep,
                   double(fGraph->iComponent), fGraph->dMinSpanTree,
                   fGraph->dMaxSpanTree };
+
+    for (int iTag = 0; iTag < ETagDisc::ETD_Size; ++iTag)
+    {
+        if (fGraph->mapGraphAmountTagDisc.count(ETagDisc(iTag)))
+            arrResult.push_back(
+                double(fGraph->mapGraphAmountTagDisc.find(ETagDisc(iTag))->second)
+            );
+        else
+        {
+            arrResult.push_back(0); // Нет такого вида дисциплин
+        }
+    }
 
     for (int y = 0; y < arrMetricHead.size(); ++y)
     {
@@ -72,11 +85,10 @@ void FOutData::Out(string sOutPath)
 
     vector<wstring> arrAddedHead;
 
-        //Параметры для всего УП целиком
-    vector<wstring> arrPrefixHead = {
-        L"Название учебного плана",
-        L"Общее кол-во ЗЕ в УП",
-        L"Общее кол-во дисциплин в УП"
+    // Параметры для всего УП целиком
+    vector<wstring> arrPrefixHead = { L"Название учебного плана",
+                                      L"Общее кол-во ЗЕ в УП",
+                                      L"Общее кол-во дисциплин в УП"
 
     };
 
@@ -84,7 +96,6 @@ void FOutData::Out(string sOutPath)
     {
         arrPrefixHead.push_back(L"!" + wsNameTag);
     }
-
 
     arrAddedHead.insert(arrAddedHead.end(),
                         arrPrefixHead.begin(),
@@ -94,10 +105,10 @@ void FOutData::Out(string sOutPath)
                         arrMetricHead.begin(),
                         arrMetricHead.end());
 
-    for (auto& wsNameTag : ptrGlobal->ptrConfig->arrNameTagDisc)
-    {
-        arrAddedHead.push_back(wsNameTag);
-    }
+    /* for (auto& wsNameTag : ptrGlobal->ptrConfig->arrNameTagDisc)
+     {
+         arrAddedHead.push_back(wsNameTag);
+     }*/
 
     for (auto& sHeaderComp : ptrGlobal->ptrSolve->setHeaderComp)
     {
@@ -109,7 +120,7 @@ void FOutData::Out(string sOutPath)
         arrAddedHead.push_back(ptrGlobal->ConwertToWstring(sHeaderComp));
     }
 
-    //Вывод заголовка таблицы
+    // Вывод заголовка таблицы
     arrOutColm.assign(arrAddedHead.size() + 1,
                       true);    // Так как нумерация с 1, поэтому и +1
 
@@ -172,16 +183,15 @@ void FOutData::Out(string sOutPath)
 
         vector<double> arrCurriculaAllResult;
 
-        //Вывод названия УП
+        // Вывод названия УП
         OutData(x, i, y, sOutName.size(), sOutName, wks, sOutName, false,
                 iXShift, iYShift);
 
-        //Общие для УП метрики (перечислены в arrPrefixHead)
+        // Общие для УП метрики (перечислены в arrPrefixHead)
         arrCurriculaAllResult.push_back(it->dAllSumScore);
         arrCurriculaAllResult.push_back(it->iAmountDisc);
 
-
-        //Дисциплин основных, по выбору, факультативов и т.д во всём УП
+        // Дисциплин основных, по выбору, факультативов и т.д во всём УП
         {
             int iNumberTag = -1;
             for (auto& wsNameTag : ptrGlobal->ptrConfig->arrNameTagDisc)
@@ -192,7 +202,8 @@ void FOutData::Out(string sOutPath)
             }
         }
 
-        {
+        // Теперь это считается в CreateTotalInfo
+        /*{
             int iNumberTag = -1;
             for (auto& wsNameTag : ptrGlobal->ptrConfig->arrNameTagDisc)
             {
@@ -203,7 +214,7 @@ void FOutData::Out(string sOutPath)
                     ptrTreeMetric.mapGraphAmountTagDisc[ETagDisc(iNumberTag)]
                     );
             }
-        }
+        }*/
 
         arrCurriculaAllResult.insert(arrCurriculaAllResult.end(),
                                      arrResult.begin(),
@@ -829,10 +840,10 @@ vector<string> FOutData::CreateCommonNameLabel(const int& iGraphType,
     vector<string> arrCommonNameLabel;
     for (auto& it : fTree->ptrGraph->mapGraph[iGraphType].arrRel)
     {
-        FTreeElement* fThis     = fTree->mapDisc[it.first];
-        //wstring       wsNameRaw = fThis->wsName;
+        FTreeElement* fThis = fTree->mapDisc[it.first];
+        // wstring       wsNameRaw = fThis->wsName;
         string sName = fThis->sName;
-           // ptrGlobal->ReversUTF16RU(ptrGlobal->ConwertToString(wsNameRaw));
+        // ptrGlobal->ReversUTF16RU(ptrGlobal->ConwertToString(wsNameRaw));
         // Выводим ещё и компетенции
         if (ptrGlobal->ptrConfig->bOutCompWithName)
         {
