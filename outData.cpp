@@ -67,6 +67,88 @@ void FOutData::CreateTotalInfo(vector<double>&   arrReturnDataMetrics,
             }
         }
     }
+
+    wstring wsNameSoMachComp =
+        L"Количество дисциплин с несколькими дисциплинами";
+    if (ptrGlobal->ptrConfig->mapArrOutParams[wsNameSoMachComp].at(eOutType) ==
+        L"да")
+    {
+        for (int iAmountComp = 0;
+             iAmountComp <= this->ptrGlobal->ptrConfig->iSoMachComp;
+             ++iAmountComp)
+        {
+            arrReturnDataMetrics.push_back(
+                fGraph->arrAmountCountCompDisc[iAmountComp]);
+        }
+    }
+}
+
+void FOutData::CreateTotalInfo(vector<string>&   arrReturnDataHeader,
+                               const FGraphType* fGraph,
+                               EOutType          eOutType)
+{
+    arrReturnDataHeader.clear();
+
+    for (int y = 0; y < arrMetricHead.size(); ++y)
+    {
+        if (ptrGlobal->ptrConfig->mapArrOutParams.count(arrMetricHead[y]))
+        {
+            if (ptrGlobal->ptrConfig->mapArrOutParams[arrMetricHead[y]].at(
+                    eOutType) == L"да")
+            {
+                arrReturnDataHeader.push_back(ptrGlobal->ConwertToString(
+                    ptrGlobal->ptrConfig->mapArrOutParams[arrMetricHead[y]].at(
+                        0)));
+            }
+        }
+    }
+
+    wstring wsNameSoMachComp =
+        L"Количество дисциплин с несколькими дисциплинами";
+    if (ptrGlobal->ptrConfig->mapArrOutParams[wsNameSoMachComp].at(eOutType) ==
+        L"да")
+    {
+        for (int iAmountComp = 0;
+             iAmountComp <= this->ptrGlobal->ptrConfig->iSoMachComp;
+             ++iAmountComp)
+        {
+            string sAddedHead = ptrGlobal->ConwertToString(
+                ptrGlobal->ptrConfig->mapArrOutParams[wsNameSoMachComp].at(0));
+
+            sAddedHead += " ";
+            if (iAmountComp == ptrGlobal->ptrConfig->iSoMachComp)
+                sAddedHead += ">=";
+
+            sAddedHead += to_string(iAmountComp) + " ";
+            sAddedHead += ptrGlobal->ConwertToString(
+                ptrGlobal->ptrConfig->wsOutSufAmountComp);
+
+            arrReturnDataHeader.push_back(sAddedHead);
+        }
+    }
+}
+
+void FOutData::CreateTotalInfo(vector<vector<string>>& arrReturnData,
+                               const FGraphType*       fGraph,
+                               EOutType                eOutType)
+{
+    arrReturnData.clear();
+
+    vector<double> arrResult;    // Соответствует arrHead который
+                                 // проинициализирован в конструкторе
+    CreateTotalInfo(arrResult, fGraph, eOutType);
+
+    vector<string> arrHeader;
+    CreateTotalInfo(arrHeader, fGraph, eOutType);
+
+    arrReturnData.clear();
+    arrReturnData.assign(min(arrResult.size(), arrHeader.size()),
+                         vector<string>(2));
+    for (int y = 0; y < arrReturnData.size(); ++y)
+    {
+        arrReturnData[y][0] = arrHeader[y];
+        arrReturnData[y][1] = to_string(arrResult[y]);
+    }
 }
 
 bool FOutData::Init() { return true; }
@@ -105,10 +187,18 @@ void FOutData::Out(string sOutPath)
                         arrMetricHead.begin(),
                         arrMetricHead.end());
 
-    /* for (auto& wsNameTag : ptrGlobal->ptrConfig->arrNameTagDisc)
-     {
-         arrAddedHead.push_back(wsNameTag);
-     }*/
+     wstring wsNameSoMachComp =
+        L"Количество дисциплин с несколькими дисциплинами";
+
+    
+    
+    for (int iAmountComp = 0;
+            iAmountComp <= this->ptrGlobal->ptrConfig->iSoMachComp;
+            ++iAmountComp)
+    {
+        arrAddedHead.push_back(wsNameSoMachComp);
+    }
+    
 
     for (auto& sHeaderComp : ptrGlobal->ptrSolve->setHeaderComp)
     {
@@ -128,6 +218,8 @@ void FOutData::Out(string sOutPath)
     y = 1, x = 1, i = 1;
 
 #pragma region OutHeader
+    
+    int iAmountComp = 0;
     for (const auto& it : arrAddedHead)
     {
         if (ptrGlobal->ptrConfig->mapArrOutParams.count(it))
@@ -136,8 +228,21 @@ void FOutData::Out(string sOutPath)
                                  EOutType::EOT_Head) == L"да");
             if (arrOutColm[i++])
             {
-                wks.cell(y, x++).value() = ptrGlobal->ConwertToString(
+                string sOut = ptrGlobal->ConwertToString(
                     ptrGlobal->ptrConfig->mapArrOutParams[it].at(0));
+                if (it == L"Количество дисциплин с несколькими дисциплинами")
+                {
+                    sOut += " ";
+                    if (iAmountComp == ptrGlobal->ptrConfig->iSoMachComp)
+                        sOut += ">=";
+
+                    sOut += to_string(iAmountComp++) + " ";
+                    sOut += ptrGlobal->ConwertToString(
+                        ptrGlobal->ptrConfig->wsOutSufAmountComp);
+                }
+                
+                wks.cell(y, x++).value() = sOut;
+                
             }
         }
         else
@@ -510,100 +615,6 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
     arrSinglOpenFile.clear();
     arrSinglOpenWKS.clear();
 }
-
-void FOutData::CreateTotalInfo(vector<string>&   arrReturnDataHeader,
-                               const FGraphType* fGraph,
-                               EOutType          eOutType)
-{
-    arrReturnDataHeader.clear();
-
-    for (int y = 0; y < arrMetricHead.size(); ++y)
-    {
-        if (ptrGlobal->ptrConfig->mapArrOutParams.count(arrMetricHead[y]))
-        {
-            if (ptrGlobal->ptrConfig->mapArrOutParams[arrMetricHead[y]].at(
-                    eOutType) == L"да")
-            {
-                arrReturnDataHeader.push_back(ptrGlobal->ConwertToString(
-                    ptrGlobal->ptrConfig->mapArrOutParams[arrMetricHead[y]].at(
-                        0)));
-            }
-        }
-    }
-}
-
-void FOutData::CreateTotalInfo(vector<vector<string>>& arrReturnData,
-                               const FGraphType*       fGraph,
-                               EOutType                eOutType)
-{
-    arrReturnData.clear();
-
-    vector<double> arrResult;    // Соответствует arrHead который
-                                 // проинициализирован в конструкторе
-    CreateTotalInfo(arrResult, fGraph, eOutType);
-
-    vector<string> arrHeader;
-    CreateTotalInfo(arrHeader, fGraph, eOutType);
-
-    arrReturnData.clear();
-    arrReturnData.assign(min(arrResult.size(), arrHeader.size()),
-                         vector<string>(2));
-    for (int y = 0; y < arrReturnData.size(); ++y)
-    {
-        arrReturnData[y][0] = arrHeader[y];
-        arrReturnData[y][1] = to_string(arrResult[y]);
-    }
-    /*for (int y = 0; y < arrReturnData.size(); ++y)
-    {
-        if (ptrGlobal->ptrConfig->mapArrOutParams.count(arrHead[y]))
-        {
-            if (ptrGlobal->ptrConfig->mapArrOutParams[arrHead[y]]
-                .at(eOutType) !=
-                L"да")
-                continue;
-
-            arrReturnData.push_back(vector<string>(2));
-
-            arrReturnData.back()[0] = ptrGlobal->ConwertToString(
-                ptrGlobal->ptrConfig->mapArrOutParams[arrHead[y]].at(0));
-
-            arrReturnData.back()[1] = arrResult[y];
-        }
-    }*/
-}
-
-// void FOutData::OutAddTotalInfo(FTreeDisc* ptrTree, int y)
-//{
-//     double dSumScoreExt   = 0;
-//     int    iAmountDiscExt = 0;
-//     ptrTree->dFindAllScore(dSumScoreExt, iAmountDiscExt);
-//     arrResult = { 0.,
-//                   ptrTree->dAllSumScore,
-//                   double(ptrTree->iAmountDisc),
-//                   dSumScoreExt,
-//                   double(iAmountDiscExt),
-//                   ptrTree->ptrGraph->mapGraph[FGraph::iCommon].dMaxDiscScore,
-//                   ptrTree->ptrGraph->mapGraph[FGraph::iCommon].dDiametrLen,
-//                   ptrTree->ptrGraph->mapGraph[FGraph::iCommon].dDiametrStep,
-//                   double(ptrTree->ptrGraph->mapGraph[FGraph::iCommon].iComponent),
-//                   ptrTree->ptrGraph->mapGraph[FGraph::iCommon].dMinSpanTree,
-//                   ptrTree->ptrGraph->mapGraph[FGraph::iCommon].dMaxSpanTree
-//                   };
-//
-//     for (int i = 1; i < arrHead.size(); ++i)
-//     {
-//         if (ptrGlobal->ptrConfig->mapArrOutParams.count(arrHead[i]))
-//         {
-//             if (ptrGlobal->ptrConfig->mapArrOutParams[arrHead[i]].at(2) !=
-//             L"да") continue;
-//
-//             arrSinglOpenWKS.back().cell(y, 1).value() =
-//             ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->mapArrOutParams[arrHead[i]].at(0));
-//             arrSinglOpenWKS.back().cell(y, 2).value() = arrResult[i];
-//             ++y;
-//         }
-//     }
-// }
 
 void FOutData::OutTableInfo(const int&                    iShiftX,
                             const int&                    iShiftY,

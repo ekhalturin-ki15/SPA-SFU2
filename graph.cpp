@@ -107,6 +107,10 @@ void FGraph::CountAllMetric(int iTypeGraph)
 
 void FGraph::CalcAllScoreAndAmount(FGraphType& fGraph)
 {
+    const int& iSoManyComp = this->ptrTree->ptrGlobal->ptrConfig->iSoMachComp;
+    fGraph.arrAmountCountCompDisc.resize(iSoManyComp + 1);
+
+
     for (const auto& [l, r] : fGraph.arrRel)
     {
         const auto& fDisc     = ptrTree->mapDisc[l];
@@ -131,6 +135,16 @@ void FGraph::CalcAllScoreAndAmount(FGraphType& fGraph)
         fGraph.dGraphAllScore += dCurScore;
         fGraph.iGraphAmountDisc++;
         fGraph.mapGraphAmountTagDisc[fDisc->eTagDisc]++;
+
+        //Определяем, сколько компетенций формируется
+        if (fDisc->mapComp.size() >= iSoManyComp)
+        {
+            fGraph.arrAmountCountCompDisc.back()++;
+        }
+        else
+        {
+            fGraph.arrAmountCountCompDisc[fDisc->mapComp.size()]++;
+        }
     }
 }
 

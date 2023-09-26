@@ -124,7 +124,8 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
         wsPatern = L"Определение вида дисциплины";
         if (wsKey == wsPatern)
         {
-            ptrGlobal->TakeData(arrTagDisc, row, 0);    // Нет ограничение на кол-во тегов,
+            ptrGlobal->TakeData(arrTagDisc, row,
+                                0);    // Нет ограничение на кол-во тегов,
             // но считается, что 0 - основной, 1 - по выбору, 2 - факультатив
             // (используется enum) Далее используется ETagDisc из solve.h
             return true;
@@ -286,7 +287,8 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
-        wsPatern = L"Удалить спецсимволы из названия дисциплин (не влияет на игнорируемые)";
+        wsPatern = L"Удалить спецсимволы из названия дисциплин (не влияет на "
+                   L"игнорируемые)";
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(bDeletingSpecCharDiscName, row);
@@ -366,6 +368,14 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
+        wsPatern = L"Суффикс после вывода кол-во компетенций у дисциплины";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(wsOutSufAmountComp, row);
+            return true;
+        }
+
+
         wsPatern = L"Разделитель между названием дисциплины и её курсом";
         if (wsKey == wsPatern)
         {
@@ -385,6 +395,14 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(iIgnoreEmptyLine, row);
+            return true;
+        }
+
+        wsPatern = L"Считать, что у дисциплины компетенций много, если их "
+                   L"число больше X =";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(iSoMachComp, row);
             return true;
         }
 

@@ -49,6 +49,8 @@ struct FConfig
 
     wstring wsOutPrefMinMax;
     wstring wsOutPrefAllCourse;
+    wstring wsOutSufAmountComp;
+
     wstring wsNameDebugFile;
     wstring wsNameLogFile;
 
@@ -75,6 +77,7 @@ struct FConfig
     int iWeigthRib;
     int iCourseLen;
     int iIgnoreEmptyLine;
+    int iSoMachComp;
 
     std::wstring wsNameConfig;    // "Параметры"
     std::wstring wsNamePage;
