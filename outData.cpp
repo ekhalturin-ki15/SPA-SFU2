@@ -47,12 +47,11 @@ void FOutData::CreateTotalInfo(vector<double>&   arrReturnDataMetrics,
     for (int iTag = 0; iTag < ETagDisc::ETD_Size; ++iTag)
     {
         if (fGraph->mapGraphAmountTagDisc.count(ETagDisc(iTag)))
-            arrResult.push_back(
-                double(fGraph->mapGraphAmountTagDisc.find(ETagDisc(iTag))->second)
-            );
+            arrResult.push_back(double(
+                fGraph->mapGraphAmountTagDisc.find(ETagDisc(iTag))->second));
         else
         {
-            arrResult.push_back(0); // Нет такого вида дисциплин
+            arrResult.push_back(0);    // Нет такого вида дисциплин
         }
     }
 
@@ -73,7 +72,7 @@ void FOutData::CreateTotalInfo(vector<double>&   arrReturnDataMetrics,
     if (ptrGlobal->ptrConfig->mapArrOutParams[wsNameSoMachComp].at(eOutType) ==
         L"да")
     {
-        //Так как дисциплин с 0-компетенциями исключаются
+        // Так как дисциплин с 0-компетенциями исключаются
         for (int iAmountComp = 1;
              iAmountComp <= this->ptrGlobal->ptrConfig->iSoMachComp;
              ++iAmountComp)
@@ -188,18 +187,15 @@ void FOutData::Out(string sOutPath)
                         arrMetricHead.begin(),
                         arrMetricHead.end());
 
-     wstring wsNameSoMachComp =
+    wstring wsNameSoMachComp =
         L"Количество дисциплин с несколькими дисциплинами";
 
-    
-    
     for (int iAmountComp = 1;
-            iAmountComp <= this->ptrGlobal->ptrConfig->iSoMachComp;
-            ++iAmountComp)
+         iAmountComp <= this->ptrGlobal->ptrConfig->iSoMachComp;
+         ++iAmountComp)
     {
         arrAddedHead.push_back(wsNameSoMachComp);
     }
-    
 
     for (auto& sHeaderComp : ptrGlobal->ptrSolve->setHeaderComp)
     {
@@ -219,8 +215,8 @@ void FOutData::Out(string sOutPath)
     y = 1, x = 1, i = 1;
 
 #pragma region OutHeader
-    
-    int iAmountComp = 1; //Так как предметы с 0-компетенциями исключаются
+
+    int iAmountComp = 1;    // Так как предметы с 0-компетенциями исключаются
     for (const auto& it : arrAddedHead)
     {
         if (ptrGlobal->ptrConfig->mapArrOutParams.count(it))
@@ -241,9 +237,8 @@ void FOutData::Out(string sOutPath)
                     sOut += ptrGlobal->ConwertToString(
                         ptrGlobal->ptrConfig->wsOutSufAmountComp);
                 }
-                
+
                 wks.cell(y, x++).value() = sOut;
-                
             }
         }
         else
@@ -672,7 +667,6 @@ void FOutData::CountRectArraySize(int& iSizeX, int& iSizeY, int x, int y,
             return;    // Нет индикаторов, значит и выводить не надо
         }
 
-
     // отступ, поэтому увеличиваем iSizeY
     if (ptrMetric->mapChild.size() == 0)
     {
@@ -863,6 +857,14 @@ vector<string> FOutData::CreateCommonNameLabel(const int& iGraphType,
         FTreeElement* fThis = fTree->mapDisc[it.first];
         // wstring       wsNameRaw = fThis->wsName;
         string sName = fThis->sName;
+
+        // Не забываем про нуль нумерацию курсов
+        if (iGraphType == FGraph::iAlt)
+        {
+            sName += ptrGlobal->ptrConfig->sPrefCourseNumber +
+                     to_string(it.second + 1);
+        }
+
         // ptrGlobal->ReversUTF16RU(ptrGlobal->ConwertToString(wsNameRaw));
         // Выводим ещё и компетенции
         if (ptrGlobal->ptrConfig->bOutCompWithName)
@@ -920,8 +922,8 @@ void FOutData::OutGephiData(string sName, string sPath, FTreeDisc* fTree)
         //}
         // OutGephiLable(sName, sName + ptrGlobal->ptrConfig->sSufAltGraphFile,
         // sPath, arrCommonNameLabel);
-        OutGephiLable(sName, sName, sPath,
-                      CreateCommonNameLabel(FGraph::iAlt, fTree));
+        OutGephiLable(sName, sName + ptrGlobal->ptrConfig->sSufAltGraphFile,
+                      sPath, CreateCommonNameLabel(FGraph::iAlt, fTree));
         OutGephiRib(sName, sName + ptrGlobal->ptrConfig->sSufAltGraphFile,
                     sPath, fTree->ptrGraph->mapGraph[FGraph::iAlt].fAdjList);
     }
@@ -930,8 +932,8 @@ void FOutData::OutGephiData(string sName, string sPath, FTreeDisc* fTree)
     {
         for (int iCourse = 0; iCourse < fTree->iAmountCourse; ++iCourse)
         {
-            OutGephiLable(sName, sName, sPath,
-                          CreateCommonNameLabel(iCourse, fTree));
+            OutGephiLable(sName, sName + "(" + to_string(iCourse + 1) + ")",
+                          sPath, CreateCommonNameLabel(iCourse, fTree));
             OutGephiRib(sName, sName + "(" + to_string(iCourse + 1) + ")",
                         sPath, fTree->ptrGraph->mapGraph[iCourse].fAdjList);
         }

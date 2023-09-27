@@ -1,3 +1,4 @@
-����������� [строка 96] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/t1/0904010003_OP-20.plm.plx.xlsx для дисциплины PK-3 не получается связать с индикатором PK-4 
-- Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/t1/0904010003_OP-20.plm.plx.xlsx обработан с недочётами
++ Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/t1/0903010030_op-21.plm.plx.xlsx успешно обработан
+
++ Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/t1/0903030031_OP-21.plm.plx.xlsx успешно обработан
 
