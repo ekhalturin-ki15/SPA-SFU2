@@ -146,6 +146,21 @@ void FError::ErrorGraphZeroValue(string sNamePlan, string sNameIndex)
     out.close();
 }
 
+void FError::ErrorGraphZeroComp(string sNamePlan, wstring wsNameIndex)
+{
+    ErrorGraphZeroComp(sNamePlan,
+                               ptrGlobal->ConwertToString(wsNameIndex));
+}
+
+void FError::ErrorGraphZeroComp(string sNamePlan, string sNameIndex)
+{
+    ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
+    out << "В графе УП " + sNamePlan + " ";
+    out << "У дисциплины " + sNameIndex + " не указаны компетенции";
+    out << END;
+    out.close();
+}
+
 void FError::ErrorOutFileNotFind(string sPathName)
 {
     ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);

@@ -73,7 +73,8 @@ void FOutData::CreateTotalInfo(vector<double>&   arrReturnDataMetrics,
     if (ptrGlobal->ptrConfig->mapArrOutParams[wsNameSoMachComp].at(eOutType) ==
         L"да")
     {
-        for (int iAmountComp = 0;
+        //Так как дисциплин с 0-компетенциями исключаются
+        for (int iAmountComp = 1;
              iAmountComp <= this->ptrGlobal->ptrConfig->iSoMachComp;
              ++iAmountComp)
         {
@@ -108,7 +109,7 @@ void FOutData::CreateTotalInfo(vector<string>&   arrReturnDataHeader,
     if (ptrGlobal->ptrConfig->mapArrOutParams[wsNameSoMachComp].at(eOutType) ==
         L"да")
     {
-        for (int iAmountComp = 0;
+        for (int iAmountComp = 1;
              iAmountComp <= this->ptrGlobal->ptrConfig->iSoMachComp;
              ++iAmountComp)
         {
@@ -192,7 +193,7 @@ void FOutData::Out(string sOutPath)
 
     
     
-    for (int iAmountComp = 0;
+    for (int iAmountComp = 1;
             iAmountComp <= this->ptrGlobal->ptrConfig->iSoMachComp;
             ++iAmountComp)
     {
@@ -219,7 +220,7 @@ void FOutData::Out(string sOutPath)
 
 #pragma region OutHeader
     
-    int iAmountComp = 0;
+    int iAmountComp = 1; //Так как предметы с 0-компетенциями исключаются
     for (const auto& it : arrAddedHead)
     {
         if (ptrGlobal->ptrConfig->mapArrOutParams.count(it))
@@ -663,6 +664,14 @@ void FOutData::CountRectArraySize(int& iSizeX, int& iSizeY, int x, int y,
                                   FTreeMetric* ptrMetric)
 {
     if (x > iSizeX) iSizeX = x + 1;    // Ищем максимум, чтобы отмерить ширину
+
+    if (ptrMetric->mapChild.size() == 1)
+        if (ptrMetric->mapChild.begin()->first == FMetric::sEmptyIndicator)
+        {
+            ++iSizeY;
+            return;    // Нет индикаторов, значит и выводить не надо
+        }
+
 
     // отступ, поэтому увеличиваем iSizeY
     if (ptrMetric->mapChild.size() == 0)

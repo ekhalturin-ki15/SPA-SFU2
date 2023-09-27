@@ -52,6 +52,9 @@ struct FError
     void ErrorGraphZeroValue(string sNamePlan, wstring wsNameIndex);
     void ErrorGraphZeroValue(string sNamePlan, string sNameIndex);
 
+    void ErrorGraphZeroComp(string sNamePlan, wstring wsNameIndex);
+    void ErrorGraphZeroComp(string sNamePlan, string sNameIndex);
+
 
     bool bIsPrint;    // Выводим один раз (пока false)
 

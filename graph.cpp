@@ -137,6 +137,13 @@ void FGraph::CalcAllScoreAndAmount(FGraphType& fGraph)
         fGraph.mapGraphAmountTagDisc[fDisc->eTagDisc]++;
 
         //Определяем, сколько компетенций формируется
+        if (fDisc->mapComp.size() == 0)
+        {
+            ptrTree->ptrGlobal->ptrError->ErrorGraphZeroComp(
+                this->ptrTree->sNamePlan, l);
+            continue;
+        }
+        else
         if (fDisc->mapComp.size() >= iSoManyComp)
         {
             fGraph.arrAmountCountCompDisc.back()++;

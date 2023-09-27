@@ -24,6 +24,7 @@
     <ProjectGuid>{7104973a-ab65-4433-ac16-15c73d7c21e8}</ProjectGuid>
     <RootNamespace>ExcelBiblT</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>SPA_SFU_2</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
