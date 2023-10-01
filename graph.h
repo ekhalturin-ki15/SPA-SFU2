@@ -38,6 +38,9 @@ struct FGraphType
 
     double             dGraphAllScore   = FGraphType::dNoInit;
     int                iGraphAmountDisc = FGraphType::dNoInit;
+    double             dDense           = FGraphType::dNoInit;
+
+
     map<ETagDisc, int> mapGraphAmountTagDisc;
     vector<int>        arrAmountCountCompDisc;
 

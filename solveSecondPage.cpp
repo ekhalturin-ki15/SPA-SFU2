@@ -137,8 +137,12 @@ void FSolveSecondPage::AddDiscScore(const OpenXLSX::XLWorksheet& fSheet,
             FError::sNotFoundKeyCol);    // Неудалось найти ключевой столбец
     }
 
-    ptrGlobal->ptrSolve->arrDisc.back()->iAmountCourse =
+    auto& iAmountCource = ptrGlobal->ptrSolve->arrDisc.back()->iAmountCourse =
         ((iIdRScore - iIdLScore) / ptrGlobal->ptrConfig->iCourseLen);
+
+    if (ptrGlobal->ptrSolve->iMaxCourse < iAmountCource)
+        ptrGlobal->ptrSolve->iMaxCourse = iAmountCource; //Максимально найденый курс среди всех УП, которые вводятся
+
 }
 
 double FSolveSecondPage::DFSCountingScore(FTreeElement* ptrThis)

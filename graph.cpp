@@ -110,7 +110,6 @@ void FGraph::CalcAllScoreAndAmount(FGraphType& fGraph)
     const int& iSoManyComp = this->ptrTree->ptrGlobal->ptrConfig->iSoMachComp;
     fGraph.arrAmountCountCompDisc.resize(iSoManyComp + 1);
 
-
     for (const auto& [l, r] : fGraph.arrRel)
     {
         const auto& fDisc     = ptrTree->mapDisc[l];
@@ -136,15 +135,14 @@ void FGraph::CalcAllScoreAndAmount(FGraphType& fGraph)
         fGraph.iGraphAmountDisc++;
         fGraph.mapGraphAmountTagDisc[fDisc->eTagDisc]++;
 
-        //Определяем, сколько компетенций формируется
+        // Определяем, сколько компетенций формируется
         if (fDisc->mapComp.size() == 0)
         {
             ptrTree->ptrGlobal->ptrError->ErrorGraphZeroComp(
                 this->ptrTree->sNamePlan, l);
             continue;
         }
-        else
-        if (fDisc->mapComp.size() >= iSoManyComp)
+        else if (fDisc->mapComp.size() >= iSoManyComp)
         {
             fGraph.arrAmountCountCompDisc.back()++;
         }
@@ -153,6 +151,19 @@ void FGraph::CalcAllScoreAndAmount(FGraphType& fGraph)
             fGraph.arrAmountCountCompDisc[fDisc->mapComp.size()]++;
         }
     }
+
+    double dAmountRib = 0;
+    for (const auto& it : fGraph.fAdjList)
+    {
+        dAmountRib += it.size();
+    }
+
+    double N    = fGraph.fAdjList.size();
+    double dMul = 1;
+    if (this->ptrTree->ptrGlobal->ptrConfig->bIsUnDirected)
+        dMul =
+            2;    // Умножаю на 2, так как неориетированный, и рёбра дублируются
+    fGraph.dDense = dAmountRib / (dMul * N * (N - 1));
 }
 
 void FGraph::CalcMinMaxWeight(double&                           dResult,
@@ -205,6 +216,7 @@ void FGraph::CalcMinMaxEdge(
     auto                                     cmp)
 {
     dResult = FGraphType::dNoInit;
+
     for (const auto& it : fCurrentAdj)
     {
         for (const auto& [iDest, dIdge] : it)

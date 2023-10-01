@@ -6,6 +6,8 @@
 #include "metric.h"
 #include "solve.h"
 
+const double FOutData::dDataNoInit = -2e9;
+
 FOutData::FOutData(FGlobal* _ptrGlobal)
     : ptrGlobal(_ptrGlobal),
       arrCompetenceHead({ L"За какой курс", L"Заголовок компетенции",
@@ -24,14 +26,15 @@ FOutData::FOutData(FGlobal* _ptrGlobal)
             L"Диаметр графа по расстоянию",
             L"Диаметр графа по количеству рёбер",
             L"Количество компонент связности", L"Минимальное оставное дерево",
-            L"Максимальное оставное дерево", L"Количество основных дисциплин",
-            L"Количество дисциплин по выбору", L"Количество факультативов" })
+            L"Максимальное оставное дерево", L"Плотность графа",
+            L"Количество основных дисциплин", L"Количество дисциплин по выбору",
+            L"Количество факультативов" })
 {
 }
 
 void FOutData::CreateTotalInfo(vector<double>&   arrReturnDataMetrics,
                                const FGraphType* fGraph,
-                               EOutType          eOutType)
+                               const EOutType&   eOutType)
 {
     arrReturnDataMetrics.clear();
     vector<double> arrResult;    // Соответствует arrHead который
@@ -42,7 +45,7 @@ void FOutData::CreateTotalInfo(vector<double>&   arrReturnDataMetrics,
                   fGraph->dMinDiscScore, fGraph->dMaxDiscScore, fGraph->dMinRib,
                   fGraph->dMaxRib, fGraph->dDiametrLen, fGraph->dDiametrStep,
                   double(fGraph->iComponent), fGraph->dMinSpanTree,
-                  fGraph->dMaxSpanTree };
+                  fGraph->dMaxSpanTree, fGraph->dDense };
 
     for (int iTag = 0; iTag < ETagDisc::ETD_Size; ++iTag)
     {
@@ -85,7 +88,7 @@ void FOutData::CreateTotalInfo(vector<double>&   arrReturnDataMetrics,
 
 void FOutData::CreateTotalInfo(vector<string>&   arrReturnDataHeader,
                                const FGraphType* fGraph,
-                               EOutType          eOutType)
+                               const EOutType&   eOutType)
 {
     arrReturnDataHeader.clear();
 
@@ -130,7 +133,7 @@ void FOutData::CreateTotalInfo(vector<string>&   arrReturnDataHeader,
 
 void FOutData::CreateTotalInfo(vector<vector<string>>& arrReturnData,
                                const FGraphType*       fGraph,
-                               EOutType                eOutType)
+                               const EOutType&         eOutType)
 {
     arrReturnData.clear();
 
@@ -153,77 +156,26 @@ void FOutData::CreateTotalInfo(vector<vector<string>>& arrReturnData,
 
 bool FOutData::Init() { return true; }
 
-void FOutData::Out(string sOutPath)
+void FOutData::CreateOnlyAllowedHeaderRow(vector<string>&        arrReturn,
+                                          vector<bool>&          arrIsAllowed,
+                                          const vector<wstring>& arrParams)
 {
-    OpenXLSX::XLDocument fOutFile;
-    fOutFile.create(sOutPath + "/TotalData.xlsx");
-    fOutFile.workbook().addWorksheet("Total Data");
-    fOutFile.workbook().deleteSheet("Sheet1");    // Стартовая страница не нужна
-    OpenXLSX::XLWorksheet wks = fOutFile.workbook().worksheet("Total Data");
-
-    int i = 0;    // Задаём порядок вывода
-    int x = 0;
-    int y = 0;
-
-    vector<wstring> arrAddedHead;
-
-    // Параметры для всего УП целиком
-    vector<wstring> arrPrefixHead = { L"Название учебного плана",
-                                      L"Общее кол-во ЗЕ в УП",
-                                      L"Общее кол-во дисциплин в УП"
-
-    };
-
-    for (auto& wsNameTag : ptrGlobal->ptrConfig->arrNameTagDisc)
-    {
-        arrPrefixHead.push_back(L"!" + wsNameTag);
-    }
-
-    arrAddedHead.insert(arrAddedHead.end(),
-                        arrPrefixHead.begin(),
-                        arrPrefixHead.end());
-
-    arrAddedHead.insert(arrAddedHead.end(),
-                        arrMetricHead.begin(),
-                        arrMetricHead.end());
-
-    wstring wsNameSoMachComp =
-        L"Количество дисциплин с несколькими дисциплинами";
-
-    for (int iAmountComp = 1;
-         iAmountComp <= this->ptrGlobal->ptrConfig->iSoMachComp;
-         ++iAmountComp)
-    {
-        arrAddedHead.push_back(wsNameSoMachComp);
-    }
-
-    for (auto& sHeaderComp : ptrGlobal->ptrSolve->setHeaderComp)
-    {
-        wstring wsCompScore = ptrGlobal->ConwertToWstring(sHeaderComp);
-        wsCompScore =
-            ptrGlobal->ptrConfig->mapArrOutParams[L"ЗЕ у компетенции"].at(0) +
-            wsCompScore;
-        arrAddedHead.push_back(wsCompScore);
-        arrAddedHead.push_back(ptrGlobal->ConwertToWstring(sHeaderComp));
-    }
-
-    // Вывод заголовка таблицы
-    arrOutColm.assign(arrAddedHead.size() + 1,
-                      true);    // Так как нумерация с 1, поэтому и +1
-
-    // Вывод заголовка (на главной странице)
-    y = 1, x = 1, i = 1;
-
-#pragma region OutHeader
+    arrReturn.clear();
+    arrIsAllowed.clear();
+    // arrIsAllowed.assign(arrParams.size(), true);
 
     int iAmountComp = 1;    // Так как предметы с 0-компетенциями исключаются
-    for (const auto& it : arrAddedHead)
+    int i = 0;
+    for (const auto& it : arrParams)
     {
         if (ptrGlobal->ptrConfig->mapArrOutParams.count(it))
         {
-            arrOutColm[i] = (ptrGlobal->ptrConfig->mapArrOutParams[it].at(
-                                 EOutType::EOT_Head) == L"да");
-            if (arrOutColm[i++])
+            arrIsAllowed.push_back(
+                (ptrGlobal->ptrConfig->mapArrOutParams[it].at(
+                     EOutType::EOT_Head) ==
+                 L"да"));    // Так как глобальная информация, то
+                             // работаем с EOutType::EOT_Head
+            if (arrIsAllowed.back())
             {
                 string sOut = ptrGlobal->ConwertToString(
                     ptrGlobal->ptrConfig->mapArrOutParams[it].at(0));
@@ -238,59 +190,155 @@ void FOutData::Out(string sOutPath)
                         ptrGlobal->ptrConfig->wsOutSufAmountComp);
                 }
 
-                wks.cell(y, x++).value() = sOut;
+                arrReturn.push_back(sOut);
             }
         }
         else
         {
-            arrOutColm[i] = true;
+            arrIsAllowed.push_back(true);
             if (it.find(
                     ptrGlobal->ptrConfig->mapArrOutParams[L"ЗЕ у компетенции"]
                         .at(0)) != wstring::npos)
             {
                 if (ptrGlobal->ptrConfig->mapArrOutParams[L"ЗЕ у компетенции"]
                         .at(EOutType::EOT_Head) != L"да")
-                    arrOutColm[i] = false;
+                    arrIsAllowed.back() = false;
             }
-            if (arrOutColm[i++])
+            if (arrIsAllowed.back())
             {
-                wks.cell(y, x++).value() = ptrGlobal->ConwertToString(it);
+                arrReturn.push_back(ptrGlobal->ConwertToString(it));
             }
         }
     }
-#pragma endregion
+}
+
+void FOutData::CreateOnlyAllowedResultRow(vector<string>&       arrReturn,
+                                          const int&            iSizeHeader,
+                                          vector<bool>&         arrIsAllowed,
+                                          const string&         sCurName,
+                                          const vector<double>& arrResult,
+                                          map<int, FСorridor>&  mapCorridorData)
+{
+    int i = 0;
+    int x = 0;
+
+    arrReturn.clear();
+    // arrIsAllowed.clear();
+    // arrIsAllowed.assign(arrResult.size() + 1, true);
+    //  +1 так как к результатам ещё добавляется имя файла
+    arrReturn.resize(iSizeHeader);
+
+    if (TakePasteData(x, arrReturn, arrIsAllowed[i++], sCurName.size(),
+                      sCurName, sCurName, false, mapCorridorData))
+    {
+        x++;
+    }
+
+    for (const auto& it : arrResult)
+    {
+        if (it != FOutData::dDataNoInit)
+        {
+            if (TakePasteData(x, arrReturn, arrIsAllowed[i++], it,
+                              to_string(it), sCurName, true, mapCorridorData))
+            {
+                x++;
+            }
+        }
+        else
+        {
+            if (TakePasteData(x, arrReturn, arrIsAllowed[i++], it, "-",
+                              sCurName, false, mapCorridorData))
+            {
+                x++;
+            }
+        }
+    }
+}
+
+void FOutData::AddTableMaxMinData(vector<vector<string>>& arrToAddedData,
+                                  map<int, FСorridor>&    mapCorridorData)
+{
+    int i = -1;
+    for (const auto& wsName : vector<wstring>(
+             { L"Максимальные значения:", L"Минимальные значения:" }))
+    {
+        ++i;
+        if (ptrGlobal->ptrConfig->mapArrOutParams.count(wsName))
+        {
+            if (ptrGlobal->ptrConfig->mapArrOutParams[wsName].at(1) == L"да")
+            {
+                vector<string> arrMinMaxData;
+
+                arrMinMaxData.push_back(ptrGlobal->ConwertToString(
+                    ptrGlobal->ptrConfig->mapArrOutParams[wsName].at(0)));
+
+                for (auto& [id, fСorridor] : mapCorridorData)
+                {
+                    arrMinMaxData.push_back(
+                        to_string(fСorridor.dMaxMin[i]) + " (" +
+                        ptrGlobal->ConwertToString(
+                            ptrGlobal->ptrConfig->wsOutPrefMinMax) +
+                        fСorridor.sMaxMin[i] + ")");
+                }
+
+                arrToAddedData.push_back(arrMinMaxData);
+            }
+        }
+    }
+}
+
+void FOutData::CreateAllCurriculaTotalData(
+    vector<vector<string>>& arrReturnData)
+{
+    arrReturnData.clear();
+    int i = 0;    // Задаём порядок вывода
+    int x = 0;
+    int y = 0;
+
+    // Параметры для всего УП целиком
+    vector<wstring> arrAddedHead = { L"Название учебного плана",
+                                     L"Общее кол-во ЗЕ в УП",
+                                     L"Общее кол-во дисциплин в УП"
+
+    };
+
+    for (auto& wsNameTag : ptrGlobal->ptrConfig->arrNameTagDisc)
+    {
+        arrAddedHead.push_back(L"!" + wsNameTag);
+    }
+
+    for (auto& sHeaderComp : ptrGlobal->ptrSolve->setHeaderComp)
+    {
+        wstring wsCompScore = ptrGlobal->ConwertToWstring(sHeaderComp);
+        wsCompScore =
+            ptrGlobal->ptrConfig->mapArrOutParams[L"ЗЕ у компетенции"].at(0) +
+            wsCompScore;
+        arrAddedHead.push_back(wsCompScore);
+        arrAddedHead.push_back(ptrGlobal->ConwertToWstring(sHeaderComp));
+    }
+
+    // Флаги того, какие столбцы выводить
+    vector<bool> arrOutColm;
+
+    // Строка заголовка таблицы
+    vector<string> arrHeader;
+    CreateOnlyAllowedHeaderRow(arrHeader, arrOutColm, arrAddedHead);
+    arrReturnData.push_back(arrHeader);
 
     // Вывод данных
-    int iXShift = 0;
-    int iYShift = 1;
-    y           = 1;
+    map<int, FСorridor> mapSaveСorridorData;
     for (const auto& it : ptrGlobal->ptrSolve->arrDisc)
     {
         // Выводить короткое, или помное имя
-        string sOutName = (ptrGlobal->ptrConfig->bOutShortNameCurr)
+        string sCurName = (ptrGlobal->ptrConfig->bOutShortNameCurr)
                               ? it->sShortNamePlan
                               : it->sNamePlan;
 
-        i = 1;
-        x = 1;
-
-        // double dSumScoreExt   = 0;
-        // int    iAmountDiscExt = 0;
-        // it->dFindAllScore(dSumScoreExt, iAmountDiscExt);
-        vector<double> arrResult;
-        CreateTotalInfo(arrResult,
-                        &it->ptrGraph->mapGraph[FGraph::iCommon],
-                        EOutType::EOT_Head);
-
-        vector<double> arrCurriculaAllResult;
-
-        // Вывод названия УП
-        OutData(x, i, y, sOutName.size(), sOutName, wks, sOutName, false,
-                iXShift, iYShift);
-
+#pragma region FormationData
+        vector<double> arrAllResult;
         // Общие для УП метрики (перечислены в arrPrefixHead)
-        arrCurriculaAllResult.push_back(it->dAllSumScore);
-        arrCurriculaAllResult.push_back(it->iAmountDisc);
+        arrAllResult.push_back(it->dAllSumScore);
+        arrAllResult.push_back(it->iAmountDisc);
 
         // Дисциплин основных, по выбору, факультативов и т.д во всём УП
         {
@@ -298,33 +346,9 @@ void FOutData::Out(string sOutPath)
             for (auto& wsNameTag : ptrGlobal->ptrConfig->arrNameTagDisc)
             {
                 ++iNumberTag;
-                arrCurriculaAllResult.push_back(
+                arrAllResult.push_back(
                     it->mapAmountTagDisc[ETagDisc(iNumberTag)]);
             }
-        }
-
-        // Теперь это считается в CreateTotalInfo
-        /*{
-            int iNumberTag = -1;
-            for (auto& wsNameTag : ptrGlobal->ptrConfig->arrNameTagDisc)
-            {
-                ++iNumberTag;
-                auto ptrTreeMetric = it->ptrGraph->mapGraph[FGraph::iCommon];
-
-                arrResult.push_back(
-                    ptrTreeMetric.mapGraphAmountTagDisc[ETagDisc(iNumberTag)]
-                    );
-            }
-        }*/
-
-        arrCurriculaAllResult.insert(arrCurriculaAllResult.end(),
-                                     arrResult.begin(),
-                                     arrResult.end());
-
-        for (const auto& dValue : arrCurriculaAllResult)
-        {
-            OutData(x, i, y, dValue, sOutName, wks, to_string(dValue), true,
-                    iXShift, iYShift);
         }
 
         for (auto& sHeaderComp : ptrGlobal->ptrSolve->setHeaderComp)
@@ -356,87 +380,456 @@ void FOutData::Out(string sOutPath)
                 // Если ЗЕ равно 0, то и не выводить
                 if (dScore > 0)
                 {
-                    OutData(x, i, y, dScore, sOutName, wks, to_string(dScore),
-                            true, iXShift, iYShift);
+                    arrAllResult.push_back(dScore);
                 }
                 else
                 {
-                    OutData(x, i, y, 0, sOutName, wks, "-", false, iXShift,
-                            iYShift);
+                    arrAllResult.push_back(FOutData::dDataNoInit);
                 }
 
                 if (dRes > ptrGlobal->ptrConfig->dMinComp)
                 {
-                    OutData(x, i, y, dRes * 100, sOutName, wks,
-                            to_string(dRes * 100) + "%", true, iXShift,
-                            iYShift);
+                    arrAllResult.push_back(dRes * 100);
                 }
                 else
                 {
-                    OutData(x, i, y, 0, sOutName, wks, "-", false, iXShift,
-                            iYShift);
+                    arrAllResult.push_back(FOutData::dDataNoInit);
                 }
             }
-            else
-            {
-                x++;    // В холостую пропускаем столбцы, они не будут заполнены
-                i++;
-            }
         }
+#pragma endregion
 
-        ++y;    // Перевод строки
+        vector<string> arrCurData;
+        CreateOnlyAllowedResultRow(arrCurData, arrHeader.size(), arrOutColm,
+                                   sCurName, arrAllResult, mapSaveСorridorData);
+        /* i = 0;
+         x = 0;
+
+         vector<string> arrCurData(arrAddedHead.size());
+
+         TakePasteData(x++, arrCurData, arrOutColm[i++], y, sCurName.size(),
+                       sCurName, sCurName, false, mapSaveСorridorData);
+
+         for (const auto& it : arrAllResult)
+         {
+             if (it != FOutData::dDataNoInit)
+             {
+                 TakePasteData(x++, arrCurData, arrOutColm[i++], y, it,
+                               to_string(it), sCurName, true,
+                               mapSaveСorridorData);
+             }
+             else
+             {
+                 TakePasteData(x++, arrCurData, arrOutColm[i++], y, it, "-",
+                               sCurName, false, mapSaveСorridorData);
+             }
+         }*/
+
+        arrReturnData.push_back(arrCurData);
     }
 
-    iYShift += y;
     //  Вывод коридора минимума максимума
-    {
-        if (ptrGlobal->ptrConfig->mapArrOutParams.count(
-                L"Максимальные значения:"))
+    AddTableMaxMinData(arrReturnData, mapSaveСorridorData);
+   /* {
+        int i = -1;
+        for (const auto& wsName : vector<wstring>(
+                 { L"Максимальные значения:", L"Минимальные значения:" }))
         {
-            if (ptrGlobal->ptrConfig->mapArrOutParams[L"Максимальные значения:"]
-                    .at(1) == L"да")
+            ++i;
+            if (ptrGlobal->ptrConfig->mapArrOutParams.count(wsName))
             {
-                wks.cell(iYShift, 1 + iXShift).value() =
-                    ptrGlobal->ConwertToString(
-                        ptrGlobal->ptrConfig
-                            ->mapArrOutParams[L"Максимальные значения:"]
-                            .at(0));
-                for (auto& [id, fСorridor] : mapSaveData)
+                if (ptrGlobal->ptrConfig->mapArrOutParams[wsName].at(1) ==
+                    L"да")
                 {
-                    wks.cell(iYShift, id + iXShift).value() =
-                        to_string(fСorridor.dMax) + " (" +
-                        ptrGlobal->ConwertToString(
-                            ptrGlobal->ptrConfig->wsOutPrefMinMax) +
-                        fСorridor.sMax + ")";
-                }
-                ++iYShift;
-            }
-        }
-        if (ptrGlobal->ptrConfig->mapArrOutParams.count(
-                L"Минимальные значения:"))
-        {
-            if (ptrGlobal->ptrConfig->mapArrOutParams[L"Минимальные значения:"]
-                    .at(1) == L"да")
-            {
-                wks.cell(iYShift, 1 + iXShift).value() =
-                    ptrGlobal->ConwertToString(
-                        ptrGlobal->ptrConfig
-                            ->mapArrOutParams[L"Минимальные значения:"]
-                            .at(0));
+                    vector<string> arrMinMaxData;
 
-                for (auto& [id, fСorridor] : mapSaveData)
-                {
-                    wks.cell(iYShift, id + iXShift).value() =
-                        to_string(fСorridor.dMin) + " (" +
-                        ptrGlobal->ConwertToString(
-                            ptrGlobal->ptrConfig->wsOutPrefMinMax) +
-                        fСorridor.sMin + ")";
+                    arrMinMaxData.push_back(ptrGlobal->ConwertToString(
+                        ptrGlobal->ptrConfig->mapArrOutParams[wsName].at(0)));
+
+                    for (auto& [id, fСorridor] : mapSaveСorridorData)
+                    {
+                        arrMinMaxData.push_back(
+                            to_string(fСorridor.dMaxMin[i]) + " (" +
+                            ptrGlobal->ConwertToString(
+                                ptrGlobal->ptrConfig->wsOutPrefMinMax) +
+                            fСorridor.sMaxMin[i] + ")");
+                    }
+
+                    arrReturnData.push_back(arrMinMaxData);
                 }
-                ++iYShift;
-                ;
             }
         }
+    }*/
+}
+
+void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
+                                      const int&              iGraphType)
+{
+    arrReturnData.clear();
+    int i = 0;    // Задаём порядок вывода
+    int x = 0;
+    int y = 0;
+
+    vector<wstring> arrAddedHead = { L"Название учебного плана" };
+
+    arrAddedHead.insert(arrAddedHead.end(),
+                        arrMetricHead.begin(),
+                        arrMetricHead.end());
+
+    wstring wsNameSoMachComp =
+        L"Количество дисциплин с несколькими дисциплинами";
+
+    for (int iAmountComp = 1;
+         iAmountComp <= this->ptrGlobal->ptrConfig->iSoMachComp;
+         ++iAmountComp)
+    {
+        arrAddedHead.push_back(wsNameSoMachComp);
     }
+
+    // Флаги того, какие столбцы выводить
+    vector<bool> arrOutColm;
+
+    // Строка заголовка таблицы
+    vector<string> arrHeader;
+    CreateOnlyAllowedHeaderRow(arrHeader, arrOutColm, arrAddedHead);
+    arrReturnData.push_back(arrHeader);
+
+    // Вывод данных
+    map<int, FСorridor> mapSaveСorridorData;
+
+    for (const auto& it : ptrGlobal->ptrSolve->arrDisc)
+    {
+        // Нет нужного нам курса (например, если 3 курс, а план магистратуры)
+        if (it->iAmountCourse <= iGraphType) continue;
+
+        // Выводить короткое, или помное имя
+        string sCurName = (ptrGlobal->ptrConfig->bOutShortNameCurr)
+                              ? it->sShortNamePlan
+                              : it->sNamePlan;
+
+        vector<double> arrAllResult;
+
+        CreateTotalInfo(arrAllResult,
+                        &it->ptrGraph->mapGraph[iGraphType],
+                        EOutType::EOT_Head);
+
+        vector<string> arrCurData;
+        CreateOnlyAllowedResultRow(arrCurData, arrHeader.size(), arrOutColm,
+                                sCurName, arrAllResult, mapSaveСorridorData);
+
+        arrReturnData.push_back(arrCurData);
+    }
+
+    AddTableMaxMinData(arrReturnData, mapSaveСorridorData);
+}
+
+void FOutData::Out(string sOutPath)
+{
+    OpenXLSX::XLDocument fOutFile;
+    fOutFile.create(sOutPath + "/TotalData.xlsx");
+    fOutFile.workbook().addWorksheet("Total Data");
+    fOutFile.workbook().deleteSheet("Sheet1");    // Стартовая страница не нужна
+    OpenXLSX::XLWorksheet wks = fOutFile.workbook().worksheet("Total Data");
+
+    vector<vector<string>> arrAllCurriculaTotalData;
+    CreateAllCurriculaTotalData(arrAllCurriculaTotalData);
+    OutTableInfo(1, 1, arrAllCurriculaTotalData, wks);
+
+    {
+        string sNamePage = ptrGlobal->ptrConfig->sOutPrefAllCurriculaAllCourse;
+        fOutFile.workbook().addWorksheet(sNamePage);
+        wks = fOutFile.workbook().worksheet(sNamePage);
+        vector<vector<string>> arrAllCoursesGraphData;
+        CreateSummaryTotalData(arrAllCoursesGraphData, FGraph::iCommon);
+        OutTableInfo(1, 1, arrAllCoursesGraphData, wks);
+    }
+
+    for (int iCourse = 0; iCourse < this->ptrGlobal->ptrSolve->iMaxCourse;
+         ++iCourse)
+    {
+        string sNamePage =
+            ptrGlobal->ptrConfig->sOutPrefAllCurriculaCurrentCourse;
+        sNamePage = sNamePage + " " + to_string(iCourse + 1);
+        fOutFile.workbook().addWorksheet(sNamePage);
+        wks = fOutFile.workbook().worksheet(sNamePage);
+        vector<vector<string>> arrCourseGraphData;
+        CreateSummaryTotalData(arrCourseGraphData, iCourse);
+        OutTableInfo(1, 1, arrCourseGraphData, wks);
+    }
+
+    //    int i = 0;    // Задаём порядок вывода
+    //    int x = 0;
+    //    int y = 0;
+    //
+    //    vector<wstring> arrAddedHead;
+    //
+    //    // Параметры для всего УП целиком
+    //    vector<wstring> arrPrefixHead = { L"Название учебного плана",
+    //                                      L"Общее кол-во ЗЕ в УП",
+    //                                      L"Общее кол-во дисциплин в УП"
+    //
+    //    };
+    //
+    //    for (auto& wsNameTag : ptrGlobal->ptrConfig->arrNameTagDisc)
+    //    {
+    //        arrPrefixHead.push_back(L"!" + wsNameTag);
+    //    }
+    //
+    //    arrAddedHead.insert(arrAddedHead.end(),
+    //                        arrPrefixHead.begin(),
+    //                        arrPrefixHead.end());
+    //
+    //    arrAddedHead.insert(arrAddedHead.end(),
+    //                        arrMetricHead.begin(),
+    //                        arrMetricHead.end());
+    //
+    //    wstring wsNameSoMachComp =
+    //        L"Количество дисциплин с несколькими дисциплинами";
+    //
+    //    for (int iAmountComp = 1;
+    //         iAmountComp <= this->ptrGlobal->ptrConfig->iSoMachComp;
+    //         ++iAmountComp)
+    //    {
+    //        arrAddedHead.push_back(wsNameSoMachComp);
+    //    }
+    //
+    //    for (auto& sHeaderComp : ptrGlobal->ptrSolve->setHeaderComp)
+    //    {
+    //        wstring wsCompScore = ptrGlobal->ConwertToWstring(sHeaderComp);
+    //        wsCompScore =
+    //            ptrGlobal->ptrConfig->mapArrOutParams[L"ЗЕ у
+    //            компетенции"].at(0) + wsCompScore;
+    //        arrAddedHead.push_back(wsCompScore);
+    //        arrAddedHead.push_back(ptrGlobal->ConwertToWstring(sHeaderComp));
+    //    }
+    //
+    //    // Вывод заголовка таблицы
+    //    arrOutColm.assign(arrAddedHead.size() + 1,
+    //                      true);    // Так как нумерация с 1, поэтому и +1
+    //
+    //    // Вывод заголовка (на главной странице)
+    //    y = 1, x = 1, i = 1;
+    //
+    // #pragma region OutHeader
+    //
+    //    int iAmountComp = 1;    // Так как предметы с 0-компетенциями
+    //    исключаются for (const auto& it : arrAddedHead)
+    //    {
+    //        if (ptrGlobal->ptrConfig->mapArrOutParams.count(it))
+    //        {
+    //            arrOutColm[i] = (ptrGlobal->ptrConfig->mapArrOutParams[it].at(
+    //                                 EOutType::EOT_Head) == L"да");
+    //            if (arrOutColm[i++])
+    //            {
+    //                string sOut = ptrGlobal->ConwertToString(
+    //                    ptrGlobal->ptrConfig->mapArrOutParams[it].at(0));
+    //                if (it == L"Количество дисциплин с несколькими
+    //                дисциплинами")
+    //                {
+    //                    sOut += " ";
+    //                    if (iAmountComp == ptrGlobal->ptrConfig->iSoMachComp)
+    //                        sOut += ">=";
+    //
+    //                    sOut += to_string(iAmountComp++) + " ";
+    //                    sOut += ptrGlobal->ConwertToString(
+    //                        ptrGlobal->ptrConfig->wsOutSufAmountComp);
+    //                }
+    //
+    //                wks.cell(y, x++).value() = sOut;
+    //            }
+    //        }
+    //        else
+    //        {
+    //            arrOutColm[i] = true;
+    //            if (it.find(
+    //                    ptrGlobal->ptrConfig->mapArrOutParams[L"ЗЕ у
+    //                    компетенции"]
+    //                        .at(0)) != wstring::npos)
+    //            {
+    //                if (ptrGlobal->ptrConfig->mapArrOutParams[L"ЗЕ у
+    //                компетенции"]
+    //                        .at(EOutType::EOT_Head) != L"да")
+    //                    arrOutColm[i] = false;
+    //            }
+    //            if (arrOutColm[i++])
+    //            {
+    //                wks.cell(y, x++).value() = ptrGlobal->ConwertToString(it);
+    //            }
+    //        }
+    //    }
+    // #pragma endregion
+    //
+    //    // Вывод данных
+    //    int iXShift = 0;
+    //    int iYShift = 1;
+    //    y           = 1;
+    //    for (const auto& it : ptrGlobal->ptrSolve->arrDisc)
+    //    {
+    //        // Выводить короткое, или помное имя
+    //        string sOutName = (ptrGlobal->ptrConfig->bOutShortNameCurr)
+    //                              ? it->sShortNamePlan
+    //                              : it->sNamePlan;
+    //
+    //        i = 1;
+    //        x = 1;
+    //
+    //        // double dSumScoreExt   = 0;
+    //        // int    iAmountDiscExt = 0;
+    //        // it->dFindAllScore(dSumScoreExt, iAmountDiscExt);
+    //        vector<double> arrResult;
+    //        CreateTotalInfo(arrResult,
+    //                        &it->ptrGraph->mapGraph[FGraph::iCommon],
+    //                        EOutType::EOT_Head);
+    //
+    //        vector<double> arrCurriculaAllResult;
+    //
+    //        // Вывод названия УП
+    //        OutData(x, i, y, sOutName.size(), sOutName, wks, sOutName, false,
+    //                iXShift, iYShift);
+    //
+    //        // Общие для УП метрики (перечислены в arrPrefixHead)
+    //        arrCurriculaAllResult.push_back(it->dAllSumScore);
+    //        arrCurriculaAllResult.push_back(it->iAmountDisc);
+    //
+    //        // Дисциплин основных, по выбору, факультативов и т.д во всём УП
+    //        {
+    //            int iNumberTag = -1;
+    //            for (auto& wsNameTag : ptrGlobal->ptrConfig->arrNameTagDisc)
+    //            {
+    //                ++iNumberTag;
+    //                arrCurriculaAllResult.push_back(
+    //                    it->mapAmountTagDisc[ETagDisc(iNumberTag)]);
+    //            }
+    //        }
+    //
+    //
+    //        arrCurriculaAllResult.insert(arrCurriculaAllResult.end(),
+    //                                     arrResult.begin(),
+    //                                     arrResult.end());
+    //
+    //        for (const auto& dValue : arrCurriculaAllResult)
+    //        {
+    //            OutData(x, i, y, dValue, sOutName, wks, to_string(dValue),
+    //            true,
+    //                    iXShift, iYShift);
+    //        }
+    //
+    //        for (auto& sHeaderComp : ptrGlobal->ptrSolve->setHeaderComp)
+    //        {
+    //            if (it->ptrMetric)
+    //            {
+    //                auto ptrTreeMetric =
+    //                    it->ptrMetric->ptrTreeMetric->mapChild[FMetric::sAllMetric];
+    //                double dScore = 0.;
+    //                double dRes   = 0.;
+    //                if (ptrTreeMetric->mapChild.count(sHeaderComp))
+    //                {
+    //                    dScore =
+    //                        (ptrGlobal->ptrConfig->bCompInterDelete)
+    //                            ?
+    //                            ptrTreeMetric->mapChild[sHeaderComp]->dBalanceSum
+    //                            : ptrTreeMetric->mapChild[sHeaderComp]
+    //                                  ->dNoBalanceSum;
+    //
+    //                    dRes = (ptrGlobal->ptrConfig->bCompInterDelete)
+    //                               ? dScore / ptrTreeMetric->dBalanceSum
+    //                               : dScore / it->dAllSumScore;
+    //                }
+    //                else
+    //                {
+    //                    dScore = 0.;
+    //                    dRes   = 0.;
+    //                }
+    //
+    //                // Если ЗЕ равно 0, то и не выводить
+    //                if (dScore > 0)
+    //                {
+    //                    OutData(x, i, y, dScore, sOutName, wks,
+    //                    to_string(dScore),
+    //                            true, iXShift, iYShift);
+    //                }
+    //                else
+    //                {
+    //                    OutData(x, i, y, 0, sOutName, wks, "-", false,
+    //                    iXShift,
+    //                            iYShift);
+    //                }
+    //
+    //                if (dRes > ptrGlobal->ptrConfig->dMinComp)
+    //                {
+    //                    OutData(x, i, y, dRes * 100, sOutName, wks,
+    //                            to_string(dRes * 100) + "%", true, iXShift,
+    //                            iYShift);
+    //                }
+    //                else
+    //                {
+    //                    OutData(x, i, y, 0, sOutName, wks, "-", false,
+    //                    iXShift,
+    //                            iYShift);
+    //                }
+    //            }
+    //            else
+    //            {
+    //                x++;    // В холостую пропускаем столбцы, они не будут
+    //                заполнены i++;
+    //            }
+    //        }
+    //
+    //        ++y;    // Перевод строки
+    //    }
+    //
+    //    iYShift += y;
+    //    //  Вывод коридора минимума максимума
+    //    {
+    //        if (ptrGlobal->ptrConfig->mapArrOutParams.count(
+    //                L"Максимальные значения:"))
+    //        {
+    //            if (ptrGlobal->ptrConfig->mapArrOutParams[L"Максимальные
+    //            значения:"]
+    //                    .at(1) == L"да")
+    //            {
+    //                wks.cell(iYShift, 1 + iXShift).value() =
+    //                    ptrGlobal->ConwertToString(
+    //                        ptrGlobal->ptrConfig
+    //                            ->mapArrOutParams[L"Максимальные значения:"]
+    //                            .at(0));
+    //                for (auto& [id, fСorridor] : mapSaveData)
+    //                {
+    //                    wks.cell(iYShift, id + iXShift).value() =
+    //                        to_string(fСorridor.dMax) + " (" +
+    //                        ptrGlobal->ConwertToString(
+    //                            ptrGlobal->ptrConfig->wsOutPrefMinMax) +
+    //                        fСorridor.sMax + ")";
+    //                }
+    //                ++iYShift;
+    //            }
+    //        }
+    //        if (ptrGlobal->ptrConfig->mapArrOutParams.count(
+    //                L"Минимальные значения:"))
+    //        {
+    //            if (ptrGlobal->ptrConfig->mapArrOutParams[L"Минимальные
+    //            значения:"]
+    //                    .at(1) == L"да")
+    //            {
+    //                wks.cell(iYShift, 1 + iXShift).value() =
+    //                    ptrGlobal->ConwertToString(
+    //                        ptrGlobal->ptrConfig
+    //                            ->mapArrOutParams[L"Минимальные значения:"]
+    //                            .at(0));
+    //
+    //                for (auto& [id, fСorridor] : mapSaveData)
+    //                {
+    //                    wks.cell(iYShift, id + iXShift).value() =
+    //                        to_string(fСorridor.dMin) + " (" +
+    //                        ptrGlobal->ConwertToString(
+    //                            ptrGlobal->ptrConfig->wsOutPrefMinMax) +
+    //                        fСorridor.sMin + ")";
+    //                }
+    //                ++iYShift;
+    //                ;
+    //            }
+    //        }
+    //    }
 
     fOutFile.save();
     fOutFile.close();
@@ -988,30 +1381,32 @@ void FOutData::OutGephiRib(const string& sName, const string& sNameFile,
 void FOutData::RetakeMinMax(FСorridor& fSaveData, const double& dNewData,
                             const string& sNewData)
 {
-    if ((dNewData > fSaveData.dMax) || (fSaveData.sMax == ""))
+    if ((dNewData > fSaveData.dMaxMin[0]) || (fSaveData.sMaxMin[0] == ""))
     {
-        fSaveData.dMax = dNewData;
-        fSaveData.sMax = sNewData;
+        fSaveData.dMaxMin[0] = dNewData;
+        fSaveData.sMaxMin[0] = sNewData;
     }
 
-    if ((dNewData < fSaveData.dMin) || (fSaveData.sMin == ""))
+    if ((dNewData < fSaveData.dMaxMin[1]) || (fSaveData.sMaxMin[1] == ""))
     {
-        fSaveData.dMin = dNewData;
-        fSaveData.sMin = sNewData;
+        fSaveData.dMaxMin[1] = dNewData;
+        fSaveData.sMaxMin[1] = sNewData;
     }
     return;
 }
 
-void FOutData::OutData(int& x, int& index, const int& y, double dDate,
-                       string sDate, OpenXLSX::XLWorksheet& wks,
-                       string sOutData, const bool& bIsConsider,
-                       const int& iXShift, const int& iYShift)
+bool FOutData::TakePasteData(const int& x, vector<string>& arrCurRow,
+                             const bool& bIsOutData, const double& dDate,
+                             const string& sOutData, const string& sCurName,
+                             const bool&          bIsConsider,
+                             map<int, FСorridor>& mapCorridorData)
 {
-    if (arrOutColm[index++])
+    if (bIsOutData)
     {
-        if (bIsConsider) RetakeMinMax(mapSaveData[x], dDate, sDate);
+        if (bIsConsider) RetakeMinMax(mapCorridorData[x], dDate, sCurName);
 
-        wks.cell(iYShift + y, iXShift + x++).value() =
-            ptrGlobal->ConwertUTF16RU(sOutData);
+        arrCurRow[x] = ptrGlobal->ConwertUTF16RU(sOutData);
+        return true;
     }
+    return false;
 }

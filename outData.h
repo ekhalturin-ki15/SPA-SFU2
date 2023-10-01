@@ -16,17 +16,18 @@ enum EOutType : int
 
 struct FСorridor
 {
-    double dMin = 0;
-    string sMin = "";
-    double dMax = 0;
-    string sMax = "";
+    vector<double> dMaxMin = { 0, 0 };
+    vector<string> sMaxMin = { "", "" };
 };
 
 struct FOutData
 {
+    static const double dDataNoInit;
+
     explicit FOutData(FGlobal* _ptrGlobal);
 
-    void Out(string sOutPath);    // Каталог, где будут файлы
+    // Начальная точка входа
+    void Out(string sOutPath);    // sOutPath - Каталог, где будут файлы
 
     bool Init();
 
@@ -35,7 +36,7 @@ private:
     const vector<wstring>
         arrCompetenceHead;    // Единожды задаётся в конструкторе
 
-    vector<int> arrOutColm;
+    // vector<int> arrOutColm;
     // vector<double>  arrResult;
 
     // Пропроска страницы Excel для вывода данных (например, при помощи
@@ -52,18 +53,49 @@ private:
     void CreateAndTake(
         string sName,
         string sPath);    // Вывод через глобальные fOpenFile и fOpenWKS
+
     void OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree);
     // void OutAddTotalInfo(FTreeDisc* ptrTree, int y);
+
+    //Записать в arrReturn только те Заголовки, которые разрешены в arrIsAllowed
+    void CreateOnlyAllowedHeaderRow(vector<string>&        arrReturn,
+                           vector<bool>&         arrIsAllowed,
+                           const vector<wstring>& arrParams);
+
+     // Записать в arrReturn только те Результаты, которые разрешены в
+    // arrIsAllowed
+
+    //Вначале строки добавляет имя учебного плана (sCurName)
+    void CreateOnlyAllowedResultRow(vector<string>&        arrReturn,
+                                 const int&            iSizeHeader,
+                                 vector<bool>&         arrIsAllowed,
+                                 const string&         sCurName,
+                                 const vector<double>& arrResult,
+                                 map<int, FСorridor>&  mapCorridorData);
+
+    void AddTableMaxMinData(vector<vector<string>>& arrToAddedData,
+                            map<int, FСorridor>&    mapCorridorData);
+
+    // Составляет таблицу для вывода информации общего вида (не имеющей
+    // отношения к графам) всех УП FSolve
+    void CreateAllCurriculaTotalData(vector<vector<string>>& arrReturnData);
+
+    // Составляет таблицу для вывода информации о всех графов одного типа из
+    // всех УП FSolve
+    void CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
+                                const int&              iGraphType);
+
     void CreateTotalInfo(vector<vector<string>>& arrReturnData,
-                         const FGraphType* fGraph, EOutType eOutType);
+                         const FGraphType* fGraph, const EOutType& eOutType);
 
     void CreateTotalInfo(vector<double>&   arrReturnDataMetrics,
-                         const FGraphType* fGraph, EOutType eOutType);
+                         const FGraphType* fGraph, const EOutType& eOutType);
 
     void CreateTotalInfo(vector<string>&   arrReturnDataHeader,
-                         const FGraphType* fGraph, EOutType eOutType);
+                         const FGraphType* fGraph, const EOutType& eOutType);
 
     // Лучше буду генерировать матрицу, и выводить её сразу же
+    // Не забываем, что OpenXLSX нумерует всё от единицы (1)
     void OutTableInfo(const int& iShiftX,    // С каким смещением выводим
                       const int& iShiftY,    // С каким смещением выводим
                       const vector<vector<string>>& arrData,    // Что выводим
@@ -101,14 +133,26 @@ private:
 
     FGlobal* ptrGlobal;    // Синглтон
 
-    map<int, FСorridor> mapSaveData;
+    // map<int, FСorridor> mapSaveData;
     void RetakeMinMax(FСorridor& fSaveData, const double& dNewData,
                       const string& sNewData);
 
-    void OutData(int& x, int& index, const int& y, double dDate, string sDate,
+    // Вместо вывода теперь формирую строки при помощи TakePasteData, а потом
+    // единожды всё вывожу
+    /*void OutData(int& x, const int iIsOutData, const int& y, double dDate,
+                 string sDate,
                  OpenXLSX::XLWorksheet& wks, string sOutData,
                  const bool& bIsConsider, const int& iXShift,
-                 const int& iYShift);
+                 const int& iYShift, map<int, FСorridor>& mapCorridorData);*/
+
+    // Вместо вывода теперь формирую строки при помощи TakePasteData, а потом
+    // единожды всё вывожу
+    // Возвращает true, если данные выводятся и надо увеличить значение x
+    bool TakePasteData(const int& x, vector<string>& arrCurRow,
+                       const bool& bIsOutData,
+                       const double& dDate, const string& sOutData,
+                       const string& sCurName, const bool& bIsConsider,
+                       map<int, FСorridor>& mapCorridorData);
 
     void OutGephiLable(
         const string& sName, const string& sNameFile, const string& sPath,

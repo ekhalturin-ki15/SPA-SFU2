@@ -354,6 +354,21 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
+        wsPatern = L"Предлог перед выводом статистики по курсу определённого номера";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(sOutPrefAllCurriculaCurrentCourse, row);
+            return true;
+        }
+
+        wsPatern =
+            L"Предлог перед выводом статистики по всем курсам";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(sOutPrefAllCurriculaAllCourse, row);
+            return true;
+        }
+
         wsPatern = L"Предлог перед выводом результата мин. макс.";
         if (wsKey == wsPatern)
         {

@@ -48,6 +48,8 @@ struct FConfig
     string sFormula;
 
     wstring wsOutPrefMinMax;
+    string sOutPrefAllCurriculaAllCourse;
+    string sOutPrefAllCurriculaCurrentCourse;
     wstring wsOutPrefAllCourse;
     wstring wsOutSufAmountComp;
 

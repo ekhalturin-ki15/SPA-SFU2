@@ -11,7 +11,8 @@ FSolve::FSolve(FGlobal* _ptrGlobal)
     : ptrGlobal(_ptrGlobal),
       bIsCorrectParsing(true),
       iCurrentPage(0),
-      iCurrentRow(0)
+      iCurrentRow(0),
+      iMaxCourse(0)
 {
     if (iSinglControll > 0) throw std::runtime_error("Re-creation Singleton");
     ++iSinglControll;

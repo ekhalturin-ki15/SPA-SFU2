@@ -13,7 +13,7 @@ struct FMetric;
 //	double dScore;
 // };
 
-//Тип дисциплины (основная, по выбору, факультатив)
+// Тип дисциплины (основная, по выбору, факультатив)
 enum ETagDisc : int
 {
     ETD_Common,
@@ -26,26 +26,28 @@ struct FTreeElement
 {
     explicit FTreeElement();
 
-    bool bAllow;        // Учитывать ли при подсчёте зачётных единиц (ЗЕ)
+    bool bAllow;    // Учитывать ли при подсчёте зачётных единиц (ЗЕ)
     bool bNotIgnore;    // Если предмет входит в перечень игнорируемых
 
-    double           dSumScore;         // Количество зачётных единиц (ЗЕ)
-    map<int, double> mapCourseScore;    // В каком семестре (ключ) сколько ЗЕ (значение)
+    double dSumScore;    // Количество зачётных единиц (ЗЕ)
+    map<int, double>
+        mapCourseScore;    // В каком семестре (ключ) сколько ЗЕ (значение)
 
-    //wstring wsName;
+    // wstring wsName;
     string  sName;
     wstring wsIndexName;
 
-    FTreeElement*         ptrParent;
+    FTreeElement* ptrParent;
     vector<FTreeElement*> arrChild;    // Дисциплины внутри модуля
-    // Указаны компетенции с индикаторами для дополнительной валидации УП (что у страницы Компетенции (2) есть весь перечень компетенций)
-    map<string, vector<string>> mapComp;    // Компетенции, у каждой из которых перечень индикаторов
+    // Указаны компетенции с индикаторами для дополнительной валидации УП (что у
+    // страницы Компетенции (2) есть весь перечень компетенций)
+    map<string, vector<string>>
+        mapComp;    // Компетенции, у каждой из которых перечень индикаторов
 
     ETagDisc eTagDisc = ETagDisc::ETD_Common;
 
-    // vector<string> arrIndicator; // Индикаторы (из индикатора можно извлечь компетенцию)
-
-
+    // vector<string> arrIndicator; // Индикаторы (из индикатора можно извлечь
+    // компетенцию)
 };
 
 struct FTreeDisc
@@ -56,33 +58,41 @@ struct FTreeDisc
     void CountDisc();
 
     // Получить только дисциплины (без модулей)
-    map<wstring, FTreeElement*> GewMapAllowDisc(bool IsNecessaryAllow, bool IsNecessaryNotIgnore);
+    map<wstring, FTreeElement*> GewMapAllowDisc(bool IsNecessaryAllow,
+                                                bool IsNecessaryNotIgnore);
 
-    FTreeElement*               ptrRoot;
-    map<wstring, FTreeElement*> mapDisc;    // Поиск указателя на дисциплину по её индексу
-    string                      sNamePlan;
-    string                      sShortNamePlan;    // Имя УП без расширения
+    FTreeElement* ptrRoot;
+    map<wstring, FTreeElement*>
+        mapDisc;    // Поиск указателя на дисциплину по её индексу
+    string sNamePlan;
+    string sShortNamePlan;    // Имя УП без расширения
 
-    int iAmountCourse;    // Количество курсов (именно курсов, не семестров)
-    double dAllSumScore;    // Общее кол-во ЗЕ курса (только дисциплин, и только тех, что учитываются)
+    int     iAmountCourse;    // Количество курсов (именно курсов, не семестров)
+    double  dAllSumScore;    // Общее кол-во ЗЕ курса (только дисциплин, и только
+                            // тех, что учитываются)
     int iAmountDisc;    // Количество учитываемых дисциплин (не по выбору)
     int iExtendedAmountDisc;    // Количество всех дисциплин (не модулей)
-    map<ETagDisc, int> mapAmountTagDisc; // Количество дисциплин по типу (основные, по выбору, факультативы)
+    map<ETagDisc, int>
+        mapAmountTagDisc;    // Количество дисциплин по типу (основные, по
+                             // выбору, факультативы)
 
-    set<string> fAllComp;    // Множество всех компетенций, присутствующих в учебном плане (УП)
+    set<string> fAllComp;    // Множество всех компетенций, присутствующих в
+                             // учебном плане (УП)
 
-    //Не нужно, так как эти значения хранятся в iAmountDisc iExtendedAmountDisc и mapAmountTagDisc
-    //void FindAllScore(double& outDSum, int& outIAmountDisc);    // Вывод через параметры
-    //void FindAllScore(double& outDSum);
+    // Не нужно, так как эти значения хранятся в iAmountDisc iExtendedAmountDisc
+    // и mapAmountTagDisc void FindAllScore(double& outDSum, int&
+    // outIAmountDisc);    // Вывод через параметры void FindAllScore(double&
+    // outDSum);
 
     FMetric* ptrMetric;    // У каждого УП свой объект класса FMetric
-    FGraph*  ptrGraph;     // У каждого УП свой объект класса FGraph
+    FGraph* ptrGraph;    // У каждого УП свой объект класса FGraph
 
     // Добавил, чтобы можно было обращаться к Config
     FGlobal* ptrGlobal;    // Синглтон
 
 private:
-    void DeleteDFS(FTreeElement* ptrThis);    // Поиск в глубину для очистки памяти
+    void DeleteDFS(
+        FTreeElement* ptrThis);    // Поиск в глубину для очистки памяти
 };
 
 struct FSolve
@@ -95,38 +105,50 @@ struct FSolve
     // Основная функция
     bool Read(string sInPath, string sNamePlan);
 
-    // Использовать только после полного считывания, строит Графы всем УП из arrDisc
+    // Использовать только после полного считывания, строит Графы всем УП из
+    // arrDisc
     void CreateAllGraph();
 
-    // Использовать только после полного считывания, строит Графы всем УП из arrDisc
+    // Использовать только после полного считывания, строит Графы всем УП из
+    // arrDisc
     void CreateAllMetric();
 
 public:
-    vector<FTreeDisc*> arrDisc;    // Указатели на все УП, которые считали (все они одновременно хранятся в памяти)
+    vector<FTreeDisc*> arrDisc;    // Указатели на все УП, которые считали (все
+                                   // они одновременно хранятся в памяти)
 
-    int iCurrentPage;    // Какая по счёту страница обрабатывается в данный момент
-    int iCurrentRow;     // Какая по счёту строка обрабатывается
+    int iCurrentPage;    // Какая по счёту страница обрабатывается в данный
+                         // момент
+    int iCurrentRow;    // Какая по счёту строка обрабатывается
 
     bool bIsCorrectParsing;
+
+    int iMaxCourse;    // Максимально встреченый курс (для сводной таблицы по
+                       // всем курсам)
 
     string sInPath;    // Для отладки
     string sOutPath;
     // Не могу перенести в FMetric, так как это общее для всех УП сразу
-    set<string> setHeaderComp;    // Все заголовки компетенций (УК, ПК, ОПК). Нужно для вывода
+    set<string> setHeaderComp;    // Все заголовки компетенций (УК, ПК, ОПК).
+                                  // Нужно для вывода
 
 private:
-    static int iSinglControll;
+    static int iSinglControll;    // Проверка на синглтон
 
     void ClearTreeDisc();
 
     // По идеи, там передаётся всегда this->iKeyPageNumber
 
-    void CreateDiscTree(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageNumber);      // Находится в solveZeroPage.cpp
-    void AddCompIndicator(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageNumber);    // Находится в solveFirstPage.cpp
+    void CreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
+                        int iKeyPageNumber);    // Находится в solveZeroPage.cpp
+    void AddCompIndicator(
+        const OpenXLSX::XLWorksheet& fSheet,
+        int iKeyPageNumber);    // Находится в solveFirstPage.cpp
 
     // В solveSecondPage.h и solveSecondPage.cpp
-    FSolveSecondPage* ptrSolveSecondPage;    // Композиция (вынес в отдельный класс, так как много методов)
-    FGlobal* ptrGlobal;                      // Синглтон
+    FSolveSecondPage* ptrSolveSecondPage;    // Композиция (вынес в отдельный
+                                             // класс, так как много методов)
+    FGlobal* ptrGlobal;    // Синглтон
     regex    fRegexComp;
     regex    fRegexHeaderComp;
     regex    fRegexHeaderInd;
