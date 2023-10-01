@@ -10,7 +10,7 @@ const int FGraph::iCommon =
 const int    FGraph::iAlt                   = -2;
 const double FGraph::dAllScoreNotEqualError = -10;
 
-const double FGraphType::dNoInit = -1;
+const double FGraphType::dNoInit = -2e9;
 
 // Инверсия зависимости
 FGraph::FGraph(FTreeDisc* _ptrTree) : ptrTree(_ptrTree)
@@ -109,6 +109,9 @@ void FGraph::CalcAllScoreAndAmount(FGraphType& fGraph)
 {
     const int& iSoManyComp = this->ptrTree->ptrGlobal->ptrConfig->iSoMachComp;
     fGraph.arrAmountCountCompDisc.resize(iSoManyComp + 1);
+
+    fGraph.iGraphAmountDisc = 0; // Отчёт от нуля
+    fGraph.dGraphAllScore   = 0; // Отчёт от нуля
 
     for (const auto& [l, r] : fGraph.arrRel)
     {

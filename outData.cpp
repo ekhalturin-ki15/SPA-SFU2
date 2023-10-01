@@ -6,7 +6,7 @@
 #include "metric.h"
 #include "solve.h"
 
-const double FOutData::dDataNoInit = -2e9;
+//const double FOutData::dDataNoInit = -2e9;
 
 FOutData::FOutData(FGlobal* _ptrGlobal)
     : ptrGlobal(_ptrGlobal),
@@ -21,12 +21,13 @@ FOutData::FOutData(FGlobal* _ptrGlobal)
             // L"(Расш.) Кол-во дисциплин в УП",    // Включает те,
             // что указаны в
             //  УП, как неучитываемые
-            L"Минимальное ЗЕ у дисциплины", L"Максимальное ЗЕ у дисциплины",
-            L"Минимальный вес ребра", L"Максимальный вес ребра",
+            L"Максимальное ЗЕ у дисциплины", L"Минимальное ЗЕ у дисциплины",
+            L"Максимальный вес ребра", L"Минимальный вес ребра", 
             L"Диаметр графа по расстоянию",
             L"Диаметр графа по количеству рёбер",
-            L"Количество компонент связности", L"Минимальное оставное дерево",
-            L"Максимальное оставное дерево", L"Плотность графа",
+            L"Количество компонент связности", 
+            L"Максимальное оставное дерево",
+            L"Минимальное оставное дерево", L"Плотность графа",
             L"Количество основных дисциплин", L"Количество дисциплин по выбору",
             L"Количество факультативов" })
 {
@@ -42,10 +43,12 @@ void FOutData::CreateTotalInfo(vector<double>&   arrReturnDataMetrics,
     arrResult = { fGraph->dGraphAllScore, double(fGraph->iGraphAmountDisc),
                   // fGraph->dGraphAllScore,
                   // double(fGraph->iGraphAmountDisc),
-                  fGraph->dMinDiscScore, fGraph->dMaxDiscScore, fGraph->dMinRib,
-                  fGraph->dMaxRib, fGraph->dDiametrLen, fGraph->dDiametrStep,
-                  double(fGraph->iComponent), fGraph->dMinSpanTree,
-                  fGraph->dMaxSpanTree, fGraph->dDense };
+                  fGraph->dMaxDiscScore, fGraph->dMinDiscScore, 
+                  fGraph->dMaxRib,
+                  fGraph->dMinRib, fGraph->dDiametrLen, fGraph->dDiametrStep,
+                  double(fGraph->iComponent), 
+                  fGraph->dMaxSpanTree,
+                  fGraph->dMinSpanTree, fGraph->dDense };
 
     for (int iTag = 0; iTag < ETagDisc::ETD_Size; ++iTag)
     {
@@ -223,9 +226,7 @@ void FOutData::CreateOnlyAllowedResultRow(vector<string>&       arrReturn,
     int x = 0;
 
     arrReturn.clear();
-    // arrIsAllowed.clear();
-    // arrIsAllowed.assign(arrResult.size() + 1, true);
-    //  +1 так как к результатам ещё добавляется имя файла
+   
     arrReturn.resize(iSizeHeader);
 
     if (TakePasteData(x, arrReturn, arrIsAllowed[i++], sCurName.size(),
@@ -236,7 +237,7 @@ void FOutData::CreateOnlyAllowedResultRow(vector<string>&       arrReturn,
 
     for (const auto& it : arrResult)
     {
-        if (it != FOutData::dDataNoInit)
+        if (it != FGraphType::dNoInit)
         {
             if (TakePasteData(x, arrReturn, arrIsAllowed[i++], it,
                               to_string(it), sCurName, true, mapCorridorData))
@@ -384,7 +385,7 @@ void FOutData::CreateAllCurriculaTotalData(
                 }
                 else
                 {
-                    arrAllResult.push_back(FOutData::dDataNoInit);
+                    arrAllResult.push_back(FGraphType::dNoInit);
                 }
 
                 if (dRes > ptrGlobal->ptrConfig->dMinComp)
@@ -393,7 +394,7 @@ void FOutData::CreateAllCurriculaTotalData(
                 }
                 else
                 {
-                    arrAllResult.push_back(FOutData::dDataNoInit);
+                    arrAllResult.push_back(FGraphType::dNoInit);
                 }
             }
         }
@@ -402,64 +403,13 @@ void FOutData::CreateAllCurriculaTotalData(
         vector<string> arrCurData;
         CreateOnlyAllowedResultRow(arrCurData, arrHeader.size(), arrOutColm,
                                    sCurName, arrAllResult, mapSaveСorridorData);
-        /* i = 0;
-         x = 0;
-
-         vector<string> arrCurData(arrAddedHead.size());
-
-         TakePasteData(x++, arrCurData, arrOutColm[i++], y, sCurName.size(),
-                       sCurName, sCurName, false, mapSaveСorridorData);
-
-         for (const auto& it : arrAllResult)
-         {
-             if (it != FOutData::dDataNoInit)
-             {
-                 TakePasteData(x++, arrCurData, arrOutColm[i++], y, it,
-                               to_string(it), sCurName, true,
-                               mapSaveСorridorData);
-             }
-             else
-             {
-                 TakePasteData(x++, arrCurData, arrOutColm[i++], y, it, "-",
-                               sCurName, false, mapSaveСorridorData);
-             }
-         }*/
 
         arrReturnData.push_back(arrCurData);
     }
 
     //  Вывод коридора минимума максимума
     AddTableMaxMinData(arrReturnData, mapSaveСorridorData);
-   /* {
-        int i = -1;
-        for (const auto& wsName : vector<wstring>(
-                 { L"Максимальные значения:", L"Минимальные значения:" }))
-        {
-            ++i;
-            if (ptrGlobal->ptrConfig->mapArrOutParams.count(wsName))
-            {
-                if (ptrGlobal->ptrConfig->mapArrOutParams[wsName].at(1) ==
-                    L"да")
-                {
-                    vector<string> arrMinMaxData;
-
-                    arrMinMaxData.push_back(ptrGlobal->ConwertToString(
-                        ptrGlobal->ptrConfig->mapArrOutParams[wsName].at(0)));
-
-                    for (auto& [id, fСorridor] : mapSaveСorridorData)
-                    {
-                        arrMinMaxData.push_back(
-                            to_string(fСorridor.dMaxMin[i]) + " (" +
-                            ptrGlobal->ConwertToString(
-                                ptrGlobal->ptrConfig->wsOutPrefMinMax) +
-                            fСorridor.sMaxMin[i] + ")");
-                    }
-
-                    arrReturnData.push_back(arrMinMaxData);
-                }
-            }
-        }
-    }*/
+  
 }
 
 void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
@@ -557,280 +507,6 @@ void FOutData::Out(string sOutPath)
         OutTableInfo(1, 1, arrCourseGraphData, wks);
     }
 
-    //    int i = 0;    // Задаём порядок вывода
-    //    int x = 0;
-    //    int y = 0;
-    //
-    //    vector<wstring> arrAddedHead;
-    //
-    //    // Параметры для всего УП целиком
-    //    vector<wstring> arrPrefixHead = { L"Название учебного плана",
-    //                                      L"Общее кол-во ЗЕ в УП",
-    //                                      L"Общее кол-во дисциплин в УП"
-    //
-    //    };
-    //
-    //    for (auto& wsNameTag : ptrGlobal->ptrConfig->arrNameTagDisc)
-    //    {
-    //        arrPrefixHead.push_back(L"!" + wsNameTag);
-    //    }
-    //
-    //    arrAddedHead.insert(arrAddedHead.end(),
-    //                        arrPrefixHead.begin(),
-    //                        arrPrefixHead.end());
-    //
-    //    arrAddedHead.insert(arrAddedHead.end(),
-    //                        arrMetricHead.begin(),
-    //                        arrMetricHead.end());
-    //
-    //    wstring wsNameSoMachComp =
-    //        L"Количество дисциплин с несколькими дисциплинами";
-    //
-    //    for (int iAmountComp = 1;
-    //         iAmountComp <= this->ptrGlobal->ptrConfig->iSoMachComp;
-    //         ++iAmountComp)
-    //    {
-    //        arrAddedHead.push_back(wsNameSoMachComp);
-    //    }
-    //
-    //    for (auto& sHeaderComp : ptrGlobal->ptrSolve->setHeaderComp)
-    //    {
-    //        wstring wsCompScore = ptrGlobal->ConwertToWstring(sHeaderComp);
-    //        wsCompScore =
-    //            ptrGlobal->ptrConfig->mapArrOutParams[L"ЗЕ у
-    //            компетенции"].at(0) + wsCompScore;
-    //        arrAddedHead.push_back(wsCompScore);
-    //        arrAddedHead.push_back(ptrGlobal->ConwertToWstring(sHeaderComp));
-    //    }
-    //
-    //    // Вывод заголовка таблицы
-    //    arrOutColm.assign(arrAddedHead.size() + 1,
-    //                      true);    // Так как нумерация с 1, поэтому и +1
-    //
-    //    // Вывод заголовка (на главной странице)
-    //    y = 1, x = 1, i = 1;
-    //
-    // #pragma region OutHeader
-    //
-    //    int iAmountComp = 1;    // Так как предметы с 0-компетенциями
-    //    исключаются for (const auto& it : arrAddedHead)
-    //    {
-    //        if (ptrGlobal->ptrConfig->mapArrOutParams.count(it))
-    //        {
-    //            arrOutColm[i] = (ptrGlobal->ptrConfig->mapArrOutParams[it].at(
-    //                                 EOutType::EOT_Head) == L"да");
-    //            if (arrOutColm[i++])
-    //            {
-    //                string sOut = ptrGlobal->ConwertToString(
-    //                    ptrGlobal->ptrConfig->mapArrOutParams[it].at(0));
-    //                if (it == L"Количество дисциплин с несколькими
-    //                дисциплинами")
-    //                {
-    //                    sOut += " ";
-    //                    if (iAmountComp == ptrGlobal->ptrConfig->iSoMachComp)
-    //                        sOut += ">=";
-    //
-    //                    sOut += to_string(iAmountComp++) + " ";
-    //                    sOut += ptrGlobal->ConwertToString(
-    //                        ptrGlobal->ptrConfig->wsOutSufAmountComp);
-    //                }
-    //
-    //                wks.cell(y, x++).value() = sOut;
-    //            }
-    //        }
-    //        else
-    //        {
-    //            arrOutColm[i] = true;
-    //            if (it.find(
-    //                    ptrGlobal->ptrConfig->mapArrOutParams[L"ЗЕ у
-    //                    компетенции"]
-    //                        .at(0)) != wstring::npos)
-    //            {
-    //                if (ptrGlobal->ptrConfig->mapArrOutParams[L"ЗЕ у
-    //                компетенции"]
-    //                        .at(EOutType::EOT_Head) != L"да")
-    //                    arrOutColm[i] = false;
-    //            }
-    //            if (arrOutColm[i++])
-    //            {
-    //                wks.cell(y, x++).value() = ptrGlobal->ConwertToString(it);
-    //            }
-    //        }
-    //    }
-    // #pragma endregion
-    //
-    //    // Вывод данных
-    //    int iXShift = 0;
-    //    int iYShift = 1;
-    //    y           = 1;
-    //    for (const auto& it : ptrGlobal->ptrSolve->arrDisc)
-    //    {
-    //        // Выводить короткое, или помное имя
-    //        string sOutName = (ptrGlobal->ptrConfig->bOutShortNameCurr)
-    //                              ? it->sShortNamePlan
-    //                              : it->sNamePlan;
-    //
-    //        i = 1;
-    //        x = 1;
-    //
-    //        // double dSumScoreExt   = 0;
-    //        // int    iAmountDiscExt = 0;
-    //        // it->dFindAllScore(dSumScoreExt, iAmountDiscExt);
-    //        vector<double> arrResult;
-    //        CreateTotalInfo(arrResult,
-    //                        &it->ptrGraph->mapGraph[FGraph::iCommon],
-    //                        EOutType::EOT_Head);
-    //
-    //        vector<double> arrCurriculaAllResult;
-    //
-    //        // Вывод названия УП
-    //        OutData(x, i, y, sOutName.size(), sOutName, wks, sOutName, false,
-    //                iXShift, iYShift);
-    //
-    //        // Общие для УП метрики (перечислены в arrPrefixHead)
-    //        arrCurriculaAllResult.push_back(it->dAllSumScore);
-    //        arrCurriculaAllResult.push_back(it->iAmountDisc);
-    //
-    //        // Дисциплин основных, по выбору, факультативов и т.д во всём УП
-    //        {
-    //            int iNumberTag = -1;
-    //            for (auto& wsNameTag : ptrGlobal->ptrConfig->arrNameTagDisc)
-    //            {
-    //                ++iNumberTag;
-    //                arrCurriculaAllResult.push_back(
-    //                    it->mapAmountTagDisc[ETagDisc(iNumberTag)]);
-    //            }
-    //        }
-    //
-    //
-    //        arrCurriculaAllResult.insert(arrCurriculaAllResult.end(),
-    //                                     arrResult.begin(),
-    //                                     arrResult.end());
-    //
-    //        for (const auto& dValue : arrCurriculaAllResult)
-    //        {
-    //            OutData(x, i, y, dValue, sOutName, wks, to_string(dValue),
-    //            true,
-    //                    iXShift, iYShift);
-    //        }
-    //
-    //        for (auto& sHeaderComp : ptrGlobal->ptrSolve->setHeaderComp)
-    //        {
-    //            if (it->ptrMetric)
-    //            {
-    //                auto ptrTreeMetric =
-    //                    it->ptrMetric->ptrTreeMetric->mapChild[FMetric::sAllMetric];
-    //                double dScore = 0.;
-    //                double dRes   = 0.;
-    //                if (ptrTreeMetric->mapChild.count(sHeaderComp))
-    //                {
-    //                    dScore =
-    //                        (ptrGlobal->ptrConfig->bCompInterDelete)
-    //                            ?
-    //                            ptrTreeMetric->mapChild[sHeaderComp]->dBalanceSum
-    //                            : ptrTreeMetric->mapChild[sHeaderComp]
-    //                                  ->dNoBalanceSum;
-    //
-    //                    dRes = (ptrGlobal->ptrConfig->bCompInterDelete)
-    //                               ? dScore / ptrTreeMetric->dBalanceSum
-    //                               : dScore / it->dAllSumScore;
-    //                }
-    //                else
-    //                {
-    //                    dScore = 0.;
-    //                    dRes   = 0.;
-    //                }
-    //
-    //                // Если ЗЕ равно 0, то и не выводить
-    //                if (dScore > 0)
-    //                {
-    //                    OutData(x, i, y, dScore, sOutName, wks,
-    //                    to_string(dScore),
-    //                            true, iXShift, iYShift);
-    //                }
-    //                else
-    //                {
-    //                    OutData(x, i, y, 0, sOutName, wks, "-", false,
-    //                    iXShift,
-    //                            iYShift);
-    //                }
-    //
-    //                if (dRes > ptrGlobal->ptrConfig->dMinComp)
-    //                {
-    //                    OutData(x, i, y, dRes * 100, sOutName, wks,
-    //                            to_string(dRes * 100) + "%", true, iXShift,
-    //                            iYShift);
-    //                }
-    //                else
-    //                {
-    //                    OutData(x, i, y, 0, sOutName, wks, "-", false,
-    //                    iXShift,
-    //                            iYShift);
-    //                }
-    //            }
-    //            else
-    //            {
-    //                x++;    // В холостую пропускаем столбцы, они не будут
-    //                заполнены i++;
-    //            }
-    //        }
-    //
-    //        ++y;    // Перевод строки
-    //    }
-    //
-    //    iYShift += y;
-    //    //  Вывод коридора минимума максимума
-    //    {
-    //        if (ptrGlobal->ptrConfig->mapArrOutParams.count(
-    //                L"Максимальные значения:"))
-    //        {
-    //            if (ptrGlobal->ptrConfig->mapArrOutParams[L"Максимальные
-    //            значения:"]
-    //                    .at(1) == L"да")
-    //            {
-    //                wks.cell(iYShift, 1 + iXShift).value() =
-    //                    ptrGlobal->ConwertToString(
-    //                        ptrGlobal->ptrConfig
-    //                            ->mapArrOutParams[L"Максимальные значения:"]
-    //                            .at(0));
-    //                for (auto& [id, fСorridor] : mapSaveData)
-    //                {
-    //                    wks.cell(iYShift, id + iXShift).value() =
-    //                        to_string(fСorridor.dMax) + " (" +
-    //                        ptrGlobal->ConwertToString(
-    //                            ptrGlobal->ptrConfig->wsOutPrefMinMax) +
-    //                        fСorridor.sMax + ")";
-    //                }
-    //                ++iYShift;
-    //            }
-    //        }
-    //        if (ptrGlobal->ptrConfig->mapArrOutParams.count(
-    //                L"Минимальные значения:"))
-    //        {
-    //            if (ptrGlobal->ptrConfig->mapArrOutParams[L"Минимальные
-    //            значения:"]
-    //                    .at(1) == L"да")
-    //            {
-    //                wks.cell(iYShift, 1 + iXShift).value() =
-    //                    ptrGlobal->ConwertToString(
-    //                        ptrGlobal->ptrConfig
-    //                            ->mapArrOutParams[L"Минимальные значения:"]
-    //                            .at(0));
-    //
-    //                for (auto& [id, fСorridor] : mapSaveData)
-    //                {
-    //                    wks.cell(iYShift, id + iXShift).value() =
-    //                        to_string(fСorridor.dMin) + " (" +
-    //                        ptrGlobal->ConwertToString(
-    //                            ptrGlobal->ptrConfig->wsOutPrefMinMax) +
-    //                        fСorridor.sMin + ")";
-    //                }
-    //                ++iYShift;
-    //                ;
-    //            }
-    //        }
-    //    }
-
     fOutFile.save();
     fOutFile.close();
 
@@ -864,31 +540,6 @@ void FOutData::Out(string sOutPath)
 
 void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
 {
-    // int x = 1;
-    // int y = 1;
-    //  Теперь это выводится в OutAddInfoInit
-
-    // vector<wstring> arrHead = { L"За какой курс",
-    //                             L"Заголовок компетенции",
-    //                             L"Процент распределения Заголовка
-    //                             компетенции", L"Компетенция", L"Процент
-    //                             распределения Компетенции", L"Индекс",
-    //                             L"Процент распределения Индекса" };
-    //// Вывод заголовка
-    // y = 1, x = 1;
-    // for (const auto& it : arrHead)
-    //{
-    //     if (ptrTree->ptrGlobal->ptrConfig->mapAddOutParams.count(it))
-    //     {
-    //         arrSinglOpenWKS.back().cell(1, x++).value() =
-    //             ptrTree->ptrGlobal->ConwertToString(ptrTree->ptrGlobal->ptrConfig->mapAddOutParams[it]);
-    //     }
-    // }
-    // y         = 2;
-    // iXShift   = 1;
-    // int iOldX = 1;
-    // iXShift += arrHead.size();
-    // iYShift               = 1;
     auto& ptrCurrentTree =
         ptrTree->ptrMetric->ptrTreeMetric->mapChild[FMetric::sAllMetric];
     double dAllSum = 1.;
@@ -912,16 +563,7 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
     {
         if (sKey == FMetric::sAllMetric) continue;
         // Теперь это выводится в OutAddInfoInit
-        /*for (const auto& it : arrHead)
-        {
-            if (ptrTree->ptrGlobal->ptrConfig->mapAddOutParams.count(it))
-            {
-                arrSinglOpenWKS.back().cell(1, x++).value() =
-                    ptrTree->ptrGlobal->ConwertToString(ptrTree->ptrGlobal->ptrConfig->mapAddOutParams[it]);
-            }
-        }
-        iOldX = iXShift;
-        iXShift += arrHead.size();*/
+      
 
         dAllSum = (ptrGlobal->ptrConfig->bCompInterDelete)
                       ? ptrCurrentTree->dBalanceSum
@@ -951,19 +593,7 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
                 arrSinglLocalCurrentCourseOpenFile[0].workbook().worksheet(
                     sName);
             // Теперь это выводится в OutAddInfoInit
-            // int iLocalX = 1;
-            // for (const auto& it : arrHead)
-            //{
-            //    if (ptrTree->ptrGlobal->ptrConfig->mapAddOutParams.count(it))
-            //    {
-            //        arrSinglLocalCurrentCourseOpenWKS.back().cell(1,
-            // iLocalX++).value() =
-            //            ptrTree->ptrGlobal->ConwertToString(ptrTree->ptrGlobal->ptrConfig->mapAddOutParams[it]);
-            //    }
-            //}
-            // Вывод в отдельные файлы (уже делал расчёт раньше, он в
-            // arrDataCourse OutRectAddInfo(1, y, ptrCurrentTree, true, dAllSum,
-            // true);
+            
 
             // Выводим локально в отдельный файл
             OutTableInfo(1,
@@ -1129,74 +759,6 @@ void FOutData::CreateTableRectInfo(
     }
 }
 
-//
-// int FOutData::OutRectAddInfo(int x, int y, FTreeMetric* ptrMetric, bool
-// bIsCourse, const double dAllSum, bool bIsLocal)
-//{
-//    // Достигнут лимит глубины вывода
-//    if (x >= iXShift)
-//    {
-//        return y + 1;
-//    }
-//
-//    if (ptrMetric->sName == FMetric::sEmptyIndicator)
-//    {
-//        return y + 1;
-//    }
-//    if (bIsLocal)
-//    {
-//        arrSinglLocalCurrentCourseOpenWKS.back().cell(y, x).value() =
-//        ptrMetric->sName;
-//    }
-//    else
-//    {
-//        arrSinglOpenWKS.back().cell(y, x).value() = ptrMetric->sName;
-//    }
-//    // Выводим процент распределения
-//    if (!bIsCourse)
-//    {
-//        ++x;
-//        double dRes = 0.;
-//        if (ptrGlobal->ptrConfig->bIsPercentRegAll)
-//        {
-//            dRes = (ptrGlobal->ptrConfig->bCompInterDelete) ?
-//            ptrMetric->dBalanceSum / dAllSum : ptrMetric->dNoBalanceSum /
-//            dAllSum;
-//        }
-//        else
-//        {
-//            dRes = (ptrGlobal->ptrConfig->bCompInterDelete) ?
-//            ptrMetric->dBalanceSum / ptrMetric->ptrParent->dBalanceSum
-//                                                            :
-//                                                            ptrMetric->dNoBalanceSum
-//                                                            /
-//                                                            ptrMetric->ptrParent->dNoBalanceSum;
-//        }
-//        if (bIsLocal)
-//        {
-//            arrSinglLocalCurrentCourseOpenWKS.back().cell(y, x).value() =
-//            dRes;
-//        }
-//        else
-//        {
-//            arrSinglOpenWKS.back().cell(y, x).value() = dRes;
-//        }
-//    }
-//
-//    if (y > iYShift) iYShift = y;    // Ищем максимум, чтобы отмерить отступ
-//
-//    if (ptrMetric->mapChild.size() == 0)
-//    {
-//        return y + 1;
-//    }
-//
-//    for (auto& [sName, ptrChild] : ptrMetric->mapChild)
-//    {
-//        y = OutRectAddInfo(x + 1, y, ptrChild, false, dAllSum, bIsLocal);
-//    }
-//
-//    return y;
-//}
 
 void FOutData::CreateAndTake(string sName, string sPath)
 {
@@ -1271,55 +833,19 @@ vector<string> FOutData::CreateCommonNameLabel(const int& iGraphType,
 
 void FOutData::OutGephiData(string sName, string sPath, FTreeDisc* fTree)
 {
-    {
-        // Выводим обычный граф
-        // vector<string> arrCommonNameLabel;
-        // for (auto& it : fTree->ptrGraph->mapGraph[FGraph::iCommon].arrRel)
-        //{
-        //    FTreeElement* fThis     = fTree->mapDisc[it.first];
-        //    wstring       wsNameRaw = fThis->wsName;
-        //    string        sName     =
-        //    ptrGlobal->ReversUTF16RU(ptrGlobal->ConwertToString(wsNameRaw));
-        //    // Выводим ещё и компетенции
-        //    if (ptrGlobal->ptrConfig->bOutCompWithName)
-        //    {
-        //        sName += AddCompString(fThis->mapComp);
-        //    }
-        //    arrCommonNameLabel.push_back(sName);
-        //}
-        // OutGephiLable(sName, sName, sPath, arrCommonNameLabel);
-        OutGephiLable(sName, sName, sPath,
-                      CreateCommonNameLabel(FGraph::iCommon, fTree));
-        OutGephiRib(sName, sName, sPath,
-                    fTree->ptrGraph->mapGraph[FGraph::iCommon].fAdjList);
-    }
+    
+       
+    OutGephiLable(sName, sName, sPath,
+                    CreateCommonNameLabel(FGraph::iCommon, fTree));
+    OutGephiRib(sName, sName, sPath,
+                fTree->ptrGraph->mapGraph[FGraph::iCommon].fAdjList);
+    
 
-    {
-        // Выводим альтернативный граф
-        // vector<string> arrCommonNameLabel;
-        // for (auto& it : fTree->ptrGraph->mapGraph[FGraph::iAlt].arrRel)
-        //{
-        //    FTreeElement* fThis     = fTree->mapDisc[it.first];
-        //    wstring       wsNameRaw = fThis->wsName;
-        //    string        sName     =
-        //    ptrGlobal->ReversUTF16RU(ptrGlobal->ConwertToString(wsNameRaw));
-        //    sName += ptrGlobal->ptrConfig->sPrefCourseNumber +
-        //    to_string(it.second + 1);    // Не забываем про нуль нумерацию
-        //    курсов
-        //    // Выводим ещё и компетенции
-        //    if (ptrGlobal->ptrConfig->bOutCompWithName)
-        //    {
-        //        sName += AddCompString(fThis->mapComp);
-        //    }
-        //    arrCommonNameLabel.push_back(sName);
-        //}
-        // OutGephiLable(sName, sName + ptrGlobal->ptrConfig->sSufAltGraphFile,
-        // sPath, arrCommonNameLabel);
-        OutGephiLable(sName, sName + ptrGlobal->ptrConfig->sSufAltGraphFile,
-                      sPath, CreateCommonNameLabel(FGraph::iAlt, fTree));
-        OutGephiRib(sName, sName + ptrGlobal->ptrConfig->sSufAltGraphFile,
-                    sPath, fTree->ptrGraph->mapGraph[FGraph::iAlt].fAdjList);
-    }
+    OutGephiLable(sName, sName + ptrGlobal->ptrConfig->sSufAltGraphFile,
+                    sPath, CreateCommonNameLabel(FGraph::iAlt, fTree));
+    OutGephiRib(sName, sName + ptrGlobal->ptrConfig->sSufAltGraphFile,
+                sPath, fTree->ptrGraph->mapGraph[FGraph::iAlt].fAdjList);
+    
 
     if (fTree->ptrGlobal->ptrConfig->bCourseOutput)
     {

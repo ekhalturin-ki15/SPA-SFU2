@@ -487,6 +487,9 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
                     }
                 }
             }
+            // Принудительно ставим "да", так как имя у УП обязательно нужно
+            // выводить
+            mapArrOutParams[L"Название учебного плана"].at(1) = L"да"; 
             return true;
         }
 

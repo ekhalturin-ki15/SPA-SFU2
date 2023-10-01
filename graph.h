@@ -36,6 +36,8 @@ struct FGraphType
     double dMinSpanTree = FGraphType::dNoInit;
     double dMaxSpanTree = FGraphType::dNoInit;
 
+
+
     double             dGraphAllScore   = FGraphType::dNoInit;
     int                iGraphAmountDisc = FGraphType::dNoInit;
     double             dDense           = FGraphType::dNoInit;

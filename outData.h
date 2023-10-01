@@ -22,8 +22,6 @@ struct FСorridor
 
 struct FOutData
 {
-    static const double dDataNoInit;
-
     explicit FOutData(FGlobal* _ptrGlobal);
 
     // Начальная точка входа
