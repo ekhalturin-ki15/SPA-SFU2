@@ -63,6 +63,9 @@ struct FError
 
     void ErrorEmptyLine();
 
+    void ErrorNoFindCourse(wstring wsNameDisc);
+    void ErrorNoFindCourse(string sNameDisc);
+
     void ErrorBadParserName(wstring wsIndexName);
     void ErrorBadParserName(string sIndexName);
 

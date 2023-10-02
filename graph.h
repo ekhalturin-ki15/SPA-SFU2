@@ -19,6 +19,9 @@ struct FGraphType
     // Сопоставление названию его id (инициализируются при создании)
     map<pair<wstring, int>, int> mapReversRel;
 
+    // Вес каждого узла
+    vector<double> arrNodeWeight;
+
     // Второй вариант графа, где дисциплины связаны либо по курсам,
     // либо +- 1 сама с собой, но разнй курс
     // В паре first куда, second вес

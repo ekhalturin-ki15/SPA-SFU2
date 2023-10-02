@@ -9,6 +9,7 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       iMaxNameDiscLen(15),
       iIgnoreEmptyLine(5),
       iWeigthRib(10),
+      iSoMachComp(6),
       dMinWeigthRib(0.01),
       dMinComp(0.01),
       dAnomalBigScore(40.0),
@@ -22,6 +23,7 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       bOutCompWithName(true),
       bOutShortNameCurr(true),
       bIsUnDirected(true),
+      bDeletingSpecCharDiscName(true),
       wsNameConfig(L"./config.xlsx"),
       wsNamePage(L"Параметры"),
       sNameLableHeader("Id;Label"),
@@ -424,7 +426,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
         wsPatern = L"Псевдонимы (название страницы)";
         if (wsKey == wsPatern)
         {
-            fAlias.mapRename.clear();
+            mapAliasRename.clear();
             int i = -1;
             for (auto& page : row.cells())
             {
@@ -437,7 +439,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
                                  ptrGlobal->ConwertToString(wsNamePage)),
                              2))
                     {
-                        fAlias.mapRename[key] = val.at(0);
+                        mapAliasRename[key] = val.at(0);
                     }
                 }
             }
@@ -447,7 +449,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
         wsPatern = L"Параметры расширенного вывода (название страницы)";
         if (wsKey == wsPatern)
         {
-            fAlias.mapRename.clear();
+            mapAddOutParams.clear();
             int i = -1;
             for (auto& page : row.cells())
             {

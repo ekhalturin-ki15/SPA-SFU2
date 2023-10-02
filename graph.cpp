@@ -10,7 +10,7 @@ const int FGraph::iCommon =
 const int    FGraph::iAlt                   = -2;
 const double FGraph::dAllScoreNotEqualError = -10;
 
-const double FGraphType::dNoInit = -2e9;
+const double FGraphType::dNoInit = -2e4;
 
 // Инверсия зависимости
 FGraph::FGraph(FTreeDisc* _ptrTree) : ptrTree(_ptrTree)
@@ -260,6 +260,15 @@ void FGraph::GenerateGraph()
     for (auto& [key, val] : mapGraph[iCommon].mapReversRel)
         mapGraph[iCommon].arrRel[val] = key;
 
+    //Сохраняем вес каждой вершины
+    mapGraph[iCommon].arrNodeWeight.resize(n);
+    for (int i = 0; i < n; ++i)
+    {
+        const auto& Disc = ptrTree->mapDisc[mapGraph[iCommon].arrRel[i].first];
+        mapGraph[iCommon].arrNodeWeight[i] = Disc->dSumScore;
+    }
+
+
     FormulaParser fFormulaParser(ptrTree->ptrGlobal->ptrConfig->sFormula,
                                  ptrTree->dAllSumScore,
                                  ptrTree->iAmountDisc);
@@ -333,6 +342,23 @@ void FGraph::GenerateAltGraph()
     // Сопостовление в обратную сторону
     for (const auto& [key, val] : mapGraph[iAlt].mapReversRel)
         mapGraph[iAlt].arrRel[val] = key;
+
+    // Сохраняем вес каждой вершины
+    mapGraph[iAlt].arrNodeWeight.resize(n);
+    for (int i = 0; i < n; ++i)
+    {
+        const auto& Disc    = ptrTree->mapDisc[mapGraph[iAlt].arrRel[i].first];
+        const auto& iCourse                = mapGraph[iAlt].arrRel[i].second;
+        if (Disc->mapCourseScore.count(iCourse))
+        {
+            mapGraph[iAlt].arrNodeWeight[i] = Disc->mapCourseScore[iCourse];
+        }
+        else
+        {
+            ptrTree->ptrGlobal->ptrError->ErrorNoFindCourse(
+                mapGraph[iAlt].arrRel[i].first);
+        }
+    }
 
     FormulaParser fFormulaParser(ptrTree->ptrGlobal->ptrConfig->sFormula,
                                  ptrTree->dAllSumScore,
@@ -441,6 +467,19 @@ void FGraph::GenerateCourseGraph()
                 mapGraph[iCourse].mapReversRel[it] = iSize;
                 mapLableAccordance[iRealNumber]    = iSize;
                 ++iSize;
+            }
+        }
+
+        // Сохраняем вес каждой вершины
+        {
+            int i = -1;
+            mapGraph[iCourse].arrNodeWeight.resize(iSize);
+            for (auto& it : mapLableAccordance)
+            {
+                ++i;
+                mapGraph[iCourse].arrNodeWeight[i] =
+                    mapGraph[FGraph::iAlt].arrNodeWeight[it.first];
+                
             }
         }
 

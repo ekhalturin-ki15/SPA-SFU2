@@ -10,11 +10,6 @@ struct FPageInfo
     vector<set<wstring>> arrHeader;    // Для каждого столбца есть множество синонимов
 };
 
-struct Alias
-{
-    map<wstring, wstring> mapRename;
-};
-
 struct FConfig
 {
     explicit FConfig(FGlobal* _ptrGlobal);
@@ -30,6 +25,7 @@ struct FConfig
 
     map<wstring, vector<wstring>> mapArrOutParams;
     map<wstring, wstring>         mapAddOutParams;
+    map<wstring, wstring>         mapAliasRename;
 
     set<wstring>                  setIgnoreDisc;
     set<string>                   setIgnoreСurriculum;    // Какие УП игнорировать впринципе
@@ -85,8 +81,6 @@ struct FConfig
     std::wstring wsNamePage;
 
     bool Init();
-
-    Alias fAlias;    // Явная композиция
 
 private:
     static int iSinglControll;

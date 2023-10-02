@@ -280,6 +280,21 @@ void FError::ErrorEmptyLine()
     out.close();
 }
 
+void FError::ErrorNoFindCourse(wstring wsNameDisc)
+{
+    ErrorNoFindCourse(ptrGlobal->ConwertToString(wsNameDisc));
+}
+
+void FError::ErrorNoFindCourse(string sNameDisc)
+{
+    ofstream out = OutHeader();
+
+    out << "В учебном плане " + ptrGlobal->ptrSolve->sInPath +
+               " неправильное соответствие курса у дисциплины" + sNameDisc;
+    out << END;
+    out.close();
+}
+
 void FError::ErrorBadParserName(wstring wsIndexName)
 {
     ErrorBadParserName(ptrGlobal->ConwertToString(wsIndexName));

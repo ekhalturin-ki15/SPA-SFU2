@@ -6,8 +6,6 @@
 #include "metric.h"
 #include "solve.h"
 
-//const double FOutData::dDataNoInit = -2e9;
-
 FOutData::FOutData(FGlobal* _ptrGlobal)
     : ptrGlobal(_ptrGlobal),
       arrCompetenceHead({ L"За какой курс", L"Заголовок компетенции",
@@ -836,13 +834,15 @@ void FOutData::OutGephiData(string sName, string sPath, FTreeDisc* fTree)
     
        
     OutGephiLable(sName, sName, sPath,
-                    CreateCommonNameLabel(FGraph::iCommon, fTree));
+                  CreateCommonNameLabel(FGraph::iCommon, fTree),
+                  fTree->ptrGraph->mapGraph[FGraph::iCommon].arrNodeWeight);
     OutGephiRib(sName, sName, sPath,
                 fTree->ptrGraph->mapGraph[FGraph::iCommon].fAdjList);
     
 
-    OutGephiLable(sName, sName + ptrGlobal->ptrConfig->sSufAltGraphFile,
-                    sPath, CreateCommonNameLabel(FGraph::iAlt, fTree));
+    OutGephiLable(sName, sName + ptrGlobal->ptrConfig->sSufAltGraphFile, sPath,
+                  CreateCommonNameLabel(FGraph::iAlt, fTree),
+                  fTree->ptrGraph->mapGraph[FGraph::iAlt].arrNodeWeight);
     OutGephiRib(sName, sName + ptrGlobal->ptrConfig->sSufAltGraphFile,
                 sPath, fTree->ptrGraph->mapGraph[FGraph::iAlt].fAdjList);
     
@@ -852,7 +852,8 @@ void FOutData::OutGephiData(string sName, string sPath, FTreeDisc* fTree)
         for (int iCourse = 0; iCourse < fTree->iAmountCourse; ++iCourse)
         {
             OutGephiLable(sName, sName + "(" + to_string(iCourse + 1) + ")",
-                          sPath, CreateCommonNameLabel(iCourse, fTree));
+                          sPath, CreateCommonNameLabel(iCourse, fTree),
+                          fTree->ptrGraph->mapGraph[iCourse].arrNodeWeight);
             OutGephiRib(sName, sName + "(" + to_string(iCourse + 1) + ")",
                         sPath, fTree->ptrGraph->mapGraph[iCourse].fAdjList);
         }
@@ -861,19 +862,20 @@ void FOutData::OutGephiData(string sName, string sPath, FTreeDisc* fTree)
 
 void FOutData::OutGephiLable(const string& sName, const string& sNameFile,
                              const string&         sPath,
-                             const vector<string>& arrNameLabel)
+                             const vector<string>& arrNameLabel,
+                             const vector<double>& arrWeightNode)
 {
     ofstream outLabel(sPath + "/" + sName + "/" + sNameFile + "Lable.csv");
 
     outLabel << ptrGlobal->ptrConfig->sNameLableHeader << "\n";
 
-    // Сначало id, потом имя
-    int i = -1;
-    for (auto& it : arrNameLabel)
+    // id, имя, вес узла
+
+    for (int i = 0; i < arrWeightNode.size(); ++i)
     {
-        ++i;
         outLabel << i << ";";
-        outLabel << it << "";
+        outLabel << arrNameLabel[i] << ";";
+        outLabel << arrWeightNode[i] << "";
         outLabel << "\n";
     }
 }

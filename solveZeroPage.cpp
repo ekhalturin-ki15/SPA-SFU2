@@ -116,16 +116,16 @@ void FSolve::CreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
                         bReadName = true;
 
                         // Меняем на псевдоним из "Псевдонимы" файла config.xlsx
-                        if (ptrGlobal->ptrConfig->fAlias.mapRename.count(
+                        if (ptrGlobal->ptrConfig->mapAliasRename.count(
                                 wsData))
                         {
                             /*ptrNewNode->wsName =
-                                ptrGlobal->ptrConfig->fAlias.mapRename[wsData];*/
+                                ptrGlobal->ptrConfig->mapAliasRename[wsData];*/
 
                             ptrNewNode->sName =
                             ptrGlobal->ReversUTF16RU(ptrGlobal->ConwertToString(
-                                ptrGlobal->ptrConfig->fAlias
-                                    .mapRename[wsData]));
+                                    ptrGlobal->ptrConfig
+                                        ->mapAliasRename[wsData]));
                         }
                         else
                         {

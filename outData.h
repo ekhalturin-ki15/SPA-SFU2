@@ -55,21 +55,22 @@ private:
     void OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree);
     // void OutAddTotalInfo(FTreeDisc* ptrTree, int y);
 
-    //Записать в arrReturn только те Заголовки, которые разрешены в arrIsAllowed
+    // Записать в arrReturn только те Заголовки, которые разрешены в
+    // arrIsAllowed
     void CreateOnlyAllowedHeaderRow(vector<string>&        arrReturn,
-                           vector<bool>&         arrIsAllowed,
-                           const vector<wstring>& arrParams);
+                                    vector<bool>&          arrIsAllowed,
+                                    const vector<wstring>& arrParams);
 
-     // Записать в arrReturn только те Результаты, которые разрешены в
+    // Записать в arrReturn только те Результаты, которые разрешены в
     // arrIsAllowed
 
-    //Вначале строки добавляет имя учебного плана (sCurName)
-    void CreateOnlyAllowedResultRow(vector<string>&        arrReturn,
-                                 const int&            iSizeHeader,
-                                 vector<bool>&         arrIsAllowed,
-                                 const string&         sCurName,
-                                 const vector<double>& arrResult,
-                                 map<int, FСorridor>&  mapCorridorData);
+    // Вначале строки добавляет имя учебного плана (sCurName)
+    void CreateOnlyAllowedResultRow(vector<string>&       arrReturn,
+                                    const int&            iSizeHeader,
+                                    vector<bool>&         arrIsAllowed,
+                                    const string&         sCurName,
+                                    const vector<double>& arrResult,
+                                    map<int, FСorridor>&  mapCorridorData);
 
     void AddTableMaxMinData(vector<vector<string>>& arrToAddedData,
                             map<int, FСorridor>&    mapCorridorData);
@@ -147,15 +148,16 @@ private:
     // единожды всё вывожу
     // Возвращает true, если данные выводятся и надо увеличить значение x
     bool TakePasteData(const int& x, vector<string>& arrCurRow,
-                       const bool& bIsOutData,
-                       const double& dDate, const string& sOutData,
-                       const string& sCurName, const bool& bIsConsider,
+                       const bool& bIsOutData, const double& dDate,
+                       const string& sOutData, const string& sCurName,
+                       const bool&          bIsConsider,
                        map<int, FСorridor>& mapCorridorData);
 
     void OutGephiLable(
         const string& sName, const string& sNameFile, const string& sPath,
-        const vector<string>&
-            arrNameLabel);    // Вывод данных о графе для Gephi в формате csv
+        const vector<string>& arrNameLabel,
+        const vector<double>& arrWeightNode);    // Вывод данных о графе
+                                                 // для Gephi в формате csv
 
     void OutGephiRib(
         const string& sName, const string& sNameFile, const string& sPath,
