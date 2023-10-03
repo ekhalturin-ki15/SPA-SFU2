@@ -28,5 +28,12 @@ G.add_weighted_edges_from(Edge.values)
 
 pos = nx.spring_layout(G, seed=42)
 plt.figure(figsize=(30,30))
-nx.draw(G, pos, labels=Label, with_labels = True, font_size=12, font_weight='bold',  node_size=DataLable[['Weight']].values * 20)
+
+for edge in G.edges(data='weight'):
+    nx.draw_networkx_edges(G, pos, edgelist=[edge], width=edge[2]*40, edge_color='#000011')
+
+nx.draw(G, pos, labels=Label, width=0, with_labels = True, font_size=14, font_weight='bold',
+        node_size=DataLable[['Weight']].values * 20, node_color='#00b4d9', font_color='#ee0111')
+
+#plt.show()
 plt.savefig('labels.png')
