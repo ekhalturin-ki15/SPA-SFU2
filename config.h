@@ -32,7 +32,7 @@ struct FConfig
 
     set<char> setIgnoreCharCompHeader;
 
-    string sNameLableHeader;
+    string sNameLabelHeader;
     string sNameRibHeader;
     string sNameRibDir;
     string sPrefCourseNumber;

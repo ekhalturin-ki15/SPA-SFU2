@@ -153,7 +153,7 @@ private:
                        const bool&          bIsConsider,
                        map<int, FСorridor>& mapCorridorData);
 
-    void OutGephiLable(
+    void OutGephiLabel(
         const string& sName, const string& sNameFile, const string& sPath,
         const vector<string>& arrNameLabel,
         const vector<double>& arrWeightNode);    // Вывод данных о графе

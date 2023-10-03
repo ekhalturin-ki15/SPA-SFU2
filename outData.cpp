@@ -833,14 +833,14 @@ void FOutData::OutGephiData(string sName, string sPath, FTreeDisc* fTree)
 {
     
        
-    OutGephiLable(sName, sName, sPath,
+    OutGephiLabel(sName, sName, sPath,
                   CreateCommonNameLabel(FGraph::iCommon, fTree),
                   fTree->ptrGraph->mapGraph[FGraph::iCommon].arrNodeWeight);
     OutGephiRib(sName, sName, sPath,
                 fTree->ptrGraph->mapGraph[FGraph::iCommon].fAdjList);
     
 
-    OutGephiLable(sName, sName + ptrGlobal->ptrConfig->sSufAltGraphFile, sPath,
+    OutGephiLabel(sName, sName + ptrGlobal->ptrConfig->sSufAltGraphFile, sPath,
                   CreateCommonNameLabel(FGraph::iAlt, fTree),
                   fTree->ptrGraph->mapGraph[FGraph::iAlt].arrNodeWeight);
     OutGephiRib(sName, sName + ptrGlobal->ptrConfig->sSufAltGraphFile,
@@ -851,7 +851,7 @@ void FOutData::OutGephiData(string sName, string sPath, FTreeDisc* fTree)
     {
         for (int iCourse = 0; iCourse < fTree->iAmountCourse; ++iCourse)
         {
-            OutGephiLable(sName, sName + "(" + to_string(iCourse + 1) + ")",
+            OutGephiLabel(sName, sName + "(" + to_string(iCourse + 1) + ")",
                           sPath, CreateCommonNameLabel(iCourse, fTree),
                           fTree->ptrGraph->mapGraph[iCourse].arrNodeWeight);
             OutGephiRib(sName, sName + "(" + to_string(iCourse + 1) + ")",
@@ -860,14 +860,14 @@ void FOutData::OutGephiData(string sName, string sPath, FTreeDisc* fTree)
     }
 }
 
-void FOutData::OutGephiLable(const string& sName, const string& sNameFile,
+void FOutData::OutGephiLabel(const string& sName, const string& sNameFile,
                              const string&         sPath,
                              const vector<string>& arrNameLabel,
                              const vector<double>& arrWeightNode)
 {
-    ofstream outLabel(sPath + "/" + sName + "/" + sNameFile + "Lable.csv");
+    ofstream outLabel(sPath + "/" + sName + "/" + sNameFile + "Label.csv");
 
-    outLabel << ptrGlobal->ptrConfig->sNameLableHeader << "\n";
+    outLabel << ptrGlobal->ptrConfig->sNameLabelHeader << "\n";
 
     // id, имя, вес узла
 

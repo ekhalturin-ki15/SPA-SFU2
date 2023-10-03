@@ -455,7 +455,7 @@ void FGraph::GenerateCourseGraph()
     for (int iCourse = 0; iCourse < this->ptrTree->iAmountCourse; ++iCourse)
     {
         // Выводим  граф по курсам
-        map<int, int> mapLableAccordance;    // Новая индексация дисциплин
+        map<int, int> mapLabelAccordance;    // Новая индексация дисциплин
                                              // (локальная для данного курса)
         int iSize       = 0;
         int iRealNumber = -1;
@@ -465,7 +465,7 @@ void FGraph::GenerateCourseGraph()
             if (it.second == iCourse)
             {
                 mapGraph[iCourse].mapReversRel[it] = iSize;
-                mapLableAccordance[iRealNumber]    = iSize;
+                mapLabelAccordance[iRealNumber]    = iSize;
                 ++iSize;
             }
         }
@@ -474,7 +474,7 @@ void FGraph::GenerateCourseGraph()
         {
             int i = -1;
             mapGraph[iCourse].arrNodeWeight.resize(iSize);
-            for (auto& it : mapLableAccordance)
+            for (auto& it : mapLabelAccordance)
             {
                 ++i;
                 mapGraph[iCourse].arrNodeWeight[i] =
@@ -489,14 +489,14 @@ void FGraph::GenerateCourseGraph()
         for (const auto& [key, val] : mapGraph[iCourse].mapReversRel)
             mapGraph[iCourse].arrRel[val] = key;
 
-        for (auto& it : mapLableAccordance)
+        for (auto& it : mapLabelAccordance)
         {
             for (auto& et : mapGraph[FGraph::iAlt].fAdjList[it.first])
             {
-                if (mapLableAccordance.count(et.first))
+                if (mapLabelAccordance.count(et.first))
                 {
                     mapGraph[iCourse].fAdjList[it.second].push_back(
-                        { mapLableAccordance[et.first], et.second });
+                        { mapLabelAccordance[et.first], et.second });
                 }
             }
         }

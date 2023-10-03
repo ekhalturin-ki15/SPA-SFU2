@@ -26,7 +26,7 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       bDeletingSpecCharDiscName(true),
       wsNameConfig(L"./config.xlsx"),
       wsNamePage(L"Параметры"),
-      sNameLableHeader("Id;Label"),
+      sNameLabelHeader("Id;Label"),
       sNameRibHeader("Source;Target;Type;Weight"),
       sNameRibDir("Undirected"),
       arrNameFileIn({ L"plans\grad", L"plans\spec" }),
@@ -164,7 +164,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
         wsPatern = L"Заголовок файла с названиями вершин";
         if (wsKey == wsPatern)
         {
-            ptrGlobal->TakeData(sNameLableHeader, row);
+            ptrGlobal->TakeData(sNameLabelHeader, row);
             return true;
         }
 
