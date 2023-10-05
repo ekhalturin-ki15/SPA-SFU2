@@ -44,7 +44,7 @@ struct FConfig
     string sFormula;
 
     wstring wsOutPrefMinMax;
-    string sOutPrefAllCurriculaAllCourse;
+    //string sOutPrefAllCurriculaAllCourse;
     string sOutPrefAllCurriculaCurrentCourse;
     wstring wsOutPrefAllCourse;
     wstring wsOutSufAmountComp;
@@ -63,6 +63,7 @@ struct FConfig
     bool bOutShortNameCurr;
     bool bIsUnDirected;
     bool bDeletingSpecCharDiscName;
+    bool bIsNormalizeScoreComp;
 
     vector<bool> bArrIsSolveGraphMetric;
 

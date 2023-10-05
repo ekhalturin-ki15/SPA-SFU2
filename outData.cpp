@@ -8,10 +8,16 @@
 
 FOutData::FOutData(FGlobal* _ptrGlobal)
     : ptrGlobal(_ptrGlobal),
-      arrCompetenceHead({ L"За какой курс", L"Заголовок компетенции",
+      arrCompetenceHead({ L"За какой курс",
+
+                          L"Заголовок компетенции", L"ЗЕ Заголовка компетенции",
                           L"Процент распределения Заголовка компетенции",
-                          L"Компетенция", L"Процент распределения Компетенции",
-                          L"Индекс", L"Процент распределения Индекса" }),
+
+                          L"Компетенция", L"ЗЕ Компетенций",
+                          L"Процент распределения Компетенции",
+
+                          L"Индикатор", L"ЗЕ индикаторов",
+                          L"Процент распределения Индикатора" }),
       arrMetricHead(
           { // L"Название учебного плана",
             L"Всего ЗЕ в графе", L"Кол-во дисциплин в графе",
@@ -20,11 +26,10 @@ FOutData::FOutData(FGlobal* _ptrGlobal)
             // что указаны в
             //  УП, как неучитываемые
             L"Максимальное ЗЕ у дисциплины", L"Минимальное ЗЕ у дисциплины",
-            L"Максимальный вес ребра", L"Минимальный вес ребра", 
+            L"Максимальный вес ребра", L"Минимальный вес ребра",
             L"Диаметр графа по расстоянию",
             L"Диаметр графа по количеству рёбер",
-            L"Количество компонент связности", 
-            L"Максимальное оставное дерево",
+            L"Количество компонент связности", L"Максимальное оставное дерево",
             L"Минимальное оставное дерево", L"Плотность графа",
             L"Количество основных дисциплин", L"Количество дисциплин по выбору",
             L"Количество факультативов" })
@@ -41,11 +46,9 @@ void FOutData::CreateTotalInfo(vector<double>&   arrReturnDataMetrics,
     arrResult = { fGraph->dGraphAllScore, double(fGraph->iGraphAmountDisc),
                   // fGraph->dGraphAllScore,
                   // double(fGraph->iGraphAmountDisc),
-                  fGraph->dMaxDiscScore, fGraph->dMinDiscScore, 
-                  fGraph->dMaxRib,
+                  fGraph->dMaxDiscScore, fGraph->dMinDiscScore, fGraph->dMaxRib,
                   fGraph->dMinRib, fGraph->dDiametrLen, fGraph->dDiametrStep,
-                  double(fGraph->iComponent), 
-                  fGraph->dMaxSpanTree,
+                  double(fGraph->iComponent), fGraph->dMaxSpanTree,
                   fGraph->dMinSpanTree, fGraph->dDense };
 
     for (int iTag = 0; iTag < ETagDisc::ETD_Size; ++iTag)
@@ -224,7 +227,7 @@ void FOutData::CreateOnlyAllowedResultRow(vector<string>&       arrReturn,
     int x = 0;
 
     arrReturn.clear();
-   
+
     arrReturn.resize(iSizeHeader);
 
     if (TakePasteData(x, arrReturn, arrIsAllowed[i++], sCurName.size(),
@@ -368,7 +371,7 @@ void FOutData::CreateAllCurriculaTotalData(
 
                     dRes = (ptrGlobal->ptrConfig->bCompInterDelete)
                                ? dScore / ptrTreeMetric->dBalanceSum
-                               : dScore / it->dAllSumScore;
+                               : dScore / ptrTreeMetric->dNoBalanceSum;
                 }
                 else
                 {
@@ -407,7 +410,6 @@ void FOutData::CreateAllCurriculaTotalData(
 
     //  Вывод коридора минимума максимума
     AddTableMaxMinData(arrReturnData, mapSaveСorridorData);
-  
 }
 
 void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
@@ -463,7 +465,7 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
 
         vector<string> arrCurData;
         CreateOnlyAllowedResultRow(arrCurData, arrHeader.size(), arrOutColm,
-                                sCurName, arrAllResult, mapSaveСorridorData);
+                                   sCurName, arrAllResult, mapSaveСorridorData);
 
         arrReturnData.push_back(arrCurData);
     }
@@ -484,7 +486,8 @@ void FOutData::Out(string sOutPath)
     OutTableInfo(1, 1, arrAllCurriculaTotalData, wks);
 
     {
-        string sNamePage = ptrGlobal->ptrConfig->sOutPrefAllCurriculaAllCourse;
+        string sNamePage = this->ptrGlobal->ConwertToString(
+            ptrGlobal->ptrConfig->wsOutPrefAllCourse);
         fOutFile.workbook().addWorksheet(sNamePage);
         wks = fOutFile.workbook().worksheet(sNamePage);
         vector<vector<string>> arrAllCoursesGraphData;
@@ -561,7 +564,6 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
     {
         if (sKey == FMetric::sAllMetric) continue;
         // Теперь это выводится в OutAddInfoInit
-      
 
         dAllSum = (ptrGlobal->ptrConfig->bCompInterDelete)
                       ? ptrCurrentTree->dBalanceSum
@@ -591,7 +593,6 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
                 arrSinglLocalCurrentCourseOpenFile[0].workbook().worksheet(
                     sName);
             // Теперь это выводится в OutAddInfoInit
-            
 
             // Выводим локально в отдельный файл
             OutTableInfo(1,
@@ -697,7 +698,7 @@ void FOutData::CountRectArraySize(int& iSizeX, int& iSizeY, int x, int y,
 
     for (auto& [sName, ptrChild] : ptrMetric->mapChild)
     {
-        CountRectArraySize(iSizeX, iSizeY, x + 2, y, ptrChild);
+        CountRectArraySize(iSizeX, iSizeY, x + 3, y, ptrChild);
     }
     return;
 }
@@ -721,6 +722,17 @@ void FOutData::CreateTableRectInfo(
     }
 
     arrReturnData[iCurrentY][x] = ptrMetric->sName;
+    // Выводим кол-во ЗЕ
+    if (!bIsCourse)
+    {
+        ++x;
+        double dRes = 0.;
+        dRes = (ptrGlobal->ptrConfig->bCompInterDelete)
+                       ? ptrMetric->dBalanceSum
+                       : ptrMetric->dNoBalanceSum;
+        arrReturnData[iCurrentY][x] = to_string(dRes);
+    }
+
     // Выводим процент распределения
     if (!bIsCourse)
     {
@@ -756,7 +768,6 @@ void FOutData::CreateTableRectInfo(
                             false, dAllSum, bIsLocal);
     }
 }
-
 
 void FOutData::CreateAndTake(string sName, string sPath)
 {
@@ -831,21 +842,17 @@ vector<string> FOutData::CreateCommonNameLabel(const int& iGraphType,
 
 void FOutData::OutGephiData(string sName, string sPath, FTreeDisc* fTree)
 {
-    
-       
     OutGephiLabel(sName, sName, sPath,
                   CreateCommonNameLabel(FGraph::iCommon, fTree),
                   fTree->ptrGraph->mapGraph[FGraph::iCommon].arrNodeWeight);
     OutGephiRib(sName, sName, sPath,
                 fTree->ptrGraph->mapGraph[FGraph::iCommon].fAdjList);
-    
 
     OutGephiLabel(sName, sName + ptrGlobal->ptrConfig->sSufAltGraphFile, sPath,
                   CreateCommonNameLabel(FGraph::iAlt, fTree),
                   fTree->ptrGraph->mapGraph[FGraph::iAlt].arrNodeWeight);
-    OutGephiRib(sName, sName + ptrGlobal->ptrConfig->sSufAltGraphFile,
-                sPath, fTree->ptrGraph->mapGraph[FGraph::iAlt].fAdjList);
-    
+    OutGephiRib(sName, sName + ptrGlobal->ptrConfig->sSufAltGraphFile, sPath,
+                fTree->ptrGraph->mapGraph[FGraph::iAlt].fAdjList);
 
     if (fTree->ptrGlobal->ptrConfig->bCourseOutput)
     {

@@ -297,6 +297,13 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
+        wsPatern = L"Делить ЗЕ у компетениции на кол-во компетенций в дисциплине";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(bIsNormalizeScoreComp, row);
+            return true;
+        }
+
         wsPatern = L"Граф неориентированный";
         if (wsKey == wsPatern)
         {
@@ -367,7 +374,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             L"Предлог перед выводом статистики по всем курсам";
         if (wsKey == wsPatern)
         {
-            ptrGlobal->TakeData(sOutPrefAllCurriculaAllCourse, row);
+            ptrGlobal->TakeData(wsOutPrefAllCourse, row);
             return true;
         }
 
@@ -378,12 +385,12 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
-        wsPatern = L"Надпись при выводе информации о всех курсах";
+       /* wsPatern = L"Надпись при выводе информации о всех курсах";
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(wsOutPrefAllCourse, row);
             return true;
-        }
+        }*/
 
         wsPatern = L"Суффикс после вывода кол-во компетенций у дисциплины";
         if (wsKey == wsPatern)

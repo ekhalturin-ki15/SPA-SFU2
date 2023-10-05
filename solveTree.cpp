@@ -77,7 +77,7 @@ void FTreeDisc::CountDisc()
     this->iAmountDisc = 0;
     for (const auto& [key, it] : mapDisc)
     {
-        if (it->dSumScore <= 0) continue; // Баг в УП (ложные дисциплины из страницы Компетенции(2))
+        //if (it->dSumScore <= 0) continue; // Баг в УП (ложные дисциплины из страницы Компетенции(2))
 
         if ((it->arrChild.size() == 0) && (it->bAllow))
         {

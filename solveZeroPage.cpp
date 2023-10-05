@@ -159,8 +159,12 @@ void FSolve::CreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
                              {
                                 ptrNewNode->sName =
                                     std::regex_replace(ptrNewNode->sName,
-                                                       std::regex("[(),.-]"),
+                                                       std::regex("[(),.]"),
                                                        "");
+                                ptrNewNode->sName =
+                                    std::regex_replace(ptrNewNode->sName,
+                                                       std::regex("[-]"),
+                                                       " ");
                              }
                         }
 

@@ -12,7 +12,7 @@ struct FTreeMetric
     string sName = "-";
 
     // Получилось матрёшка
-    double                    dNoBalanceSum = 0.;    // Всего ЗЕ с пересечением у всех Компетенций
+    double                    dNoBalanceSum = 0.;    // Всего ЗЕ без пересечения у всех Компетенций
     double                    dBalanceSum   = 0.;    // Всего ЗЕ с пересечением у всех Компетенций
     map<string, FTreeMetric*> mapChild;
     FTreeMetric*              ptrParent = nullptr;    // Инверсия зависимости

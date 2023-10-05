@@ -141,6 +141,14 @@ void FMetric::Create()
                                 // также и по типу анализа
         //(целиком, или только по определённому курсу)
 
+        double dAmountInd = 0;    // Если установлен флаг bIsNormalizeScoreComp,
+                                  // то делим ЗЕ на кол-во индикаторов
+        for (auto& [comp, arrInd] : it->mapComp)
+        {
+            dAmountInd += 1 > arrInd.size() ? 1 : arrInd.size();
+        }
+        dAmountInd = 1 > dAmountInd ? 1 : dAmountInd; // Но 0 делить нельзя
+
         ++iL;
         for (auto& [comp, arrInd] : it->mapComp)
         {
@@ -176,56 +184,42 @@ void FMetric::Create()
                     }
                 }
 
-                UpdateCourseMetric(ptrTreeMetric->mapChild[sAllMetric],
-                                   mapIsTakenScore,
-                                   { sCompName, sCompNumber, sIndicatorNumber },
-                                   it->dSumScore);
+                {
+                    double dNormalizeScore = it->dSumScore;
+                    if (ptrTree->ptrGlobal->ptrConfig->bIsNormalizeScoreComp)
+                    {
+                        // Делим всё на кол-во индикаторов, так как считаем, что
+                        // все ЗЕ равномерно делятся на изучение каждого
+                        // индикатора (причём, не параллельно)
+                        dNormalizeScore /= dAmountInd;
+                    }
+
+                    UpdateCourseMetric(
+                        ptrTreeMetric->mapChild[sAllMetric],
+                        mapIsTakenScore,
+                        { sCompName, sCompNumber, sIndicatorNumber },
+                        dNormalizeScore);
+                }
 
                 for (auto [iCourse, dScore] : it->mapCourseScore)
                 {
+                    double dNormalizeScore = dScore;
+                    if (ptrTree->ptrGlobal->ptrConfig->bIsNormalizeScoreComp)
+                    {
+                        dNormalizeScore /= dAmountInd;
+                    }
+
                     string sCourse = to_string(iCourse + 1);
                     UpdateCourseMetric(
                         ptrTreeMetric->mapChild[sCourse],
                         mapIsTakenScore,
                         { sCompName, sCompNumber, sIndicatorNumber },
-                        dScore);
+                        dNormalizeScore);
                 }
             }
         }
 
         // Восходящая инициализация (с листьев) для высчитывания iBalanceSum
         InitBalanceScore();
-
-        //	//Пересечение компетенций учитываем несколько раз, чтобы получилось
-        //100% 	fMetric->mapChild[sAllMetric]->iSum += setComp.size() *
-        //it->dSumScore;
-        //	//mapMetric[iAllMetric].iBalancAmountComp += setComp.size() *
-        //it->dSumScore;
-
-        //	for (auto& et : setComp)
-        //	{
-        //		if (!fMetric->mapChild[sAllMetric]->mapChild.count(et))
-        //		{
-        //			fMetric->mapChild[sAllMetric]->mapChild[et] = new
-        //FTreeMetric;
-        //		}
-
-        //		fMetric->mapChild[sAllMetric]->mapChild[et]->iSum +=
-        //it->dSumScore;
-        //	}
-
-        //	//Теперь высчитываем по каждому курсу по отдельности
-        //	for (int iCourse = 0; iCourse < ptrTree->iAmountCourse; ++iCourse)
-        //	{
-        //		if (!it->mapCourseScore.count(iCourse)) continue; // Чтобы не
-        //забивать map нулями
-        //		//Пересечение компетенций учитываем несколько раз, чтобы
-        //получилось 100% 		mapMetric[iCourse].iBalancAmountComp += setComp.size()
-        //* it->mapCourseScore[iCourse]; 		for (auto& et : setComp)
-        //		{
-        //			mapMetric[iCourse].mapCompDistr[et] +=
-        //it->mapCourseScore[iCourse];
-        //		}
-        //	}
     }
 }
