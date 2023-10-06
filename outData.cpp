@@ -128,7 +128,12 @@ void FOutData::CreateTotalInfo(vector<string>&   arrReturnDataHeader,
 
             sAddedHead += to_string(iAmountComp) + " ";
             sAddedHead += ptrGlobal->ConwertToString(
-                ptrGlobal->ptrConfig->wsOutSufAmountComp);
+                ptrGlobal->ptrConfig
+                    ->mapArrOutParams[L"Суффикс после вывода кол-во "
+                                      L"компетенций у дисциплины"]
+                    .at(0));
+            // sAddedHead += ptrGlobal->ConwertToString(
+            //     ptrGlobal->ptrConfig->wsOutSufAmountComp);
 
             arrReturnDataHeader.push_back(sAddedHead);
         }
@@ -191,7 +196,13 @@ void FOutData::CreateOnlyAllowedHeaderRow(vector<string>&        arrReturn,
 
                     sOut += to_string(iAmountComp++) + " ";
                     sOut += ptrGlobal->ConwertToString(
-                        ptrGlobal->ptrConfig->wsOutSufAmountComp);
+                        ptrGlobal->ptrConfig
+                            ->mapArrOutParams[L"Суффикс после вывода кол-во "
+                                              L"компетенций у дисциплины"]
+                            .at(0));
+
+                    // sOut += ptrGlobal->ConwertToString(
+                    //     ptrGlobal->ptrConfig->wsOutSufAmountComp);
                 }
 
                 arrReturn.push_back(sOut);
@@ -276,10 +287,19 @@ void FOutData::AddTableMaxMinData(vector<vector<string>>& arrToAddedData,
 
                 for (auto& [id, fСorridor] : mapCorridorData)
                 {
-                    arrMinMaxData.push_back(
+                    /*arrMinMaxData.push_back(
                         to_string(fСorridor.dMaxMin[i]) + " (" +
                         ptrGlobal->ConwertToString(
                             ptrGlobal->ptrConfig->wsOutPrefMinMax) +
+                        fСorridor.sMaxMin[i] + ")");  */
+
+                    arrMinMaxData.push_back(
+                        to_string(fСorridor.dMaxMin[i]) + " (" +
+                        ptrGlobal->ConwertToString(
+                            ptrGlobal->ptrConfig
+                                ->mapArrOutParams[L"Предлог перед выводом "
+                                                  L"результата мин. макс."]
+                                .at(0)) +
                         fСorridor.sMaxMin[i] + ")");
                 }
 
@@ -487,7 +507,14 @@ void FOutData::Out(string sOutPath)
 
     {
         string sNamePage = this->ptrGlobal->ConwertToString(
-            ptrGlobal->ptrConfig->wsOutPrefAllCourse);
+            ptrGlobal->ptrConfig
+                ->mapArrOutParams
+                    [L"Предлог перед выводом статистики по всем курсам"]
+                .at(0));
+
+        /*string sNamePage = this->ptrGlobal->ConwertToString(
+            ptrGlobal->ptrConfig->wsOutPrefAllCourse);*/
+
         fOutFile.workbook().addWorksheet(sNamePage);
         wks = fOutFile.workbook().worksheet(sNamePage);
         vector<vector<string>> arrAllCoursesGraphData;
@@ -498,8 +525,15 @@ void FOutData::Out(string sOutPath)
     for (int iCourse = 0; iCourse < this->ptrGlobal->ptrSolve->iMaxCourse;
          ++iCourse)
     {
-        string sNamePage =
-            ptrGlobal->ptrConfig->sOutPrefAllCurriculaCurrentCourse;
+        // string sNamePage =
+        //     ptrGlobal->ptrConfig->sOutPrefAllCurriculaCurrentCourse;
+
+        string sNamePage = ptrGlobal->ConwertToString(
+            ptrGlobal->ptrConfig
+                ->mapArrOutParams[L"Предлог перед выводом статистики по курсу "
+                                  L"определённого номера"]
+                .at(0));
+
         sNamePage = sNamePage + " " + to_string(iCourse + 1);
         fOutFile.workbook().addWorksheet(sNamePage);
         wks = fOutFile.workbook().worksheet(sNamePage);
@@ -726,10 +760,10 @@ void FOutData::CreateTableRectInfo(
     if (!bIsCourse)
     {
         ++x;
-        double dRes = 0.;
-        dRes = (ptrGlobal->ptrConfig->bCompInterDelete)
-                       ? ptrMetric->dBalanceSum
-                       : ptrMetric->dNoBalanceSum;
+        double dRes                 = 0.;
+        dRes                        = (ptrGlobal->ptrConfig->bCompInterDelete)
+                                          ? ptrMetric->dBalanceSum
+                                          : ptrMetric->dNoBalanceSum;
         arrReturnData[iCurrentY][x] = to_string(dRes);
     }
 
@@ -848,11 +882,35 @@ void FOutData::OutGephiData(string sName, string sPath, FTreeDisc* fTree)
     OutGephiRib(sName, sName, sPath,
                 fTree->ptrGraph->mapGraph[FGraph::iCommon].fAdjList);
 
-    OutGephiLabel(sName, sName + ptrGlobal->ptrConfig->sSufAltGraphFile, sPath,
-                  CreateCommonNameLabel(FGraph::iAlt, fTree),
-                  fTree->ptrGraph->mapGraph[FGraph::iAlt].arrNodeWeight);
-    OutGephiRib(sName, sName + ptrGlobal->ptrConfig->sSufAltGraphFile, sPath,
-                fTree->ptrGraph->mapGraph[FGraph::iAlt].fAdjList);
+    OutGephiLabel(
+        sName,
+        sName +
+            ptrGlobal->ConwertToString(
+                ptrGlobal->ptrConfig
+                    ->mapArrOutParams
+                        [L"Суффикс названия альтернативного графа при выводе"]
+                    .at(0)),
+        sPath,
+        CreateCommonNameLabel(FGraph::iAlt, fTree),
+        fTree->ptrGraph->mapGraph[FGraph::iAlt].arrNodeWeight);
+
+    /*OutGephiLabel(sName, sName + ptrGlobal->ptrConfig->sSufAltGraphFile,
+       sPath, CreateCommonNameLabel(FGraph::iAlt, fTree),
+                  fTree->ptrGraph->mapGraph[FGraph::iAlt].arrNodeWeight);*/
+
+    OutGephiRib(
+        sName,
+        sName +
+            ptrGlobal->ConwertToString(
+                ptrGlobal->ptrConfig
+                    ->mapArrOutParams
+                        [L"Суффикс названия альтернативного графа при выводе"]
+                    .at(0)),
+        sPath,
+        fTree->ptrGraph->mapGraph[FGraph::iAlt].fAdjList);
+
+    /*OutGephiRib(sName, sName + ptrGlobal->ptrConfig->sSufAltGraphFile, sPath,
+                fTree->ptrGraph->mapGraph[FGraph::iAlt].fAdjList);*/
 
     if (fTree->ptrGlobal->ptrConfig->bCourseOutput)
     {

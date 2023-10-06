@@ -36,18 +36,19 @@ struct FConfig
     string sNameRibHeader;
     string sNameRibDir;
     string sPrefCourseNumber;
-    string sSufAltGraphFile;
+    
 
     string sRegexComp;
     string sRegexHeaderIndicator;
     string sRegexHeaderComp;
     string sFormula;
 
-    wstring wsOutPrefMinMax;
+    //wstring wsOutPrefMinMax;
     //string sOutPrefAllCurriculaAllCourse;
-    string sOutPrefAllCurriculaCurrentCourse;
-    wstring wsOutPrefAllCourse;
-    wstring wsOutSufAmountComp;
+    //string sOutPrefAllCurriculaCurrentCourse;
+    //string sSufAltGraphFile;
+    //wstring wsOutPrefAllCourse;
+    //wstring wsOutSufAmountComp;
 
     wstring wsNameDebugFile;
     wstring wsNameLogFile;

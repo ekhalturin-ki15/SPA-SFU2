@@ -44,8 +44,14 @@ void FMetric::InitBalanceScore() { ptrTreeMetric->InitBalanceScore(); }
 // Инверсия зависимости
 FMetric::FMetric(FTreeDisc* _ptrTree) : ptrTree(_ptrTree)
 {
+    // sAllMetric = _ptrTree->ptrGlobal->ConwertToString(
+    //     _ptrTree->ptrGlobal->ptrConfig->wsOutPrefAllCourse);
+
     sAllMetric = _ptrTree->ptrGlobal->ConwertToString(
-        _ptrTree->ptrGlobal->ptrConfig->wsOutPrefAllCourse);
+        _ptrTree->ptrGlobal->ptrConfig
+            ->mapArrOutParams
+                [L"Предлог перед выводом статистики по всем курсам"]
+            .at(0));
 
     try
     {
@@ -147,7 +153,7 @@ void FMetric::Create()
         {
             dAmountInd += 1 > arrInd.size() ? 1 : arrInd.size();
         }
-        dAmountInd = 1 > dAmountInd ? 1 : dAmountInd; // Но 0 делить нельзя
+        dAmountInd = 1 > dAmountInd ? 1 : dAmountInd;    // Но 0 делить нельзя
 
         ++iL;
         for (auto& [comp, arrInd] : it->mapComp)

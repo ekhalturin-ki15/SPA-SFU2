@@ -33,10 +33,10 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       arrNameFileOut({ L"result\grad", L"result\spec" }),
       wsNameDebugFile(L"debugFile.txt"),
       wsNameLogFile(L"logFile.txt"),
-      wsOutPrefMinMax(L"у УП "),
-      wsOutPrefAllCourse(L"Все курсы"),
-      sPrefCourseNumber("_"),
-      sSufAltGraphFile("Alt"),
+      //wsOutPrefMinMax(L"у УП "),
+      //wsOutPrefAllCourse(L"Все курсы"),
+      //sPrefCourseNumber("_"),
+      //sSufAltGraphFile("Alt"),
       sRegexComp("{0, 1}(.{0, } ? ); "),
       sRegexHeaderIndicator("(.{1,})-(.{1,})\.(.{1,})"),
       sFormula("((L + R) / 2) * K")
@@ -325,7 +325,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
-        wsPatern = L"Удалить спецсимволы из наименования компетенции";
+        wsPatern = L"Спецсимволы для удаления из наименования компетенции";
         if (wsKey == wsPatern)
         {
             string sData;
@@ -363,27 +363,27 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
-        wsPatern = L"Предлог перед выводом статистики по курсу определённого номера";
+        /*wsPatern = L"Предлог перед выводом статистики по курсу определённого номера";
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(sOutPrefAllCurriculaCurrentCourse, row);
             return true;
-        }
+        }*/
 
-        wsPatern =
+        /*wsPatern =
             L"Предлог перед выводом статистики по всем курсам";
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(wsOutPrefAllCourse, row);
             return true;
-        }
+        }*/
 
-        wsPatern = L"Предлог перед выводом результата мин. макс.";
+        /*wsPatern = L"Предлог перед выводом результата мин. макс.";
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(wsOutPrefMinMax, row);
             return true;
-        }
+        }*/
 
        /* wsPatern = L"Надпись при выводе информации о всех курсах";
         if (wsKey == wsPatern)
@@ -392,25 +392,24 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }*/
 
-        wsPatern = L"Суффикс после вывода кол-во компетенций у дисциплины";
+        /*wsPatern = L"Суффикс после вывода кол-во компетенций у дисциплины";
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(wsOutSufAmountComp, row);
             return true;
-        }
+        }*/
 
+        /*wsPatern = L"Суффикс названия альтернативного графа при выводе";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(sSufAltGraphFile, row);
+            return true;
+        }*/
 
         wsPatern = L"Разделитель между названием дисциплины и её курсом";
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(sPrefCourseNumber, row);
-            return true;
-        }
-
-        wsPatern = L"Суффикс названия альтернативного графа при выводе";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(sSufAltGraphFile, row);
             return true;
         }
 
@@ -490,7 +489,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
                     for (auto& [key, val] : ptrGlobal->SetMapParams(
                              fBook.worksheet(
                                  ptrGlobal->ConwertToString(wsNamePage)),
-                             4))
+                             {2, 3, 4}))
                     {
                         mapArrOutParams[key] = val;
                     }
@@ -498,7 +497,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             }
             // Принудительно ставим "да", так как имя у УП обязательно нужно
             // выводить
-            mapArrOutParams[L"Название учебного плана"].at(1) = L"да"; 
+            mapArrOutParams[L"Название учебного плана"].push_back( L"да" ); 
             return true;
         }
 

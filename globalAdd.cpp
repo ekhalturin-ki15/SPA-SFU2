@@ -84,6 +84,45 @@ void FGlobal::TakeData(double& outIData, const OpenXLSX::XLRow& row)
 }
 
 vector<pair<wstring, vector<wstring>>>
+    FGlobal::SetMapParams(const OpenXLSX::XLWorksheet& fPage,
+                          set<int>
+                              setUsedSize)
+{
+    vector<pair<wstring, vector<wstring>>> arrReturn;
+    int                                    y = -1;
+    for (auto row : fPage.rows())
+    {
+        y++;
+        if (y)    // Игнорируем первую строку, в ней описание столбцов
+        {
+            wstring wsKeyName;
+            wstring wsRename;
+
+            int i = -1;
+            for (auto& column : row.cells())
+            {
+                ++i;
+                if (i == 0)
+                {
+                    wsKeyName = GetValue(column);
+                    arrReturn.push_back({ wsKeyName, vector<wstring>() });
+                }
+                else
+                {
+                    wsRename = GetValue(column);
+                    arrReturn.back().second.push_back(wsRename);
+                }
+            }
+
+            if (!setUsedSize.count(i + 1))
+                throw std::out_of_range("No equeal " + to_string(i) + "!+");
+        }
+    }
+
+    return arrReturn;
+}
+
+vector<pair<wstring, vector<wstring>>>
     FGlobal::SetMapParams(const OpenXLSX::XLWorksheet& fPage, int iSize)
 {
     vector<pair<wstring, vector<wstring>>> arrReturn;
