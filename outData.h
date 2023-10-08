@@ -108,20 +108,23 @@ private:
                              const double dAllSum, bool bIsLocal = false);
 
     void CreateTableRectInfo(
+        const bool& bIsCounting,    // Если true - то проход в холостую для
+                                    // определения iSizeX
         vector<vector<string>>&
             arrReturnData,    // Возвращаемое значение с функции
-        int x, const int& iSizeX,
+        int x,
+        int& iSizeX,    // Если считаем вхолостую, когда bIsCounting == true, то
+                        // записываем в iSizeX результат
         int&         iCurrentY,    // Глобальная переменая
         FTreeMetric* ptrMetric, bool bIsCourse, const double dAllSum,
-        bool bIsLocal = false);    // Возвращает Актуальное занчение y
+        const bool& bIsLocal = false);    // Возвращает Актуальное занчение y
 
-    // Проход рекурсии вхолостую
-    void CountRectArraySize(
-        int& iSizeX,
-        int& iSizeY,
-        int  x,
-        int  y,
-        FTreeMetric* ptrMetric);    // Возвращает Актуальное занчение y
+    //// Проход рекурсии вхолостую (теперь находится в CreateTableRectInfo)
+    // void CountRectArraySize(
+    //     int& iSizeX,
+    //     int& iSizeY,
+    //     int  x,
+    //     FTreeMetric* ptrMetric);    // Возвращает Актуальное занчение y
 
     vector<string> CreateCommonNameLabel(const int& iGraphType,
                                          FTreeDisc* fTree);
@@ -135,14 +138,6 @@ private:
     // map<int, FСorridor> mapSaveData;
     void RetakeMinMax(FСorridor& fSaveData, const double& dNewData,
                       const string& sNewData);
-
-    // Вместо вывода теперь формирую строки при помощи TakePasteData, а потом
-    // единожды всё вывожу
-    /*void OutData(int& x, const int iIsOutData, const int& y, double dDate,
-                 string sDate,
-                 OpenXLSX::XLWorksheet& wks, string sOutData,
-                 const bool& bIsConsider, const int& iXShift,
-                 const int& iYShift, map<int, FСorridor>& mapCorridorData);*/
 
     // Вместо вывода теперь формирую строки при помощи TakePasteData, а потом
     // единожды всё вывожу

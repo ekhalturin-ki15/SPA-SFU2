@@ -14,7 +14,7 @@ struct FMetric;
 // };
 
 // Тип дисциплины (основная, по выбору, факультатив)
-enum ETagDisc : int
+enum ETypeDisc : int
 {
     ETD_Common,
     ETD_Chosen,
@@ -44,7 +44,7 @@ struct FTreeElement
     map<string, vector<string>>
         mapComp;    // Компетенции, у каждой из которых перечень индикаторов
 
-    ETagDisc eTagDisc = ETagDisc::ETD_Common;
+    ETypeDisc eTypeDisc = ETypeDisc::ETD_Common;
 
     // vector<string> arrIndicator; // Индикаторы (из индикатора можно извлечь
     // компетенцию)
@@ -72,15 +72,15 @@ struct FTreeDisc
                             // тех, что учитываются)
     int iAmountDisc;    // Количество учитываемых дисциплин (не по выбору)
     int iExtendedAmountDisc;    // Количество всех дисциплин (не модулей)
-    map<ETagDisc, int>
-        mapAmountTagDisc;    // Количество дисциплин по типу (основные, по
+    map<ETypeDisc, int>
+        mapAmountTypeDisc;    // Количество дисциплин по типу (основные, по
                              // выбору, факультативы)
 
     set<string> fAllComp;    // Множество всех компетенций, присутствующих в
                              // учебном плане (УП)
 
     // Не нужно, так как эти значения хранятся в iAmountDisc iExtendedAmountDisc
-    // и mapAmountTagDisc void FindAllScore(double& outDSum, int&
+    // и mapAmountTypeDisc void FindAllScore(double& outDSum, int&
     // outIAmountDisc);    // Вывод через параметры void FindAllScore(double&
     // outDSum);
 

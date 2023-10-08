@@ -10,6 +10,7 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       iIgnoreEmptyLine(5),
       iWeigthRib(10),
       iSoMachComp(6),
+      iPrecision(5),
       dMinWeigthRib(0.01),
       dMinComp(0.01),
       dAnomalBigScore(40.0),
@@ -23,6 +24,7 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       bOutCompWithName(true),
       bOutShortNameCurr(true),
       bIsUnDirected(true),
+      bIsNormalizeScoreComp(true),
       bDeletingSpecCharDiscName(true),
       wsNameConfig(L"./config.xlsx"),
       wsNamePage(L"Параметры"),
@@ -126,20 +128,20 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
         wsPatern = L"Определение вида дисциплины";
         if (wsKey == wsPatern)
         {
-            ptrGlobal->TakeData(arrTagDisc, row,
+            ptrGlobal->TakeData(arrTypeDisc, row,
                                 0);    // Нет ограничение на кол-во тегов,
             // но считается, что 0 - основной, 1 - по выбору, 2 - факультатив
             // (используется enum) Далее используется ETagDisc из solve.h
             return true;
         }
 
-        // Проверка, что размер совпадает с arrTagDisc.size()
+        // Проверка, что размер совпадает с arrTypeDisc.size()
         wsPatern = L"Названия видов дисциплин при выводе количества";
         if (wsKey == wsPatern)
         {
             int iSize = 0;
-            if (arrTagDisc.size() != 0) iSize = arrTagDisc.size() + 1;
-            ptrGlobal->TakeData(arrNameTagDisc, row, iSize);
+            if (arrTypeDisc.size() != 0) iSize = arrTypeDisc.size() + 1;
+            ptrGlobal->TakeData(arrNameTypeDisc, row, iSize);
             return true;
         }
 
@@ -429,6 +431,13 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
+        wsPatern = L"Макс кол-во знаков после запятой";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(iPrecision, row);
+            return true;
+        }
+
         wsPatern = L"Псевдонимы (название страницы)";
         if (wsKey == wsPatern)
         {
@@ -446,6 +455,56 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
                              2))
                     {
                         mapAliasRename[key] = val.at(0);
+                    }
+                }
+            }
+            return true;
+        }
+
+         wsPatern = L"Тег дисциплины (название страницы)";
+        if (wsKey == wsPatern)
+        {
+            mapAliasRename.clear();
+            int i = -1;
+            for (auto& page : row.cells())
+            {
+                i++;
+                if (i)
+                {
+                    wstring wsNamePage = ptrGlobal->GetValue(page);
+                    for (auto& [key, val] : ptrGlobal->SetMapParams(
+                             fBook.worksheet(
+                                 ptrGlobal->ConwertToString(wsNamePage)),
+                             0))
+                    {
+                        int iNum = 0;
+                        try
+                        {
+                            iNum = stoi(key);
+                        }
+                        catch (...)
+                        {
+                            iNum = 0;
+                        }
+
+                        if (iNum != 0)
+                        {
+                            if (val.size() != 1)    // Если это id тега, то у
+                                                    // него ровно одно значение
+                            {
+                                return false;
+                            }
+
+                            arrTagName.push_back(val.at(0));
+                        }
+                        else
+                        {
+                            for (auto& it : val)
+                            {
+                                int iIdTag = stoi(it);
+                                mapTagDisc[key].insert(iIdTag);
+                            }
+                        }
                     }
                 }
             }

@@ -87,7 +87,7 @@ void FTreeDisc::CountDisc()
         if (it->arrChild.size() == 0)
         {
             this->iExtendedAmountDisc++;
-            mapAmountTagDisc[it->eTagDisc]++;
+            mapAmountTypeDisc[it->eTypeDisc]++;
         }
     }
     return;

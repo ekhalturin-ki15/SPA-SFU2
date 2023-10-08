@@ -5,9 +5,10 @@ struct FGlobal;
 //
 struct FPageInfo
 {
-    wstring              wsName;
-    string               sName;        // Лучше один раз конвертировать (быстрее по времени)
-    vector<set<wstring>> arrHeader;    // Для каждого столбца есть множество синонимов
+    wstring wsName;
+    string sName;    // Лучше один раз конвертировать (быстрее по времени)
+    vector<set<wstring>>
+        arrHeader;    // Для каждого столбца есть множество синонимов
 };
 
 struct FConfig
@@ -17,18 +18,24 @@ struct FConfig
 
     vector<FPageInfo> arrKeyPage;
 
-    vector<wstring>               arrTagDisc;
-    vector<wstring>               arrNameTagDisc;
+    vector<wstring>
+        arrTypeDisc;    // Определяем вид дисциплины (основ, факульт, по выбору)
+    vector<wstring> arrNameTypeDisc;
 
-    vector<wstring>               arrNameFileIn;
-    vector<wstring>               arrNameFileOut;
+    vector<wstring> arrNameFileIn;
+    vector<wstring> arrNameFileOut;
 
     map<wstring, vector<wstring>> mapArrOutParams;
     map<wstring, wstring>         mapAddOutParams;
     map<wstring, wstring>         mapAliasRename;
 
-    set<wstring>                  setIgnoreDisc;
-    set<string>                   setIgnoreСurriculum;    // Какие УП игнорировать впринципе
+    vector<wstring> arrTagName;
+    map<wstring, set<int>>
+        mapTagDisc;    // Определяем, какая дисциплина (гуманитарна, естеств,
+                       // общепроф)
+
+    set<wstring> setIgnoreDisc;
+    set<string> setIgnoreСurriculum;    // Какие УП игнорировать впринципе
 
     set<char> setIgnoreCharCompHeader;
 
@@ -36,19 +43,18 @@ struct FConfig
     string sNameRibHeader;
     string sNameRibDir;
     string sPrefCourseNumber;
-    
 
     string sRegexComp;
     string sRegexHeaderIndicator;
     string sRegexHeaderComp;
     string sFormula;
 
-    //wstring wsOutPrefMinMax;
-    //string sOutPrefAllCurriculaAllCourse;
-    //string sOutPrefAllCurriculaCurrentCourse;
-    //string sSufAltGraphFile;
-    //wstring wsOutPrefAllCourse;
-    //wstring wsOutSufAmountComp;
+    // wstring wsOutPrefMinMax;
+    // string sOutPrefAllCurriculaAllCourse;
+    // string sOutPrefAllCurriculaCurrentCourse;
+    // string sSufAltGraphFile;
+    // wstring wsOutPrefAllCourse;
+    // wstring wsOutSufAmountComp;
 
     wstring wsNameDebugFile;
     wstring wsNameLogFile;
@@ -78,6 +84,7 @@ struct FConfig
     int iCourseLen;
     int iIgnoreEmptyLine;
     int iSoMachComp;
+    int iPrecision;
 
     std::wstring wsNameConfig;    // "Параметры"
     std::wstring wsNamePage;
@@ -87,7 +94,8 @@ struct FConfig
 private:
     static int iSinglControll;
 
-    bool                 SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey, OpenXLSX::XLRow row);
+    bool                 SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
+                                   OpenXLSX::XLRow row);
     vector<set<wstring>> SetParsingParams(OpenXLSX::XLWorksheet& fPage);
 
     FGlobal* ptrGlobal;    // Синглтон

@@ -6,6 +6,9 @@
 #include "metric.h"
 #include "solve.h"
 
+#include <sstream>
+#include <iomanip>
+
 FOutData::FOutData(FGlobal* _ptrGlobal)
     : ptrGlobal(_ptrGlobal),
       arrCompetenceHead({ L"За какой курс",
@@ -51,11 +54,11 @@ void FOutData::CreateTotalInfo(vector<double>&   arrReturnDataMetrics,
                   double(fGraph->iComponent), fGraph->dMaxSpanTree,
                   fGraph->dMinSpanTree, fGraph->dDense };
 
-    for (int iTag = 0; iTag < ETagDisc::ETD_Size; ++iTag)
+    for (int iType = 0; iType < ETypeDisc::ETD_Size; ++iType)
     {
-        if (fGraph->mapGraphAmountTagDisc.count(ETagDisc(iTag)))
+        if (fGraph->mapGraphAmountTypeDisc.count(ETypeDisc(iType)))
             arrResult.push_back(double(
-                fGraph->mapGraphAmountTagDisc.find(ETagDisc(iTag))->second));
+                fGraph->mapGraphAmountTypeDisc.find(ETypeDisc(iType))->second));
         else
         {
             arrResult.push_back(0);    // Нет такого вида дисциплин
@@ -159,7 +162,10 @@ void FOutData::CreateTotalInfo(vector<vector<string>>& arrReturnData,
     for (int y = 0; y < arrReturnData.size(); ++y)
     {
         arrReturnData[y][0] = arrHeader[y];
-        arrReturnData[y][1] = to_string(arrResult[y]);
+        std::ostringstream fOut;
+        fOut << std::setprecision(ptrGlobal->ptrConfig->iPrecision)
+             << std::noshowpoint << arrResult[y];
+        arrReturnData[y][1] = fOut.str();
     }
 }
 
@@ -251,8 +257,12 @@ void FOutData::CreateOnlyAllowedResultRow(vector<string>&       arrReturn,
     {
         if (it != FGraphType::dNoInit)
         {
-            if (TakePasteData(x, arrReturn, arrIsAllowed[i++], it,
-                              to_string(it), sCurName, true, mapCorridorData))
+            std::ostringstream fOut;
+            fOut << std::setprecision(ptrGlobal->ptrConfig->iPrecision)
+                 << std::noshowpoint << it;
+
+            if (TakePasteData(x, arrReturn, arrIsAllowed[i++], it, fOut.str(),
+                              sCurName, true, mapCorridorData))
             {
                 x++;
             }
@@ -292,9 +302,12 @@ void FOutData::AddTableMaxMinData(vector<vector<string>>& arrToAddedData,
                         ptrGlobal->ConwertToString(
                             ptrGlobal->ptrConfig->wsOutPrefMinMax) +
                         fСorridor.sMaxMin[i] + ")");  */
+                    std::ostringstream fOut;
+                    fOut << std::setprecision(ptrGlobal->ptrConfig->iPrecision)
+                         << std::noshowpoint << fСorridor.dMaxMin[i];
 
                     arrMinMaxData.push_back(
-                        to_string(fСorridor.dMaxMin[i]) + " (" +
+                        fOut.str() + " (" +
                         ptrGlobal->ConwertToString(
                             ptrGlobal->ptrConfig
                                 ->mapArrOutParams[L"Предлог перед выводом "
@@ -324,9 +337,9 @@ void FOutData::CreateAllCurriculaTotalData(
 
     };
 
-    for (auto& wsNameTag : ptrGlobal->ptrConfig->arrNameTagDisc)
+    for (auto& wsNameType : ptrGlobal->ptrConfig->arrNameTypeDisc)
     {
-        arrAddedHead.push_back(L"!" + wsNameTag);
+        arrAddedHead.push_back(L"!" + wsNameType);
     }
 
     for (auto& sHeaderComp : ptrGlobal->ptrSolve->setHeaderComp)
@@ -364,12 +377,12 @@ void FOutData::CreateAllCurriculaTotalData(
 
         // Дисциплин основных, по выбору, факультативов и т.д во всём УП
         {
-            int iNumberTag = -1;
-            for (auto& wsNameTag : ptrGlobal->ptrConfig->arrNameTagDisc)
+            int iNumberType = -1;
+            for (auto& wsNameType : ptrGlobal->ptrConfig->arrNameTypeDisc)
             {
-                ++iNumberTag;
+                ++iNumberType;
                 arrAllResult.push_back(
-                    it->mapAmountTagDisc[ETagDisc(iNumberTag)]);
+                    it->mapAmountTypeDisc[ETypeDisc(iNumberType)]);
             }
         }
 
@@ -690,7 +703,12 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
 {
     int iSizeX = 0, iSizeY = 1;    // iSizeY = 1 из-за заголовка
     arrReturnData.clear();
-    CountRectArraySize(iSizeX, iSizeY, 0, 0, ptrMetric);
+
+    CreateTableRectInfo(true, arrReturnData, 0, iSizeX,
+                        iSizeY,    // 0-строка под заголовок
+                        ptrMetric, bIsCourse, dAllSum,
+                        bIsLocal);    // Считаем вхолостую
+
     arrReturnData.assign(iSizeY, vector<string>(iSizeX));
 
     // Вывод заголовка
@@ -706,47 +724,53 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
     }
 
     int iCurrentY = 1;
-    CreateTableRectInfo(arrReturnData, 0, iSizeX,
+    CreateTableRectInfo(false, arrReturnData, 0, iSizeX,
                         iCurrentY,    // 0-строка под заголовок
                         ptrMetric, bIsCourse, dAllSum, bIsLocal);
 }
 
-void FOutData::CountRectArraySize(int& iSizeX, int& iSizeY, int x, int y,
-                                  FTreeMetric* ptrMetric)
-{
-    if (x > iSizeX) iSizeX = x + 1;    // Ищем максимум, чтобы отмерить ширину
-
-    if (ptrMetric->mapChild.size() == 1)
-        if (ptrMetric->mapChild.begin()->first == FMetric::sEmptyIndicator)
-        {
-            ++iSizeY;
-            return;    // Нет индикаторов, значит и выводить не надо
-        }
-
-    // отступ, поэтому увеличиваем iSizeY
-    if (ptrMetric->mapChild.size() == 0)
-    {
-        ++iSizeY;
-        return;
-    }
-
-    for (auto& [sName, ptrChild] : ptrMetric->mapChild)
-    {
-        CountRectArraySize(iSizeX, iSizeY, x + 3, y, ptrChild);
-    }
-    return;
-}
+//void FOutData::CountRectArraySize(int& iSizeX, int& iSizeY, int x,
+//                                  FTreeMetric* ptrMetric)
+//{
+//    if (x > iSizeX) iSizeX = x + 1;    // Ищем максимум, чтобы отмерить ширину
+//
+//    //if (ptrMetric->mapChild.size() == 1)
+//    //if (ptrMetric->mapChild.begin()->first == FMetric::sEmptyIndicator)
+//    if (ptrMetric->sName == FMetric::sEmptyIndicator)
+//    {
+//        ++iSizeY;
+//        return;    // Нет индикаторов, значит и выводить не надо
+//    }
+//
+//    // отступ, поэтому увеличиваем iSizeY
+//    if (ptrMetric->mapChild.size() == 0)
+//    {
+//        ++iSizeY;
+//        return;
+//    }
+//
+//    for (auto& [sName, ptrChild] : ptrMetric->mapChild)
+//    {
+//        CountRectArraySize(iSizeX, iSizeY, x + 3, y, ptrChild);
+//    }
+//    return;
+//}
 
 void FOutData::CreateTableRectInfo(
+    const bool& bIsCounting,
     vector<vector<string>>& arrReturnData,    // Возвращаемое значение с функции
-    int x, const int& iSizeX, int& iCurrentY, FTreeMetric* ptrMetric,
-    bool bIsCourse, const double dAllSum, bool bIsLocal)
+    int x, int& iSizeX, int& iCurrentY, FTreeMetric* ptrMetric,
+    bool bIsCourse, const double dAllSum, const bool& bIsLocal)
 {
-    // Достигнут лимит глубины вывода
-    if (x >= iSizeX)
+    
+    if (!bIsCounting)
     {
-        ++iCurrentY;
-        return;
+        // Достигнут лимит глубины вывода
+        if (x >= iSizeX)
+        {
+            ++iCurrentY;
+            return;
+        }
     }
 
     if (ptrMetric->sName == FMetric::sEmptyIndicator)
@@ -755,39 +779,59 @@ void FOutData::CreateTableRectInfo(
         return;
     }
 
-    arrReturnData[iCurrentY][x] = ptrMetric->sName;
+    if (!bIsCounting)
+    {
+        arrReturnData[iCurrentY][x] = ptrMetric->sName;
+    }
     // Выводим кол-во ЗЕ
     if (!bIsCourse)
     {
         ++x;
-        double dRes                 = 0.;
-        dRes                        = (ptrGlobal->ptrConfig->bCompInterDelete)
-                                          ? ptrMetric->dBalanceSum
-                                          : ptrMetric->dNoBalanceSum;
-        arrReturnData[iCurrentY][x] = to_string(dRes);
+        if (!bIsCounting)
+        {
+            double dRes = 0.;
+            dRes        = (ptrGlobal->ptrConfig->bCompInterDelete)
+                              ? ptrMetric->dBalanceSum
+                              : ptrMetric->dNoBalanceSum;
+
+            std::ostringstream fOut;
+            fOut << std::setprecision(ptrGlobal->ptrConfig->iPrecision)
+                 << std::noshowpoint << dRes;
+            arrReturnData[iCurrentY][x] = fOut.str();
+        }
     }
 
     // Выводим процент распределения
     if (!bIsCourse)
     {
         ++x;
-        double dRes = 0.;
-        if (ptrGlobal->ptrConfig->bIsPercentRegAll)
+        if (!bIsCounting)
         {
-            dRes = (ptrGlobal->ptrConfig->bCompInterDelete)
-                       ? ptrMetric->dBalanceSum / dAllSum
-                       : ptrMetric->dNoBalanceSum / dAllSum;
+            double dRes = 0.;
+            if (ptrGlobal->ptrConfig->bIsPercentRegAll)
+            {
+                dRes = (ptrGlobal->ptrConfig->bCompInterDelete)
+                           ? ptrMetric->dBalanceSum / dAllSum
+                           : ptrMetric->dNoBalanceSum / dAllSum;
+            }
+            else
+            {
+                dRes = (ptrGlobal->ptrConfig->bCompInterDelete)
+                           ? ptrMetric->dBalanceSum /
+                                 ptrMetric->ptrParent->dBalanceSum
+                           : ptrMetric->dNoBalanceSum /
+                                 ptrMetric->ptrParent->dNoBalanceSum;
+            }
+            std::ostringstream fOut;
+            fOut << std::setprecision(ptrGlobal->ptrConfig->iPrecision)
+                 << std::noshowpoint << dRes;
+            arrReturnData[iCurrentY][x] = fOut.str();
         }
-        else
-        {
-            dRes =
-                (ptrGlobal->ptrConfig->bCompInterDelete)
-                    ? ptrMetric->dBalanceSum / ptrMetric->ptrParent->dBalanceSum
-                    : ptrMetric->dNoBalanceSum /
-                          ptrMetric->ptrParent->dNoBalanceSum;
-        }
+    }
 
-        arrReturnData[iCurrentY][x] = to_string(dRes);
+    if (bIsCounting)
+    {
+        if (x >= iSizeX) iSizeX = x + 1;    // Ищем максимум, чтобы отмерить ширину
     }
 
     if (ptrMetric->mapChild.size() == 0)
@@ -798,7 +842,8 @@ void FOutData::CreateTableRectInfo(
 
     for (auto& [sName, ptrChild] : ptrMetric->mapChild)
     {
-        CreateTableRectInfo(arrReturnData, x + 1, iSizeX, iCurrentY, ptrChild,
+        CreateTableRectInfo(bIsCounting, arrReturnData, x + 1, iSizeX, iCurrentY,
+                            ptrChild,
                             false, dAllSum, bIsLocal);
     }
 }
