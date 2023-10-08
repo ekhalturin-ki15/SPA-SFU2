@@ -55,5 +55,7 @@ private:
     regex      fRegexHeaderInd;
     regex      fRegexHeaderComp;
 
-    map<wstring, FTreeElement*> mapAllowDisc;    // Оставляем только разрешённые дисциплины (без модулей) для анализа
+    // mapAllowDisc теперь в FSolve вместе с УП
+    //map<wstring, FTreeElement*> mapAllowDisc;   // Оставляем только разрешённые дисциплины (без
+                         // модулей) для анализа (и без тех, у кого ЗЕ = 0)
 };

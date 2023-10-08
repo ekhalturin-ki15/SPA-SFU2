@@ -71,15 +71,21 @@ bool FSolve::Read(string _sInPath, string sNamePlan)
 
     try
     {
+        FTreeDisc* ptrTree = new FTreeDisc(ptrGlobal);
+        arrDisc.push_back(ptrTree);
+        arrDisc.back()->sNamePlan = sNamePlan;
+        arrDisc.back()->sShortNamePlan =
+            sNamePlan.substr(0, sNamePlan.find('.'));
+
         fDoc.open(sInPath);
         fBook = fDoc.workbook();
-        CreateDiscTree(
+        CreateDiscTreeZeroPage(
             fBook.worksheet(ptrGlobal->ConwertToString(
                 ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].wsName)),
             iCurrentPage);
         ++iCurrentPage;
 
-        AddCompIndicator(
+        AddCompIndicatorFirstPage(
             fBook.worksheet(ptrGlobal->ConwertToString(
                 ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].wsName)),
             iCurrentPage);
@@ -96,9 +102,11 @@ bool FSolve::Read(string _sInPath, string sNamePlan)
         {
             throw std::logic_error(FError::sNotEqualSum);
         }
-        arrDisc.back()->sNamePlan = sNamePlan;
-        arrDisc.back()->sShortNamePlan =
-            sNamePlan.substr(0, sNamePlan.find('.'));
+
+        arrDisc.back()->mapAllowDisc =
+            arrDisc.back()->GewMapAllowDisc(true, true);
+
+        
         ++iCurrentPage;
     }
     catch (logic_error eError)

@@ -93,8 +93,9 @@ struct FGraph
 private:
     FTreeDisc* ptrTree;
 
-    map<wstring, FTreeElement*>
-        mapAllowDisc;    // Оставляем только разрешённые дисциплины (без
+    // mapAllowDisc теперь в FSolve вместе с УП
+    //map<wstring, FTreeElement*>
+    //    mapAllowDisc;    // Оставляем только разрешённые дисциплины (без
                          // модулей) для анализа (и без тех, у кого ЗЕ = 0)
 
     // Регулирование посещённых вершин 0 - не были, 1 - были

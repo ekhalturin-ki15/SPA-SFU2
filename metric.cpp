@@ -72,7 +72,7 @@ FMetric::FMetric(FTreeDisc* _ptrTree) : ptrTree(_ptrTree)
         _ptrTree->ptrGlobal->ptrError->ErrorBadRegex(
             "Регулярное выражение поиска заголовка индикатора");
     }
-    mapAllowDisc = _ptrTree->GewMapAllowDisc(true, true);
+    //mapAllowDisc = _ptrTree->GewMapAllowDisc(true, true);
 
     ptrTreeMetric            = new FTreeMetric;
     ptrTreeMetric->ptrParent = nullptr;
@@ -140,7 +140,7 @@ void FMetric::Create()
 {
     // Сначало для общего, потом для курсов по отдельности
     int iL = -1;
-    for (auto& [key, it] : mapAllowDisc)
+    for (auto& [key, it] : ptrTree->mapAllowDisc)
     {
         set<vector<string>>
             mapIsTakenScore;    // Достаточно set, так как идёт разветвление

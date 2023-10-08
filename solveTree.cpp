@@ -77,7 +77,11 @@ void FTreeDisc::CountDisc()
     this->iAmountDisc = 0;
     for (const auto& [key, it] : mapDisc)
     {
-        //if (it->dSumScore <= 0) continue; // Баг в УП (ложные дисциплины из страницы Компетенции(2))
+        if (it->dSumScore <= 0)
+        {
+            continue;    // Баг в УП (ложные дисциплины из страницы
+                         // Компетенции(2))
+        }
 
         if ((it->arrChild.size() == 0) && (it->bAllow))
         {
@@ -99,7 +103,8 @@ map<wstring, FTreeElement*>
     map<wstring, FTreeElement*> mapReturn;
     for (const auto& [key, it] : mapDisc)
     {
-        if (it->arrChild.size() == 0)
+        // Нулевые дисциплины тоже нужно убрать
+        if ((it->arrChild.size() == 0) && (it->dSumScore > 0))
         {
             if (IsNecessaryNotIgnore)
                 if (!it->bNotIgnore) continue;
@@ -107,8 +112,17 @@ map<wstring, FTreeElement*>
             if (IsNecessaryAllow)
                 if (!it->bAllow) continue;
 
-            if (it->dSumScore > 0) // Нулевые дисциплины тоде нужно убрать
-                mapReturn[key] = it;
+            mapReturn[key] = it;
+        }
+        else
+        {
+            //Удаляем заголовки модулей, так как им не нужны теги
+            auto ptr = ptrGlobal->ptrError->mapIndexDiscWithoutTag.find(it->wsIndexName);
+
+            if (ptr != ptrGlobal->ptrError->mapIndexDiscWithoutTag.end())
+            {
+                ptrGlobal->ptrError->mapIndexDiscWithoutTag.erase(ptr);
+            }
         }
     }
     return mapReturn;

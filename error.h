@@ -16,8 +16,10 @@ struct FError
     ~FError();
     bool Init();
 
-    void ErrorInFileNotFind(string sPathName);      // Если ошибки при открытии файла в виде zip
-    void ErrorInFileNotFind(wstring wsPathName);    // Если ошибки при открытии файла в виде zip
+    void ErrorInFileNotFind(
+        string sPathName);    // Если ошибки при открытии файла в виде zip
+    void ErrorInFileNotFind(
+        wstring wsPathName);    // Если ошибки при открытии файла в виде zip
 
     void ErrorOutFileNotFind(string wsPathName);
     void ErrorOutFileNotFind(wstring wsPathName);
@@ -48,13 +50,13 @@ struct FError
     void ErrorGraphNoInitWeightDisc(string sNamePlan, wstring wsNameIndex);
     void ErrorGraphNoInitWeightDisc(string sNamePlan, string sNameIndex);
 
-    //void ErrorGraphBadAllScore(string sNamePlan, int iTypeGraph, int iTypeError);
+    // void ErrorGraphBadAllScore(string sNamePlan, int iTypeGraph, int
+    // iTypeError);
     void ErrorGraphZeroValue(string sNamePlan, wstring wsNameIndex);
     void ErrorGraphZeroValue(string sNamePlan, string sNameIndex);
 
     void ErrorGraphZeroComp(string sNamePlan, wstring wsNameIndex);
     void ErrorGraphZeroComp(string sNamePlan, string sNameIndex);
-
 
     bool bIsPrint;    // Выводим один раз (пока false)
 
@@ -69,6 +71,9 @@ struct FError
     void ErrorBadParserName(wstring wsIndexName);
     void ErrorBadParserName(string sIndexName);
 
+    void ErrorConfiqDublicateNameDisc(wstring wsNameDisc);
+    void ErrorConfiqDublicateNameDisc(string sNameDisc);
+
     void ErrorBadParserComp(wstring wsIndexName);
     void ErrorBadParserComp(string sIndexName);
 
@@ -80,6 +85,13 @@ struct FError
     void OKParsing();
 
     void WAParsing();    // WA - wrong answer
+
+    map<wstring, pair<wstring, string>>
+        mapIndexDiscWithoutTag;    // Хранит Index и Name дисциплины
+    // Дисциплины, для которых не указаны
+    // теги, выводим их через FEroor в лог
+
+    void OutDiscWithoutTag();
 
 private:
     static int iSinglControll;

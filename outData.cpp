@@ -508,6 +508,9 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
 
 void FOutData::Out(string sOutPath)
 {
+    //Вывод всех тех предметов, для которых не указаны теги (Гуманитарная, естеств. общепроф. и т.д.)
+    ptrGlobal->ptrError->OutDiscWithoutTag();
+
     OpenXLSX::XLDocument fOutFile;
     fOutFile.create(sOutPath + "/TotalData.xlsx");
     fOutFile.workbook().addWorksheet("Total Data");

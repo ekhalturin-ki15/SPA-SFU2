@@ -26,6 +26,7 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       bIsUnDirected(true),
       bIsNormalizeScoreComp(true),
       bDeletingSpecCharDiscName(true),
+      bOutAllInfoWithoutTag(true),
       wsNameConfig(L"./config.xlsx"),
       wsNamePage(L"Параметры"),
       sNameLabelHeader("Id;Label"),
@@ -35,10 +36,10 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       arrNameFileOut({ L"result\grad", L"result\spec" }),
       wsNameDebugFile(L"debugFile.txt"),
       wsNameLogFile(L"logFile.txt"),
-      //wsOutPrefMinMax(L"у УП "),
-      //wsOutPrefAllCourse(L"Все курсы"),
-      //sPrefCourseNumber("_"),
-      //sSufAltGraphFile("Alt"),
+      // wsOutPrefMinMax(L"у УП "),
+      // wsOutPrefAllCourse(L"Все курсы"),
+      // sPrefCourseNumber("_"),
+      // sSufAltGraphFile("Alt"),
       sRegexComp("{0, 1}(.{0, } ? ); "),
       sRegexHeaderIndicator("(.{1,})-(.{1,})\.(.{1,})"),
       sFormula("((L + R) / 2) * K")
@@ -299,7 +300,8 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
-        wsPatern = L"Делить ЗЕ у компетениции на кол-во компетенций в дисциплине";
+        wsPatern =
+            L"Делить ЗЕ у компетениции на кол-во компетенций в дисциплине";
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(bIsNormalizeScoreComp, row);
@@ -324,6 +326,13 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(bMultiIndicator, row);
+            return true;
+        }
+
+        wsPatern = L"Вывод полной информации о дисциплин без тега";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(bOutAllInfoWithoutTag, row);
             return true;
         }
 
@@ -365,8 +374,8 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
-        /*wsPatern = L"Предлог перед выводом статистики по курсу определённого номера";
-        if (wsKey == wsPatern)
+        /*wsPatern = L"Предлог перед выводом статистики по курсу определённого
+        номера"; if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(sOutPrefAllCurriculaCurrentCourse, row);
             return true;
@@ -387,12 +396,12 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }*/
 
-       /* wsPatern = L"Надпись при выводе информации о всех курсах";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(wsOutPrefAllCourse, row);
-            return true;
-        }*/
+        /* wsPatern = L"Надпись при выводе информации о всех курсах";
+         if (wsKey == wsPatern)
+         {
+             ptrGlobal->TakeData(wsOutPrefAllCourse, row);
+             return true;
+         }*/
 
         /*wsPatern = L"Суффикс после вывода кол-во компетенций у дисциплины";
         if (wsKey == wsPatern)
@@ -461,7 +470,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
-         wsPatern = L"Тег дисциплины (название страницы)";
+        wsPatern = L"Тег дисциплины (название страницы)";
         if (wsKey == wsPatern)
         {
             mapAliasRename.clear();
@@ -477,28 +486,40 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
                                  ptrGlobal->ConwertToString(wsNamePage)),
                              0))
                     {
-                        int iNum = 0;
-                        try
+                        int iNum = -1;
+                        if (key.size() < 3)// У нас не будет более 100 тегов
                         {
-                            iNum = stoi(key);
-                        }
-                        catch (...)
-                        {
-                            iNum = 0;
+                            try
+                            {
+                                iNum = stoi(key);
+                            }
+                            catch (...)
+                            {
+                                iNum = -1;
+                            }
                         }
 
-                        if (iNum != 0)
+                        if (iNum != -1)
                         {
                             if (val.size() != 1)    // Если это id тега, то у
                                                     // него ровно одно значение
                             {
-                                return false;
+                                throw std::out_of_range("Tag size no equeal 1 (" +
+                                                        to_string(val.size()) +
+                                                        ")!+");
                             }
 
                             arrTagName.push_back(val.at(0));
                         }
                         else
                         {
+                            if (mapTagDisc.count(key))
+                            {
+                                ptrGlobal->ptrError
+                                    ->ErrorConfiqDublicateNameDisc(key);
+                                return false;    // Дублирование одного и
+                                                 // того же предмета
+                            }
                             for (auto& it : val)
                             {
                                 int iIdTag = stoi(it);
@@ -548,7 +569,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
                     for (auto& [key, val] : ptrGlobal->SetMapParams(
                              fBook.worksheet(
                                  ptrGlobal->ConwertToString(wsNamePage)),
-                             {2, 3, 4}))
+                             { 2, 3, 4 }))
                     {
                         mapArrOutParams[key] = val;
                     }
@@ -556,7 +577,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             }
             // Принудительно ставим "да", так как имя у УП обязательно нужно
             // выводить
-            mapArrOutParams[L"Название учебного плана"].push_back( L"да" ); 
+            mapArrOutParams[L"Название учебного плана"].push_back(L"да");
             return true;
         }
 

@@ -3,7 +3,7 @@
 #include "global.h"
 #include "solve.h"
 
-void FSolve::CreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
+void FSolve::CreateDiscTreeZeroPage(const OpenXLSX::XLWorksheet& fSheet,
                             int                          iKeyPageNumber)
 {
     int h = ptrGlobal->HeightPage(fSheet);
@@ -12,10 +12,7 @@ void FSolve::CreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
     int iIdName  = -1;
     int iIdComp  = -1;
 
-    FTreeDisc* ptrTree = new FTreeDisc(ptrGlobal);
-    arrDisc.push_back(ptrTree);
-
-    FTreeElement* ptrThis    = ptrTree->ptrRoot;
+    FTreeElement* ptrThis    = arrDisc.back()->ptrRoot;
     FTreeElement* ptrNewNode = nullptr;
     // Считываем заголовок
     {
@@ -108,55 +105,40 @@ void FSolve::CreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
                         }
                         //
 
-                        ptrTree->mapDisc[wsData] = ptrNewNode;
+                        arrDisc.back()->mapDisc[wsData] = ptrNewNode;
                         continue;
                     }
                     else if ((iIdName <= x) && (x < iIdComp) && (!bReadName))
                     {
                         bReadName = true;
 
+                        // Удаляем лишние пробелы
+                        wsData = std::regex_replace(wsData,
+                                                    std::wregex(L" {2,}"),
+                                                    L" ");
+
                         // Меняем на псевдоним из "Псевдонимы" файла config.xlsx
-                        if (ptrGlobal->ptrConfig->mapAliasRename.count(
-                                wsData))
+                        if (ptrGlobal->ptrConfig->mapAliasRename.count(wsData))
                         {
                             /*ptrNewNode->wsName =
                                 ptrGlobal->ptrConfig->mapAliasRename[wsData];*/
 
-                            ptrNewNode->sName =
-                            ptrGlobal->ReversUTF16RU(ptrGlobal->ConwertToString(
+                            ptrNewNode->sName = ptrGlobal->ReversUTF16RU(
+                                ptrGlobal->ConwertToString(
                                     ptrGlobal->ptrConfig
                                         ->mapAliasRename[wsData]));
                         }
                         else
                         {
-                          /*  ptrNewNode->wsName = wsData;
-                            ptrNewNode->wsName = ptrNewNode->wsName.substr(
-                                0, ptrGlobal->ptrConfig->iMaxNameDiscLen);*/
-
-                             // Удаляем лишние пробелы
-                            wsData =
-                                std::regex_replace(wsData,
-                                                   std::wregex(L" {2,}"),
-                                                   L" ");
-
-                             ptrNewNode->sName = ptrGlobal->ReversUTF16RU(
+                            ptrNewNode->sName = ptrGlobal->ReversUTF16RU(
                                 ptrGlobal->ConwertToString(wsData));
 
-                             ptrNewNode->sName = ptrNewNode->sName.substr(
-                                 0, ptrGlobal->ptrConfig->iMaxNameDiscLen);
-                            
-                             //Убираем лишние пробелы в конце
-                             while (ptrNewNode->sName.size() > 1)
-                             {
-                                if (ptrNewNode->sName.back() == ' ')
-                                    ptrNewNode->sName.pop_back();
-                                else
-                                    break;
-                                 
-                             }
+                            ptrNewNode->sName = ptrNewNode->sName.substr(
+                                0,
+                                ptrGlobal->ptrConfig->iMaxNameDiscLen);
 
-                             if (ptrGlobal->ptrConfig->bDeletingSpecCharDiscName)
-                             {
+                            if (ptrGlobal->ptrConfig->bDeletingSpecCharDiscName)
+                            {
                                 ptrNewNode->sName =
                                     std::regex_replace(ptrNewNode->sName,
                                                        std::regex("[(),.]"),
@@ -165,11 +147,38 @@ void FSolve::CreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
                                     std::regex_replace(ptrNewNode->sName,
                                                        std::regex("[-]"),
                                                        " ");
-                             }
+                            }
+
+                            // Убираем лишние пробелы в конце
+                            while (ptrNewNode->sName.size() > 1)
+                            {
+                                if (ptrNewNode->sName.back() == ' ')
+                                    ptrNewNode->sName.pop_back();
+                                else
+                                    break;
+                            }
                         }
 
                         ptrNewNode->bNotIgnore = !(
                             ptrGlobal->ptrConfig->setIgnoreDisc.count(wsData));
+
+                        // Смотрим, какие теги есть у дисциплины
+                        // Гуманитарные, естеств, общепроф. и т.д.
+                        if (ptrGlobal->ptrConfig->mapTagDisc.count(wsData))
+                        {
+                            ptrNewNode->setTagDisc =
+                                ptrGlobal->ptrConfig->mapTagDisc[wsData];
+                        }
+                        else
+                        {
+                            
+                            ptrGlobal->ptrError->mapIndexDiscWithoutTag
+                                [ptrNewNode->wsIndexName] = {
+                                wsData, ptrGlobal->ptrSolve->arrDisc.back()
+                                            ->sShortNamePlan
+                            };
+                        }
+
                         continue;
                     }
                     else if ((iIdComp <= x) && (!bReadComp))
@@ -197,11 +206,11 @@ void FSolve::CreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
                             ptrGlobal->DeleteSpechChars(sCompName);
 
                             ptrNewNode->mapComp[sCompName] = {};
-                            ptrTree->fAllComp.insert(sCompName);
+                            arrDisc.back()->fAllComp.insert(sCompName);
 
                             // vector<smatch> matchesHeader{
                             //	sregex_iterator{ALL(sCompName),
-                            //fRegexHeaderComp}, 		sregex_iterator{}};
+                            // fRegexHeaderComp}, 		sregex_iterator{}};
 
                             // for (auto sData : matchesHeader)
                             //{

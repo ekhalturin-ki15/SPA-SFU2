@@ -7,7 +7,8 @@ struct FGlobal;
 struct FGraph;
 struct FMetric;
 
-// struct FSemesterScore
+struct FSolve;
+    // struct FSemesterScore
 //{
 //	int iNumSemester;
 //	double dScore;
@@ -45,6 +46,9 @@ struct FTreeElement
         mapComp;    // Компетенции, у каждой из которых перечень индикаторов
 
     ETypeDisc eTypeDisc = ETypeDisc::ETD_Common;
+    // Перечисляются теги дисциплины (Гуманитарная, естеств., общепроф.)
+    // Может быть несколько тегов у одной дисциплины
+    set<int> setTagDisc;
 
     // vector<string> arrIndicator; // Индикаторы (из индикатора можно извлечь
     // компетенцию)
@@ -52,14 +56,12 @@ struct FTreeElement
 
 struct FTreeDisc
 {
+    friend class FSolve;
+
     explicit FTreeDisc(FGlobal* _ptrGlobal);
     ~FTreeDisc();
 
     void CountDisc();
-
-    // Получить только дисциплины (без модулей)
-    map<wstring, FTreeElement*> GewMapAllowDisc(bool IsNecessaryAllow,
-                                                bool IsNecessaryNotIgnore);
 
     FTreeElement* ptrRoot;
     map<wstring, FTreeElement*>
@@ -67,14 +69,14 @@ struct FTreeDisc
     string sNamePlan;
     string sShortNamePlan;    // Имя УП без расширения
 
-    int     iAmountCourse;    // Количество курсов (именно курсов, не семестров)
-    double  dAllSumScore;    // Общее кол-во ЗЕ курса (только дисциплин, и только
+    int iAmountCourse;    // Количество курсов (именно курсов, не семестров)
+    double dAllSumScore;    // Общее кол-во ЗЕ курса (только дисциплин, и только
                             // тех, что учитываются)
     int iAmountDisc;    // Количество учитываемых дисциплин (не по выбору)
     int iExtendedAmountDisc;    // Количество всех дисциплин (не модулей)
     map<ETypeDisc, int>
         mapAmountTypeDisc;    // Количество дисциплин по типу (основные, по
-                             // выбору, факультативы)
+                              // выбору, факультативы)
 
     set<string> fAllComp;    // Множество всех компетенций, присутствующих в
                              // учебном плане (УП)
@@ -83,6 +85,10 @@ struct FTreeDisc
     // и mapAmountTypeDisc void FindAllScore(double& outDSum, int&
     // outIAmountDisc);    // Вывод через параметры void FindAllScore(double&
     // outDSum);
+
+    map<wstring, FTreeElement*>
+        mapAllowDisc;    // Оставляем только разрешённые дисциплины (без
+                         // модулей) для анализа (и без тех, у кого ЗЕ = 0)
 
     FMetric* ptrMetric;    // У каждого УП свой объект класса FMetric
     FGraph* ptrGraph;    // У каждого УП свой объект класса FGraph
@@ -93,6 +99,11 @@ struct FTreeDisc
 private:
     void DeleteDFS(
         FTreeElement* ptrThis);    // Поиск в глубину для очистки памяти
+        
+    // Получить только дисциплины (без модулей)
+    map<wstring, FTreeElement*>
+        GewMapAllowDisc(bool IsNecessaryAllow,
+                                                bool IsNecessaryNotIgnore);
 };
 
 struct FSolve
@@ -139,9 +150,10 @@ private:
 
     // По идеи, там передаётся всегда this->iKeyPageNumber
 
-    void CreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
+    void CreateDiscTreeZeroPage(
+        const OpenXLSX::XLWorksheet& fSheet,
                         int iKeyPageNumber);    // Находится в solveZeroPage.cpp
-    void AddCompIndicator(
+    void AddCompIndicatorFirstPage(
         const OpenXLSX::XLWorksheet& fSheet,
         int iKeyPageNumber);    // Находится в solveFirstPage.cpp
 
@@ -152,4 +164,5 @@ private:
     regex    fRegexComp;
     regex    fRegexHeaderComp;
     regex    fRegexHeaderInd;
+
 };

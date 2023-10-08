@@ -327,6 +327,22 @@ void FError::ErrorBadParserComp(string sIndexName)
     out.close();
 }
 
+
+void FError::ErrorConfiqDublicateNameDisc(wstring wsNameDisc)
+{
+    ErrorConfiqDublicateNameDisc(ptrGlobal->ConwertToString(wsNameDisc));
+}
+
+void FError::ErrorConfiqDublicateNameDisc(string sNameDisc)
+{
+    ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
+
+    out << "!!!В тегах дублируется дисциплина " +
+               ptrGlobal->ReversUTF16RU(sNameDisc);
+    out << END;
+    out.close();
+}
+
 void FError::ErrorBadIndicatorBind(wstring wsIndexName, wstring wsIndicator)
 {
     ErrorBadIndicatorBind(ptrGlobal->ConwertToString(wsIndexName),
@@ -365,6 +381,36 @@ void FError::WAParsing()
     out << END;
     out << END;
     out.close();
+}
+
+void FError::OutDiscWithoutTag() 
+{
+    if (mapIndexDiscWithoutTag.size())    // Если есть дисциплины без тегов, то
+                                          // только тогда выводим как ошибку
+    {
+        ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
+        out << "Не определены теги у следующих дисциплин:";
+        out << END;
+        for (auto& [wsIndex, fData]: mapIndexDiscWithoutTag)
+        {
+            const auto& [wsName, sCurricula] = fData;
+            if (ptrGlobal->ptrConfig->bOutAllInfoWithoutTag)
+            {
+                out << "\t\t";
+                out <<
+                ptrGlobal->ReversUTF16RU(ptrGlobal->ConwertToString(wsIndex));
+                out << " : ";
+            }
+            out << ptrGlobal->ReversUTF16RU(ptrGlobal->ConwertToString(wsName));
+            if (ptrGlobal->ptrConfig->bOutAllInfoWithoutTag)
+            {
+                out << " (";
+                out << sCurricula;
+                out << ")";
+            }
+            out << END;
+        }
+    }
 }
 
 FError::~FError() { --iSinglControll; }

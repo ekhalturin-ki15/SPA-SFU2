@@ -15,7 +15,8 @@ const double FGraphType::dNoInit = -2e4;
 // Инверсия зависимости
 FGraph::FGraph(FTreeDisc* _ptrTree) : ptrTree(_ptrTree)
 {
-    mapAllowDisc = _ptrTree->GewMapAllowDisc(true, true);
+    //Теперь mapAllowDisc хранится в _ptrTree
+    //mapAllowDisc = _ptrTree->GewMapAllowDisc(true, true);
 }
 
 void FGraph::Create()
@@ -241,7 +242,7 @@ void FGraph::GenerateGraph()
     int i;
 
     i = -1;
-    for (const auto& [key, it] : mapAllowDisc)
+    for (const auto& [key, it] : ptrTree->mapAllowDisc)
     {
         ++i;
         // arrRel[i] = key;
@@ -325,7 +326,7 @@ void FGraph::GenerateAltGraph()
 {
     int i;
     i = -1;
-    for (const auto& [key, it] : mapAllowDisc)
+    for (const auto& [key, it] : ptrTree->mapAllowDisc)
     {
         for (const auto& [iCourse, val] : it->mapCourseScore)
         {
