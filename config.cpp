@@ -520,9 +520,9 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
                     for (auto& [key, val] : ptrGlobal->SetMapParams(
                              fBook.worksheet(
                                  ptrGlobal->ConwertToString(wsNamePage)),
-                             2))
+                             3)) //Теперь ещё и считываем, требуется ли выводить
                     {
-                        mapAddOutParams[key] = val.at(0);
+                        mapAddOutParams[key] = val;
                     }
                 }
             }

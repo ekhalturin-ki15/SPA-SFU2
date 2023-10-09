@@ -46,31 +46,6 @@ void FTreeDisc::DeleteDFS(FTreeElement* ptrThis)
     }
     delete ptrThis;
 }
-//
-// void FTreeDisc::FindAllScore(double& outDSum, int& outIAmountDisc)
-//{
-//    outDSum        = 0;
-//    outIAmountDisc = 0;
-//    for (const auto& [key, it] : mapDisc)
-//    {
-//        if (it->arrChild.size() == 0)
-//        {
-//            outDSum += it->dSumScore;
-//            outIAmountDisc++;
-//        }
-//    }
-//    return;
-//}
-//
-// void FTreeDisc::FindAllScore(double& outDSum)
-//{
-//    outDSum = 0;
-//    for (const auto& [key, it] : mapDisc)
-//    {
-//        if (it->arrChild.size() == 0) { outDSum += it->dSumScore; }
-//    }
-//    return;
-//}
 
 void FTreeDisc::CountDisc()
 {
@@ -117,7 +92,8 @@ map<wstring, FTreeElement*>
         else
         {
             //Удаляем заголовки модулей, так как им не нужны теги
-            auto ptr = ptrGlobal->ptrError->mapIndexDiscWithoutTag.find(it->wsIndexName);
+            auto ptr = ptrGlobal->ptrError->mapIndexDiscWithoutTag.find(
+                { it->wsIndexName, this->sShortNamePlan });
 
             if (ptr != ptrGlobal->ptrError->mapIndexDiscWithoutTag.end())
             {

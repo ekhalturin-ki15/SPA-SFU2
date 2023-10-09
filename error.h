@@ -86,7 +86,7 @@ struct FError
 
     void WAParsing();    // WA - wrong answer
 
-    map<wstring, pair<wstring, string>>
+    map<pair<wstring, string>, wstring>
         mapIndexDiscWithoutTag;    // Хранит Index и Name дисциплины
     // Дисциплины, для которых не указаны
     // теги, выводим их через FEroor в лог

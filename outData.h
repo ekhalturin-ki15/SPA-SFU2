@@ -128,6 +128,9 @@ private:
 
     vector<string> CreateCommonNameLabel(const int& iGraphType,
                                          FTreeDisc* fTree);
+
+    vector<string> CreateTag(const int& iGraphType,
+                                         FTreeDisc* fTree);
     void           OutGephiData(
                   string sName,
                   string sPath,
@@ -151,7 +154,8 @@ private:
     void OutGephiLabel(
         const string& sName, const string& sNameFile, const string& sPath,
         const vector<string>& arrNameLabel,
-        const vector<double>& arrWeightNode);    // Вывод данных о графе
+        const vector<double>& arrWeightNode,
+        const vector<string>& arrTag);    // Вывод данных о графе
                                                  // для Gephi в формате csv
 
     void OutGephiRib(

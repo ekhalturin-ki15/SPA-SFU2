@@ -709,30 +709,60 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
 {
     int iSizeX = 0, iSizeY = 1;    // iSizeY = 1 из-за заголовка
     arrReturnData.clear();
+    vector<vector<string>> arrAllData;
 
-    CreateTableRectInfo(true, arrReturnData, 0, iSizeX,
+    CreateTableRectInfo(true, arrAllData, 0, iSizeX,
                         iSizeY,    // 0-строка под заголовок
                         ptrMetric, 0, dAllSum,
                         bIsLocal);    // Считаем вхолостую
 
-    arrReturnData.assign(iSizeY, vector<string>(iSizeX));
+    arrAllData.assign(iSizeY, vector<string>(iSizeX));
 
     // Вывод заголовка
-    int x = 0;
-    for (const auto& it : arrCompetenceHead)
     {
-        if (x >= iSizeX) break;
-        if (this->ptrGlobal->ptrConfig->mapAddOutParams.count(it))
+        int x = -1;
+        for (const auto& it : arrCompetenceHead)
         {
-            arrReturnData[0][x++] = this->ptrGlobal->ConwertToString(
-                this->ptrGlobal->ptrConfig->mapAddOutParams[it]);
+            ++x;
+            if (x >= iSizeX) break;
+            if (this->ptrGlobal->ptrConfig->mapAddOutParams.count(it))
+            {
+                arrAllData[0][x] = this->ptrGlobal->ConwertToString(
+                    this->ptrGlobal->ptrConfig->mapAddOutParams[it].at(0));
+            }
         }
     }
 
     int iCurrentY = 1;
-    CreateTableRectInfo(false, arrReturnData, 0, iSizeX,
+    CreateTableRectInfo(false, arrAllData, 0, iSizeX,
                         iCurrentY,    // 0-строка под заголовок
                         ptrMetric, 0, dAllSum, bIsLocal);
+
+    //Теперь нужно оставить только те заголовки, которые требуется выводить
+
+    // Вывод Только того, что требуется пользователю
+    {
+        arrReturnData.resize(arrAllData.size());
+                    
+        for (int y = 0; y < arrAllData.size(); ++y)
+        {
+            int x = -1;
+            for (const auto& it : arrCompetenceHead)
+            {
+                ++x;
+                if (x >= iSizeX) break;
+                if (this->ptrGlobal->ptrConfig->mapAddOutParams.count(it))
+                {
+                    if (ptrGlobal->ptrConfig->mapAddOutParams[it].at(1) ==
+                        L"да")
+                    {
+                        arrReturnData[y].push_back(arrAllData[y][x]);
+                    }
+                }
+            }
+        }
+       
+    }
 }
 
 void FOutData::CreateTableRectInfo(
@@ -745,17 +775,6 @@ void FOutData::CreateTableRectInfo(
     {
         // Достигнут лимит глубины вывода
         if (x >= iSizeX)
-        {
-            ++iCurrentY;
-            return;
-        }
-    }
-
-    if (!ptrGlobal->ptrConfig->bOutIndicatorsInfo)
-    {
-        if (iDeep == ptrGlobal->ptrConfig
-                         ->iIndicatorDeep)    // На глубине 0 - курсы, 1 -
-                                              // компетенции, 2 - индикаторы
         {
             ++iCurrentY;
             return;
@@ -837,6 +856,18 @@ void FOutData::CreateTableRectInfo(
             iSizeX = x + 1;    // Ищем максимум, чтобы отмерить ширину
     }
 
+    
+    if (!ptrGlobal->ptrConfig->bOutIndicatorsInfo)
+    {
+        if (iDeep + 1 == ptrGlobal->ptrConfig
+                         ->iIndicatorDeep)    // На глубине 0 - курсы, 1 -
+                                              // компетенции, 2 - индикаторы
+        {
+            ++iCurrentY;
+            return;
+        }
+    }
+
     if (ptrMetric->mapChild.size() == 0)
     {
         ++iCurrentY;
@@ -893,7 +924,23 @@ string FOutData::AddCompString(const map<string, vector<string>>& mapComp)
     return sReturn;
 }
 
-vector<string> FOutData::CreateCommonNameLabel(const int& iGraphType,
+vector<string> FOutData::CreateTag(const int& iGraphType, FTreeDisc* fTree)
+{
+    vector<string> arrTag;
+    for (auto& [key, val] : fTree->ptrGraph->mapGraph[iGraphType].mapReversRel)
+    {
+        string sTag = "-";
+        if (fTree->mapDisc[key.first]->setTagDisc.size() > 0)
+            sTag = to_string(*fTree->mapDisc[key.first]->setTagDisc.begin());
+        arrTag.push_back(sTag);
+    }
+
+    return arrTag;
+}
+
+
+
+    vector<string> FOutData::CreateCommonNameLabel(const int& iGraphType,
                                                FTreeDisc* fTree)
 {
     vector<string> arrCommonNameLabel;
@@ -925,7 +972,8 @@ void FOutData::OutGephiData(string sName, string sPath, FTreeDisc* fTree)
 {
     OutGephiLabel(sName, sName, sPath,
                   CreateCommonNameLabel(FGraph::iCommon, fTree),
-                  fTree->ptrGraph->mapGraph[FGraph::iCommon].arrNodeWeight);
+                  fTree->ptrGraph->mapGraph[FGraph::iCommon].arrNodeWeight,
+                  CreateTag(FGraph::iCommon, fTree));
     OutGephiRib(sName, sName, sPath,
                 fTree->ptrGraph->mapGraph[FGraph::iCommon].fAdjList);
 
@@ -939,11 +987,8 @@ void FOutData::OutGephiData(string sName, string sPath, FTreeDisc* fTree)
                     .at(0)),
         sPath,
         CreateCommonNameLabel(FGraph::iAlt, fTree),
-        fTree->ptrGraph->mapGraph[FGraph::iAlt].arrNodeWeight);
-
-    /*OutGephiLabel(sName, sName + ptrGlobal->ptrConfig->sSufAltGraphFile,
-       sPath, CreateCommonNameLabel(FGraph::iAlt, fTree),
-                  fTree->ptrGraph->mapGraph[FGraph::iAlt].arrNodeWeight);*/
+        fTree->ptrGraph->mapGraph[FGraph::iAlt].arrNodeWeight,
+        CreateTag(FGraph::iAlt, fTree));
 
     OutGephiRib(
         sName,
@@ -956,16 +1001,14 @@ void FOutData::OutGephiData(string sName, string sPath, FTreeDisc* fTree)
         sPath,
         fTree->ptrGraph->mapGraph[FGraph::iAlt].fAdjList);
 
-    /*OutGephiRib(sName, sName + ptrGlobal->ptrConfig->sSufAltGraphFile, sPath,
-                fTree->ptrGraph->mapGraph[FGraph::iAlt].fAdjList);*/
-
     if (fTree->ptrGlobal->ptrConfig->bCourseOutput)
     {
         for (int iCourse = 0; iCourse < fTree->iAmountCourse; ++iCourse)
         {
             OutGephiLabel(sName, sName + "(" + to_string(iCourse + 1) + ")",
                           sPath, CreateCommonNameLabel(iCourse, fTree),
-                          fTree->ptrGraph->mapGraph[iCourse].arrNodeWeight);
+                          fTree->ptrGraph->mapGraph[iCourse].arrNodeWeight,
+                          CreateTag(iCourse, fTree));
             OutGephiRib(sName, sName + "(" + to_string(iCourse + 1) + ")",
                         sPath, fTree->ptrGraph->mapGraph[iCourse].fAdjList);
         }
@@ -975,7 +1018,8 @@ void FOutData::OutGephiData(string sName, string sPath, FTreeDisc* fTree)
 void FOutData::OutGephiLabel(const string& sName, const string& sNameFile,
                              const string&         sPath,
                              const vector<string>& arrNameLabel,
-                             const vector<double>& arrWeightNode)
+                             const vector<double>& arrWeightNode,
+                             const vector<string>& arrTag)
 {
     ofstream outLabel(sPath + "/" + sName + "/" + sNameFile + "Label.csv");
 
@@ -987,7 +1031,8 @@ void FOutData::OutGephiLabel(const string& sName, const string& sNameFile,
     {
         outLabel << i << ";";
         outLabel << arrNameLabel[i] << ";";
-        outLabel << arrWeightNode[i] << "";
+        outLabel << arrWeightNode[i] << ";";
+        outLabel << arrTag[i] << "";
         outLabel << "\n";
     }
 }

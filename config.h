@@ -26,7 +26,9 @@ struct FConfig
     vector<wstring> arrNameFileOut;
 
     map<wstring, vector<wstring>> mapArrOutParams;
-    map<wstring, wstring>         mapAddOutParams;
+    map<wstring, vector<wstring>>
+        mapAddOutParams;    // Вывод рекурсивного дерева
+
     map<wstring, wstring>         mapAliasRename;
 
     vector<wstring> arrTagName;

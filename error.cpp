@@ -391,9 +391,9 @@ void FError::OutDiscWithoutTag()
         ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
         out << "Не определены теги у следующих дисциплин:";
         out << END;
-        for (auto& [wsIndex, fData]: mapIndexDiscWithoutTag)
+        for (auto& [fData, wsName] : mapIndexDiscWithoutTag)
         {
-            const auto& [wsName, sCurricula] = fData;
+            const auto& [wsIndex, sCurricula] = fData;
             if (ptrGlobal->ptrConfig->bOutAllInfoWithoutTag)
             {
                 out << "\t\t";

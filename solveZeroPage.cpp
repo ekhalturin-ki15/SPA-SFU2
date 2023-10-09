@@ -172,11 +172,10 @@ void FSolve::CreateDiscTreeZeroPage(const OpenXLSX::XLWorksheet& fSheet,
                         else
                         {
                             
-                            ptrGlobal->ptrError->mapIndexDiscWithoutTag
-                                [ptrNewNode->wsIndexName] = {
-                                wsData, ptrGlobal->ptrSolve->arrDisc.back()
-                                            ->sShortNamePlan
-                            };
+                            ptrGlobal->ptrError->mapIndexDiscWithoutTag[{
+                                ptrNewNode->wsIndexName,
+                                ptrGlobal->ptrSolve->arrDisc.back()
+                                    ->sShortNamePlan }] = wsData;
                         }
 
                         continue;
