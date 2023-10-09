@@ -111,12 +111,30 @@ void FMetric::UpdateMetricBranch(FTreeMetric*         ptrNowTree,
         arrCurrent.push_back(ptrRec->sName);
         ptrRec = ptrRec->ptrParent;
     }
+    AddScoreNoBalanceSum(ptrNowTree->mapChild[sName], setIsTakenScore,
+                          arrCurrent , dScore);
 
-    if (!setIsTakenScore.count({ arrCurrent }))
+    //if (!setIsTakenScore.count( arrCurrent ))
+    //{
+    //    ptrNowTree->mapChild[sName]->dNoBalanceSum += dScore;
+    //    ptrNowTree->mapChild[sName]->iAmountUsingDisc += 1; // Подсчитываем кол-во дисциплин, которые участвовали в формировании компетенции
+    //    setIsTakenScore.insert( arrCurrent );
+    //}
+}
+
+void FMetric::AddScoreNoBalanceSum(FTreeMetric*         ptrNowTree,
+                                   set<vector<string>>& setIsTakenScore,
+                                   const vector<string>& sCurrent,
+                                   const double&        dScore)
+{
+    if (!setIsTakenScore.count({ sCurrent }))
     {
-        ptrNowTree->mapChild[sName]->dNoBalanceSum += dScore;
-        setIsTakenScore.insert({ arrCurrent });
+        ptrNowTree->dNoBalanceSum += dScore;
+        ptrNowTree->iAmountUsingDisc += 1;    // Подсчитываем кол-во дисциплин, которые участвовали в
+                  // формировании компетенции
+        setIsTakenScore.insert({ sCurrent });
     }
+
 }
 
 void FMetric::UpdateCourseMetric(FTreeMetric*          ptrRootTree,
@@ -130,11 +148,14 @@ void FMetric::UpdateCourseMetric(FTreeMetric*          ptrRootTree,
         UpdateMetricBranch(ptrNowTree, setIsTakenScore, sCurName, dScore);
         ptrNowTree = ptrNowTree->mapChild[sCurName];
     }
-    if (!setIsTakenScore.count({ ptrRootTree->sName }))
+    AddScoreNoBalanceSum(ptrRootTree, setIsTakenScore, { ptrRootTree->sName },
+                         dScore);
+
+    /*if (!setIsTakenScore.count({ ptrRootTree->sName }))
     {
         ptrRootTree->dNoBalanceSum += dScore;
         setIsTakenScore.insert({ ptrRootTree->sName });
-    }
+    }*/
 }
 void FMetric::Create()
 {

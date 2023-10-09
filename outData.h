@@ -104,7 +104,7 @@ private:
     // занчение y
 
     void CreateTableInfoInit(vector<vector<string>>& arrReturnData,
-                             FTreeMetric* ptrMetric, bool bIsCourse,
+                             FTreeMetric* ptrMetric,
                              const double dAllSum, bool bIsLocal = false);
 
     void CreateTableRectInfo(
@@ -116,7 +116,7 @@ private:
         int& iSizeX,    // Если считаем вхолостую, когда bIsCounting == true, то
                         // записываем в iSizeX результат
         int&         iCurrentY,    // Глобальная переменая
-        FTreeMetric* ptrMetric, bool bIsCourse, const double dAllSum,
+        FTreeMetric* ptrMetric, int iDeep, const double dAllSum,
         const bool& bIsLocal = false);    // Возвращает Актуальное занчение y
 
     //// Проход рекурсии вхолостую (теперь находится в CreateTableRectInfo)

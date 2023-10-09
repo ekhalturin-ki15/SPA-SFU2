@@ -11,6 +11,7 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       iWeigthRib(10),
       iSoMachComp(6),
       iPrecision(5),
+      iIndicatorDeep(3),
       dMinWeigthRib(0.01),
       dMinComp(0.01),
       dAnomalBigScore(40.0),
@@ -27,6 +28,7 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       bIsNormalizeScoreComp(true),
       bDeletingSpecCharDiscName(true),
       bOutAllInfoWithoutTag(true),
+      bOutIndicatorsInfo(true),
       wsNameConfig(L"./config.xlsx"),
       wsNamePage(L"Параметры"),
       sNameLabelHeader("Id;Label"),
@@ -336,6 +338,21 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
+        wsPatern = L"Выводить информацию об индикаторах";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(bOutIndicatorsInfo, row);
+            return true;
+        }
+
+        wsPatern = L"Индикатор находится на глубине X=";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(iIndicatorDeep, row);
+            return true;
+        }
+
+
         wsPatern = L"Спецсимволы для удаления из наименования компетенции";
         if (wsKey == wsPatern)
         {
@@ -373,49 +390,6 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             ptrGlobal->TakeData(sFormula, row);
             return true;
         }
-
-        /*wsPatern = L"Предлог перед выводом статистики по курсу определённого
-        номера"; if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(sOutPrefAllCurriculaCurrentCourse, row);
-            return true;
-        }*/
-
-        /*wsPatern =
-            L"Предлог перед выводом статистики по всем курсам";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(wsOutPrefAllCourse, row);
-            return true;
-        }*/
-
-        /*wsPatern = L"Предлог перед выводом результата мин. макс.";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(wsOutPrefMinMax, row);
-            return true;
-        }*/
-
-        /* wsPatern = L"Надпись при выводе информации о всех курсах";
-         if (wsKey == wsPatern)
-         {
-             ptrGlobal->TakeData(wsOutPrefAllCourse, row);
-             return true;
-         }*/
-
-        /*wsPatern = L"Суффикс после вывода кол-во компетенций у дисциплины";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(wsOutSufAmountComp, row);
-            return true;
-        }*/
-
-        /*wsPatern = L"Суффикс названия альтернативного графа при выводе";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(sSufAltGraphFile, row);
-            return true;
-        }*/
 
         wsPatern = L"Разделитель между названием дисциплины и её курсом";
         if (wsKey == wsPatern)

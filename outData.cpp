@@ -6,21 +6,24 @@
 #include "metric.h"
 #include "solve.h"
 
-#include <sstream>
 #include <iomanip>
+#include <sstream>
 
 FOutData::FOutData(FGlobal* _ptrGlobal)
     : ptrGlobal(_ptrGlobal),
-      arrCompetenceHead({ L"За какой курс",
+      arrCompetenceHead(
+          { L"За какой курс",
 
-                          L"Заголовок компетенции", L"ЗЕ Заголовка компетенции",
-                          L"Процент распределения Заголовка компетенции",
+            L"Заголовок компетенции", L"ЗЕ Заголовка компетенции",
+            L"Кол-во дисциплин заголовка компетенции",
+           
+            L"Процент распределения Заголовка компетенции",
 
-                          L"Компетенция", L"ЗЕ Компетенций",
-                          L"Процент распределения Компетенции",
+            L"Компетенция", L"ЗЕ Компетенций", L"Кол-во дисциплин компетенции", 
+            L"Процент распределения Компетенции",
 
-                          L"Индикатор", L"ЗЕ индикаторов",
-                          L"Процент распределения Индикатора" }),
+            L"Индикатор", L"ЗЕ индикаторов", L"Кол-во дисциплин индикатора", 
+            L"Процент распределения Индикатора" }),
       arrMetricHead(
           { // L"Название учебного плана",
             L"Всего ЗЕ в графе", L"Кол-во дисциплин в графе",
@@ -508,7 +511,8 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
 
 void FOutData::Out(string sOutPath)
 {
-    //Вывод всех тех предметов, для которых не указаны теги (Гуманитарная, естеств. общепроф. и т.д.)
+    // Вывод всех тех предметов, для которых не указаны теги (Гуманитарная,
+    // естеств. общепроф. и т.д.)
     ptrGlobal->ptrError->OutDiscWithoutTag();
 
     OpenXLSX::XLDocument fOutFile;
@@ -604,7 +608,7 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
     // OutRectAddInfo(arrData, 0, 0, ptrCurrentTree, true, dAllSum); //
     // Вывод FMetric::sAllMetric
     int iXShift = 1;
-    CreateTableInfoInit(arrDataAll, ptrCurrentTree, true, dAllSum);
+    CreateTableInfoInit(arrDataAll, ptrCurrentTree, dAllSum);
     OutTableInfo(iXShift, 1, arrDataAll, arrSinglOpenWKS.back());
     iXShift +=
         arrDataAll.front().size();    // Сдвигаемся на ширину выведеной таблицы
@@ -622,7 +626,7 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
         vector<vector<string>> arrDataCourse;
         // Вывод конкретного курса
         // OutRectAddInfo(iOldX, y, ptrCurrentTree, true, dAllSum);
-        CreateTableInfoInit(arrDataCourse, ptrCurrentTree, true, dAllSum);
+        CreateTableInfoInit(arrDataCourse, ptrCurrentTree, dAllSum);
         OutTableInfo(iXShift, 1, arrDataCourse, arrSinglOpenWKS.back());
         iXShift += arrDataAll.front()
                        .size();    // Сдвигаемся на ширину выведеной таблицы
@@ -700,7 +704,6 @@ void FOutData::OutTableInfo(const int&                    iShiftX,
 
 void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
                                    FTreeMetric*            ptrMetric,
-                                   bool                    bIsCourse,
                                    const double            dAllSum,
                                    bool                    bIsLocal)
 {
@@ -709,7 +712,7 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
 
     CreateTableRectInfo(true, arrReturnData, 0, iSizeX,
                         iSizeY,    // 0-строка под заголовок
-                        ptrMetric, bIsCourse, dAllSum,
+                        ptrMetric, 0, dAllSum,
                         bIsLocal);    // Считаем вхолостую
 
     arrReturnData.assign(iSizeY, vector<string>(iSizeX));
@@ -729,47 +732,30 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
     int iCurrentY = 1;
     CreateTableRectInfo(false, arrReturnData, 0, iSizeX,
                         iCurrentY,    // 0-строка под заголовок
-                        ptrMetric, bIsCourse, dAllSum, bIsLocal);
+                        ptrMetric, 0, dAllSum, bIsLocal);
 }
-
-//void FOutData::CountRectArraySize(int& iSizeX, int& iSizeY, int x,
-//                                  FTreeMetric* ptrMetric)
-//{
-//    if (x > iSizeX) iSizeX = x + 1;    // Ищем максимум, чтобы отмерить ширину
-//
-//    //if (ptrMetric->mapChild.size() == 1)
-//    //if (ptrMetric->mapChild.begin()->first == FMetric::sEmptyIndicator)
-//    if (ptrMetric->sName == FMetric::sEmptyIndicator)
-//    {
-//        ++iSizeY;
-//        return;    // Нет индикаторов, значит и выводить не надо
-//    }
-//
-//    // отступ, поэтому увеличиваем iSizeY
-//    if (ptrMetric->mapChild.size() == 0)
-//    {
-//        ++iSizeY;
-//        return;
-//    }
-//
-//    for (auto& [sName, ptrChild] : ptrMetric->mapChild)
-//    {
-//        CountRectArraySize(iSizeX, iSizeY, x + 3, y, ptrChild);
-//    }
-//    return;
-//}
 
 void FOutData::CreateTableRectInfo(
     const bool& bIsCounting,
     vector<vector<string>>& arrReturnData,    // Возвращаемое значение с функции
-    int x, int& iSizeX, int& iCurrentY, FTreeMetric* ptrMetric,
-    bool bIsCourse, const double dAllSum, const bool& bIsLocal)
+    int x, int& iSizeX, int& iCurrentY, FTreeMetric* ptrMetric, int iDeep,
+    const double dAllSum, const bool& bIsLocal)
 {
-    
     if (!bIsCounting)
     {
         // Достигнут лимит глубины вывода
         if (x >= iSizeX)
+        {
+            ++iCurrentY;
+            return;
+        }
+    }
+
+    if (!ptrGlobal->ptrConfig->bOutIndicatorsInfo)
+    {
+        if (iDeep == ptrGlobal->ptrConfig
+                         ->iIndicatorDeep)    // На глубине 0 - курсы, 1 -
+                                              // компетенции, 2 - индикаторы
         {
             ++iCurrentY;
             return;
@@ -787,7 +773,7 @@ void FOutData::CreateTableRectInfo(
         arrReturnData[iCurrentY][x] = ptrMetric->sName;
     }
     // Выводим кол-во ЗЕ
-    if (!bIsCourse)
+    if (iDeep > 0)
     {
         ++x;
         if (!bIsCounting)
@@ -804,8 +790,21 @@ void FOutData::CreateTableRectInfo(
         }
     }
 
+    // Выводим кол-во дисциплин
+    if (iDeep > 0)
+    {
+        ++x;
+        if (!bIsCounting)
+        {
+            std::ostringstream fOut;
+            fOut << std::setprecision(ptrGlobal->ptrConfig->iPrecision)
+                 << std::noshowpoint << ptrMetric->iAmountUsingDisc;
+            arrReturnData[iCurrentY][x] = fOut.str();
+        }
+    }
+
     // Выводим процент распределения
-    if (!bIsCourse)
+    if (iDeep > 0)
     {
         ++x;
         if (!bIsCounting)
@@ -834,7 +833,8 @@ void FOutData::CreateTableRectInfo(
 
     if (bIsCounting)
     {
-        if (x >= iSizeX) iSizeX = x + 1;    // Ищем максимум, чтобы отмерить ширину
+        if (x >= iSizeX)
+            iSizeX = x + 1;    // Ищем максимум, чтобы отмерить ширину
     }
 
     if (ptrMetric->mapChild.size() == 0)
@@ -845,9 +845,8 @@ void FOutData::CreateTableRectInfo(
 
     for (auto& [sName, ptrChild] : ptrMetric->mapChild)
     {
-        CreateTableRectInfo(bIsCounting, arrReturnData, x + 1, iSizeX, iCurrentY,
-                            ptrChild,
-                            false, dAllSum, bIsLocal);
+        CreateTableRectInfo(bIsCounting, arrReturnData, x + 1, iSizeX,
+                            iCurrentY, ptrChild, iDeep + 1, dAllSum, bIsLocal);
     }
 }
 

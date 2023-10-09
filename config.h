@@ -72,6 +72,7 @@ struct FConfig
     bool bDeletingSpecCharDiscName;
     bool bIsNormalizeScoreComp;
     bool bOutAllInfoWithoutTag;
+    bool bOutIndicatorsInfo;
 
     vector<bool> bArrIsSolveGraphMetric;
 
@@ -86,6 +87,7 @@ struct FConfig
     int iIgnoreEmptyLine;
     int iSoMachComp;
     int iPrecision;
+    int iIndicatorDeep;
 
     std::wstring wsNameConfig;    // "Параметры"
     std::wstring wsNamePage;
