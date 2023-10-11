@@ -16,6 +16,11 @@ struct FTreeMetric
     int iAmountUsingDisc = 0;
     double dNoBalanceSum = 0.;    // Всего ЗЕ без пересечения у всех Компетенций
     double dBalanceSum = 0.;    // Всего ЗЕ с пересечением у всех Компетенций
+    double dChosenSum =
+        0.;    // Всего ЗЕ, которые были выбраны для вывода пользователем (В
+               // зависимости от ptrConfig->bCompInterDelete)
+    double dInclusionPercent = 0.;
+
     map<string, FTreeMetric*> mapChild;
     FTreeMetric* ptrParent = nullptr;    // Инверсия зависимости
 
@@ -23,6 +28,14 @@ struct FTreeMetric
     void DeleteDFS(FTreeMetric* th);
     void InitBalanceScore();
     void InitBalanceScoreDFS(FTreeMetric* th);
+
+    void InitChosenScore(const bool& bIsPercentRegAll,
+                         const bool& bCompInterDelete);
+    void InitChosenScoreDFS(
+        FTreeMetric*                            th,
+        const double&                           dAllSum,
+        const bool& bIsPercentRegAll,
+        const bool& bCompInterDelete);
 
     // map<string, double> mapCompDistr; //ЗЕ у каждой компетенции по
     // отдельности map<string, double> mapBalancAmountCompDistr;//Всего ЗЕ с
@@ -47,10 +60,11 @@ struct FMetric
     FTreeMetric* ptrTreeMetric;
 
 private:
-    void UpdateCourseMetric(FTreeMetric*          ptrRootTree,
-                            set<vector<string>>&  setIsTakenScore,
-                            const vector<string>& arrRectUpdate,
-                            const double&         dScore);
+    void UpdateCourseMetric(
+        FTreeMetric*          ptrRootTree,
+        set<vector<string>>&  setIsTakenScore,
+        const vector<string>& arrRectUpdate,
+        const double&         dScore   );
 
     // Смотрим, какие компетенции мы уже учитывали ранее, а если не учитывали,
     // то на сколько ЗЕ изменить
@@ -59,8 +73,8 @@ private:
                             const string&        sName,
                             const double&        dScore);
 
-    void AddScoreNoBalanceSum(FTreeMetric*         ptrNowTree,
-                              set<vector<string>>& setIsTakenScore,
+    void AddScoreNoBalanceSum(FTreeMetric*          ptrNowTree,
+                              set<vector<string>>&  setIsTakenScore,
                               const vector<string>& sCurrent,
                               const double&         dScore);
 

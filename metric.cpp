@@ -33,13 +33,57 @@ void FTreeMetric::InitBalanceScoreDFS(FTreeMetric* th)
     th->dBalanceSum = dScore;
 }
 
+
+void FTreeMetric::InitChosenScoreDFS(FTreeMetric* th, const double& dAllSum,
+                                     const bool& bIsPercentRegAll,
+                                     const bool& bCompInterDelete)
+{
+    if (th->mapChild.size() == 0) return;
+    th->dChosenSum = (bCompInterDelete) ? th->dBalanceSum : th->dNoBalanceSum;
+    if (bIsPercentRegAll)
+    {
+        th->dInclusionPercent = (bCompInterDelete)
+                                    ? th->dBalanceSum / dAllSum
+                                    : th->dNoBalanceSum / dAllSum;
+    }
+    else
+    {
+        th->dInclusionPercent =
+            (bCompInterDelete) ? th->dBalanceSum / th->ptrParent->dBalanceSum
+                : th->dNoBalanceSum / th->ptrParent->dNoBalanceSum;
+    }
+    for (auto& [key, val] : th->mapChild)
+    {
+        InitChosenScoreDFS(val, dAllSum, bIsPercentRegAll, bCompInterDelete);
+    }
+
+
+}
+
+
+
 void FTreeMetric::Delete() { DeleteDFS(this); }
 
 void FTreeMetric::InitBalanceScore() { InitBalanceScoreDFS(this); }
 
+void FTreeMetric::InitChosenScore(const bool& bIsPercentRegAll,
+                                  const bool& bCompInterDelete)
+{
+    for (const auto& [key, val] : this->mapChild)
+    {
+        double dAllScore =
+            (bCompInterDelete) ? val->dBalanceSum : val->dNoBalanceSum;
+
+        InitChosenScoreDFS(val, dAllScore, bIsPercentRegAll, bCompInterDelete);
+    }
+}
+
 FMetric::~FMetric() { ptrTreeMetric->Delete(); }
 
-void FMetric::InitBalanceScore() { ptrTreeMetric->InitBalanceScore(); }
+void FMetric::InitBalanceScore()
+{ 
+    ptrTreeMetric->InitBalanceScore(); 
+}
 
 // Инверсия зависимости
 FMetric::FMetric(FTreeDisc* _ptrTree) : ptrTree(_ptrTree)
@@ -140,7 +184,7 @@ void FMetric::AddScoreNoBalanceSum(FTreeMetric*         ptrNowTree,
 void FMetric::UpdateCourseMetric(FTreeMetric*          ptrRootTree,
                                  set<vector<string>>&  setIsTakenScore,
                                  const vector<string>& arrRectUpdate,
-                                 const double&         dScore)
+                                 const double& dScore)
 {
     auto ptrNowTree = ptrRootTree;
     for (const auto& sCurName : arrRectUpdate)
@@ -164,7 +208,7 @@ void FMetric::Create()
     for (auto& [key, it] : ptrTree->mapAllowDisc)
     {
         set<vector<string>>
-            mapIsTakenScore;    // Достаточно set, так как идёт разветвление
+            setIsTakenScore;    // Достаточно set, так как идёт разветвление
                                 // также и по типу анализа
         //(целиком, или только по определённому курсу)
 
@@ -223,11 +267,38 @@ void FMetric::Create()
 
                     UpdateCourseMetric(
                         ptrTreeMetric->mapChild[sAllMetric],
-                        mapIsTakenScore,
+                        setIsTakenScore,
                         { sCompName, sCompNumber, sIndicatorNumber },
                         dNormalizeScore);
+
+                    //В холостую пройдёмся по дереву, чтобы сохдать недостающие нулевые узлы
+                    if (ptrTree->ptrGlobal->ptrConfig->bOutEmptyComp)
+                    {
+                        for (int iCourse = 1;
+                             iCourse <= ptrTree->iAmountCourse;
+                             ++iCourse)    // Делаем 1 нумерацию
+                        {
+                            auto ptrNowTree =
+                                ptrTreeMetric->mapChild[to_string(iCourse)];
+                            for (const auto& sCurName :
+                                 { sCompName, sCompNumber, sIndicatorNumber })
+                            {
+                                if (!ptrNowTree->mapChild.count(sCurName))
+                                {
+                                    ptrNowTree->mapChild[sCurName] =
+                                        new FTreeMetric;
+                                    ptrNowTree->mapChild[sCurName]->ptrParent =
+                                        ptrNowTree;
+                                    ptrNowTree->mapChild[sCurName]->sName =
+                                        sCurName;
+                                }
+                                ptrNowTree = ptrNowTree->mapChild[sCurName];
+                            }
+                        }
+                    }
                 }
 
+                //Только для определённого курса
                 for (auto [iCourse, dScore] : it->mapCourseScore)
                 {
                     double dNormalizeScore = dScore;
@@ -239,7 +310,7 @@ void FMetric::Create()
                     string sCourse = to_string(iCourse + 1);
                     UpdateCourseMetric(
                         ptrTreeMetric->mapChild[sCourse],
-                        mapIsTakenScore,
+                        setIsTakenScore,
                         { sCompName, sCompNumber, sIndicatorNumber },
                         dNormalizeScore);
                 }
@@ -247,6 +318,11 @@ void FMetric::Create()
         }
 
         // Восходящая инициализация (с листьев) для высчитывания iBalanceSum
+        //А также для расчёта dChosenSum и dInclusionPercent
         InitBalanceScore();
     }
+
+    ptrTreeMetric->InitChosenScore(
+        ptrTree->ptrGlobal->ptrConfig->bIsPercentRegAll,
+        ptrTree->ptrGlobal->ptrConfig->bCompInterDelete);
 }

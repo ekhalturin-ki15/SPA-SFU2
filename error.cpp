@@ -40,7 +40,7 @@ bool FError::Init()
     return true;
 }
 
-ofstream FError::OutHeader()
+ofstream FError::OutHeader() const
 {
     ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
     int&     iCurrentPage                  = ptrGlobal->ptrSolve->iCurrentPage;
@@ -56,7 +56,7 @@ ofstream FError::OutHeader()
     return out;
 }
 
-void FError::FatalErrorFewConfigPages()
+void FError::FatalErrorFewConfigPages() const
 {
     ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
     out << "!! Не хватает указаний страниц для парсинга УП (их 3, обычно их "
@@ -64,7 +64,7 @@ void FError::FatalErrorFewConfigPages()
     out << END;
     out.close();
 }
-void FError::ErrorInFileNotFind(string sPathName)
+void FError::ErrorInFileNotFind(string sPathName) const
 {
     ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
     out << "! Не обнаружен каталог с входными данным " + sPathName;
@@ -72,12 +72,12 @@ void FError::ErrorInFileNotFind(string sPathName)
     out.close();
 }
 
-void FError::ErrorInFileNotFind(wstring wsPathName)
+void FError::ErrorInFileNotFind(wstring wsPathName) const
 {
     ErrorInFileNotFind(ptrGlobal->ConwertToString(wsPathName));
 }
 
-void FError::ErrorOutFileCreate(string sPathName)
+void FError::ErrorOutFileCreate(string sPathName) const
 {
     ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
     out << "! Не удаётся создать каталог " + sPathName;
@@ -85,7 +85,7 @@ void FError::ErrorOutFileCreate(string sPathName)
     out.close();
 }
 
-void FError::ErrorBadConfigSizeParams(string sNameParams, string sInfo)
+void FError::ErrorBadConfigSizeParams(string sNameParams, string sInfo) const
 {
     ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
     out << "!!! Ошибка при считывании параметра config.xlsx " +
@@ -94,7 +94,7 @@ void FError::ErrorBadConfigSizeParams(string sNameParams, string sInfo)
     out.close();
 }
 
-void FError::ErrorNotFoundConfig()
+void FError::ErrorNotFoundConfig() const
 {
     ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
     out << "!!! не найден файл config.xlsx";
@@ -102,18 +102,20 @@ void FError::ErrorNotFoundConfig()
     out.close();
 }
 
-void FError::ErrorOutFileCreate(wstring wsPathName)
+void FError::ErrorOutFileCreate(wstring wsPathName) const
 {
     ErrorOutFileCreate(ptrGlobal->ConwertToString(wsPathName));
 }
 
-void FError::ErrorGraphNoInitWeightDisc(string sNamePlan, wstring wsNameIndex)
+void FError::ErrorGraphNoInitWeightDisc(string  sNamePlan,
+                                        wstring wsNameIndex) const
 {
     ErrorGraphNoInitWeightDisc(sNamePlan,
                                ptrGlobal->ConwertToString(wsNameIndex));
 }
 
-void FError::ErrorGraphNoInitWeightDisc(string sNamePlan, string sNameIndex)
+void FError::ErrorGraphNoInitWeightDisc(string sNamePlan,
+                                        string sNameIndex) const
 {
     ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
     out << "В графе УП " + sNamePlan + " ";
@@ -121,7 +123,7 @@ void FError::ErrorGraphNoInitWeightDisc(string sNamePlan, string sNameIndex)
     out << END;
     out.close();
 }
-void FError::ErrorGraphZeroValue(string sNamePlan, wstring wsNameIndex)
+void FError::ErrorGraphZeroValue(string sNamePlan, wstring wsNameIndex) const
 {
     ErrorGraphZeroValue(sNamePlan, ptrGlobal->ConwertToString(wsNameIndex));
 }
@@ -137,7 +139,7 @@ void FError::ErrorGraphZeroValue(string sNamePlan, wstring wsNameIndex)
 //     out.close();
 // }
 
-void FError::ErrorGraphZeroValue(string sNamePlan, string sNameIndex)
+void FError::ErrorGraphZeroValue(string sNamePlan, string sNameIndex) const
 {
     ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
     out << "В графе УП " + sNamePlan + " ";
@@ -146,13 +148,13 @@ void FError::ErrorGraphZeroValue(string sNamePlan, string sNameIndex)
     out.close();
 }
 
-void FError::ErrorGraphZeroComp(string sNamePlan, wstring wsNameIndex)
+void FError::ErrorGraphZeroComp(string sNamePlan, wstring wsNameIndex) const
 {
     ErrorGraphZeroComp(sNamePlan,
                                ptrGlobal->ConwertToString(wsNameIndex));
 }
 
-void FError::ErrorGraphZeroComp(string sNamePlan, string sNameIndex)
+void FError::ErrorGraphZeroComp(string sNamePlan, string sNameIndex) const
 {
     ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
     out << "В графе УП " + sNamePlan + " ";
@@ -161,7 +163,7 @@ void FError::ErrorGraphZeroComp(string sNamePlan, string sNameIndex)
     out.close();
 }
 
-void FError::ErrorOutFileNotFind(string sPathName)
+void FError::ErrorOutFileNotFind(string sPathName) const
 {
     ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
     out << "Не обнаружен каталог для вывода данных " + sPathName;
@@ -169,12 +171,12 @@ void FError::ErrorOutFileNotFind(string sPathName)
     out.close();
 }
 
-void FError::ErrorOutFileNotFind(wstring wsPathName)
+void FError::ErrorOutFileNotFind(wstring wsPathName) const
 {
     ErrorOutFileNotFind(ptrGlobal->ConwertToString(wsPathName));
 }
 
-void FError::ErrorUncorrectExtension()
+void FError::ErrorUncorrectExtension() const
 {
     ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
     out << "! Программа работает только с расширение XLSX, другое у файла " +
@@ -183,7 +185,7 @@ void FError::ErrorUncorrectExtension()
     out.close();
 }
 
-void FError::ErrorBadTree()
+void FError::ErrorBadTree() const
 {
     ofstream out = OutHeader();
 
@@ -193,7 +195,7 @@ void FError::ErrorBadTree()
     out.close();
 }
 
-void FError::ErrorNotFoundKeyCol()
+void FError::ErrorNotFoundKeyCol() const
 {
     ofstream out = OutHeader();
 
@@ -203,7 +205,7 @@ void FError::ErrorNotFoundKeyCol()
     out.close();
 }
 
-void FError::ErrorNotEqualSum()
+void FError::ErrorNotEqualSum() const
 {
     ofstream out = OutHeader();
 
@@ -213,7 +215,7 @@ void FError::ErrorNotEqualSum()
     out.close();
 }
 
-void FError::ErrorToMuchColums()
+void FError::ErrorToMuchColums() const
 {
     ofstream out = OutHeader();
 
@@ -224,7 +226,7 @@ void FError::ErrorToMuchColums()
     out.close();
 }
 
-void FError::ErrorBadParser()
+void FError::ErrorBadParser() const
 {
     ofstream out = OutHeader();
 
@@ -234,7 +236,7 @@ void FError::ErrorBadParser()
     out.close();
 }
 
-void FError::ErrorAnomalBigScore(double dAmount)
+void FError::ErrorAnomalBigScore(double dAmount) const
 {
     ofstream out = OutHeader();
 
@@ -270,7 +272,7 @@ void FError::ErrorBadFormula()
     }
 }
 
-void FError::ErrorEmptyLine()
+void FError::ErrorEmptyLine() const
 {
     ofstream out = OutHeader();
 
@@ -280,12 +282,12 @@ void FError::ErrorEmptyLine()
     out.close();
 }
 
-void FError::ErrorNoFindCourse(wstring wsNameDisc)
+void FError::ErrorNoFindCourse(wstring wsNameDisc) const
 {
     ErrorNoFindCourse(ptrGlobal->ConwertToString(wsNameDisc));
 }
 
-void FError::ErrorNoFindCourse(string sNameDisc)
+void FError::ErrorNoFindCourse(string sNameDisc) const
 {
     ofstream out = OutHeader();
 
@@ -295,12 +297,12 @@ void FError::ErrorNoFindCourse(string sNameDisc)
     out.close();
 }
 
-void FError::ErrorBadParserName(wstring wsIndexName)
+void FError::ErrorBadParserName(wstring wsIndexName) const
 {
     ErrorBadParserName(ptrGlobal->ConwertToString(wsIndexName));
 }
 
-void FError::ErrorBadParserName(string sIndexName)
+void FError::ErrorBadParserName(string sIndexName) const
 {
     ofstream out = OutHeader();
 
@@ -311,12 +313,12 @@ void FError::ErrorBadParserName(string sIndexName)
     out.close();
 }
 
-void FError::ErrorBadParserComp(wstring wsIndexName)
+void FError::ErrorBadParserComp(wstring wsIndexName) const
 {
     ErrorBadParserComp(ptrGlobal->ConwertToString(wsIndexName));
 }
 
-void FError::ErrorBadParserComp(string sIndexName)
+void FError::ErrorBadParserComp(string sIndexName) const
 {
     ofstream out = OutHeader();
 
@@ -328,12 +330,12 @@ void FError::ErrorBadParserComp(string sIndexName)
 }
 
 
-void FError::ErrorConfiqDublicateNameDisc(wstring wsNameDisc)
+void FError::ErrorConfiqDublicateNameDisc(wstring wsNameDisc) const
 {
     ErrorConfiqDublicateNameDisc(ptrGlobal->ConwertToString(wsNameDisc));
 }
 
-void FError::ErrorConfiqDublicateNameDisc(string sNameDisc)
+void FError::ErrorConfiqDublicateNameDisc(string sNameDisc) const
 {
     ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
 
@@ -343,13 +345,14 @@ void FError::ErrorConfiqDublicateNameDisc(string sNameDisc)
     out.close();
 }
 
-void FError::ErrorBadIndicatorBind(wstring wsIndexName, wstring wsIndicator)
+void FError::ErrorBadIndicatorBind(wstring wsIndexName,
+                                   wstring wsIndicator) const
 {
     ErrorBadIndicatorBind(ptrGlobal->ConwertToString(wsIndexName),
                           ptrGlobal->ConwertToString(wsIndicator));
 }
 
-void FError::ErrorBadIndicatorBind(string sIndexName, string sIndicator)
+void FError::ErrorBadIndicatorBind(string sIndexName, string sIndicator) const
 {
     ofstream&& out = OutHeader();
 
@@ -361,7 +364,7 @@ void FError::ErrorBadIndicatorBind(string sIndexName, string sIndicator)
     out.close();
 }
 
-void FError::OKParsing()
+void FError::OKParsing() const
 {
     ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
 
@@ -372,7 +375,7 @@ void FError::OKParsing()
     out.close();
 }
 
-void FError::WAParsing()
+void FError::WAParsing() const
 {
     ofstream out(ptrGlobal->ptrConfig->wsNameLogFile, std::ios::app);
 
@@ -383,7 +386,7 @@ void FError::WAParsing()
     out.close();
 }
 
-void FError::OutDiscWithoutTag() 
+void FError::OutDiscWithoutTag() const
 {
     if (mapIndexDiscWithoutTag.size())    // Если есть дисциплины без тегов, то
                                           // только тогда выводим как ошибку

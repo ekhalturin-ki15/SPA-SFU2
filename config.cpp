@@ -28,7 +28,7 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       bIsNormalizeScoreComp(true),
       bDeletingSpecCharDiscName(true),
       bOutAllInfoWithoutTag(true),
-      bOutIndicatorsInfo(true),
+      //bOutIndicatorsInfo(true),
       wsNameConfig(L"./config.xlsx"),
       wsNamePage(L"Параметры"),
       sNameLabelHeader("Id;Label"),
@@ -338,12 +338,19 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
-        wsPatern = L"Выводить информацию об индикаторах";
+        wsPatern = L"Выводить компетенции с 0 ЗЕ";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(bOutEmptyComp, row);
+            return true;
+        }
+
+        /*wsPatern = L"Выводить информацию об индикаторах";
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(bOutIndicatorsInfo, row);
             return true;
-        }
+        }*/
 
         wsPatern = L"Индикатор находится на глубине X=";
         if (wsKey == wsPatern)

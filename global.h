@@ -33,19 +33,25 @@ struct FGlobal
     bool ReCreate();
     bool Init();
 
-    wstring GetValue(const OpenXLSX::XLCell& cell);
+    wstring GetValue(const OpenXLSX::XLCell& cell) ;
 
-    wstring ConwertToWstring(string sData);    // Придётся постоянно конвертировать, так как мы точно не знаем,
+    wstring ConwertToWstring(
+        string sData) ;    // Придётся постоянно конвертировать, так как мы
+                                // точно не знаем,
     // какие данные в ячейках, и всё переводим в наиболее общий тип данных wstring
     string ConwertToString(wstring wsData);
 
-    string ConwertUTF16RU(string sData);    // Перевод в UTF16 RU вручную (через mapFirstUnicRU и mapLastUnicRU)
-    string ReversUTF16RU(string sData);    // Перевод из UTF16 RU обратно в строку вручную (через mapReversUnic)
+    string ConwertUTF16RU(
+        string sData) ;    // Перевод в UTF16 RU вручную (через
+                                // mapFirstUnicRU и mapLastUnicRU)
+    string ReversUTF16RU(
+        string sData) const;    // Перевод из UTF16 RU обратно в строку вручную
+                                // (через mapReversUnic)
 
-    string  ConwertPathFormat(string sFileName, bool bRename = false);
-    wstring ConwertPathFormat(wstring wsFileName, bool bRename = false);
+    string  ConwertPathFormat(string sFileName, bool bRename = false) const ;
+    wstring ConwertPathFormat(wstring wsFileName, bool bRename = false) const;
 
-    void TakeData(bool& outBData, const OpenXLSX::XLRow& row);    // Возвращение результата через параметры (значение со втрой ячейки)
+    void TakeData(bool& outBData, const OpenXLSX::XLRow& row) ;    // Возвращение результата через параметры (значение со втрой ячейки)
     void TakeData(vector<wstring>&       outArrData,
                   const OpenXLSX::XLRow& row,
                   int iSize);    // Возвращение результата через параметры (значение со втрой ячейки)
@@ -63,7 +69,9 @@ struct FGlobal
     // Возвращает количество строк на странице Excel файла (не включительно, то есть, на 1 больше)
     int HeightPage(const OpenXLSX::XLWorksheet& fSheet);
 
-    void DeleteSpechChars(string& sData);    // Удаляем спецсимволы из строки, взятые с Config
+    void DeleteSpechChars(string& sData) const;    // Удаляем спецсимволы из строки, взятые с Config
+
+    string DoubletWithPrecision(const double& dNum) const;
 
     FError*   ptrError;      // Синглтон
     FConfig*  ptrConfig;     // Синглтон

@@ -65,6 +65,9 @@
     <ClCompile Include="metric.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="FAdapOutData.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="0903010030-21.plm.plx.xlsx">
@@ -106,6 +109,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="dsu.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="FAdapOutData.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

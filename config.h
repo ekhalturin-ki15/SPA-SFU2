@@ -74,7 +74,8 @@ struct FConfig
     bool bDeletingSpecCharDiscName;
     bool bIsNormalizeScoreComp;
     bool bOutAllInfoWithoutTag;
-    bool bOutIndicatorsInfo;
+    //bool bOutIndicatorsInfo;
+    bool bOutEmptyComp;
 
     vector<bool> bArrIsSolveGraphMetric;
 

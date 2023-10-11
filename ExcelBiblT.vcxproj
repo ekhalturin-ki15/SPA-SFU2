@@ -161,6 +161,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="config.cpp" />
+    <ClCompile Include="FAdapOutData.cpp" />
     <ClCompile Include="formulaParser.cpp" />
     <ClCompile Include="globalAdd.cpp" />
     <ClCompile Include="error.cpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="config.h" />
     <ClInclude Include="dsu.h" />
     <ClInclude Include="error.h" />
+    <ClInclude Include="FAdapOutData.h" />
     <ClInclude Include="formulaParser.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="graph.h" />

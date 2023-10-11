@@ -165,10 +165,10 @@ void FOutData::CreateTotalInfo(vector<vector<string>>& arrReturnData,
     for (int y = 0; y < arrReturnData.size(); ++y)
     {
         arrReturnData[y][0] = arrHeader[y];
-        std::ostringstream fOut;
+        /*std::ostringstream fOut;
         fOut << std::setprecision(ptrGlobal->ptrConfig->iPrecision)
-             << std::noshowpoint << arrResult[y];
-        arrReturnData[y][1] = fOut.str();
+             << std::noshowpoint << arrResult[y];*/
+        arrReturnData[y][1] = ptrGlobal->DoubletWithPrecision(arrResult[y]);
     }
 }
 
@@ -260,11 +260,12 @@ void FOutData::CreateOnlyAllowedResultRow(vector<string>&       arrReturn,
     {
         if (it != FGraphType::dNoInit)
         {
-            std::ostringstream fOut;
+            /*std::ostringstream fOut;
             fOut << std::setprecision(ptrGlobal->ptrConfig->iPrecision)
-                 << std::noshowpoint << it;
+                 << std::noshowpoint << it;*/
 
-            if (TakePasteData(x, arrReturn, arrIsAllowed[i++], it, fOut.str(),
+            if (TakePasteData(x, arrReturn, arrIsAllowed[i++], it,
+                              ptrGlobal->DoubletWithPrecision(it),
                               sCurName, true, mapCorridorData))
             {
                 x++;
@@ -305,12 +306,13 @@ void FOutData::AddTableMaxMinData(vector<vector<string>>& arrToAddedData,
                         ptrGlobal->ConwertToString(
                             ptrGlobal->ptrConfig->wsOutPrefMinMax) +
                         fСorridor.sMaxMin[i] + ")");  */
-                    std::ostringstream fOut;
+                    /*std::ostringstream fOut;
                     fOut << std::setprecision(ptrGlobal->ptrConfig->iPrecision)
-                         << std::noshowpoint << fСorridor.dMaxMin[i];
+                         << std::noshowpoint << fСorridor.dMaxMin[i];*/
 
                     arrMinMaxData.push_back(
-                        fOut.str() + " (" +
+                        ptrGlobal->DoubletWithPrecision(fСorridor.dMaxMin[i]) +
+                        " (" +
                         ptrGlobal->ConwertToString(
                             ptrGlobal->ptrConfig
                                 ->mapArrOutParams[L"Предлог перед выводом "
@@ -376,7 +378,7 @@ void FOutData::CreateAllCurriculaTotalData(
         vector<double> arrAllResult;
         // Общие для УП метрики (перечислены в arrPrefixHead)
         arrAllResult.push_back(it->dAllSumScore);
-        arrAllResult.push_back(it->iAmountDisc);
+        arrAllResult.push_back(it->iExtendedAmountDisc);
 
         // Дисциплин основных, по выбору, факультативов и т.д во всём УП
         {
@@ -399,7 +401,7 @@ void FOutData::CreateAllCurriculaTotalData(
                 double dRes   = 0.;
                 if (ptrTreeMetric->mapChild.count(sHeaderComp))
                 {
-                    dScore =
+                   /* dScore =
                         (ptrGlobal->ptrConfig->bCompInterDelete)
                             ? ptrTreeMetric->mapChild[sHeaderComp]->dBalanceSum
                             : ptrTreeMetric->mapChild[sHeaderComp]
@@ -407,7 +409,10 @@ void FOutData::CreateAllCurriculaTotalData(
 
                     dRes = (ptrGlobal->ptrConfig->bCompInterDelete)
                                ? dScore / ptrTreeMetric->dBalanceSum
-                               : dScore / ptrTreeMetric->dNoBalanceSum;
+                               : dScore / ptrTreeMetric->dNoBalanceSum;*/
+
+                    dScore = ptrTreeMetric->dChosenSum;
+                    dRes = ptrTreeMetric->dInclusionPercent;
                 }
                 else
                 {
@@ -511,10 +516,6 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
 
 void FOutData::Out(string sOutPath)
 {
-    // Вывод всех тех предметов, для которых не указаны теги (Гуманитарная,
-    // естеств. общепроф. и т.д.)
-    ptrGlobal->ptrError->OutDiscWithoutTag();
-
     OpenXLSX::XLDocument fOutFile;
     fOutFile.create(sOutPath + "/TotalData.xlsx");
     fOutFile.workbook().addWorksheet("Total Data");
@@ -527,10 +528,8 @@ void FOutData::Out(string sOutPath)
 
     {
         string sNamePage = this->ptrGlobal->ConwertToString(
-            ptrGlobal->ptrConfig
-                ->mapArrOutParams
-                    [L"Предлог перед выводом статистики по всем курсам"]
-                .at(0));
+            ptrGlobal->ptrConfig->mapArrOutParams
+                    [L"Предлог перед выводом статистики по всем курсам"].at(0));
 
         /*string sNamePage = this->ptrGlobal->ConwertToString(
             ptrGlobal->ptrConfig->wsOutPrefAllCourse);*/
@@ -597,10 +596,11 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
 {
     auto& ptrCurrentTree =
         ptrTree->ptrMetric->ptrTreeMetric->mapChild[FMetric::sAllMetric];
-    double dAllSum = 1.;
-    dAllSum        = (ptrGlobal->ptrConfig->bCompInterDelete)
+    //double dAllSum = 1.;
+    /*dAllSum        = (ptrGlobal->ptrConfig->bCompInterDelete)
                          ? ptrCurrentTree->dBalanceSum
-                         : ptrCurrentTree->dNoBalanceSum;
+                         : ptrCurrentTree->dNoBalanceSum;*/
+    //dAllSum = ptrCurrentTree->dChosenSum;
 
     // OutRectAddInfo(iOldX, y, ptrCurrentTree, true, dAllSum);
     vector<vector<string>> arrDataAll;
@@ -608,7 +608,7 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
     // OutRectAddInfo(arrData, 0, 0, ptrCurrentTree, true, dAllSum); //
     // Вывод FMetric::sAllMetric
     int iXShift = 1;
-    CreateTableInfoInit(arrDataAll, ptrCurrentTree, dAllSum);
+    CreateTableInfoInit(arrDataAll, ptrCurrentTree, ptrCurrentTree->dChosenSum);
     OutTableInfo(iXShift, 1, arrDataAll, arrSinglOpenWKS.back());
     iXShift +=
         arrDataAll.front().size();    // Сдвигаемся на ширину выведеной таблицы
@@ -619,14 +619,17 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
         if (sKey == FMetric::sAllMetric) continue;
         // Теперь это выводится в OutAddInfoInit
 
-        dAllSum = (ptrGlobal->ptrConfig->bCompInterDelete)
+       /* dAllSum = (ptrGlobal->ptrConfig->bCompInterDelete)
                       ? ptrCurrentTree->dBalanceSum
-                      : ptrCurrentTree->dNoBalanceSum;
+                      : ptrCurrentTree->dNoBalanceSum;*/
+
+        //dAllSum = ptrCurrentTree->dChosenSum;
 
         vector<vector<string>> arrDataCourse;
         // Вывод конкретного курса
         // OutRectAddInfo(iOldX, y, ptrCurrentTree, true, dAllSum);
-        CreateTableInfoInit(arrDataCourse, ptrCurrentTree, dAllSum);
+        CreateTableInfoInit(arrDataCourse, ptrCurrentTree,
+                            ptrCurrentTree->dChosenSum);
         OutTableInfo(iXShift, 1, arrDataCourse, arrSinglOpenWKS.back());
         iXShift += arrDataAll.front()
                        .size();    // Сдвигаемся на ширину выведеной таблицы
@@ -704,7 +707,7 @@ void FOutData::OutTableInfo(const int&                    iShiftX,
 
 void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
                                    FTreeMetric*            ptrMetric,
-                                   const double            dAllSum,
+                                   //const double            dAllSum,
                                    bool                    bIsLocal)
 {
     int iSizeX = 0, iSizeY = 1;    // iSizeY = 1 из-за заголовка
@@ -713,7 +716,7 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
 
     CreateTableRectInfo(true, arrAllData, 0, iSizeX,
                         iSizeY,    // 0-строка под заголовок
-                        ptrMetric, 0, dAllSum,
+                        ptrMetric, 0, //dAllSum,
                         bIsLocal);    // Считаем вхолостую
 
     arrAllData.assign(iSizeY, vector<string>(iSizeX));
@@ -736,17 +739,20 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
     int iCurrentY = 1;
     CreateTableRectInfo(false, arrAllData, 0, iSizeX,
                         iCurrentY,    // 0-строка под заголовок
-                        ptrMetric, 0, dAllSum, bIsLocal);
+                        ptrMetric, 0, //dAllSum,
+                        bIsLocal);
 
     //Теперь нужно оставить только те заголовки, которые требуется выводить
 
     // Вывод Только того, что требуется пользователю
     {
-        arrReturnData.resize(arrAllData.size());
+        //arrReturnData.resize(arrAllData.size());
                     
         for (int y = 0; y < arrAllData.size(); ++y)
         {
             int x = -1;
+            vector<string> arrBuf;
+            bool           bIsTakeNoEmpty = false;
             for (const auto& it : arrCompetenceHead)
             {
                 ++x;
@@ -756,10 +762,15 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
                     if (ptrGlobal->ptrConfig->mapAddOutParams[it].at(1) ==
                         L"да")
                     {
-                        arrReturnData[y].push_back(arrAllData[y][x]);
+                        arrBuf.push_back(arrAllData[y][x]);
+                        if (arrAllData[y][x] != "")
+                        {
+                            bIsTakeNoEmpty = true;
+                        }
                     }
                 }
             }
+            if (bIsTakeNoEmpty) arrReturnData.push_back(arrBuf);
         }
        
     }
@@ -769,7 +780,7 @@ void FOutData::CreateTableRectInfo(
     const bool& bIsCounting,
     vector<vector<string>>& arrReturnData,    // Возвращаемое значение с функции
     int x, int& iSizeX, int& iCurrentY, FTreeMetric* ptrMetric, int iDeep,
-    const double dAllSum, const bool& bIsLocal)
+    const bool& bIsLocal)
 {
     if (!bIsCounting)
     {
@@ -802,10 +813,11 @@ void FOutData::CreateTableRectInfo(
                               ? ptrMetric->dBalanceSum
                               : ptrMetric->dNoBalanceSum;
 
-            std::ostringstream fOut;
+            /*std::ostringstream fOut;
             fOut << std::setprecision(ptrGlobal->ptrConfig->iPrecision)
-                 << std::noshowpoint << dRes;
-            arrReturnData[iCurrentY][x] = fOut.str();
+                 << std::noshowpoint << ptrMetric->dChosenSum;*/
+            arrReturnData[iCurrentY][x] = arrReturnData[iCurrentY][x] =
+                ptrGlobal->DoubletWithPrecision(ptrMetric->dChosenSum);
         }
     }
 
@@ -815,10 +827,11 @@ void FOutData::CreateTableRectInfo(
         ++x;
         if (!bIsCounting)
         {
-            std::ostringstream fOut;
+           /* std::ostringstream fOut;
             fOut << std::setprecision(ptrGlobal->ptrConfig->iPrecision)
-                 << std::noshowpoint << ptrMetric->iAmountUsingDisc;
-            arrReturnData[iCurrentY][x] = fOut.str();
+                 << std::noshowpoint << ptrMetric->iAmountUsingDisc;*/
+            arrReturnData[iCurrentY][x] =
+                ptrGlobal->DoubletWithPrecision(ptrMetric->iAmountUsingDisc);
         }
     }
 
@@ -832,8 +845,10 @@ void FOutData::CreateTableRectInfo(
             if (ptrGlobal->ptrConfig->bIsPercentRegAll)
             {
                 dRes = (ptrGlobal->ptrConfig->bCompInterDelete)
-                           ? ptrMetric->dBalanceSum / dAllSum
-                           : ptrMetric->dNoBalanceSum / dAllSum;
+                           ? ptrMetric->dBalanceSum /
+                                 ptrMetric->ptrParent->dBalanceSum
+                           : ptrMetric->dNoBalanceSum /
+                                 ptrMetric->ptrParent->dNoBalanceSum;
             }
             else
             {
@@ -843,10 +858,11 @@ void FOutData::CreateTableRectInfo(
                            : ptrMetric->dNoBalanceSum /
                                  ptrMetric->ptrParent->dNoBalanceSum;
             }
-            std::ostringstream fOut;
+            /*std::ostringstream fOut;
             fOut << std::setprecision(ptrGlobal->ptrConfig->iPrecision)
-                 << std::noshowpoint << dRes;
-            arrReturnData[iCurrentY][x] = fOut.str();
+                 << std::noshowpoint << dRes;*/
+            arrReturnData[iCurrentY][x] =
+                ptrGlobal->DoubletWithPrecision(ptrMetric->dInclusionPercent);
         }
     }
 
@@ -856,17 +872,17 @@ void FOutData::CreateTableRectInfo(
             iSizeX = x + 1;    // Ищем максимум, чтобы отмерить ширину
     }
 
-    
-    if (!ptrGlobal->ptrConfig->bOutIndicatorsInfo)
-    {
-        if (iDeep + 1 == ptrGlobal->ptrConfig
-                         ->iIndicatorDeep)    // На глубине 0 - курсы, 1 -
-                                              // компетенции, 2 - индикаторы
-        {
-            ++iCurrentY;
-            return;
-        }
-    }
+    //Убрал, так как пересекается с параметром "не отображать поля"
+    //if (!ptrGlobal->ptrConfig->bOutIndicatorsInfo)
+    //{
+    //    if (iDeep + 1 == ptrGlobal->ptrConfig
+    //                     ->iIndicatorDeep)    // На глубине 0 - курсы, 1 -
+    //                                          // компетенции, 2 - индикаторы
+    //    {
+    //        ++iCurrentY;
+    //        return;
+    //    }
+    //}
 
     if (ptrMetric->mapChild.size() == 0)
     {
@@ -877,7 +893,8 @@ void FOutData::CreateTableRectInfo(
     for (auto& [sName, ptrChild] : ptrMetric->mapChild)
     {
         CreateTableRectInfo(bIsCounting, arrReturnData, x + 1, iSizeX,
-                            iCurrentY, ptrChild, iDeep + 1, dAllSum, bIsLocal);
+                            iCurrentY, ptrChild, iDeep + 1, //dAllSum, 
+            bIsLocal);
     }
 }
 

@@ -158,7 +158,7 @@ string FGlobal::ConwertToString(wstring wsData)
     return fConverterToString2.to_bytes(wsData);
 }
 
-string FGlobal::ConwertUTF16RU(string sData)
+string FGlobal::ConwertUTF16RU(string sData) 
 {
     string sOut;
     for (const auto& it : sData)
@@ -176,7 +176,7 @@ string FGlobal::ConwertUTF16RU(string sData)
     return sOut;
 }
 
-string FGlobal::ReversUTF16RU(string sData)
+string FGlobal::ReversUTF16RU(string sData) const
 {
     string sOut;
     for (int i = 0; i < sData.size();)
@@ -185,7 +185,8 @@ string FGlobal::ReversUTF16RU(string sData)
         {
             if (mapReversUnic.count({ sData[i], sData[i + 1] }))
             {
-                sOut.push_back(mapReversUnic[{ sData[i], sData[i + 1] }]);
+                //Чтобы метод был константный, используем const
+                sOut.push_back(mapReversUnic.find({ sData[i], sData[i + 1] })->second);
                 i += 2;
             }
             else
@@ -235,14 +236,14 @@ wstring FGlobal::GetValue(const OpenXLSX::XLCell& cell)
 }
 
 //+ Избавляемся от киррилицы
-string FGlobal::ConwertPathFormat(string sFileName, bool bRename)
+string FGlobal::ConwertPathFormat(string sFileName, bool bRename) const
 {
     string sNewName = sFileName;
 
     for (auto& it : sNewName)
     {
         if (it == '\\') it = '/';
-        if (mapTranslit.count(it)) it = mapTranslit[it];
+        if (mapTranslit.count(it)) it = mapTranslit.find(it)->second;
     }
 
     if (bRename)
@@ -260,14 +261,14 @@ string FGlobal::ConwertPathFormat(string sFileName, bool bRename)
 }
 
 //+ Избавляемся от киррилицы
-wstring FGlobal::ConwertPathFormat(wstring wsFileName, bool bRename)
+wstring FGlobal::ConwertPathFormat(wstring wsFileName, bool bRename) const
 {
     wstring wsNewName = wsFileName;
 
     for (auto& it : wsNewName)
     {
         if (it == '\\') it = '/';
-        if (mapWTranslit.count(it)) it = mapWTranslit[it];
+        if (mapWTranslit.count(it)) it = mapWTranslit.find(it)->second;
     }
 
     if (bRename)

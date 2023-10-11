@@ -6,7 +6,7 @@ struct FTreeDisc;
 struct FTreeMetric;
 struct FGraphType;
 
-// Куда производится вывод (на главную горизонтально, или в побочные фалы
+// Куда производится вывод (на главную горизонтально, или в побочные файлы
 // вертикально)
 enum EOutType : int
 {
@@ -104,8 +104,8 @@ private:
     // занчение y
 
     void CreateTableInfoInit(vector<vector<string>>& arrReturnData,
-                             FTreeMetric* ptrMetric,
-                             const double dAllSum, bool bIsLocal = false);
+                             FTreeMetric* ptrMetric, //const double dAllSum,
+                             bool bIsLocal = false);
 
     void CreateTableRectInfo(
         const bool& bIsCounting,    // Если true - то проход в холостую для
@@ -116,7 +116,7 @@ private:
         int& iSizeX,    // Если считаем вхолостую, когда bIsCounting == true, то
                         // записываем в iSizeX результат
         int&         iCurrentY,    // Глобальная переменая
-        FTreeMetric* ptrMetric, int iDeep, const double dAllSum,
+        FTreeMetric* ptrMetric, int iDeep, 
         const bool& bIsLocal = false);    // Возвращает Актуальное занчение y
 
     //// Проход рекурсии вхолостую (теперь находится в CreateTableRectInfo)
@@ -129,8 +129,7 @@ private:
     vector<string> CreateCommonNameLabel(const int& iGraphType,
                                          FTreeDisc* fTree);
 
-    vector<string> CreateTag(const int& iGraphType,
-                                         FTreeDisc* fTree);
+    vector<string> CreateTag(const int& iGraphType, FTreeDisc* fTree);
     void           OutGephiData(
                   string sName,
                   string sPath,
@@ -153,10 +152,9 @@ private:
 
     void OutGephiLabel(
         const string& sName, const string& sNameFile, const string& sPath,
-        const vector<string>& arrNameLabel,
-        const vector<double>& arrWeightNode,
+        const vector<string>& arrNameLabel, const vector<double>& arrWeightNode,
         const vector<string>& arrTag);    // Вывод данных о графе
-                                                 // для Gephi в формате csv
+                                          // для Gephi в формате csv
 
     void OutGephiRib(
         const string& sName, const string& sNameFile, const string& sPath,

@@ -157,6 +157,11 @@ int main()
             ptrGlobal->ptrSolve
                 ->CreateAllMetric();    // Метрики не связаны с графом
 
+            // Вывод всех тех предметов, для которых не указаны теги
+            // (Гуманитарная,
+            // естеств. общепроф. и т.д.)
+            ptrGlobal->ptrError->OutDiscWithoutTag();
+
             auto sTotalOutName =
                 fFile /
                 ptrGlobal->ptrConfig

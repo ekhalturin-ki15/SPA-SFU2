@@ -2,7 +2,7 @@
 #include "error.h"
 #include "global.h"
 
-void FGlobal::DeleteSpechChars(string& sData)
+void FGlobal::DeleteSpechChars(string& sData) const
 {
     if (ptrConfig == nullptr) return;
 
@@ -16,7 +16,15 @@ void FGlobal::DeleteSpechChars(string& sData)
     return;
 }
 
-void FGlobal::TakeData(bool& outBData, const OpenXLSX::XLRow& row)
+string FGlobal::DoubletWithPrecision(const double& dNum) const
+{ 
+    std::ostringstream fOut;
+    fOut << std::setprecision(ptrConfig->iPrecision)
+        << std::noshowpoint << dNum;
+    return fOut.str();
+}
+
+void FGlobal::TakeData(bool& outBData, const OpenXLSX::XLRow& row) 
 {
     for (auto& it : row.cells(2, 2))    // Считываем только вторую ячейку
     {

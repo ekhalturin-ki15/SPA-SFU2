@@ -17,86 +17,89 @@ struct FError
     bool Init();
 
     void ErrorInFileNotFind(
-        string sPathName);    // Если ошибки при открытии файла в виде zip
-    void ErrorInFileNotFind(
-        wstring wsPathName);    // Если ошибки при открытии файла в виде zip
+        string sPathName) const;    // Если ошибки при открытии файла в виде zip
+    void ErrorInFileNotFind(wstring wsPathName)
+        const;    // Если ошибки при открытии файла в виде zip
 
-    void ErrorOutFileNotFind(string wsPathName);
-    void ErrorOutFileNotFind(wstring wsPathName);
+    void ErrorOutFileNotFind(string wsPathName) const;
+    void ErrorOutFileNotFind(wstring wsPathName) const;
 
-    void ErrorOutFileCreate(string wsPathName);
-    void ErrorOutFileCreate(wstring wsPathName);
+    void ErrorOutFileCreate(string wsPathName) const;
+    void ErrorOutFileCreate(wstring wsPathName) const;
 
-    void ErrorNotFoundConfig();
+    void ErrorNotFoundConfig() const;
 
-    void FatalErrorFewConfigPages();
+    void FatalErrorFewConfigPages() const;
 
-    void ErrorUncorrectExtension();
+    void ErrorUncorrectExtension() const;
 
-    void ErrorBadTree();    // Если ошибки при построении дерева дисциплин
+    void ErrorBadTree() const;    // Если ошибки при построении дерева дисциплин
 
-    void ErrorNotFoundKeyCol();    // Если ошибки при нахождении ключевого поля
+    void ErrorNotFoundKeyCol()
+        const;    // Если ошибки при нахождении ключевого поля
 
-    void ErrorToMuchColums();    // Если ошибки при построении дерева дисциплин
+    void ErrorToMuchColums()
+        const;    // Если ошибки при построении дерева дисциплин
 
-    void ErrorNotEqualSum();
+    void ErrorNotEqualSum() const;
 
-    void ErrorBadConfigSizeParams(string sNameParams, string sInfo);
+    void ErrorBadConfigSizeParams(string sNameParams, string sInfo) const;
 
-    void ErrorBadParser();
+    void ErrorBadParser() const;
 
     void ErrorBadFormula();
 
-    void ErrorGraphNoInitWeightDisc(string sNamePlan, wstring wsNameIndex);
-    void ErrorGraphNoInitWeightDisc(string sNamePlan, string sNameIndex);
+    void ErrorGraphNoInitWeightDisc(string  sNamePlan,
+                                    wstring wsNameIndex) const;
+    void ErrorGraphNoInitWeightDisc(string sNamePlan, string sNameIndex) const;
 
     // void ErrorGraphBadAllScore(string sNamePlan, int iTypeGraph, int
     // iTypeError);
-    void ErrorGraphZeroValue(string sNamePlan, wstring wsNameIndex);
-    void ErrorGraphZeroValue(string sNamePlan, string sNameIndex);
+    void ErrorGraphZeroValue(string sNamePlan, wstring wsNameIndex) const;
+    void ErrorGraphZeroValue(string sNamePlan, string sNameIndex) const;
 
-    void ErrorGraphZeroComp(string sNamePlan, wstring wsNameIndex);
-    void ErrorGraphZeroComp(string sNamePlan, string sNameIndex);
+    void ErrorGraphZeroComp(string sNamePlan, wstring wsNameIndex) const;
+    void ErrorGraphZeroComp(string sNamePlan, string sNameIndex) const;
 
     bool bIsPrint;    // Выводим один раз (пока false)
 
     void        ErrorBadRegex(string sName);
     set<string> setBadRegexName;
 
-    void ErrorEmptyLine();
+    void ErrorEmptyLine() const;
 
-    void ErrorNoFindCourse(wstring wsNameDisc);
-    void ErrorNoFindCourse(string sNameDisc);
+    void ErrorNoFindCourse(wstring wsNameDisc) const;
+    void ErrorNoFindCourse(string sNameDisc) const;
 
-    void ErrorBadParserName(wstring wsIndexName);
-    void ErrorBadParserName(string sIndexName);
+    void ErrorBadParserName(wstring wsIndexName) const;
+    void ErrorBadParserName(string sIndexName) const;
 
-    void ErrorConfiqDublicateNameDisc(wstring wsNameDisc);
-    void ErrorConfiqDublicateNameDisc(string sNameDisc);
+    void ErrorConfiqDublicateNameDisc(wstring wsNameDisc) const;
+    void ErrorConfiqDublicateNameDisc(string sNameDisc) const;
 
-    void ErrorBadParserComp(wstring wsIndexName);
-    void ErrorBadParserComp(string sIndexName);
+    void ErrorBadParserComp(wstring wsIndexName) const;
+    void ErrorBadParserComp(string sIndexName) const;
 
-    void ErrorBadIndicatorBind(wstring wsIndexName, wstring wsIndicator);
-    void ErrorBadIndicatorBind(string sIndexName, string sIndicator);
+    void ErrorBadIndicatorBind(wstring wsIndexName, wstring wsIndicator) const;
+    void ErrorBadIndicatorBind(string sIndexName, string sIndicator) const;
 
-    void ErrorAnomalBigScore(double dAmount);
+    void ErrorAnomalBigScore(double dAmount) const;
 
-    void OKParsing();
+    void OKParsing() const;
 
-    void WAParsing();    // WA - wrong answer
+    void WAParsing() const;    // WA - wrong answer
 
     map<pair<wstring, string>, wstring>
         mapIndexDiscWithoutTag;    // Хранит Index и Name дисциплины
     // Дисциплины, для которых не указаны
     // теги, выводим их через FEroor в лог
 
-    void OutDiscWithoutTag();
+    void OutDiscWithoutTag() const;
 
 private:
     static int iSinglControll;
 
-    ofstream OutHeader();
+    ofstream OutHeader() const;
 
     FGlobal* ptrGlobal;    // Синглтон
 };
