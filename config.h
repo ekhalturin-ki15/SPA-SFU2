@@ -29,12 +29,11 @@ struct FConfig
     map<wstring, vector<wstring>>
         mapAddOutParams;    // Вывод рекурсивного дерева
 
-    map<wstring, wstring>         mapAliasRename;
+    map<wstring, wstring> mapAliasRename;
 
     vector<wstring> arrTagName;
-    map<wstring, set<int>>
-        mapTagDisc;    // Определяем, какая дисциплина (гуманитарна, естеств,
-                       // общепроф)
+    map<wstring, set<int>> mapTagDisc;    // Определяем, какая дисциплина
+                                          // (гуманитарна, естеств, общепроф)
 
     set<wstring> setIgnoreDisc;
     set<string> setIgnoreСurriculum;    // Какие УП игнорировать впринципе
@@ -74,8 +73,10 @@ struct FConfig
     bool bDeletingSpecCharDiscName;
     bool bIsNormalizeScoreComp;
     bool bOutAllInfoWithoutTag;
-    //bool bOutIndicatorsInfo;
+    // bool bOutIndicatorsInfo;
     bool bOutEmptyComp;
+    // bool bSetNameIfNotIndex; // Пока что только в планах научить программу
+    // работать с предметами, когда не указаны их индексы
 
     vector<bool> bArrIsSolveGraphMetric;
 

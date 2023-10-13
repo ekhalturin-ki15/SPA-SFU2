@@ -30,9 +30,8 @@ struct FOutData
     bool Init();
 
 private:
-    const vector<wstring> arrMetricHead;    // Единожды задаётся в конструкторе
-    const vector<wstring>
-        arrCompetenceHead;    // Единожды задаётся в конструкторе
+    const vector<wstring> arrMetricHead;// Единожды задаётся в конструкторе
+    const vector<wstring> arrCompetenceHead;// Единожды задаётся в конструкторе
 
     // vector<int> arrOutColm;
     // vector<double>  arrResult;
@@ -104,8 +103,9 @@ private:
     // занчение y
 
     void CreateTableInfoInit(vector<vector<string>>& arrReturnData,
-                             FTreeMetric* ptrMetric, //const double dAllSum,
-                             bool bIsLocal = false);
+                             FTreeMetric* ptrMetric    // const double dAllSum,
+                             //bool         bIsLocal = false
+    );
 
     void CreateTableRectInfo(
         const bool& bIsCounting,    // Если true - то проход в холостую для
@@ -116,8 +116,25 @@ private:
         int& iSizeX,    // Если считаем вхолостую, когда bIsCounting == true, то
                         // записываем в iSizeX результат
         int&         iCurrentY,    // Глобальная переменая
-        FTreeMetric* ptrMetric, int iDeep, 
-        const bool& bIsLocal = false);    // Возвращает Актуальное занчение y
+        FTreeMetric* ptrMetric, int iDeep
+        //const bool& bIsLocal = false
+        );    // Возвращает Актуальное значение y
+
+
+    void CreateGraphE1TableInfoInit(
+        map<string, map<string, string>>& fReturnData,
+                             FTreeMetric* ptrMetric);
+
+    void CreateGraphE1TableRectInfo(
+        const bool& bIsCounting,    // Если true - то проход в холостую для
+                                    // определения iSizeX
+        vector<vector<string>>&
+            arrReturnData,    // Возвращаемое значение с функции
+        int x,
+        int& iSizeX,    // Если считаем вхолостую, когда bIsCounting == true, то
+                        // записываем в iSizeX результат
+        int&         iCurrentY,    // Глобальная переменая
+        FTreeMetric* ptrMetric, int iDeep);    // Возвращает Актуальное значение y
 
     //// Проход рекурсии вхолостую (теперь находится в CreateTableRectInfo)
     // void CountRectArraySize(

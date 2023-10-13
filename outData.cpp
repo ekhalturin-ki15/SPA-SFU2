@@ -16,13 +16,13 @@ FOutData::FOutData(FGlobal* _ptrGlobal)
 
             L"Заголовок компетенции", L"ЗЕ Заголовка компетенции",
             L"Кол-во дисциплин заголовка компетенции",
-           
+
             L"Процент распределения Заголовка компетенции",
 
-            L"Компетенция", L"ЗЕ Компетенций", L"Кол-во дисциплин компетенции", 
+            L"Компетенция", L"ЗЕ Компетенций", L"Кол-во дисциплин компетенции",
             L"Процент распределения Компетенции",
 
-            L"Индикатор", L"ЗЕ индикаторов", L"Кол-во дисциплин индикатора", 
+            L"Индикатор", L"ЗЕ индикаторов", L"Кол-во дисциплин индикатора",
             L"Процент распределения Индикатора" }),
       arrMetricHead(
           { // L"Название учебного плана",
@@ -265,8 +265,8 @@ void FOutData::CreateOnlyAllowedResultRow(vector<string>&       arrReturn,
                  << std::noshowpoint << it;*/
 
             if (TakePasteData(x, arrReturn, arrIsAllowed[i++], it,
-                              ptrGlobal->DoubletWithPrecision(it),
-                              sCurName, true, mapCorridorData))
+                              ptrGlobal->DoubletWithPrecision(it), sCurName,
+                              true, mapCorridorData))
             {
                 x++;
             }
@@ -401,18 +401,18 @@ void FOutData::CreateAllCurriculaTotalData(
                 double dRes   = 0.;
                 if (ptrTreeMetric->mapChild.count(sHeaderComp))
                 {
-                   /* dScore =
-                        (ptrGlobal->ptrConfig->bCompInterDelete)
-                            ? ptrTreeMetric->mapChild[sHeaderComp]->dBalanceSum
-                            : ptrTreeMetric->mapChild[sHeaderComp]
-                                  ->dNoBalanceSum;
+                    /* dScore =
+                         (ptrGlobal->ptrConfig->bCompInterDelete)
+                             ? ptrTreeMetric->mapChild[sHeaderComp]->dBalanceSum
+                             : ptrTreeMetric->mapChild[sHeaderComp]
+                                   ->dNoBalanceSum;
 
-                    dRes = (ptrGlobal->ptrConfig->bCompInterDelete)
-                               ? dScore / ptrTreeMetric->dBalanceSum
-                               : dScore / ptrTreeMetric->dNoBalanceSum;*/
+                     dRes = (ptrGlobal->ptrConfig->bCompInterDelete)
+                                ? dScore / ptrTreeMetric->dBalanceSum
+                                : dScore / ptrTreeMetric->dNoBalanceSum;*/
 
                     dScore = ptrTreeMetric->dChosenSum;
-                    dRes = ptrTreeMetric->dInclusionPercent;
+                    dRes   = ptrTreeMetric->dInclusionPercent;
                 }
                 else
                 {
@@ -528,8 +528,10 @@ void FOutData::Out(string sOutPath)
 
     {
         string sNamePage = this->ptrGlobal->ConwertToString(
-            ptrGlobal->ptrConfig->mapArrOutParams
-                    [L"Предлог перед выводом статистики по всем курсам"].at(0));
+            ptrGlobal->ptrConfig
+                ->mapArrOutParams
+                    [L"Предлог перед выводом статистики по всем курсам"]
+                .at(0));
 
         /*string sNamePage = this->ptrGlobal->ConwertToString(
             ptrGlobal->ptrConfig->wsOutPrefAllCourse);*/
@@ -596,11 +598,11 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
 {
     auto& ptrCurrentTree =
         ptrTree->ptrMetric->ptrTreeMetric->mapChild[FMetric::sAllMetric];
-    //double dAllSum = 1.;
+    // double dAllSum = 1.;
     /*dAllSum        = (ptrGlobal->ptrConfig->bCompInterDelete)
                          ? ptrCurrentTree->dBalanceSum
                          : ptrCurrentTree->dNoBalanceSum;*/
-    //dAllSum = ptrCurrentTree->dChosenSum;
+    // dAllSum = ptrCurrentTree->dChosenSum;
 
     // OutRectAddInfo(iOldX, y, ptrCurrentTree, true, dAllSum);
     vector<vector<string>> arrDataAll;
@@ -608,7 +610,7 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
     // OutRectAddInfo(arrData, 0, 0, ptrCurrentTree, true, dAllSum); //
     // Вывод FMetric::sAllMetric
     int iXShift = 1;
-    CreateTableInfoInit(arrDataAll, ptrCurrentTree, ptrCurrentTree->dChosenSum);
+    CreateTableInfoInit(arrDataAll, ptrCurrentTree);//, ptrCurrentTree->dChosenSum);
     OutTableInfo(iXShift, 1, arrDataAll, arrSinglOpenWKS.back());
     iXShift +=
         arrDataAll.front().size();    // Сдвигаемся на ширину выведеной таблицы
@@ -617,23 +619,17 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
          ptrTree->ptrMetric->ptrTreeMetric->mapChild)
     {
         if (sKey == FMetric::sAllMetric) continue;
-        // Теперь это выводится в OutAddInfoInit
 
-       /* dAllSum = (ptrGlobal->ptrConfig->bCompInterDelete)
-                      ? ptrCurrentTree->dBalanceSum
-                      : ptrCurrentTree->dNoBalanceSum;*/
-
-        //dAllSum = ptrCurrentTree->dChosenSum;
-
-        vector<vector<string>> arrDataCourse;
+        vector<vector<string>> arrDataAllCourse;
         // Вывод конкретного курса
-        // OutRectAddInfo(iOldX, y, ptrCurrentTree, true, dAllSum);
-        CreateTableInfoInit(arrDataCourse, ptrCurrentTree,
-                            ptrCurrentTree->dChosenSum);
-        OutTableInfo(iXShift, 1, arrDataCourse, arrSinglOpenWKS.back());
+        CreateTableInfoInit(arrDataAllCourse,
+                            ptrCurrentTree);    // ptrCurrentTree->dChosenSum);
+
+        OutTableInfo(iXShift, 1, arrDataAllCourse, arrSinglOpenWKS.back());
+
         iXShift += arrDataAll.front()
                        .size();    // Сдвигаемся на ширину выведеной таблицы
-        iYShift = max(iYShift + 0ull, arrDataCourse.size() + 0ull);
+        iYShift = max(iYShift + 0ull, arrDataAllCourse.size() + 0ull);
         {
             arrSinglLocalCurrentCourseOpenFile.clear();
             arrSinglLocalCurrentCourseOpenFile.resize(1);
@@ -654,7 +650,7 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
             // Выводим локально в отдельный файл
             OutTableInfo(1,
                          1,
-                         arrDataCourse,
+                         arrDataAllCourse,
                          arrSinglLocalCurrentCourseOpenWKS.back());
 
             vector<vector<string>> arrTotalCourseGraphData;
@@ -663,7 +659,7 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
                             EOutType::EOT_Added);
 
             OutTableInfo(1,    // Так как 1-индексация
-                         arrDataCourse.size() + 1,    // Так как 1-индексация
+                         arrDataAllCourse.size() + 1,    // Так как 1-индексация
                          arrTotalCourseGraphData,
                          arrSinglLocalCurrentCourseOpenWKS.back());
 
@@ -682,6 +678,81 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
                     EOutType::EOT_Added);
     OutTableInfo(1, iYShift + 1,    // Так как 1-индексация
                  arrTotalGraphData, arrSinglOpenWKS.back());
+
+    {
+        // Новая визуализация
+        map<string, map<string, map<string, string>>> mapGraphE1;
+        for (auto& [sKey, ptrCurrentTree] :
+             ptrTree->ptrMetric->ptrTreeMetric->mapChild)
+        {
+            if (sKey == FMetric::sAllMetric) continue;
+            map<string, map<string, string>> fBuf;
+            // Вывод конкретного курса
+            CreateGraphE1TableInfoInit(fBuf, ptrCurrentTree);
+            mapGraphE1[sKey] = fBuf;
+        }
+
+
+        int iSize = 1;
+        for (const auto& [sComp, et] : mapGraphE1["1"])
+        {
+            iSize += et.size();
+
+
+        }
+        vector<vector<string>> arrData(iSize, vector<string>(mapGraphE1.size()+2));
+
+        {
+            int y = 1;
+            for (const auto& [sCourse, it] : mapGraphE1)
+            {
+                ++y;
+                int x = -1;
+                for (const auto& [sComp, et] : it)
+                {
+                    for (const auto& [sNum, sVal] : et)
+                    {
+                        ++x;
+                        arrData[x][y] = sVal;
+                        arrData[x][0] = sComp;
+                        arrData[x][1] = sNum;
+                    }
+                }
+                arrData[arrData.size() - 1][y] = sCourse;
+            }
+        }
+
+
+        arrSinglLocalCurrentCourseOpenFile.clear();
+        arrSinglLocalCurrentCourseOpenFile.resize(1);
+        arrSinglLocalCurrentCourseOpenWKS.clear();
+        arrSinglLocalCurrentCourseOpenWKS.resize(1);
+
+        arrSinglLocalCurrentCourseOpenFile[0].create(sPath + "/" + sName + "/" +
+                                                     "E1Diagram.xlsx");
+        arrSinglLocalCurrentCourseOpenFile[0].workbook().addWorksheet("E1Diagram");
+        arrSinglLocalCurrentCourseOpenFile[0].workbook().deleteSheet(
+            "Sheet1");    // Стартовая страница не нужна
+        arrSinglLocalCurrentCourseOpenFile[0].save();
+        arrSinglLocalCurrentCourseOpenWKS[0] =
+            arrSinglLocalCurrentCourseOpenFile[0].workbook().worksheet("E1Diagram");
+        // Теперь это выводится в OutAddInfoInit
+
+        // Выводим локально в отдельный файл
+        OutTableInfo(1,
+                     1,
+                     arrData,
+                     arrSinglLocalCurrentCourseOpenWKS.back());
+
+        arrSinglLocalCurrentCourseOpenFile.back().save();
+        arrSinglLocalCurrentCourseOpenFile.back().close();
+
+        // Очищаем память от использованных объектов
+        arrSinglLocalCurrentCourseOpenFile.clear();
+        arrSinglLocalCurrentCourseOpenWKS.clear();
+    }
+
+
 
     arrSinglOpenFile.back().save();
     arrSinglOpenFile.back().close();
@@ -706,18 +777,21 @@ void FOutData::OutTableInfo(const int&                    iShiftX,
 }
 
 void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
-                                   FTreeMetric*            ptrMetric,
-                                   //const double            dAllSum,
-                                   bool                    bIsLocal)
+                                   FTreeMetric*            ptrMetric
+                                   // const double            dAllSum,
+                                   //bool bIsLocal
+    )
 {
     int iSizeX = 0, iSizeY = 1;    // iSizeY = 1 из-за заголовка
     arrReturnData.clear();
     vector<vector<string>> arrAllData;
 
-    CreateTableRectInfo(true, arrAllData, 0, iSizeX,
+    CreateTableRectInfo(true,// Считаем вхолостую
+        arrAllData, 0, iSizeX,
                         iSizeY,    // 0-строка под заголовок
-                        ptrMetric, 0, //dAllSum,
-                        bIsLocal);    // Считаем вхолостую
+                        ptrMetric, 0    // dAllSum,
+                        //bIsLocal
+        );       
 
     arrAllData.assign(iSizeY, vector<string>(iSizeX));
 
@@ -739,18 +813,19 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
     int iCurrentY = 1;
     CreateTableRectInfo(false, arrAllData, 0, iSizeX,
                         iCurrentY,    // 0-строка под заголовок
-                        ptrMetric, 0, //dAllSum,
-                        bIsLocal);
+                        ptrMetric, 0    // dAllSum,
+                        //bIsLocal
+        );
 
-    //Теперь нужно оставить только те заголовки, которые требуется выводить
+    // Теперь нужно оставить только те заголовки, которые требуется выводить
 
     // Вывод Только того, что требуется пользователю
     {
-        //arrReturnData.resize(arrAllData.size());
-                    
+        // arrReturnData.resize(arrAllData.size());
+
         for (int y = 0; y < arrAllData.size(); ++y)
         {
-            int x = -1;
+            int            x = -1;
             vector<string> arrBuf;
             bool           bIsTakeNoEmpty = false;
             for (const auto& it : arrCompetenceHead)
@@ -772,15 +847,15 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
             }
             if (bIsTakeNoEmpty) arrReturnData.push_back(arrBuf);
         }
-       
     }
 }
 
 void FOutData::CreateTableRectInfo(
     const bool& bIsCounting,
     vector<vector<string>>& arrReturnData,    // Возвращаемое значение с функции
-    int x, int& iSizeX, int& iCurrentY, FTreeMetric* ptrMetric, int iDeep,
-    const bool& bIsLocal)
+    int x, int& iSizeX, int& iCurrentY, FTreeMetric* ptrMetric, int iDeep
+    //const bool& bIsLocal
+    )
 {
     if (!bIsCounting)
     {
@@ -827,9 +902,9 @@ void FOutData::CreateTableRectInfo(
         ++x;
         if (!bIsCounting)
         {
-           /* std::ostringstream fOut;
-            fOut << std::setprecision(ptrGlobal->ptrConfig->iPrecision)
-                 << std::noshowpoint << ptrMetric->iAmountUsingDisc;*/
+            /* std::ostringstream fOut;
+             fOut << std::setprecision(ptrGlobal->ptrConfig->iPrecision)
+                  << std::noshowpoint << ptrMetric->iAmountUsingDisc;*/
             arrReturnData[iCurrentY][x] =
                 ptrGlobal->DoubletWithPrecision(ptrMetric->iAmountUsingDisc);
         }
@@ -872,18 +947,6 @@ void FOutData::CreateTableRectInfo(
             iSizeX = x + 1;    // Ищем максимум, чтобы отмерить ширину
     }
 
-    //Убрал, так как пересекается с параметром "не отображать поля"
-    //if (!ptrGlobal->ptrConfig->bOutIndicatorsInfo)
-    //{
-    //    if (iDeep + 1 == ptrGlobal->ptrConfig
-    //                     ->iIndicatorDeep)    // На глубине 0 - курсы, 1 -
-    //                                          // компетенции, 2 - индикаторы
-    //    {
-    //        ++iCurrentY;
-    //        return;
-    //    }
-    //}
-
     if (ptrMetric->mapChild.size() == 0)
     {
         ++iCurrentY;
@@ -893,8 +956,9 @@ void FOutData::CreateTableRectInfo(
     for (auto& [sName, ptrChild] : ptrMetric->mapChild)
     {
         CreateTableRectInfo(bIsCounting, arrReturnData, x + 1, iSizeX,
-                            iCurrentY, ptrChild, iDeep + 1, //dAllSum, 
-            bIsLocal);
+                            iCurrentY, ptrChild, iDeep + 1    // dAllSum,
+                            //bIsLocal
+            );
     }
 }
 
@@ -955,9 +1019,7 @@ vector<string> FOutData::CreateTag(const int& iGraphType, FTreeDisc* fTree)
     return arrTag;
 }
 
-
-
-    vector<string> FOutData::CreateCommonNameLabel(const int& iGraphType,
+vector<string> FOutData::CreateCommonNameLabel(const int& iGraphType,
                                                FTreeDisc* fTree)
 {
     vector<string> arrCommonNameLabel;
@@ -1065,7 +1127,7 @@ void FOutData::OutGephiRib(const string& sName, const string& sNameFile,
     // Откуда, куда, тип (неориентированный), Вес
     for (int l = 0; l < fAdjList.size(); ++l)
     {
-        for (auto [r, dLen] : fAdjList[l])
+        for (const auto& [r, dLen] : fAdjList[l])
         {
             // Чтобы не дублировать, он же неориентированный
             if ((l < r) || (!ptrGlobal->ptrConfig->bIsUnDirected))
@@ -1111,4 +1173,168 @@ bool FOutData::TakePasteData(const int& x, vector<string>& arrCurRow,
         return true;
     }
     return false;
+}
+
+
+
+
+void FOutData::CreateGraphE1TableInfoInit(
+    map<string, map<string, string>>& fReturnData,
+                                   FTreeMetric*            ptrMetric)
+{
+    int iSizeX = 0, iSizeY = 0; 
+    vector<vector<string>> arrAllData;
+
+    CreateGraphE1TableRectInfo(true,    // Считаем вхолостую
+                        arrAllData, 0, iSizeX,
+                        iSizeY,    // 0-строка под заголовок
+                        ptrMetric, 0    // dAllSum,
+                                        // bIsLocal
+    );
+
+    arrAllData.assign(iSizeY, vector<string>(iSizeX));
+
+    set<wstring> setE1AcceptedHead = { L"Заголовок компетенции", L"Компетенция",
+                                       L"ЗЕ Компетенций" };
+
+    int iCurrentY = 0;
+    CreateGraphE1TableRectInfo( false, arrAllData, 0, iSizeX,
+                        iCurrentY,    // 0-строка под заголовок
+                        ptrMetric, 0    // dAllSum,
+                                        // bIsLocal
+    );
+
+    // Теперь нужно оставить только те заголовки setE1AcceptedHead
+    string sHeadComp;
+    string sComp;
+    string sScore;
+
+    for (int y = 0; y < arrAllData.size(); ++y)
+    {
+        int            x = -1;
+        
+        for (const auto& it : arrCompetenceHead)
+        {
+            ++x;
+            if (x >= iSizeX) break;
+            if (it == L"Заголовок компетенции")
+            {
+                if (arrAllData[y][x] != "")
+                    sHeadComp = arrAllData[y][x];
+            }
+            if (it == L"Компетенция")
+            {
+                if (arrAllData[y][x] != "") sComp = arrAllData[y][x];
+            }
+            if (it == L"ЗЕ Компетенций")
+            {
+                if (arrAllData[y][x] != "") sScore = arrAllData[y][x];               
+            }
+        }
+        if (sScore == "0") 
+            fReturnData[sHeadComp][sComp] = "";
+        else
+            fReturnData[sHeadComp][sComp] = sScore;
+    }
+    
+}
+
+void FOutData::CreateGraphE1TableRectInfo(
+    const bool& bIsCounting, 
+    vector<vector<string>>& arrReturnData,    // Возвращаемое значение с функции
+    int x, int& iSizeX, int& iCurrentY, FTreeMetric* ptrMetric, int iDeep
+    // const bool& bIsLocal
+)
+{
+    if (iDeep == 3)
+    {
+        ++iCurrentY;
+        return;
+        
+    }
+
+    if (!bIsCounting)
+    {
+        arrReturnData[iCurrentY][x] = ptrMetric->sName;
+    }
+   
+    // Выводим кол-во ЗЕ
+    if (iDeep > 0)
+    {
+        ++x;
+        if (!bIsCounting)
+        {
+            double dRes = 0.;
+            dRes        = (ptrGlobal->ptrConfig->bCompInterDelete)
+                              ? ptrMetric->dBalanceSum
+                              : ptrMetric->dNoBalanceSum;
+
+            arrReturnData[iCurrentY][x] = arrReturnData[iCurrentY][x] =
+                ptrGlobal->DoubletWithPrecision(ptrMetric->dChosenSum);
+        }
+    }
+
+    // Выводим кол-во дисциплин
+    if (iDeep > 0)
+    {
+        ++x;
+        if (!bIsCounting)
+        {
+            arrReturnData[iCurrentY][x] =
+                ptrGlobal->DoubletWithPrecision(ptrMetric->iAmountUsingDisc);
+        }
+        
+    }
+
+    // Выводим процент распределения
+    if (iDeep > 0)
+    {
+        ++x;
+        if (!bIsCounting)
+        {
+            double dRes = 0.;
+            if (ptrGlobal->ptrConfig->bIsPercentRegAll)
+            {
+                dRes = (ptrGlobal->ptrConfig->bCompInterDelete)
+                           ? ptrMetric->dBalanceSum /
+                                 ptrMetric->ptrParent->dBalanceSum
+                           : ptrMetric->dNoBalanceSum /
+                                 ptrMetric->ptrParent->dNoBalanceSum;
+            }
+            else
+            {
+                dRes = (ptrGlobal->ptrConfig->bCompInterDelete)
+                           ? ptrMetric->dBalanceSum /
+                                 ptrMetric->ptrParent->dBalanceSum
+                           : ptrMetric->dNoBalanceSum /
+                                 ptrMetric->ptrParent->dNoBalanceSum;
+            }
+            /*std::ostringstream fOut;
+            fOut << std::setprecision(ptrGlobal->ptrConfig->iPrecision)
+                 << std::noshowpoint << dRes;*/
+            arrReturnData[iCurrentY][x] =
+                ptrGlobal->DoubletWithPrecision(ptrMetric->dInclusionPercent);
+        }
+        
+    }
+
+    if (bIsCounting)
+    {
+        if (x >= iSizeX)
+            iSizeX = x + 1;    // Ищем максимум, чтобы отмерить ширину
+    }
+
+    if (ptrMetric->mapChild.size() == 0)
+    {
+        ++iCurrentY;
+        return;
+    }
+
+    for (auto& [sName, ptrChild] : ptrMetric->mapChild)
+    {
+        CreateGraphE1TableRectInfo(bIsCounting, arrReturnData, x + 1, iSizeX,
+                            iCurrentY, ptrChild, iDeep + 1    // dAllSum,
+                                                              // bIsLocal
+        );
+    }
 }

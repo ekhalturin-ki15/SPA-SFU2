@@ -67,6 +67,10 @@ void FTreeDisc::CountDisc()
         {
             this->iExtendedAmountDisc++;
             mapAmountTypeDisc[it->eTypeDisc]++;
+            for (const auto& et : it->setTagDisc)
+            {
+                mapAmountTagDisc[et]++;
+            }
         }
     }
     return;

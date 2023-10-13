@@ -66,6 +66,13 @@ struct FTreeDisc
     FTreeElement* ptrRoot;
     map<wstring, FTreeElement*>
         mapDisc;    // Поиск указателя на дисциплину по её индексу
+
+    map<wstring, FTreeElement*>
+        mapAllowDisc;    // Оставляем только разрешённые дисциплины (без
+                         // модулей) для анализа (и без тех, у кого ЗЕ = 0)
+
+    map<wstring, wstring> mapNameToIndexDisc;
+
     string sNamePlan;
     string sShortNamePlan;    // Имя УП без расширения
 
@@ -78,6 +85,9 @@ struct FTreeDisc
         mapAmountTypeDisc;    // Количество дисциплин по типу (основные, по
                               // выбору, факультативы)
 
+    map<int, int> mapAmountTagDisc;// Количество дисциплин по теги (гуманитарные, технические, естествонаучные)
+
+
     set<string> fAllComp;    // Множество всех компетенций, присутствующих в
                              // учебном плане (УП)
 
@@ -86,9 +96,7 @@ struct FTreeDisc
     // outIAmountDisc);    // Вывод через параметры void FindAllScore(double&
     // outDSum);
 
-    map<wstring, FTreeElement*>
-        mapAllowDisc;    // Оставляем только разрешённые дисциплины (без
-                         // модулей) для анализа (и без тех, у кого ЗЕ = 0)
+    
 
     FMetric* ptrMetric;    // У каждого УП свой объект класса FMetric
     FGraph* ptrGraph;    // У каждого УП свой объект класса FGraph

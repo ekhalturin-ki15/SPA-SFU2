@@ -14,6 +14,7 @@
 #include "config.h"
 #include "error.h"
 #include "global.h"
+#include "adapOutData.h"
 #include "outData.h"
 #include "solve.h"
 
@@ -166,6 +167,8 @@ int main()
                 fFile /
                 ptrGlobal->ptrConfig
                     ->arrNameFileOut[category];    // / "TotalData.xlsx";
+
+            ptrGlobal->ptrAdapOutData->Create(sTotalOutName.string());
             ptrGlobal->ptrOutData->Out(sTotalOutName.string());
 
             // Пересоздание

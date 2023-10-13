@@ -65,7 +65,7 @@
     <ClCompile Include="metric.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="FAdapOutData.cpp">
+    <ClCompile Include="adapOutData.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -111,7 +111,7 @@
     <ClInclude Include="dsu.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="FAdapOutData.h">
+    <ClInclude Include="adapOutData.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

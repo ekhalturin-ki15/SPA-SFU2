@@ -38,7 +38,6 @@ void FTreeMetric::InitChosenScoreDFS(FTreeMetric* th, const double& dAllSum,
                                      const bool& bIsPercentRegAll,
                                      const bool& bCompInterDelete)
 {
-    if (th->mapChild.size() == 0) return;
     th->dChosenSum = (bCompInterDelete) ? th->dBalanceSum : th->dNoBalanceSum;
     if (bIsPercentRegAll)
     {
@@ -52,6 +51,7 @@ void FTreeMetric::InitChosenScoreDFS(FTreeMetric* th, const double& dAllSum,
             (bCompInterDelete) ? th->dBalanceSum / th->ptrParent->dBalanceSum
                 : th->dNoBalanceSum / th->ptrParent->dNoBalanceSum;
     }
+    //if (th->mapChild.size() == 0) return;
     for (auto& [key, val] : th->mapChild)
     {
         InitChosenScoreDFS(val, dAllSum, bIsPercentRegAll, bCompInterDelete);
@@ -234,7 +234,7 @@ void FMetric::Create()
                 string sIndicatorNumber;
                 if (matchesInd.size() > 0)
                 {
-                    for (auto sData : matchesInd)
+                    for (const auto& sData : matchesInd)
                     {
                         sCompName        = sData[1].str();
                         sCompNumber      = sData[2].str();
@@ -247,7 +247,7 @@ void FMetric::Create()
                         sregex_iterator { ALL(comp), fRegexHeaderComp },
                         sregex_iterator {}
                     };
-                    for (auto sData : matchesComp)
+                    for (const auto& sData : matchesComp)
                     {
                         sCompName        = sData[1].str();
                         sCompNumber      = sData[2].str();
@@ -299,7 +299,7 @@ void FMetric::Create()
                 }
 
                 //Только для определённого курса
-                for (auto [iCourse, dScore] : it->mapCourseScore)
+                for (const auto& [iCourse, dScore] : it->mapCourseScore)
                 {
                     double dNormalizeScore = dScore;
                     if (ptrTree->ptrGlobal->ptrConfig->bIsNormalizeScoreComp)

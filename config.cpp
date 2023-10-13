@@ -28,6 +28,8 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       bIsNormalizeScoreComp(true),
       bDeletingSpecCharDiscName(true),
       bOutAllInfoWithoutTag(true),
+      bOutEmptyComp(true),
+      //bSetNameIfNotIndex(true),
       //bOutIndicatorsInfo(true),
       wsNameConfig(L"./config.xlsx"),
       wsNamePage(L"Параметры"),
@@ -345,6 +347,13 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
+        /*wsPatern = L"Использовать имя вместо индекса, если нет индекса";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(bSetNameIfNotIndex, row);
+            return true;
+        }*/
+
         /*wsPatern = L"Выводить информацию об индикаторах";
         if (wsKey == wsPatern)
         {
@@ -630,12 +639,12 @@ vector<set<wstring>> FConfig::SetParsingParams(OpenXLSX::XLWorksheet& fPage)
     vector<set<wstring>> arrResult(fPage.rows().begin()->cells().size());
 
     int y = 0;
-    for (auto row : fPage.rows())
+    for (const auto& row : fPage.rows())
     {
         if (y++)    // Игнорируем первую строку, в ней описание столбцов
         {
             int i = 0;
-            for (auto& column : row.cells())
+            for (const auto& column : row.cells())
             {
                 wstring wsData = ptrGlobal->GetValue(column);
                 if (wsData != L"")

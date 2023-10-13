@@ -3,6 +3,7 @@
 #include "config.h"
 #include "error.h"
 #include "graph.h"
+#include "adapOutData.h"
 #include "outData.h"
 #include "solve.h"
 
@@ -135,14 +136,16 @@ FGlobal::FGlobal()
 
 bool FGlobal::Init()
 {
-    ptrConfig  = new FConfig(this);
-    ptrSolve   = new FSolve(this);
-    ptrError   = new FError(this);
-    ptrOutData = new FOutData(this);
+    ptrConfig      = new FConfig(this);
+    ptrSolve       = new FSolve(this);
+    ptrError       = new FError(this);
+    ptrAdapOutData = new FAdapOutData(this);
+    ptrOutData     = new FOutData(this);
 
     if (!ptrConfig->Init()) return false;
     if (!ptrError->Init()) return false;
     if (!ptrSolve->Init()) return false;
+    if (!ptrAdapOutData->Init()) return false;
     if (!ptrOutData->Init()) return false;
 
     return true;
@@ -158,7 +161,7 @@ string FGlobal::ConwertToString(wstring wsData)
     return fConverterToString2.to_bytes(wsData);
 }
 
-string FGlobal::ConwertUTF16RU(string sData) 
+string FGlobal::ConwertUTF16RU(string sData)
 {
     string sOut;
     for (const auto& it : sData)
@@ -185,8 +188,9 @@ string FGlobal::ReversUTF16RU(string sData) const
         {
             if (mapReversUnic.count({ sData[i], sData[i + 1] }))
             {
-                //Чтобы метод был константный, используем const
-                sOut.push_back(mapReversUnic.find({ sData[i], sData[i + 1] })->second);
+                // Чтобы метод был константный, используем const
+                sOut.push_back(
+                    mapReversUnic.find({ sData[i], sData[i + 1] })->second);
                 i += 2;
             }
             else
@@ -304,6 +308,8 @@ bool FGlobal::ReCreate()
     // Всё, кроме ptrError и ptrConfig нужно пересоздать
     delete ptrSolve;
     ptrSolve = nullptr;
+    delete ptrAdapOutData;
+    ptrAdapOutData = nullptr;
     delete ptrOutData;
     ptrOutData = nullptr;
 
@@ -311,6 +317,7 @@ bool FGlobal::ReCreate()
     ptrOutData = new FOutData(this);
 
     if (!ptrSolve->Init()) return false;
+    if (!ptrAdapOutData->Init()) return false;
     if (!ptrOutData->Init()) return false;
 
     return true;

@@ -17,7 +17,7 @@ void FSolve::CreateDiscTreeZeroPage(const OpenXLSX::XLWorksheet& fSheet,
     // Считываем заголовок
     {
         int x = 0;
-        for (auto it : fSheet.rows().begin()->cells())
+        for (const auto& it : fSheet.rows().begin()->cells())
         {
             if (ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber]
                     .arrHeader[0]
@@ -38,6 +38,13 @@ void FSolve::CreateDiscTreeZeroPage(const OpenXLSX::XLWorksheet& fSheet,
         }
     }
 
+    //bool bIsNoHaveIndex = false;
+    //if (iIdIndex == -1)    // Не указаны индексы
+    //{
+    //    bIsNoHaveIndex = true;
+    //    iIdIndex = iIdName;    // Пусть теперь имя будет индексом
+    //}
+
 #ifdef DEBUG
     ofstream out(ptrGlobal->ptrConfig->wsNameDebugFile);
 #endif    // DEBUG
@@ -46,7 +53,7 @@ void FSolve::CreateDiscTreeZeroPage(const OpenXLSX::XLWorksheet& fSheet,
                        // индекс вложенности -1
 
     iCurrentRow = -1;
-    for (auto row : fSheet.rows())
+    for (const auto& row : fSheet.rows())
     {
         ++iCurrentRow;
 
@@ -59,7 +66,7 @@ void FSolve::CreateDiscTreeZeroPage(const OpenXLSX::XLWorksheet& fSheet,
 
         if (iCurrentRow != 0)
         {
-            for (auto it : row.cells())
+            for (const auto& it : row.cells())
             {
                 ++x;
                 wstring wsData = ptrGlobal->GetValue(it);
@@ -71,6 +78,9 @@ void FSolve::CreateDiscTreeZeroPage(const OpenXLSX::XLWorksheet& fSheet,
                     {
                         bReadIndex = true;    // Чтобы повторно не находить
                                               // индекс в строке
+
+
+
                         while (iPreX >= x)
                         {
                             if (ptrThis == nullptr)
@@ -111,6 +121,13 @@ void FSolve::CreateDiscTreeZeroPage(const OpenXLSX::XLWorksheet& fSheet,
                     else if ((iIdName <= x) && (x < iIdComp) && (!bReadName))
                     {
                         bReadName = true;
+
+                        if (ptrNewNode)
+                        {
+                            arrDisc.back()->mapNameToIndexDisc[wsData] =
+                                ptrNewNode->wsIndexName;                            
+                        }
+
 
                         // Удаляем лишние пробелы
                         wsData = std::regex_replace(wsData,
@@ -193,7 +210,7 @@ void FSolve::CreateDiscTreeZeroPage(const OpenXLSX::XLWorksheet& fSheet,
                             sregex_iterator {}
                         };
 
-                        for (auto sData : matches)
+                        for (const auto& sData : matches)
                         {
                             string sCompName = sData[1].str();
                             // Есть ошибка оператора: иногда вместо компетенции

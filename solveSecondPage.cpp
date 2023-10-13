@@ -16,6 +16,8 @@ void FSolveSecondPage::AddDiscScore(const OpenXLSX::XLWorksheet& fSheet,
     // Инициализируются один раз
     int iIdAllow = -1;    // Не инициализированы
     int iIdIndex = -1;    // Позиция столбца, где указан индекс
+    int iIdName =
+        -1;    // Позиция столбца, где указано имя (будем исп. если нет имени)
     int iIdLScore =
         -1;    //  Позиция столбца, где начинается перечесление ЗЕ за семестр
     int iIdRScore =
@@ -62,9 +64,18 @@ void FSolveSecondPage::AddDiscScore(const OpenXLSX::XLWorksheet& fSheet,
                 if (ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber]
                         .arrHeader[2]
                         .count(wsData))
-                    iIdLScore = x;
+                    iIdName =
+                        x - 1;    // Так как в УП есть два столбца с ОДИНАКОВЫМИ
+                                  // названиями "Наименование", поэтому
+                                  // ориентироваться по ним не получится, зато
+                                  // получится ориентироваться по следующему за
+                                  // ним столбцу
                 if (ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber]
                         .arrHeader[3]
+                        .count(wsData))
+                    iIdLScore = x;
+                if (ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber]
+                        .arrHeader[4]
                         .count(wsData))
                     iIdRScore = x;
 
@@ -74,9 +85,17 @@ void FSolveSecondPage::AddDiscScore(const OpenXLSX::XLWorksheet& fSheet,
                     bIsAllow   = (wsData.find(L"+") != wstring::npos);
                 }
 
-                if ((iIdIndex != -1) && (iIdIndex <= x) && (x < iIdLScore) &&
-                    (!bReadIndex))
+                if (((iIdIndex != -1) && (iIdIndex <= x) && (x < iIdLScore) &&
+                     (!bReadIndex)) ||
+                    ((iIdName != -1) && (iIdName <= x) && (x < iIdLScore) &&
+                     (!bReadIndex)))
                 {
+                    if (iIdIndex == -1)
+                    {
+                        wsData = ptrGlobal->ptrSolve->arrDisc.back()
+                                     ->mapNameToIndexDisc[wsData];
+                    }
+
                     bReadIndex     = true;
                     wsCurrentIndex = wsData;
                     // Если указан среди перечня кодов дисциплин
@@ -130,8 +149,8 @@ void FSolveSecondPage::AddDiscScore(const OpenXLSX::XLWorksheet& fSheet,
         }
     }
 
-    if ((iIdAllow == -1) || (iIdIndex == -1) || (iIdLScore == -1) ||
-        (iIdRScore == -1))
+    if ((iIdAllow == -1) || ((iIdIndex == -1) && (iIdName == -1)) ||
+        (iIdLScore == -1) || (iIdRScore == -1))
     {
         throw std::logic_error(
             FError::sNotFoundKeyCol);    // Неудалось найти ключевой столбец
@@ -141,8 +160,9 @@ void FSolveSecondPage::AddDiscScore(const OpenXLSX::XLWorksheet& fSheet,
         ((iIdRScore - iIdLScore) / ptrGlobal->ptrConfig->iCourseLen);
 
     if (ptrGlobal->ptrSolve->iMaxCourse < iAmountCource)
-        ptrGlobal->ptrSolve->iMaxCourse = iAmountCource; //Максимально найденый курс среди всех УП, которые вводятся
-
+        ptrGlobal->ptrSolve->iMaxCourse =
+            iAmountCource;    // Максимально найденый курс среди всех УП,
+                              // которые вводятся
 }
 
 double FSolveSecondPage::DFSCountingScore(FTreeElement* ptrThis)
