@@ -29,6 +29,8 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       bDeletingSpecCharDiscName(true),
       bOutAllInfoWithoutTag(true),
       bOutEmptyComp(true),
+      bOutTotalInfo(true),
+      bOutMaxMinData(true),
       //bSetNameIfNotIndex(true),
       //bOutIndicatorsInfo(true),
       wsNameConfig(L"./config.xlsx"),
@@ -124,6 +126,19 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             bArrIsSolveGraphMetric.resize(arrBool.size());
             for (int i = 0; i < arrBool.size(); ++i)
                 bArrIsSolveGraphMetric[i] =
+                    (arrBool[i].find(L"да") != wstring::npos);
+
+            return true;
+        }
+
+        wsPatern = L"Объединить вывод данных УП с данными по графам";
+        if (wsKey == wsPatern)
+        {
+            vector<wstring> arrBool;
+            ptrGlobal->TakeData(arrBool, row, 3);
+            bArrIsconcatGraphData.resize(arrBool.size());
+            for (int i = 0; i < arrBool.size(); ++i)
+                bArrIsconcatGraphData[i] =
                     (arrBool[i].find(L"да") != wstring::npos);
 
             return true;
@@ -347,19 +362,19 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
-        /*wsPatern = L"Использовать имя вместо индекса, если нет индекса";
+        wsPatern = L"Выводить итоговую статистику";
         if (wsKey == wsPatern)
         {
-            ptrGlobal->TakeData(bSetNameIfNotIndex, row);
+            ptrGlobal->TakeData(bOutTotalInfo, row);
             return true;
-        }*/
+        }
 
-        /*wsPatern = L"Выводить информацию об индикаторах";
+        wsPatern = L"Выводить коридор макс-мин";
         if (wsKey == wsPatern)
         {
-            ptrGlobal->TakeData(bOutIndicatorsInfo, row);
+            ptrGlobal->TakeData(bOutMaxMinData, row);
             return true;
-        }*/
+        }
 
         wsPatern = L"Индикатор находится на глубине X=";
         if (wsKey == wsPatern)

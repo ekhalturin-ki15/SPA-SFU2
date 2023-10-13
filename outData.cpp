@@ -450,7 +450,10 @@ void FOutData::CreateAllCurriculaTotalData(
     }
 
     //  Вывод коридора минимума максимума
-    AddTableMaxMinData(arrReturnData, mapSaveСorridorData);
+    if (ptrGlobal->ptrConfig->bOutMaxMinData)
+    {
+        AddTableMaxMinData(arrReturnData, mapSaveСorridorData);
+    }
 }
 
 void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
@@ -511,7 +514,10 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
         arrReturnData.push_back(arrCurData);
     }
 
-    AddTableMaxMinData(arrReturnData, mapSaveСorridorData);
+    if (ptrGlobal->ptrConfig->bOutMaxMinData)
+    {
+        AddTableMaxMinData(arrReturnData, mapSaveСorridorData);
+    }
 }
 
 void FOutData::Out(string sOutPath)
@@ -522,10 +528,21 @@ void FOutData::Out(string sOutPath)
     fOutFile.workbook().deleteSheet("Sheet1");    // Стартовая страница не нужна
     OpenXLSX::XLWorksheet wks = fOutFile.workbook().worksheet("Total Data");
 
+    int                    iShiftX = 1;
     vector<vector<string>> arrAllCurriculaTotalData;
     CreateAllCurriculaTotalData(arrAllCurriculaTotalData);
-    OutTableInfo(1, 1, arrAllCurriculaTotalData, wks);
-
+    OutTableInfo(iShiftX, 1, arrAllCurriculaTotalData, wks);
+    iShiftX += arrAllCurriculaTotalData.front().size() - 1;
+    if (ptrGlobal->ptrConfig->bArrIsconcatGraphData.at(0))
+    {
+        vector<vector<string>> arrAllCoursesGraphData;
+        CreateSummaryTotalData(arrAllCoursesGraphData, FGraph::iCommon);
+        OutTableInfo(
+            iShiftX, 1, arrAllCoursesGraphData,
+                     wks, 1); // iShiftDataX = 1, так как заголовки УП выводить не надо
+        iShiftX += arrAllCoursesGraphData.front().size() - 1; // -1 так как без заголовка УП
+    }
+    else
     {
         string sNamePage = this->ptrGlobal->ConwertToString(
             ptrGlobal->ptrConfig
@@ -546,21 +563,33 @@ void FOutData::Out(string sOutPath)
     for (int iCourse = 0; iCourse < this->ptrGlobal->ptrSolve->iMaxCourse;
          ++iCourse)
     {
-        // string sNamePage =
-        //     ptrGlobal->ptrConfig->sOutPrefAllCurriculaCurrentCourse;
+        if (ptrGlobal->ptrConfig->bArrIsconcatGraphData.at(1))
+        {
+            vector<vector<string>> arrCourseGraphData;
+            CreateSummaryTotalData(arrCourseGraphData, iCourse);
+            OutTableInfo(
+                iShiftX, 1, arrCourseGraphData, wks,
+                1);    // iShiftDataX = 1, так как заголовки УП выводить не надо 
+            
+            iShiftX += arrCourseGraphData.front().size() -
+                       1;    // -1 так как без заголовка УП
+        }
+        else
+        {
+            string sNamePage = ptrGlobal->ConwertToString(
+                ptrGlobal->ptrConfig
+                    ->mapArrOutParams
+                        [L"Предлог перед выводом статистики по курсу "
+                         L"определённого номера"]
+                    .at(0));
 
-        string sNamePage = ptrGlobal->ConwertToString(
-            ptrGlobal->ptrConfig
-                ->mapArrOutParams[L"Предлог перед выводом статистики по курсу "
-                                  L"определённого номера"]
-                .at(0));
-
-        sNamePage = sNamePage + " " + to_string(iCourse + 1);
-        fOutFile.workbook().addWorksheet(sNamePage);
-        wks = fOutFile.workbook().worksheet(sNamePage);
-        vector<vector<string>> arrCourseGraphData;
-        CreateSummaryTotalData(arrCourseGraphData, iCourse);
-        OutTableInfo(1, 1, arrCourseGraphData, wks);
+            sNamePage = sNamePage + " " + to_string(iCourse + 1);
+            fOutFile.workbook().addWorksheet(sNamePage);
+            wks = fOutFile.workbook().worksheet(sNamePage);
+            vector<vector<string>> arrCourseGraphData;
+            CreateSummaryTotalData(arrCourseGraphData, iCourse);
+            OutTableInfo(1, 1, arrCourseGraphData, wks);
+        }
     }
 
     fOutFile.save();
@@ -607,10 +636,9 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
     // OutRectAddInfo(iOldX, y, ptrCurrentTree, true, dAllSum);
     vector<vector<string>> arrDataAll;
 
-    // OutRectAddInfo(arrData, 0, 0, ptrCurrentTree, true, dAllSum); //
-    // Вывод FMetric::sAllMetric
     int iXShift = 1;
-    CreateTableInfoInit(arrDataAll, ptrCurrentTree);//, ptrCurrentTree->dChosenSum);
+    CreateTableInfoInit(arrDataAll,
+                        ptrCurrentTree);    //, ptrCurrentTree->dChosenSum);
     OutTableInfo(iXShift, 1, arrDataAll, arrSinglOpenWKS.back());
     iXShift +=
         arrDataAll.front().size();    // Сдвигаемся на ширину выведеной таблицы
@@ -653,15 +681,19 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
                          arrDataAllCourse,
                          arrSinglLocalCurrentCourseOpenWKS.back());
 
-            vector<vector<string>> arrTotalCourseGraphData;
-            CreateTotalInfo(arrTotalCourseGraphData,
-                            &ptrTree->ptrGraph->mapGraph[sKey[0] - '1'],
-                            EOutType::EOT_Added);
+            if (ptrGlobal->ptrConfig->bOutTotalInfo)
+            {
+                vector<vector<string>> arrTotalCourseGraphData;
+                CreateTotalInfo(arrTotalCourseGraphData,
+                                &ptrTree->ptrGraph->mapGraph[sKey[0] - '1'],
+                                EOutType::EOT_Added);
 
-            OutTableInfo(1,    // Так как 1-индексация
-                         arrDataAllCourse.size() + 1,    // Так как 1-индексация
-                         arrTotalCourseGraphData,
-                         arrSinglLocalCurrentCourseOpenWKS.back());
+                OutTableInfo(1,    // Так как 1-индексация
+                             arrDataAllCourse.size() +
+                                 1,    // Так как 1-индексация
+                             arrTotalCourseGraphData,
+                             arrSinglLocalCurrentCourseOpenWKS.back());
+            }
 
             arrSinglLocalCurrentCourseOpenFile.back().save();
             arrSinglLocalCurrentCourseOpenFile.back().close();
@@ -672,12 +704,15 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
         }
     }
 
-    vector<vector<string>> arrTotalGraphData;
-    CreateTotalInfo(arrTotalGraphData,
-                    &ptrTree->ptrGraph->mapGraph[FGraph::iCommon],
-                    EOutType::EOT_Added);
-    OutTableInfo(1, iYShift + 1,    // Так как 1-индексация
-                 arrTotalGraphData, arrSinglOpenWKS.back());
+    if (ptrGlobal->ptrConfig->bOutTotalInfo)
+    {
+        vector<vector<string>> arrTotalGraphData;
+        CreateTotalInfo(arrTotalGraphData,
+                        &ptrTree->ptrGraph->mapGraph[FGraph::iCommon],
+                        EOutType::EOT_Added);
+        OutTableInfo(1, iYShift + 1,    // Так как 1-индексация
+                     arrTotalGraphData, arrSinglOpenWKS.back());
+    }
 
     {
         // Новая визуализация
@@ -692,15 +727,13 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
             mapGraphE1[sKey] = fBuf;
         }
 
-
         int iSize = 1;
         for (const auto& [sComp, et] : mapGraphE1["1"])
         {
             iSize += et.size();
-
-
         }
-        vector<vector<string>> arrData(iSize, vector<string>(mapGraphE1.size()+2));
+        vector<vector<string>> arrData(iSize,
+                                       vector<string>(mapGraphE1.size() + 2));
 
         {
             int y = 1;
@@ -722,7 +755,6 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
             }
         }
 
-
         arrSinglLocalCurrentCourseOpenFile.clear();
         arrSinglLocalCurrentCourseOpenFile.resize(1);
         arrSinglLocalCurrentCourseOpenWKS.clear();
@@ -730,19 +762,18 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
 
         arrSinglLocalCurrentCourseOpenFile[0].create(sPath + "/" + sName + "/" +
                                                      "E1Diagram.xlsx");
-        arrSinglLocalCurrentCourseOpenFile[0].workbook().addWorksheet("E1Diagram");
+        arrSinglLocalCurrentCourseOpenFile[0].workbook().addWorksheet(
+            "E1Diagram");
         arrSinglLocalCurrentCourseOpenFile[0].workbook().deleteSheet(
             "Sheet1");    // Стартовая страница не нужна
         arrSinglLocalCurrentCourseOpenFile[0].save();
         arrSinglLocalCurrentCourseOpenWKS[0] =
-            arrSinglLocalCurrentCourseOpenFile[0].workbook().worksheet("E1Diagram");
+            arrSinglLocalCurrentCourseOpenFile[0].workbook().worksheet(
+                "E1Diagram");
         // Теперь это выводится в OutAddInfoInit
 
         // Выводим локально в отдельный файл
-        OutTableInfo(1,
-                     1,
-                     arrData,
-                     arrSinglLocalCurrentCourseOpenWKS.back());
+        OutTableInfo(1, 1, arrData, arrSinglLocalCurrentCourseOpenWKS.back());
 
         arrSinglLocalCurrentCourseOpenFile.back().save();
         arrSinglLocalCurrentCourseOpenFile.back().close();
@@ -752,8 +783,6 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
         arrSinglLocalCurrentCourseOpenWKS.clear();
     }
 
-
-
     arrSinglOpenFile.back().save();
     arrSinglOpenFile.back().close();
 
@@ -762,14 +791,15 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
     arrSinglOpenWKS.clear();
 }
 
-void FOutData::OutTableInfo(const int&                    iShiftX,
-                            const int&                    iShiftY,
+void FOutData::OutTableInfo(const int& iShiftX, const int& iShiftY,
                             const vector<vector<string>>& arrData,
-                            OpenXLSX::XLWorksheet&        WKS)
+                            OpenXLSX::XLWorksheet& WKS, 
+                            int iShiftDataX,
+                            int iShiftDataY)
 {
-    for (int y = 0; y < arrData.size(); ++y)
+    for (int y = iShiftDataY; y < arrData.size(); ++y)
     {
-        for (int x = 0; x < arrData[y].size(); ++x)
+        for (int x = iShiftDataX; x < arrData[y].size(); ++x)
         {
             WKS.cell(y + iShiftY, x + iShiftX).value() = arrData[y][x];
         }
@@ -779,19 +809,19 @@ void FOutData::OutTableInfo(const int&                    iShiftX,
 void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
                                    FTreeMetric*            ptrMetric
                                    // const double            dAllSum,
-                                   //bool bIsLocal
-    )
+                                   // bool bIsLocal
+)
 {
     int iSizeX = 0, iSizeY = 1;    // iSizeY = 1 из-за заголовка
     arrReturnData.clear();
     vector<vector<string>> arrAllData;
 
-    CreateTableRectInfo(true,// Считаем вхолостую
-        arrAllData, 0, iSizeX,
+    CreateTableRectInfo(true,    // Считаем вхолостую
+                        arrAllData, 0, iSizeX,
                         iSizeY,    // 0-строка под заголовок
                         ptrMetric, 0    // dAllSum,
-                        //bIsLocal
-        );       
+                                        // bIsLocal
+    );
 
     arrAllData.assign(iSizeY, vector<string>(iSizeX));
 
@@ -814,8 +844,8 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
     CreateTableRectInfo(false, arrAllData, 0, iSizeX,
                         iCurrentY,    // 0-строка под заголовок
                         ptrMetric, 0    // dAllSum,
-                        //bIsLocal
-        );
+                                        // bIsLocal
+    );
 
     // Теперь нужно оставить только те заголовки, которые требуется выводить
 
@@ -854,8 +884,8 @@ void FOutData::CreateTableRectInfo(
     const bool& bIsCounting,
     vector<vector<string>>& arrReturnData,    // Возвращаемое значение с функции
     int x, int& iSizeX, int& iCurrentY, FTreeMetric* ptrMetric, int iDeep
-    //const bool& bIsLocal
-    )
+    // const bool& bIsLocal
+)
 {
     if (!bIsCounting)
     {
@@ -957,8 +987,8 @@ void FOutData::CreateTableRectInfo(
     {
         CreateTableRectInfo(bIsCounting, arrReturnData, x + 1, iSizeX,
                             iCurrentY, ptrChild, iDeep + 1    // dAllSum,
-                            //bIsLocal
-            );
+                                                              // bIsLocal
+        );
     }
 }
 
@@ -1175,21 +1205,18 @@ bool FOutData::TakePasteData(const int& x, vector<string>& arrCurRow,
     return false;
 }
 
-
-
-
 void FOutData::CreateGraphE1TableInfoInit(
     map<string, map<string, string>>& fReturnData,
-                                   FTreeMetric*            ptrMetric)
+    FTreeMetric*                      ptrMetric)
 {
-    int iSizeX = 0, iSizeY = 0; 
+    int                    iSizeX = 0, iSizeY = 0;
     vector<vector<string>> arrAllData;
 
     CreateGraphE1TableRectInfo(true,    // Считаем вхолостую
-                        arrAllData, 0, iSizeX,
-                        iSizeY,    // 0-строка под заголовок
-                        ptrMetric, 0    // dAllSum,
-                                        // bIsLocal
+                               arrAllData, 0, iSizeX,
+                               iSizeY,    // 0-строка под заголовок
+                               ptrMetric, 0    // dAllSum,
+                                               // bIsLocal
     );
 
     arrAllData.assign(iSizeY, vector<string>(iSizeX));
@@ -1198,10 +1225,10 @@ void FOutData::CreateGraphE1TableInfoInit(
                                        L"ЗЕ Компетенций" };
 
     int iCurrentY = 0;
-    CreateGraphE1TableRectInfo( false, arrAllData, 0, iSizeX,
-                        iCurrentY,    // 0-строка под заголовок
-                        ptrMetric, 0    // dAllSum,
-                                        // bIsLocal
+    CreateGraphE1TableRectInfo(false, arrAllData, 0, iSizeX,
+                               iCurrentY,    // 0-строка под заголовок
+                               ptrMetric, 0    // dAllSum,
+                                               // bIsLocal
     );
 
     // Теперь нужно оставить только те заголовки setE1AcceptedHead
@@ -1211,16 +1238,15 @@ void FOutData::CreateGraphE1TableInfoInit(
 
     for (int y = 0; y < arrAllData.size(); ++y)
     {
-        int            x = -1;
-        
+        int x = -1;
+
         for (const auto& it : arrCompetenceHead)
         {
             ++x;
             if (x >= iSizeX) break;
             if (it == L"Заголовок компетенции")
             {
-                if (arrAllData[y][x] != "")
-                    sHeadComp = arrAllData[y][x];
+                if (arrAllData[y][x] != "") sHeadComp = arrAllData[y][x];
             }
             if (it == L"Компетенция")
             {
@@ -1228,19 +1254,18 @@ void FOutData::CreateGraphE1TableInfoInit(
             }
             if (it == L"ЗЕ Компетенций")
             {
-                if (arrAllData[y][x] != "") sScore = arrAllData[y][x];               
+                if (arrAllData[y][x] != "") sScore = arrAllData[y][x];
             }
         }
-        if (sScore == "0") 
+        if (sScore == "0")
             fReturnData[sHeadComp][sComp] = "";
         else
             fReturnData[sHeadComp][sComp] = sScore;
     }
-    
 }
 
 void FOutData::CreateGraphE1TableRectInfo(
-    const bool& bIsCounting, 
+    const bool& bIsCounting,
     vector<vector<string>>& arrReturnData,    // Возвращаемое значение с функции
     int x, int& iSizeX, int& iCurrentY, FTreeMetric* ptrMetric, int iDeep
     // const bool& bIsLocal
@@ -1250,14 +1275,13 @@ void FOutData::CreateGraphE1TableRectInfo(
     {
         ++iCurrentY;
         return;
-        
     }
 
     if (!bIsCounting)
     {
         arrReturnData[iCurrentY][x] = ptrMetric->sName;
     }
-   
+
     // Выводим кол-во ЗЕ
     if (iDeep > 0)
     {
@@ -1283,7 +1307,6 @@ void FOutData::CreateGraphE1TableRectInfo(
             arrReturnData[iCurrentY][x] =
                 ptrGlobal->DoubletWithPrecision(ptrMetric->iAmountUsingDisc);
         }
-        
     }
 
     // Выводим процент распределения
@@ -1315,7 +1338,6 @@ void FOutData::CreateGraphE1TableRectInfo(
             arrReturnData[iCurrentY][x] =
                 ptrGlobal->DoubletWithPrecision(ptrMetric->dInclusionPercent);
         }
-        
     }
 
     if (bIsCounting)
@@ -1333,8 +1355,8 @@ void FOutData::CreateGraphE1TableRectInfo(
     for (auto& [sName, ptrChild] : ptrMetric->mapChild)
     {
         CreateGraphE1TableRectInfo(bIsCounting, arrReturnData, x + 1, iSizeX,
-                            iCurrentY, ptrChild, iDeep + 1    // dAllSum,
-                                                              // bIsLocal
+                                   iCurrentY, ptrChild, iDeep + 1    // dAllSum,
+                                                                     // bIsLocal
         );
     }
 }

@@ -75,10 +75,16 @@ struct FConfig
     bool bOutAllInfoWithoutTag;
     // bool bOutIndicatorsInfo;
     bool bOutEmptyComp;
+
+    bool bOutTotalInfo;
+    bool bOutMaxMinData;
     // bool bSetNameIfNotIndex; // Пока что только в планах научить программу
     // работать с предметами, когда не указаны их индексы
 
     vector<bool> bArrIsSolveGraphMetric;
+
+    //Объединять ли данные УП с данными графов
+    vector<bool> bArrIsconcatGraphData;
 
     double dMinWeigthRib;
     double dMinComp;

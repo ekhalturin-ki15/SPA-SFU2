@@ -30,8 +30,9 @@ struct FOutData
     bool Init();
 
 private:
-    const vector<wstring> arrMetricHead;// Единожды задаётся в конструкторе
-    const vector<wstring> arrCompetenceHead;// Единожды задаётся в конструкторе
+    const vector<wstring> arrMetricHead;    // Единожды задаётся в конструкторе
+    const vector<wstring>
+        arrCompetenceHead;    // Единожды задаётся в конструкторе
 
     // vector<int> arrOutColm;
     // vector<double>  arrResult;
@@ -94,17 +95,23 @@ private:
 
     // Лучше буду генерировать матрицу, и выводить её сразу же
     // Не забываем, что OpenXLSX нумерует всё от единицы (1)
-    void OutTableInfo(const int& iShiftX,    // С каким смещением выводим
-                      const int& iShiftY,    // С каким смещением выводим
-                      const vector<vector<string>>& arrData,    // Что выводим
-                      OpenXLSX::XLWorksheet& WKS);    // Куда выводим
+    void OutTableInfo(
+        const int& iShiftX,    // С каким смещением выводим
+        const int& iShiftY,    // С каким смещением выводим
+        const vector<vector<string>>& arrData,    // Что выводим
+        OpenXLSX::XLWorksheet&        WKS,
+        int iShiftDataX = 0,    // Возможно, потребуется выводить не всю таблицу
+                                // целиком, а только её часть
+        int iShiftDataY = 0
+
+    );    // Куда выводим
     // int OutRectAddInfo(int x, int y, FTreeMetric* ptrMetric, bool bIsCourse,
     // const double dAllSum, bool bIsLocal = false);    // Возвращает Актуальное
     // занчение y
 
     void CreateTableInfoInit(vector<vector<string>>& arrReturnData,
                              FTreeMetric* ptrMetric    // const double dAllSum,
-                             //bool         bIsLocal = false
+                             // bool         bIsLocal = false
     );
 
     void CreateTableRectInfo(
@@ -117,13 +124,12 @@ private:
                         // записываем в iSizeX результат
         int&         iCurrentY,    // Глобальная переменая
         FTreeMetric* ptrMetric, int iDeep
-        //const bool& bIsLocal = false
-        );    // Возвращает Актуальное значение y
-
+        // const bool& bIsLocal = false
+    );    // Возвращает Актуальное значение y
 
     void CreateGraphE1TableInfoInit(
         map<string, map<string, string>>& fReturnData,
-                             FTreeMetric* ptrMetric);
+        FTreeMetric*                      ptrMetric);
 
     void CreateGraphE1TableRectInfo(
         const bool& bIsCounting,    // Если true - то проход в холостую для
@@ -134,7 +140,8 @@ private:
         int& iSizeX,    // Если считаем вхолостую, когда bIsCounting == true, то
                         // записываем в iSizeX результат
         int&         iCurrentY,    // Глобальная переменая
-        FTreeMetric* ptrMetric, int iDeep);    // Возвращает Актуальное значение y
+        FTreeMetric* ptrMetric,
+        int iDeep);    // Возвращает Актуальное значение y
 
     //// Проход рекурсии вхолостую (теперь находится в CreateTableRectInfo)
     // void CountRectArraySize(
