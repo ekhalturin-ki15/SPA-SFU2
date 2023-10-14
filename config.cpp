@@ -23,7 +23,7 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       bCompInterDelete(true),
       bIsPercentRegAll(true),
       bOutCompWithName(true),
-      bOutShortNameCurr(true),
+      bOutShortNameCur(true),
       bIsUnDirected(true),
       bIsNormalizeScoreComp(true),
       bDeletingSpecCharDiscName(true),
@@ -307,7 +307,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
         wsPatern = L"Выводить короткое имя для УП";
         if (wsKey == wsPatern)
         {
-            ptrGlobal->TakeData(bOutShortNameCurr, row);
+            ptrGlobal->TakeData(bOutShortNameCur, row);
             return true;
         }
 
@@ -375,6 +375,13 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             ptrGlobal->TakeData(bOutMaxMinData, row);
             return true;
         }
+
+        //wsPatern = L"Выводить префикс название УП";
+        //if (wsKey == wsPatern)
+        //{
+        //    ptrGlobal->TakeData(bOutCurriculaName, row);
+        //    return true;
+        //}
 
         wsPatern = L"Индикатор находится на глубине X=";
         if (wsKey == wsPatern)

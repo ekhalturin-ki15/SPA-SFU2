@@ -30,9 +30,13 @@ struct FOutData
     bool Init();
 
 private:
-    const vector<wstring> arrMetricHead;    // Единожды задаётся в конструкторе
-    const vector<wstring>
-        arrCompetenceHead;    // Единожды задаётся в конструкторе
+
+    string sCurPlanName;
+
+    //Нельзя обобщать заголовки, это нарушает правило Лисков
+    //const vector<wstring> arrMetricHead;    // Единожды задаётся в конструкторе
+    //const vector<wstring>
+    //    arrCompetenceHead;    // Единожды задаётся в конструкторе
 
     // vector<int> arrOutColm;
     // vector<double>  arrResult;
@@ -110,7 +114,8 @@ private:
     // занчение y
 
     void CreateTableInfoInit(vector<vector<string>>& arrReturnData,
-                             FTreeMetric* ptrMetric    // const double dAllSum,
+                             FTreeMetric*            ptrMetric,
+                             bool bIsOutNameCur    // const double dAllSum,
                              // bool         bIsLocal = false
     );
 

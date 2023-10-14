@@ -68,7 +68,7 @@ struct FConfig
     bool bCompInterDelete;
     bool bIsPercentRegAll;
     bool bOutCompWithName;
-    bool bOutShortNameCurr;
+    bool bOutShortNameCur;
     bool bIsUnDirected;
     bool bDeletingSpecCharDiscName;
     bool bIsNormalizeScoreComp;
@@ -78,6 +78,7 @@ struct FConfig
 
     bool bOutTotalInfo;
     bool bOutMaxMinData;
+    //bool bOutCurriculaName; // В параметрах вывода указано как да или нет
     // bool bSetNameIfNotIndex; // Пока что только в планах научить программу
     // работать с предметами, когда не указаны их индексы
 

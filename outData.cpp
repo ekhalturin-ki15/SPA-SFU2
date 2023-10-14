@@ -10,35 +10,38 @@
 #include <sstream>
 
 FOutData::FOutData(FGlobal* _ptrGlobal)
-    : ptrGlobal(_ptrGlobal),
-      arrCompetenceHead(
-          { L"За какой курс",
+    : ptrGlobal(_ptrGlobal)
 
-            L"Заголовок компетенции", L"ЗЕ Заголовка компетенции",
-            L"Кол-во дисциплин заголовка компетенции",
+      //arrCompetenceHead(
+      //    { 
+      //       L"Название УП", L"За какой курс",
 
-            L"Процент распределения Заголовка компетенции",
+      //      L"Заголовок компетенции", L"ЗЕ Заголовка компетенции",
+      //      L"Кол-во дисциплин заголовка компетенции",
 
-            L"Компетенция", L"ЗЕ Компетенций", L"Кол-во дисциплин компетенции",
-            L"Процент распределения Компетенции",
+      //      L"Процент распределения Заголовка компетенции",
 
-            L"Индикатор", L"ЗЕ индикаторов", L"Кол-во дисциплин индикатора",
-            L"Процент распределения Индикатора" }),
-      arrMetricHead(
-          { // L"Название учебного плана",
-            L"Всего ЗЕ в графе", L"Кол-во дисциплин в графе",
-            // L"(Расш.) Общее кол-во ЗЕ в УП",
-            // L"(Расш.) Кол-во дисциплин в УП",    // Включает те,
-            // что указаны в
-            //  УП, как неучитываемые
-            L"Максимальное ЗЕ у дисциплины", L"Минимальное ЗЕ у дисциплины",
-            L"Максимальный вес ребра", L"Минимальный вес ребра",
-            L"Диаметр графа по расстоянию",
-            L"Диаметр графа по количеству рёбер",
-            L"Количество компонент связности", L"Максимальное оставное дерево",
-            L"Минимальное оставное дерево", L"Плотность графа",
-            L"Количество основных дисциплин", L"Количество дисциплин по выбору",
-            L"Количество факультативов" })
+      //      L"Компетенция", L"ЗЕ Компетенций", L"Кол-во дисциплин компетенции",
+      //      L"Процент распределения Компетенции",
+
+      //      L"Индикатор", L"ЗЕ индикаторов", L"Кол-во дисциплин индикатора",
+      //      L"Процент распределения Индикатора" }),
+
+      //arrMetricHead(
+      //    { // L"Название учебного плана",
+      //      L"Всего ЗЕ в графе", L"Кол-во дисциплин в графе",
+      //      // L"(Расш.) Общее кол-во ЗЕ в УП",
+      //      // L"(Расш.) Кол-во дисциплин в УП",    // Включает те,
+      //      // что указаны в
+      //      //  УП, как неучитываемые
+      //      L"Максимальное ЗЕ у дисциплины", L"Минимальное ЗЕ у дисциплины",
+      //      L"Максимальный вес ребра", L"Минимальный вес ребра",
+      //      L"Диаметр графа по расстоянию",
+      //      L"Диаметр графа по количеству рёбер",
+      //      L"Количество компонент связности", L"Максимальное оставное дерево",
+      //      L"Минимальное оставное дерево", L"Плотность графа",
+      //      L"Количество основных дисциплин", L"Количество дисциплин по выбору",
+      //      L"Количество факультативов" })
 {
 }
 
@@ -46,6 +49,17 @@ void FOutData::CreateTotalInfo(vector<double>&   arrReturnDataMetrics,
                                const FGraphType* fGraph,
                                const EOutType&   eOutType)
 {
+
+    const vector<wstring> arrMetricHead(
+        { L"Всего ЗЕ в графе", L"Кол-во дисциплин в графе",
+          L"Максимальное ЗЕ у дисциплины", L"Минимальное ЗЕ у дисциплины",
+          L"Максимальный вес ребра", L"Минимальный вес ребра",
+          L"Диаметр графа по расстоянию", L"Диаметр графа по количеству рёбер",
+          L"Количество компонент связности", L"Максимальное оставное дерево",
+          L"Минимальное оставное дерево", L"Плотность графа",
+          L"Количество основных дисциплин", L"Количество дисциплин по выбору",
+          L"Количество факультативов" });
+
     arrReturnDataMetrics.clear();
     vector<double> arrResult;    // Соответствует arrHead который
                                  // проинициализирован в конструкторе
@@ -100,6 +114,16 @@ void FOutData::CreateTotalInfo(vector<string>&   arrReturnDataHeader,
                                const FGraphType* fGraph,
                                const EOutType&   eOutType)
 {
+    const vector<wstring> arrMetricHead(
+        { L"Всего ЗЕ в графе", L"Кол-во дисциплин в графе",
+          L"Максимальное ЗЕ у дисциплины", L"Минимальное ЗЕ у дисциплины",
+          L"Максимальный вес ребра", L"Минимальный вес ребра",
+          L"Диаметр графа по расстоянию", L"Диаметр графа по количеству рёбер",
+          L"Количество компонент связности", L"Максимальное оставное дерево",
+          L"Минимальное оставное дерево", L"Плотность графа",
+          L"Количество основных дисциплин", L"Количество дисциплин по выбору",
+          L"Количество факультативов" });
+
     arrReturnDataHeader.clear();
 
     for (int y = 0; y < arrMetricHead.size(); ++y)
@@ -301,15 +325,6 @@ void FOutData::AddTableMaxMinData(vector<vector<string>>& arrToAddedData,
 
                 for (auto& [id, fСorridor] : mapCorridorData)
                 {
-                    /*arrMinMaxData.push_back(
-                        to_string(fСorridor.dMaxMin[i]) + " (" +
-                        ptrGlobal->ConwertToString(
-                            ptrGlobal->ptrConfig->wsOutPrefMinMax) +
-                        fСorridor.sMaxMin[i] + ")");  */
-                    /*std::ostringstream fOut;
-                    fOut << std::setprecision(ptrGlobal->ptrConfig->iPrecision)
-                         << std::noshowpoint << fСorridor.dMaxMin[i];*/
-
                     arrMinMaxData.push_back(
                         ptrGlobal->DoubletWithPrecision(fСorridor.dMaxMin[i]) +
                         " (" +
@@ -370,9 +385,9 @@ void FOutData::CreateAllCurriculaTotalData(
     for (const auto& it : ptrGlobal->ptrSolve->arrDisc)
     {
         // Выводить короткое, или помное имя
-        string sCurName = (ptrGlobal->ptrConfig->bOutShortNameCurr)
-                              ? it->sShortNamePlan
-                              : it->sNamePlan;
+        sCurPlanName = (ptrGlobal->ptrConfig->bOutShortNameCur)
+                           ? it->sShortNamePlan
+                           : it->sNamePlan;
 
 #pragma region FormationData
         vector<double> arrAllResult;
@@ -401,16 +416,6 @@ void FOutData::CreateAllCurriculaTotalData(
                 double dRes   = 0.;
                 if (ptrTreeMetric->mapChild.count(sHeaderComp))
                 {
-                    /* dScore =
-                         (ptrGlobal->ptrConfig->bCompInterDelete)
-                             ? ptrTreeMetric->mapChild[sHeaderComp]->dBalanceSum
-                             : ptrTreeMetric->mapChild[sHeaderComp]
-                                   ->dNoBalanceSum;
-
-                     dRes = (ptrGlobal->ptrConfig->bCompInterDelete)
-                                ? dScore / ptrTreeMetric->dBalanceSum
-                                : dScore / ptrTreeMetric->dNoBalanceSum;*/
-
                     dScore = ptrTreeMetric->dChosenSum;
                     dRes   = ptrTreeMetric->dInclusionPercent;
                 }
@@ -444,7 +449,8 @@ void FOutData::CreateAllCurriculaTotalData(
 
         vector<string> arrCurData;
         CreateOnlyAllowedResultRow(arrCurData, arrHeader.size(), arrOutColm,
-                                   sCurName, arrAllResult, mapSaveСorridorData);
+                                   sCurPlanName, arrAllResult,
+                                   mapSaveСorridorData);
 
         arrReturnData.push_back(arrCurData);
     }
@@ -459,6 +465,16 @@ void FOutData::CreateAllCurriculaTotalData(
 void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
                                       const int&              iGraphType)
 {
+    const vector<wstring> arrMetricHead(
+        { L"Всего ЗЕ в графе", L"Кол-во дисциплин в графе",
+          L"Максимальное ЗЕ у дисциплины", L"Минимальное ЗЕ у дисциплины",
+          L"Максимальный вес ребра", L"Минимальный вес ребра",
+          L"Диаметр графа по расстоянию", L"Диаметр графа по количеству рёбер",
+          L"Количество компонент связности", L"Максимальное оставное дерево",
+          L"Минимальное оставное дерево", L"Плотность графа",
+          L"Количество основных дисциплин", L"Количество дисциплин по выбору",
+          L"Количество факультативов" });
+
     arrReturnData.clear();
     int i = 0;    // Задаём порядок вывода
     int x = 0;
@@ -497,9 +513,9 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
         if (it->iAmountCourse <= iGraphType) continue;
 
         // Выводить короткое, или помное имя
-        string sCurName = (ptrGlobal->ptrConfig->bOutShortNameCurr)
-                              ? it->sShortNamePlan
-                              : it->sNamePlan;
+        sCurPlanName = (ptrGlobal->ptrConfig->bOutShortNameCur)
+                           ? it->sShortNamePlan
+                           : it->sNamePlan;
 
         vector<double> arrAllResult;
 
@@ -509,7 +525,8 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
 
         vector<string> arrCurData;
         CreateOnlyAllowedResultRow(arrCurData, arrHeader.size(), arrOutColm,
-                                   sCurName, arrAllResult, mapSaveСorridorData);
+                                   sCurPlanName, arrAllResult,
+                                   mapSaveСorridorData);
 
         arrReturnData.push_back(arrCurData);
     }
@@ -538,9 +555,10 @@ void FOutData::Out(string sOutPath)
         vector<vector<string>> arrAllCoursesGraphData;
         CreateSummaryTotalData(arrAllCoursesGraphData, FGraph::iCommon);
         OutTableInfo(
-            iShiftX, 1, arrAllCoursesGraphData,
-                     wks, 1); // iShiftDataX = 1, так как заголовки УП выводить не надо
-        iShiftX += arrAllCoursesGraphData.front().size() - 1; // -1 так как без заголовка УП
+            iShiftX, 1, arrAllCoursesGraphData, wks,
+            1);    // iShiftDataX = 1, так как заголовки УП выводить не надо
+        iShiftX += arrAllCoursesGraphData.front().size() -
+                   1;    // -1 так как без заголовка УП
     }
     else
     {
@@ -569,8 +587,8 @@ void FOutData::Out(string sOutPath)
             CreateSummaryTotalData(arrCourseGraphData, iCourse);
             OutTableInfo(
                 iShiftX, 1, arrCourseGraphData, wks,
-                1);    // iShiftDataX = 1, так как заголовки УП выводить не надо 
-            
+                1);    // iShiftDataX = 1, так как заголовки УП выводить не надо
+
             iShiftX += arrCourseGraphData.front().size() -
                        1;    // -1 так как без заголовка УП
         }
@@ -598,11 +616,11 @@ void FOutData::Out(string sOutPath)
     for (auto& it : ptrGlobal->ptrSolve->arrDisc)
     {
         // Выводить короткое, или помное имя
-        string sOutName = (ptrGlobal->ptrConfig->bOutShortNameCurr)
-                              ? it->sShortNamePlan
-                              : it->sNamePlan;
+        sCurPlanName = (ptrGlobal->ptrConfig->bOutShortNameCur)
+                           ? it->sShortNamePlan
+                           : it->sNamePlan;
 
-        string sNewFile = sOutPath + "/" + sOutName;
+        string sNewFile = sOutPath + "/" + sCurPlanName;
 
         if (!filesystem::exists(sNewFile))
         {
@@ -617,9 +635,9 @@ void FOutData::Out(string sOutPath)
             }
         }
 
-        OutGephiData(sOutName, sOutPath, it);
-        CreateAndTake(sOutName, sOutPath);
-        OutAddInfo(sOutName, sOutPath, it);
+        OutGephiData(sCurPlanName, sOutPath, it);
+        CreateAndTake(sCurPlanName, sOutPath);
+        OutAddInfo(sCurPlanName, sOutPath, it);
     }
 }
 
@@ -627,18 +645,14 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
 {
     auto& ptrCurrentTree =
         ptrTree->ptrMetric->ptrTreeMetric->mapChild[FMetric::sAllMetric];
-    // double dAllSum = 1.;
-    /*dAllSum        = (ptrGlobal->ptrConfig->bCompInterDelete)
-                         ? ptrCurrentTree->dBalanceSum
-                         : ptrCurrentTree->dNoBalanceSum;*/
-    // dAllSum = ptrCurrentTree->dChosenSum;
-
-    // OutRectAddInfo(iOldX, y, ptrCurrentTree, true, dAllSum);
+   
     vector<vector<string>> arrDataAll;
 
     int iXShift = 1;
+
     CreateTableInfoInit(arrDataAll,
-                        ptrCurrentTree);    //, ptrCurrentTree->dChosenSum);
+                        ptrCurrentTree, true);    //, ptrCurrentTree->dChosenSum);
+
     OutTableInfo(iXShift, 1, arrDataAll, arrSinglOpenWKS.back());
     iXShift +=
         arrDataAll.front().size();    // Сдвигаемся на ширину выведеной таблицы
@@ -651,11 +665,11 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
         vector<vector<string>> arrDataAllCourse;
         // Вывод конкретного курса
         CreateTableInfoInit(arrDataAllCourse,
-                            ptrCurrentTree);    // ptrCurrentTree->dChosenSum);
+                            ptrCurrentTree, false);    // ptrCurrentTree->dChosenSum);
 
         OutTableInfo(iXShift, 1, arrDataAllCourse, arrSinglOpenWKS.back());
 
-        iXShift += arrDataAll.front()
+        iXShift += arrDataAllCourse.front()
                        .size();    // Сдвигаемся на ширину выведеной таблицы
         iYShift = max(iYShift + 0ull, arrDataAllCourse.size() + 0ull);
         {
@@ -676,9 +690,14 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
             // Теперь это выводится в OutAddInfoInit
 
             // Выводим локально в отдельный файл
+
+            vector<vector<string>> arrDataAllCourseOnFile;
+            // Вывод конкретного курса
+            CreateTableInfoInit(arrDataAllCourseOnFile, ptrCurrentTree, true); 
+
             OutTableInfo(1,
                          1,
-                         arrDataAllCourse,
+                         arrDataAllCourseOnFile,
                          arrSinglLocalCurrentCourseOpenWKS.back());
 
             if (ptrGlobal->ptrConfig->bOutTotalInfo)
@@ -793,8 +812,7 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
 
 void FOutData::OutTableInfo(const int& iShiftX, const int& iShiftY,
                             const vector<vector<string>>& arrData,
-                            OpenXLSX::XLWorksheet& WKS, 
-                            int iShiftDataX,
+                            OpenXLSX::XLWorksheet& WKS, int iShiftDataX,
                             int iShiftDataY)
 {
     for (int y = iShiftDataY; y < arrData.size(); ++y)
@@ -807,17 +825,42 @@ void FOutData::OutTableInfo(const int& iShiftX, const int& iShiftY,
 }
 
 void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
-                                   FTreeMetric*            ptrMetric
+                                   FTreeMetric* ptrMetric, bool bIsOutNameCur
                                    // const double            dAllSum,
                                    // bool bIsLocal
 )
 {
+
+    deque<wstring> arrCompetenceHead(
+        { //L"Название УП",
+        L"За какой курс",
+
+          L"Заголовок компетенции", L"ЗЕ Заголовка компетенции",
+          L"Кол-во дисциплин заголовка компетенции",
+
+          L"Процент распределения Заголовка компетенции",
+
+          L"Компетенция", L"ЗЕ Компетенций", L"Кол-во дисциплин компетенции",
+          L"Процент распределения Компетенции",
+
+          L"Индикатор", L"ЗЕ индикаторов", L"Кол-во дисциплин индикатора",
+          L"Процент распределения Индикатора" });
+
+    int iShiftX = 0;  
+
+    if (bIsOutNameCur)
+    {
+        arrCompetenceHead.push_front(L"Название УП");
+        ++iShiftX;    // ++ из-за вывода названия УП
+    }
+
     int iSizeX = 0, iSizeY = 1;    // iSizeY = 1 из-за заголовка
     arrReturnData.clear();
     vector<vector<string>> arrAllData;
 
     CreateTableRectInfo(true,    // Считаем вхолостую
-                        arrAllData, 0, iSizeX,
+                        arrAllData, iShiftX,   
+                        iSizeX,
                         iSizeY,    // 0-строка под заголовок
                         ptrMetric, 0    // dAllSum,
                                         // bIsLocal
@@ -841,7 +884,7 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
     }
 
     int iCurrentY = 1;
-    CreateTableRectInfo(false, arrAllData, 0, iSizeX,
+    CreateTableRectInfo(false, arrAllData, iShiftX, iSizeX,
                         iCurrentY,    // 0-строка под заголовок
                         ptrMetric, 0    // dAllSum,
                                         // bIsLocal
@@ -851,22 +894,25 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
 
     // Вывод Только того, что требуется пользователю
     {
-        // arrReturnData.resize(arrAllData.size());
-
         for (int y = 0; y < arrAllData.size(); ++y)
         {
             int            x = -1;
             vector<string> arrBuf;
+
             bool           bIsTakeNoEmpty = false;
             for (const auto& it : arrCompetenceHead)
             {
                 ++x;
+
                 if (x >= iSizeX) break;
                 if (this->ptrGlobal->ptrConfig->mapAddOutParams.count(it))
                 {
                     if (ptrGlobal->ptrConfig->mapAddOutParams[it].at(1) ==
                         L"да")
                     {
+                        if ((y == 1) && (it == L"Название УП"))
+                            arrAllData[y][x] = sCurPlanName; // Если у нас самая верхняя правая позиция данных, выводим заголовок УП
+
                         arrBuf.push_back(arrAllData[y][x]);
                         if (arrAllData[y][x] != "")
                         {
@@ -878,6 +924,7 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
             if (bIsTakeNoEmpty) arrReturnData.push_back(arrBuf);
         }
     }
+
 }
 
 void FOutData::CreateTableRectInfo(
@@ -918,10 +965,7 @@ void FOutData::CreateTableRectInfo(
                               ? ptrMetric->dBalanceSum
                               : ptrMetric->dNoBalanceSum;
 
-            /*std::ostringstream fOut;
-            fOut << std::setprecision(ptrGlobal->ptrConfig->iPrecision)
-                 << std::noshowpoint << ptrMetric->dChosenSum;*/
-            arrReturnData[iCurrentY][x] = arrReturnData[iCurrentY][x] =
+            arrReturnData[iCurrentY][x] =
                 ptrGlobal->DoubletWithPrecision(ptrMetric->dChosenSum);
         }
     }
@@ -932,9 +976,6 @@ void FOutData::CreateTableRectInfo(
         ++x;
         if (!bIsCounting)
         {
-            /* std::ostringstream fOut;
-             fOut << std::setprecision(ptrGlobal->ptrConfig->iPrecision)
-                  << std::noshowpoint << ptrMetric->iAmountUsingDisc;*/
             arrReturnData[iCurrentY][x] =
                 ptrGlobal->DoubletWithPrecision(ptrMetric->iAmountUsingDisc);
         }
@@ -963,9 +1004,7 @@ void FOutData::CreateTableRectInfo(
                            : ptrMetric->dNoBalanceSum /
                                  ptrMetric->ptrParent->dNoBalanceSum;
             }
-            /*std::ostringstream fOut;
-            fOut << std::setprecision(ptrGlobal->ptrConfig->iPrecision)
-                 << std::noshowpoint << dRes;*/
+
             arrReturnData[iCurrentY][x] =
                 ptrGlobal->DoubletWithPrecision(ptrMetric->dInclusionPercent);
         }
@@ -1236,6 +1275,20 @@ void FOutData::CreateGraphE1TableInfoInit(
     string sComp;
     string sScore;
 
+    const vector<wstring> arrCompetenceHead(
+        { L"За какой курс",
+
+          L"Заголовок компетенции", L"ЗЕ Заголовка компетенции",
+          L"Кол-во дисциплин заголовка компетенции",
+
+          L"Процент распределения Заголовка компетенции",
+
+          L"Компетенция", L"ЗЕ Компетенций", L"Кол-во дисциплин компетенции",
+          L"Процент распределения Компетенции",
+
+          L"Индикатор", L"ЗЕ индикаторов", L"Кол-во дисциплин индикатора",
+          L"Процент распределения Индикатора" }); // Свой независимый от других вывод
+
     for (int y = 0; y < arrAllData.size(); ++y)
     {
         int x = -1;
@@ -1332,9 +1385,7 @@ void FOutData::CreateGraphE1TableRectInfo(
                            : ptrMetric->dNoBalanceSum /
                                  ptrMetric->ptrParent->dNoBalanceSum;
             }
-            /*std::ostringstream fOut;
-            fOut << std::setprecision(ptrGlobal->ptrConfig->iPrecision)
-                 << std::noshowpoint << dRes;*/
+
             arrReturnData[iCurrentY][x] =
                 ptrGlobal->DoubletWithPrecision(ptrMetric->dInclusionPercent);
         }
