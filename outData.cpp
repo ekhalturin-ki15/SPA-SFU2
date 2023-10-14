@@ -416,8 +416,9 @@ void FOutData::CreateAllCurriculaTotalData(
                 double dRes   = 0.;
                 if (ptrTreeMetric->mapChild.count(sHeaderComp))
                 {
-                    dScore = ptrTreeMetric->dChosenSum;
-                    dRes   = ptrTreeMetric->dInclusionPercent;
+                    dScore = ptrTreeMetric->mapChild[sHeaderComp]->dChosenSum;
+                    dRes =
+                        ptrTreeMetric->mapChild[sHeaderComp]->dInclusionPercent;
                 }
                 else
                 {
@@ -924,6 +925,20 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
             if (bIsTakeNoEmpty) arrReturnData.push_back(arrBuf);
         }
     }
+
+
+    if (ptrGlobal->ptrConfig->bOutWithoutEmptyCell)
+    {
+        for (int y = 1; y < arrReturnData.size(); ++y)
+        {
+            for (int x = 0; x < arrReturnData[y].size(); ++x)
+            {
+                if (arrReturnData[y][x] == "")
+                    arrReturnData[y][x] = arrReturnData[y - 1][x];
+            }
+        }
+    }
+
 
 }
 

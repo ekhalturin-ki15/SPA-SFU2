@@ -31,6 +31,7 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       bOutEmptyComp(true),
       bOutTotalInfo(true),
       bOutMaxMinData(true),
+      bOutWithoutEmptyCell(true),
       //bSetNameIfNotIndex(true),
       //bOutIndicatorsInfo(true),
       wsNameConfig(L"./config.xlsx"),
@@ -376,12 +377,12 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
-        //wsPatern = L"Выводить префикс название УП";
-        //if (wsKey == wsPatern)
-        //{
-        //    ptrGlobal->TakeData(bOutCurriculaName, row);
-        //    return true;
-        //}
+        wsPatern = L"Не оставлять пустые ячейки во время вывода дерева компетенций";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(bOutWithoutEmptyCell, row);
+            return true;
+        }
 
         wsPatern = L"Индикатор находится на глубине X=";
         if (wsKey == wsPatern)
