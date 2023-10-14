@@ -77,7 +77,6 @@ struct FConfig
     bool bOutEmptyComp;
 
     bool bOutTotalInfo;
-    bool bOutMaxMinData;
     bool bOutWithoutEmptyCell;
     //bool bOutCurriculaName; // В параметрах вывода указано как да или нет
     // bool bSetNameIfNotIndex; // Пока что только в планах научить программу

@@ -457,10 +457,8 @@ void FOutData::CreateAllCurriculaTotalData(
     }
 
     //  Вывод коридора минимума максимума
-    if (ptrGlobal->ptrConfig->bOutMaxMinData)
-    {
-        AddTableMaxMinData(arrReturnData, mapSaveСorridorData);
-    }
+    AddTableMaxMinData(arrReturnData, mapSaveСorridorData);
+    
 }
 
 void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
@@ -532,10 +530,9 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
         arrReturnData.push_back(arrCurData);
     }
 
-    if (ptrGlobal->ptrConfig->bOutMaxMinData)
-    {
-        AddTableMaxMinData(arrReturnData, mapSaveСorridorData);
-    }
+    
+    AddTableMaxMinData(arrReturnData, mapSaveСorridorData);
+    
 }
 
 void FOutData::Out(string sOutPath)

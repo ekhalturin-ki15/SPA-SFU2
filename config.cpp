@@ -30,7 +30,6 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       bOutAllInfoWithoutTag(true),
       bOutEmptyComp(true),
       bOutTotalInfo(true),
-      bOutMaxMinData(true),
       bOutWithoutEmptyCell(true),
       //bSetNameIfNotIndex(true),
       //bOutIndicatorsInfo(true),
@@ -367,13 +366,6 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(bOutTotalInfo, row);
-            return true;
-        }
-
-        wsPatern = L"Выводить коридор макс-мин";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(bOutMaxMinData, row);
             return true;
         }
 
