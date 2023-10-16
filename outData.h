@@ -63,7 +63,8 @@ private:
     // arrIsAllowed
     void CreateOnlyAllowedHeaderRow(vector<string>&        arrReturn,
                                     vector<bool>&          arrIsAllowed,
-                                    const vector<wstring>& arrParams);
+                                    const vector<wstring>& arrParams,
+                                    const vector<wstring>& arrOnlyAllow);
 
     // Записать в arrReturn только те Результаты, которые разрешены в
     // arrIsAllowed
@@ -72,9 +73,10 @@ private:
     void CreateOnlyAllowedResultRow(vector<string>&       arrReturn,
                                     const int&            iSizeHeader,
                                     vector<bool>&         arrIsAllowed,
-                                    const string&         sCurName,
+                                    //const string&         sCurName, // Лучше передать FTreeDisc*
                                     const vector<double>& arrResult,
-                                    map<int, FСorridor>&  mapCorridorData);
+                                    map<int, FСorridor>&  mapCorridorData,
+        FTreeDisc* ptrTree, const vector<wstring>& arrOnlyAllow);
 
     void AddTableMaxMinData(vector<vector<string>>& arrToAddedData,
                             map<int, FСorridor>&    mapCorridorData);

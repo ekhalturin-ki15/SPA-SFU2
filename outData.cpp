@@ -9,39 +9,38 @@
 #include <iomanip>
 #include <sstream>
 
-FOutData::FOutData(FGlobal* _ptrGlobal)
-    : ptrGlobal(_ptrGlobal)
+FOutData::FOutData(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
 
-      //arrCompetenceHead(
-      //    { 
-      //       L"Название УП", L"За какой курс",
+// arrCompetenceHead(
+//     {
+//        L"Название УП", L"За какой курс",
 
-      //      L"Заголовок компетенции", L"ЗЕ Заголовка компетенции",
-      //      L"Кол-во дисциплин заголовка компетенции",
+//      L"Заголовок компетенции", L"ЗЕ Заголовка компетенции",
+//      L"Кол-во дисциплин заголовка компетенции",
 
-      //      L"Процент распределения Заголовка компетенции",
+//      L"Процент распределения Заголовка компетенции",
 
-      //      L"Компетенция", L"ЗЕ Компетенций", L"Кол-во дисциплин компетенции",
-      //      L"Процент распределения Компетенции",
+//      L"Компетенция", L"ЗЕ Компетенций", L"Кол-во дисциплин компетенции",
+//      L"Процент распределения Компетенции",
 
-      //      L"Индикатор", L"ЗЕ индикаторов", L"Кол-во дисциплин индикатора",
-      //      L"Процент распределения Индикатора" }),
+//      L"Индикатор", L"ЗЕ индикаторов", L"Кол-во дисциплин индикатора",
+//      L"Процент распределения Индикатора" }),
 
-      //arrMetricHead(
-      //    { // L"Название учебного плана",
-      //      L"Всего ЗЕ в графе", L"Кол-во дисциплин в графе",
-      //      // L"(Расш.) Общее кол-во ЗЕ в УП",
-      //      // L"(Расш.) Кол-во дисциплин в УП",    // Включает те,
-      //      // что указаны в
-      //      //  УП, как неучитываемые
-      //      L"Максимальное ЗЕ у дисциплины", L"Минимальное ЗЕ у дисциплины",
-      //      L"Максимальный вес ребра", L"Минимальный вес ребра",
-      //      L"Диаметр графа по расстоянию",
-      //      L"Диаметр графа по количеству рёбер",
-      //      L"Количество компонент связности", L"Максимальное оставное дерево",
-      //      L"Минимальное оставное дерево", L"Плотность графа",
-      //      L"Количество основных дисциплин", L"Количество дисциплин по выбору",
-      //      L"Количество факультативов" })
+// arrMetricHead(
+//     { // L"Название учебного плана",
+//       L"Всего ЗЕ в графе", L"Кол-во дисциплин в графе",
+//       // L"(Расш.) Общее кол-во ЗЕ в УП",
+//       // L"(Расш.) Кол-во дисциплин в УП",    // Включает те,
+//       // что указаны в
+//       //  УП, как неучитываемые
+//       L"Максимальное ЗЕ у дисциплины", L"Минимальное ЗЕ у дисциплины",
+//       L"Максимальный вес ребра", L"Минимальный вес ребра",
+//       L"Диаметр графа по расстоянию",
+//       L"Диаметр графа по количеству рёбер",
+//       L"Количество компонент связности", L"Максимальное оставное дерево",
+//       L"Минимальное оставное дерево", L"Плотность графа",
+//       L"Количество основных дисциплин", L"Количество дисциплин по выбору",
+//       L"Количество факультативов" })
 {
 }
 
@@ -49,7 +48,6 @@ void FOutData::CreateTotalInfo(vector<double>&   arrReturnDataMetrics,
                                const FGraphType* fGraph,
                                const EOutType&   eOutType)
 {
-
     const vector<wstring> arrMetricHead(
         { L"Всего ЗЕ в графе", L"Кол-во дисциплин в графе",
           L"Максимальное ЗЕ у дисциплины", L"Минимальное ЗЕ у дисциплины",
@@ -200,11 +198,14 @@ bool FOutData::Init() { return true; }
 
 void FOutData::CreateOnlyAllowedHeaderRow(vector<string>&        arrReturn,
                                           vector<bool>&          arrIsAllowed,
-                                          const vector<wstring>& arrParams)
+                                          const vector<wstring>& arrParams,
+                                          const vector<wstring>& arrOnlyAllow)
 {
     arrReturn.clear();
     arrIsAllowed.clear();
     // arrIsAllowed.assign(arrParams.size(), true);
+
+    set<wstring> setOnlyAllow = { arrOnlyAllow.begin(), arrOnlyAllow.end() };
 
     int iAmountComp = 1;    // Так как предметы с 0-компетенциями исключаются
     int i = 0;
@@ -212,11 +213,19 @@ void FOutData::CreateOnlyAllowedHeaderRow(vector<string>&        arrReturn,
     {
         if (ptrGlobal->ptrConfig->mapArrOutParams.count(it))
         {
-            arrIsAllowed.push_back(
-                (ptrGlobal->ptrConfig->mapArrOutParams[it].at(
-                     EOutType::EOT_Head) ==
-                 L"да"));    // Так как глобальная информация, то
-                             // работаем с EOutType::EOT_Head
+            if (setOnlyAllow.count(it))
+            {
+                arrIsAllowed.push_back(true);
+            }
+            else
+            {
+                arrIsAllowed.push_back(
+                    (ptrGlobal->ptrConfig->mapArrOutParams[it].at(
+                         EOutType::EOT_Head) ==
+                     L"да"));    // Так как глобальная информация, то
+                                 // работаем с EOutType::EOT_Head
+            }
+
             if (arrIsAllowed.back())
             {
                 string sOut = ptrGlobal->ConwertToString(
@@ -260,12 +269,14 @@ void FOutData::CreateOnlyAllowedHeaderRow(vector<string>&        arrReturn,
     }
 }
 
-void FOutData::CreateOnlyAllowedResultRow(vector<string>&       arrReturn,
-                                          const int&            iSizeHeader,
-                                          vector<bool>&         arrIsAllowed,
-                                          const string&         sCurName,
+void FOutData::CreateOnlyAllowedResultRow(vector<string>& arrReturn,
+                                          const int&      iSizeHeader,
+                                          vector<bool>&   arrIsAllowed,
+                                          // const string&         sCurName,
                                           const vector<double>& arrResult,
-                                          map<int, FСorridor>&  mapCorridorData)
+                                          map<int, FСorridor>&  mapCorridorData,
+                                          FTreeDisc*            ptrTree,
+                                          const vector<wstring>& arrOnlyAllow)
 {
     int i = 0;
     int x = 0;
@@ -274,10 +285,15 @@ void FOutData::CreateOnlyAllowedResultRow(vector<string>&       arrReturn,
 
     arrReturn.resize(iSizeHeader);
 
-    if (TakePasteData(x, arrReturn, arrIsAllowed[i++], sCurName.size(),
-                      sCurName, sCurName, false, mapCorridorData))
+    vector<string> arrAllowData = { ptrTree->sCurName, ptrTree->sTypePlan };
+
+    for (const auto& sData : arrAllowData)
     {
-        x++;
+        if (TakePasteData(x, arrReturn, arrIsAllowed[i++], sData.size(), sData,
+                          sData, false, mapCorridorData))
+        {
+            x++;
+        }
     }
 
     for (const auto& it : arrResult)
@@ -289,8 +305,8 @@ void FOutData::CreateOnlyAllowedResultRow(vector<string>&       arrReturn,
                  << std::noshowpoint << it;*/
 
             if (TakePasteData(x, arrReturn, arrIsAllowed[i++], it,
-                              ptrGlobal->DoubletWithPrecision(it), sCurName,
-                              true, mapCorridorData))
+                              ptrGlobal->DoubletWithPrecision(it),
+                              ptrTree->sCurName, true, mapCorridorData))
             {
                 x++;
             }
@@ -298,7 +314,7 @@ void FOutData::CreateOnlyAllowedResultRow(vector<string>&       arrReturn,
         else
         {
             if (TakePasteData(x, arrReturn, arrIsAllowed[i++], it, "-",
-                              sCurName, false, mapCorridorData))
+                              ptrTree->sCurName, false, mapCorridorData))
             {
                 x++;
             }
@@ -351,15 +367,18 @@ void FOutData::CreateAllCurriculaTotalData(
     int y = 0;
 
     // Параметры для всего УП целиком
-    vector<wstring> arrAddedHead = { L"Название учебного плана",
-                                     L"Общее кол-во ЗЕ в УП",
-                                     L"Общее кол-во дисциплин в УП"
+    vector<wstring> arrOnlyAllowHead = { L"Название учебного плана",
+                                         L"Тип учебного плана" };
 
-    };
+    vector<wstring> arrAddHead = { L"Код направления", L"Общее кол-во ЗЕ в УП",
+                                   L"Общее кол-во дисциплин в УП" };
+
+    vector<wstring> arrBuf = arrOnlyAllowHead;
+    arrBuf.insert(arrBuf.end(), arrAddHead.begin(), arrAddHead.end());
 
     for (auto& wsNameType : ptrGlobal->ptrConfig->arrNameTypeDisc)
     {
-        arrAddedHead.push_back(L"!" + wsNameType);
+        arrBuf.push_back(L"!" + wsNameType);
     }
 
     for (auto& sHeaderComp : ptrGlobal->ptrSolve->setHeaderComp)
@@ -368,8 +387,8 @@ void FOutData::CreateAllCurriculaTotalData(
         wsCompScore =
             ptrGlobal->ptrConfig->mapArrOutParams[L"ЗЕ у компетенции"].at(0) +
             wsCompScore;
-        arrAddedHead.push_back(wsCompScore);
-        arrAddedHead.push_back(ptrGlobal->ConwertToWstring(sHeaderComp));
+        arrBuf.push_back(wsCompScore);
+        arrBuf.push_back(ptrGlobal->ConwertToWstring(sHeaderComp));
     }
 
     // Флаги того, какие столбцы выводить
@@ -377,7 +396,7 @@ void FOutData::CreateAllCurriculaTotalData(
 
     // Строка заголовка таблицы
     vector<string> arrHeader;
-    CreateOnlyAllowedHeaderRow(arrHeader, arrOutColm, arrAddedHead);
+    CreateOnlyAllowedHeaderRow(arrHeader, arrOutColm, arrBuf, arrOnlyAllowHead);
     arrReturnData.push_back(arrHeader);
 
     // Вывод данных
@@ -385,13 +404,14 @@ void FOutData::CreateAllCurriculaTotalData(
     for (const auto& it : ptrGlobal->ptrSolve->arrDisc)
     {
         // Выводить короткое, или помное имя
-        sCurPlanName = (ptrGlobal->ptrConfig->bOutShortNameCur)
-                           ? it->sShortNamePlan
-                           : it->sNamePlan;
+        /* sCurPlanName = (ptrGlobal->ptrConfig->bOutShortNameCur)
+                            ? it->sShortNamePlan
+                            : it->sNamePlan;*/
 
 #pragma region FormationData
         vector<double> arrAllResult;
         // Общие для УП метрики (перечислены в arrPrefixHead)
+        arrAllResult.push_back(atoi(it->sShortNamePlan.substr(0, 2).c_str()));
         arrAllResult.push_back(it->dAllSumScore);
         arrAllResult.push_back(it->iExtendedAmountDisc);
 
@@ -450,15 +470,14 @@ void FOutData::CreateAllCurriculaTotalData(
 
         vector<string> arrCurData;
         CreateOnlyAllowedResultRow(arrCurData, arrHeader.size(), arrOutColm,
-                                   sCurPlanName, arrAllResult,
-                                   mapSaveСorridorData);
+                                   arrAllResult, mapSaveСorridorData, it,
+                                   arrOnlyAllowHead);
 
         arrReturnData.push_back(arrCurData);
     }
 
     //  Вывод коридора минимума максимума
     AddTableMaxMinData(arrReturnData, mapSaveСorridorData);
-    
 }
 
 void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
@@ -479,7 +498,9 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
     int x = 0;
     int y = 0;
 
-    vector<wstring> arrAddedHead = { L"Название учебного плана" };
+    vector<wstring> arrOnlyAllowHead = { L"Название учебного плана",
+                                         L"Тип учебного плана" };
+    vector<wstring> arrAddedHead = arrOnlyAllowHead;
 
     arrAddedHead.insert(arrAddedHead.end(),
                         arrMetricHead.begin(),
@@ -500,7 +521,8 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
 
     // Строка заголовка таблицы
     vector<string> arrHeader;
-    CreateOnlyAllowedHeaderRow(arrHeader, arrOutColm, arrAddedHead);
+    CreateOnlyAllowedHeaderRow(arrHeader, arrOutColm, arrAddedHead,
+                               arrOnlyAllowHead);
     arrReturnData.push_back(arrHeader);
 
     // Вывод данных
@@ -512,9 +534,9 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
         if (it->iAmountCourse <= iGraphType) continue;
 
         // Выводить короткое, или помное имя
-        sCurPlanName = (ptrGlobal->ptrConfig->bOutShortNameCur)
+        /*sCurPlanName = (ptrGlobal->ptrConfig->bOutShortNameCur)
                            ? it->sShortNamePlan
-                           : it->sNamePlan;
+                           : it->sNamePlan;*/
 
         vector<double> arrAllResult;
 
@@ -524,15 +546,14 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
 
         vector<string> arrCurData;
         CreateOnlyAllowedResultRow(arrCurData, arrHeader.size(), arrOutColm,
-                                   sCurPlanName, arrAllResult,
-                                   mapSaveСorridorData);
+                                   // sCurPlanName,
+                                   arrAllResult, mapSaveСorridorData, it,
+                                   arrOnlyAllowHead);
 
         arrReturnData.push_back(arrCurData);
     }
 
-    
     AddTableMaxMinData(arrReturnData, mapSaveСorridorData);
-    
 }
 
 void FOutData::Out(string sOutPath)
@@ -643,13 +664,13 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
 {
     auto& ptrCurrentTree =
         ptrTree->ptrMetric->ptrTreeMetric->mapChild[FMetric::sAllMetric];
-   
+
     vector<vector<string>> arrDataAll;
 
     int iXShift = 1;
 
-    CreateTableInfoInit(arrDataAll,
-                        ptrCurrentTree, true);    //, ptrCurrentTree->dChosenSum);
+    CreateTableInfoInit(arrDataAll, ptrCurrentTree,
+                        true);    //, ptrCurrentTree->dChosenSum);
 
     OutTableInfo(iXShift, 1, arrDataAll, arrSinglOpenWKS.back());
     iXShift +=
@@ -662,8 +683,8 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
 
         vector<vector<string>> arrDataAllCourse;
         // Вывод конкретного курса
-        CreateTableInfoInit(arrDataAllCourse,
-                            ptrCurrentTree, false);    // ptrCurrentTree->dChosenSum);
+        CreateTableInfoInit(arrDataAllCourse, ptrCurrentTree,
+                            false);    // ptrCurrentTree->dChosenSum);
 
         OutTableInfo(iXShift, 1, arrDataAllCourse, arrSinglOpenWKS.back());
 
@@ -691,7 +712,7 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
 
             vector<vector<string>> arrDataAllCourseOnFile;
             // Вывод конкретного курса
-            CreateTableInfoInit(arrDataAllCourseOnFile, ptrCurrentTree, true); 
+            CreateTableInfoInit(arrDataAllCourseOnFile, ptrCurrentTree, true);
 
             OutTableInfo(1,
                          1,
@@ -772,6 +793,11 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
             }
         }
 
+        // Добавим обозначение того, что выводим курсы
+        if (ptrGlobal->ptrConfig->mapAddOutParams.count(L"За какой курс"))
+            arrData.back().front() = ptrGlobal->ConwertToString(
+                ptrGlobal->ptrConfig->mapAddOutParams[L"За какой курс"].at(0));
+
         arrSinglLocalCurrentCourseOpenFile.clear();
         arrSinglLocalCurrentCourseOpenFile.resize(1);
         arrSinglLocalCurrentCourseOpenWKS.clear();
@@ -828,10 +854,9 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
                                    // bool bIsLocal
 )
 {
-
     deque<wstring> arrCompetenceHead(
-        { //L"Название УП",
-        L"За какой курс",
+        { // L"Название УП",
+          L"За какой курс",
 
           L"Заголовок компетенции", L"ЗЕ Заголовка компетенции",
           L"Кол-во дисциплин заголовка компетенции",
@@ -844,7 +869,7 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
           L"Индикатор", L"ЗЕ индикаторов", L"Кол-во дисциплин индикатора",
           L"Процент распределения Индикатора" });
 
-    int iShiftX = 0;  
+    int iShiftX = 0;
 
     if (bIsOutNameCur)
     {
@@ -857,8 +882,7 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
     vector<vector<string>> arrAllData;
 
     CreateTableRectInfo(true,    // Считаем вхолостую
-                        arrAllData, iShiftX,   
-                        iSizeX,
+                        arrAllData, iShiftX, iSizeX,
                         iSizeY,    // 0-строка под заголовок
                         ptrMetric, 0    // dAllSum,
                                         // bIsLocal
@@ -897,7 +921,7 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
             int            x = -1;
             vector<string> arrBuf;
 
-            bool           bIsTakeNoEmpty = false;
+            bool bIsTakeNoEmpty = false;
             for (const auto& it : arrCompetenceHead)
             {
                 ++x;
@@ -909,7 +933,10 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
                         L"да")
                     {
                         if ((y == 1) && (it == L"Название УП"))
-                            arrAllData[y][x] = sCurPlanName; // Если у нас самая верхняя правая позиция данных, выводим заголовок УП
+                            arrAllData[y][x] =
+                                sCurPlanName;    // Если у нас самая верхняя
+                                                 // правая позиция данных,
+                                                 // выводим заголовок УП
 
                         arrBuf.push_back(arrAllData[y][x]);
                         if (arrAllData[y][x] != "")
@@ -923,7 +950,6 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
         }
     }
 
-
     if (ptrGlobal->ptrConfig->bOutWithoutEmptyCell)
     {
         for (int y = 1; y < arrReturnData.size(); ++y)
@@ -935,8 +961,6 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
             }
         }
     }
-
-
 }
 
 void FOutData::CreateTableRectInfo(
@@ -1299,7 +1323,8 @@ void FOutData::CreateGraphE1TableInfoInit(
           L"Процент распределения Компетенции",
 
           L"Индикатор", L"ЗЕ индикаторов", L"Кол-во дисциплин индикатора",
-          L"Процент распределения Индикатора" }); // Свой независимый от других вывод
+          L"Процент распределения Индикатора" });    // Свой независимый от
+                                                     // других вывод
 
     for (int y = 0; y < arrAllData.size(); ++y)
     {

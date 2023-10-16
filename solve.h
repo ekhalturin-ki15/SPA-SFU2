@@ -75,6 +75,9 @@ struct FTreeDisc
 
     string sNamePlan;
     string sShortNamePlan;    // Имя УП без расширения
+    string sCurName;    // Имя УП без расширения
+    string sTypePlan =
+        "None";    // Указывается: бакалавр, магистр, специалист или абитуриент
 
     int iAmountCourse;    // Количество курсов (именно курсов, не семестров)
     double dAllSumScore;    // Общее кол-во ЗЕ курса (только дисциплин, и только
@@ -164,6 +167,11 @@ private:
     void AddCompIndicatorFirstPage(
         const OpenXLSX::XLWorksheet& fSheet,
         int iKeyPageNumber);    // Находится в solveFirstPage.cpp
+
+    void FindTypePlanThirdPage(
+        const OpenXLSX::XLWorksheet& fSheet,
+        int iKeyPageNumber);    // Находится в solveFirstPage.cpp
+
 
     // В solveSecondPage.h и solveSecondPage.cpp
     FSolveSecondPage* ptrSolveSecondPage;    // Композиция (вынес в отдельный

@@ -68,6 +68,9 @@
     <ClCompile Include="adapOutData.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="solveThirdPage.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="0903010030-21.plm.plx.xlsx">

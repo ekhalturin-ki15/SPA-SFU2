@@ -77,6 +77,10 @@ bool FSolve::Read(string _sInPath, string sNamePlan)
         arrDisc.back()->sShortNamePlan =
             sNamePlan.substr(0, sNamePlan.find('.'));
 
+        arrDisc.back()->sCurName = (ptrGlobal->ptrConfig->bOutShortNameCur)
+                                       ? arrDisc.back()->sShortNamePlan
+                                       : arrDisc.back()->sNamePlan;
+
         fDoc.open(sInPath);
         fBook = fDoc.workbook();
         CreateDiscTreeZeroPage(
@@ -95,6 +99,14 @@ bool FSolve::Read(string _sInPath, string sNamePlan)
             fBook.worksheet(ptrGlobal->ConwertToString(
                 ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].wsName)),
             iCurrentPage);
+        ++iCurrentPage;
+
+        FindTypePlanThirdPage(
+            fBook.worksheet(ptrGlobal->ConwertToString(
+                ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].wsName)),
+            iCurrentPage);
+        ++iCurrentPage;
+
         arrDisc.back()->CountDisc();
 
         if (ptrSolveSecondPage->DFSCountingScore(arrDisc.back()->ptrRoot) !=
