@@ -565,19 +565,21 @@ void FOutData::Out(string sOutPath)
     OpenXLSX::XLWorksheet wks = fOutFile.workbook().worksheet("Total Data");
 
     int                    iShiftX = 1;
+    int                    iEscape = 2; // Сколько строк не требуется повторно выводить
     vector<vector<string>> arrAllCurriculaTotalData;
     CreateAllCurriculaTotalData(arrAllCurriculaTotalData);
     OutTableInfo(iShiftX, 1, arrAllCurriculaTotalData, wks);
-    iShiftX += arrAllCurriculaTotalData.front().size() - 1;
+    iShiftX += arrAllCurriculaTotalData.front().size() - iEscape;
     if (ptrGlobal->ptrConfig->bArrIsconcatGraphData.at(0))
     {
         vector<vector<string>> arrAllCoursesGraphData;
         CreateSummaryTotalData(arrAllCoursesGraphData, FGraph::iCommon);
         OutTableInfo(
             iShiftX, 1, arrAllCoursesGraphData, wks,
-            1);    // iShiftDataX = 1, так как заголовки УП выводить не надо
+                     iEscape);    // iShiftDataX = 1, так как заголовки УП
+                                  // выводить не надо
         iShiftX += arrAllCoursesGraphData.front().size() -
-                   1;    // -1 так как без заголовка УП
+                   iEscape;    // -iEscape так как без заголовка УП
     }
     else
     {
@@ -606,10 +608,11 @@ void FOutData::Out(string sOutPath)
             CreateSummaryTotalData(arrCourseGraphData, iCourse);
             OutTableInfo(
                 iShiftX, 1, arrCourseGraphData, wks,
-                1);    // iShiftDataX = 1, так как заголовки УП выводить не надо
+                         iEscape);    // iShiftDataX = iEscape, так как
+                                      // заголовки УП выводить не надо
 
             iShiftX += arrCourseGraphData.front().size() -
-                       1;    // -1 так как без заголовка УП
+                       iEscape;    // -iEscape так как без заголовка УП
         }
         else
         {
