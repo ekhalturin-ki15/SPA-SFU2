@@ -33,6 +33,8 @@ private:
 
     string sCurPlanName;
 
+    int iSizeOnlyAllow;
+
     //Нельзя обобщать заголовки, это нарушает правило Лисков
     //const vector<wstring> arrMetricHead;    // Единожды задаётся в конструкторе
     //const vector<wstring>

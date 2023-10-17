@@ -285,7 +285,11 @@ void FOutData::CreateOnlyAllowedResultRow(vector<string>& arrReturn,
 
     arrReturn.resize(iSizeHeader);
 
-    vector<string> arrAllowData = { ptrTree->sCurName, ptrTree->sTypePlan };
+    vector<string> arrAllowData = {
+        ptrTree->sCurName,
+        ptrTree->sShortNamePlan.substr(ptrTree->sShortNamePlan.size() - 2),
+        ptrTree->sTypePlan,
+    };
 
     for (const auto& sData : arrAllowData)
     {
@@ -368,7 +372,11 @@ void FOutData::CreateAllCurriculaTotalData(
 
     // Параметры для всего УП целиком
     vector<wstring> arrOnlyAllowHead = { L"Название учебного плана",
-                                         L"Тип учебного плана" };
+                                         L"Год начала подготовки", 
+                                         L"Тип учебного плана"  };
+
+    
+    iSizeOnlyAllow = arrOnlyAllowHead.size();
 
     vector<wstring> arrAddHead = { L"Код направления", L"Общее кол-во ЗЕ в УП",
                                    L"Общее кол-во дисциплин в УП" };
@@ -499,6 +507,7 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
     int y = 0;
 
     vector<wstring> arrOnlyAllowHead = { L"Название учебного плана",
+                                         L"Год начала подготовки",
                                          L"Тип учебного плана" };
     vector<wstring> arrAddedHead = arrOnlyAllowHead;
 
@@ -565,21 +574,21 @@ void FOutData::Out(string sOutPath)
     OpenXLSX::XLWorksheet wks = fOutFile.workbook().worksheet("Total Data");
 
     int                    iShiftX = 1;
-    int                    iEscape = 2; // Сколько строк не требуется повторно выводить
     vector<vector<string>> arrAllCurriculaTotalData;
     CreateAllCurriculaTotalData(arrAllCurriculaTotalData);
     OutTableInfo(iShiftX, 1, arrAllCurriculaTotalData, wks);
-    iShiftX += arrAllCurriculaTotalData.front().size() - iEscape;
+    iShiftX += arrAllCurriculaTotalData.front().size() - iSizeOnlyAllow;
     if (ptrGlobal->ptrConfig->bArrIsconcatGraphData.at(0))
     {
         vector<vector<string>> arrAllCoursesGraphData;
         CreateSummaryTotalData(arrAllCoursesGraphData, FGraph::iCommon);
         OutTableInfo(
             iShiftX, 1, arrAllCoursesGraphData, wks,
-                     iEscape);    // iShiftDataX = 1, так как заголовки УП
+                     iSizeOnlyAllow);    // iShiftDataX = 1, так как заголовки
+                                         // УП
                                   // выводить не надо
         iShiftX += arrAllCoursesGraphData.front().size() -
-                   iEscape;    // -iEscape так как без заголовка УП
+                   iSizeOnlyAllow;    // -iEscape так как без заголовка УП
     }
     else
     {
@@ -608,11 +617,11 @@ void FOutData::Out(string sOutPath)
             CreateSummaryTotalData(arrCourseGraphData, iCourse);
             OutTableInfo(
                 iShiftX, 1, arrCourseGraphData, wks,
-                         iEscape);    // iShiftDataX = iEscape, так как
+                         iSizeOnlyAllow);    // iShiftDataX = iEscape, так как
                                       // заголовки УП выводить не надо
 
             iShiftX += arrCourseGraphData.front().size() -
-                       iEscape;    // -iEscape так как без заголовка УП
+                       iSizeOnlyAllow;    // -iEscape так как без заголовка УП
         }
         else
         {
