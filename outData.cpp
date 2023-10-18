@@ -372,10 +372,9 @@ void FOutData::CreateAllCurriculaTotalData(
 
     // Параметры для всего УП целиком
     vector<wstring> arrOnlyAllowHead = { L"Название учебного плана",
-                                         L"Год начала подготовки", 
-                                         L"Тип учебного плана"  };
+                                         L"Год начала подготовки",
+                                         L"Тип учебного плана" };
 
-    
     iSizeOnlyAllow = arrOnlyAllowHead.size();
 
     vector<wstring> arrAddHead = { L"Код направления", L"Общее кол-во ЗЕ в УП",
@@ -577,16 +576,18 @@ void FOutData::Out(string sOutPath)
     vector<vector<string>> arrAllCurriculaTotalData;
     CreateAllCurriculaTotalData(arrAllCurriculaTotalData);
     OutTableInfo(iShiftX, 1, arrAllCurriculaTotalData, wks);
+    OutTableInfoCSV(arrAllCurriculaTotalData, sOutPath, "",
+                    "Total Data");
+
     iShiftX += arrAllCurriculaTotalData.front().size() - iSizeOnlyAllow;
     if (ptrGlobal->ptrConfig->bArrIsconcatGraphData.at(0))
     {
         vector<vector<string>> arrAllCoursesGraphData;
         CreateSummaryTotalData(arrAllCoursesGraphData, FGraph::iCommon);
-        OutTableInfo(
-            iShiftX, 1, arrAllCoursesGraphData, wks,
+        OutTableInfo(iShiftX, 1, arrAllCoursesGraphData, wks,
                      iSizeOnlyAllow);    // iShiftDataX = 1, так как заголовки
                                          // УП
-                                  // выводить не надо
+        // выводить не надо
         iShiftX += arrAllCoursesGraphData.front().size() -
                    iSizeOnlyAllow;    // -iEscape так как без заголовка УП
     }
@@ -606,6 +607,9 @@ void FOutData::Out(string sOutPath)
         vector<vector<string>> arrAllCoursesGraphData;
         CreateSummaryTotalData(arrAllCoursesGraphData, FGraph::iCommon);
         OutTableInfo(1, 1, arrAllCoursesGraphData, wks);
+
+        OutTableInfoCSV(arrAllCoursesGraphData, sOutPath, "",
+                        sNamePage);
     }
 
     for (int iCourse = 0; iCourse < this->ptrGlobal->ptrSolve->iMaxCourse;
@@ -615,10 +619,9 @@ void FOutData::Out(string sOutPath)
         {
             vector<vector<string>> arrCourseGraphData;
             CreateSummaryTotalData(arrCourseGraphData, iCourse);
-            OutTableInfo(
-                iShiftX, 1, arrCourseGraphData, wks,
+            OutTableInfo(iShiftX, 1, arrCourseGraphData, wks,
                          iSizeOnlyAllow);    // iShiftDataX = iEscape, так как
-                                      // заголовки УП выводить не надо
+                                             // заголовки УП выводить не надо
 
             iShiftX += arrCourseGraphData.front().size() -
                        iSizeOnlyAllow;    // -iEscape так как без заголовка УП
@@ -638,6 +641,10 @@ void FOutData::Out(string sOutPath)
             vector<vector<string>> arrCourseGraphData;
             CreateSummaryTotalData(arrCourseGraphData, iCourse);
             OutTableInfo(1, 1, arrCourseGraphData, wks);
+
+            string sNameCSV = ptrGlobal->ReversUTF16RU(sNamePage);
+
+            OutTableInfoCSV(arrCourseGraphData, sOutPath, "", sNameCSV);
         }
     }
 
@@ -685,6 +692,8 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
                         true);    //, ptrCurrentTree->dChosenSum);
 
     OutTableInfo(iXShift, 1, arrDataAll, arrSinglOpenWKS.back());
+    OutTableInfoCSV(arrDataAll, sPath, sName, "Data");
+
     iXShift +=
         arrDataAll.front().size();    // Сдвигаемся на ширину выведеной таблицы
     int iYShift = arrDataAll.size();
@@ -699,6 +708,7 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
                             false);    // ptrCurrentTree->dChosenSum);
 
         OutTableInfo(iXShift, 1, arrDataAllCourse, arrSinglOpenWKS.back());
+        OutTableInfoCSV(arrDataAllCourse, sPath, sName, "Data_" + sKey);
 
         iXShift += arrDataAllCourse.front()
                        .size();    // Сдвигаемся на ширину выведеной таблицы
@@ -860,6 +870,27 @@ void FOutData::OutTableInfo(const int& iShiftX, const int& iShiftY,
     }
 }
 
+void FOutData::OutTableInfoCSV(
+    const vector<vector<string>>& arrData,    // Что выводим
+    const string& sPath, const string& sNameFile, const string& sName, const int& iShiftDataX,    // С каким смещением выводим
+    const int& iShiftDataY)    // С каким смещением выводим)
+{
+    string sAllPath = sPath;
+
+    if (sNameFile != "") sAllPath += "/" + sNameFile;
+    if (sName != "") sAllPath += "/" + sName;
+    ofstream outLabel(sAllPath + ".csv");
+    for (int y = iShiftDataY; y < arrData.size(); ++y)
+    {
+        for (int x = iShiftDataX; x < arrData[y].size(); ++x)
+        {
+            if (x) outLabel << ";";
+            outLabel << arrData[y][x];
+        }
+        outLabel << "\n";
+    }
+}
+
 void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
                                    FTreeMetric* ptrMetric, bool bIsOutNameCur
                                    // const double            dAllSum,
@@ -875,10 +906,11 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
 
           L"Процент распределения Заголовка компетенции",
 
-          L"Компетенция", L"ЗЕ Компетенций", L"Кол-во дисциплин компетенции",
-          L"Процент распределения Компетенции",
+          L"Компетенция", L"Полное название компетенции", L"ЗЕ Компетенций",
+          L"Кол-во дисциплин компетенции", L"Процент распределения Компетенции",
 
-          L"Индикатор", L"ЗЕ индикаторов", L"Кол-во дисциплин индикатора",
+          L"Индикатор", L"Полное название индикатора", L"ЗЕ индикаторов",
+          L"Кол-во дисциплин индикатора",
           L"Процент распределения Индикатора" });
 
     int iShiftX = 0;
@@ -949,6 +981,9 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
                                 sCurPlanName;    // Если у нас самая верхняя
                                                  // правая позиция данных,
                                                  // выводим заголовок УП
+                                                 // (костыль, надо бы push
+                                                 // front, но это уже когда
+                                                 // добавлю adapOutData
 
                         arrBuf.push_back(arrAllData[y][x]);
                         if (arrAllData[y][x] != "")
@@ -1002,6 +1037,30 @@ void FOutData::CreateTableRectInfo(
     {
         arrReturnData[iCurrentY][x] = ptrMetric->sName;
     }
+
+    // Выводим полное название компетенции
+    if (iDeep > 1)
+    {
+        ++x;
+        if (!bIsCounting)
+        {
+            vector<string> arrName;
+            auto           ptrBuf = ptrMetric;
+            for (int i = 0; i < iDeep; ++i)
+            {
+                arrName.push_back(ptrBuf->sName);
+                ptrBuf = ptrBuf->ptrParent;
+            }
+            for (int i = iDeep - 1; i >= 0; --i)
+            {
+                arrReturnData[iCurrentY][x] += arrName[i];
+                if (i)
+                    arrReturnData[iCurrentY][x] +=
+                        ptrGlobal->ptrConfig->sPrefFullNameCourse;
+            }
+        }
+    }
+
     // Выводим кол-во ЗЕ
     if (iDeep > 0)
     {
@@ -1166,7 +1225,7 @@ vector<string> FOutData::CreateCommonNameLabel(const int& iGraphType,
 
 void FOutData::OutGephiData(string sName, string sPath, FTreeDisc* fTree)
 {
-    OutGephiLabel(sName, sName, sPath,
+    OutGephiLabel(sPath, sName, sName,
                   CreateCommonNameLabel(FGraph::iCommon, fTree),
                   fTree->ptrGraph->mapGraph[FGraph::iCommon].arrNodeWeight,
                   CreateTag(FGraph::iCommon, fTree));
@@ -1174,14 +1233,15 @@ void FOutData::OutGephiData(string sName, string sPath, FTreeDisc* fTree)
                 fTree->ptrGraph->mapGraph[FGraph::iCommon].fAdjList);
 
     OutGephiLabel(
-        sName,
+        sPath,
         sName +
             ptrGlobal->ConwertToString(
                 ptrGlobal->ptrConfig
                     ->mapArrOutParams
                         [L"Суффикс названия альтернативного графа при выводе"]
                     .at(0)),
-        sPath,
+
+        sName,
         CreateCommonNameLabel(FGraph::iAlt, fTree),
         fTree->ptrGraph->mapGraph[FGraph::iAlt].arrNodeWeight,
         CreateTag(FGraph::iAlt, fTree));
@@ -1201,18 +1261,22 @@ void FOutData::OutGephiData(string sName, string sPath, FTreeDisc* fTree)
     {
         for (int iCourse = 0; iCourse < fTree->iAmountCourse; ++iCourse)
         {
-            OutGephiLabel(sName, sName + "(" + to_string(iCourse + 1) + ")",
-                          sPath, CreateCommonNameLabel(iCourse, fTree),
+            OutGephiLabel(sPath,
+                          sName + "(" + to_string(iCourse + 1) + ")",
+                          sName,
+                          CreateCommonNameLabel(iCourse, fTree),
                           fTree->ptrGraph->mapGraph[iCourse].arrNodeWeight,
                           CreateTag(iCourse, fTree));
-            OutGephiRib(sName, sName + "(" + to_string(iCourse + 1) + ")",
-                        sPath, fTree->ptrGraph->mapGraph[iCourse].fAdjList);
+            OutGephiRib(sPath,
+                        sName + "(" + to_string(iCourse + 1) + ")",
+                        sName,
+                        fTree->ptrGraph->mapGraph[iCourse].fAdjList);
         }
     }
 }
 
-void FOutData::OutGephiLabel(const string& sName, const string& sNameFile,
-                             const string&         sPath,
+void FOutData::OutGephiLabel(const string& sPath, const string& sNameFile,
+                             const string&         sName,
                              const vector<string>& arrNameLabel,
                              const vector<double>& arrWeightNode,
                              const vector<string>& arrTag)

@@ -429,6 +429,13 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
+        wsPatern = L"Разделитель для вывода полного названия компетенций и индикаторов";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(sPrefFullNameCourse, row);
+            return true;
+        }
+
         wsPatern = L"Игнорировать пустые строки в конце странице, если их не "
                    L"менее X =";
         if (wsKey == wsPatern)

@@ -44,6 +44,7 @@ struct FConfig
     string sNameRibHeader;
     string sNameRibDir;
     string sPrefCourseNumber;
+    string sPrefFullNameCourse;
 
     string sRegexComp;
     string sRegexHeaderIndicator;

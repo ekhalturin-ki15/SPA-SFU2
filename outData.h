@@ -113,9 +113,30 @@ private:
         int iShiftDataY = 0
 
     );    // Куда выводим
+
+    void OutTableInfoCSV(
+        const vector<vector<string>>& arrData,    // Что выводим
+                        const string& sPath, const string& sNameFile,
+                        const string& sName,
+                        const int& iShiftX = 0,    // С каким смещением выводим
+                        const int& iShiftY = 0   // С каким смещением выводим
+    );    // Куда выводим
     // int OutRectAddInfo(int x, int y, FTreeMetric* ptrMetric, bool bIsCourse,
     // const double dAllSum, bool bIsLocal = false);    // Возвращает Актуальное
     // занчение y
+
+
+    
+    void OutGephiLabel(
+        const string& sPath, const string& sNameFile, const string& sName,
+        const vector<string>& arrNameLabel, const vector<double>& arrWeightNode,
+        const vector<string>& arrTag);    // Вывод данных о графе
+                                          // для Gephi в формате csv
+
+    void OutGephiRib(
+        const string& sPath, const string& sNameFile, const string& sName,
+        const vector<vector<pair<int, double>>>&
+            fAdjList);    // Вывод данных о графе для Gephi в формате csv
 
     void CreateTableInfoInit(vector<vector<string>>& arrReturnData,
                              FTreeMetric*            ptrMetric,
@@ -182,17 +203,6 @@ private:
                        const string& sOutData, const string& sCurName,
                        const bool&          bIsConsider,
                        map<int, FСorridor>& mapCorridorData);
-
-    void OutGephiLabel(
-        const string& sName, const string& sNameFile, const string& sPath,
-        const vector<string>& arrNameLabel, const vector<double>& arrWeightNode,
-        const vector<string>& arrTag);    // Вывод данных о графе
-                                          // для Gephi в формате csv
-
-    void OutGephiRib(
-        const string& sName, const string& sNameFile, const string& sPath,
-        const vector<vector<pair<int, double>>>&
-            fAdjList);    // Вывод данных о графе для Gephi в формате csv
 
     string AddCompString(const map<string, vector<string>>& mapComp);
 
