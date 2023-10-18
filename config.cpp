@@ -31,6 +31,7 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       bOutEmptyComp(true),
       bOutTotalInfo(true),
       bOutWithoutEmptyCell(true),
+      bIsOutCSVDate(false),
       //bSetNameIfNotIndex(true),
       //bOutIndicatorsInfo(true),
       wsNameConfig(L"./config.xlsx"),
@@ -46,8 +47,8 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       // wsOutPrefAllCourse(L"Все курсы"),
       // sPrefCourseNumber("_"),
       // sSufAltGraphFile("Alt"),
-      sRegexComp("{0, 1}(.{0, } ? ); "),
-      sRegexHeaderIndicator("(.{1,})-(.{1,})\.(.{1,})"),
+      //sRegexComp("{0, 1}(.{0, } ? ); "),
+      //sRegexHeaderIndicator("(.{1,})-(.{1,})\.(.{1,})"),
       sFormula("((L + R) / 2) * K")
 {
     if (iSinglControll > 0) throw std::runtime_error("Re-creation Singleton");
@@ -341,6 +342,13 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
+        wsPatern = L"Вывод доп файлов csv";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(bIsOutCSVDate, row);
+            return true;
+        }
+
         wsPatern = L"Использовать многоуровневые индикаторы";
         if (wsKey == wsPatern)
         {
@@ -404,14 +412,14 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
         wsPatern = L"Регулярное выражение разбивки индикатора";
         if (wsKey == wsPatern)
         {
-            ptrGlobal->TakeData(sRegexHeaderIndicator, row);
+            ptrGlobal->TakeData(arrRegexHeaderInd, row, 0);
             return true;
         }
 
         wsPatern = L"Регулярное выражение разбивки компетенции";
         if (wsKey == wsPatern)
         {
-            ptrGlobal->TakeData(sRegexHeaderComp, row);
+            ptrGlobal->TakeData(arrRegexHeaderComp, row, 0);
             return true;
         }
 

@@ -75,10 +75,32 @@ void FSolve::AddCompIndicatorFirstPage(const OpenXLSX::XLWorksheet& fSheet, int 
 
                             ptrThis->mapComp[sLastComp].push_back(sLastIndicator);
 
-                            vector<smatch> matchesHeaderComp { sregex_iterator { ALL(sLastComp), fRegexHeaderComp },
-                                                           sregex_iterator {} };
+
+
+                            vector<smatch> matchesHeaderComp;
+                           /* { sregex_iterator { ALL(sLastComp),
+                                                fRegexHeaderComp },
+                                                           sregex_iterator {} };*/
+
+                            bool bIsTrueMatchComp = false;
+
+                            for (const auto& HeaderComp : arrRegexHeaderComp)
+                            {
+                                vector<smatch> matchesBuf {
+                                    sregex_iterator { ALL(sLastComp),
+                                                      HeaderComp },
+                                    sregex_iterator {}
+                                };
+                                if (matchesBuf.size() > 0)
+                                {
+                                    matchesHeaderComp = matchesBuf;
+                                    bIsTrueMatchComp  = true;
+                                    break;
+                                }
+                            }
+
                             
-                            if (matchesHeaderComp.size() > 0)
+                            if (bIsTrueMatchComp)
                             {
                                 for (auto sData : matchesHeaderComp)
                                 {
@@ -88,8 +110,28 @@ void FSolve::AddCompIndicatorFirstPage(const OpenXLSX::XLWorksheet& fSheet, int 
                             }
                             else
                             {
-                                vector<smatch> matchesHeaderInd { sregex_iterator { ALL(sLastIndicator), fRegexHeaderInd },
-                                                               sregex_iterator {} };
+                                vector<smatch> matchesHeaderInd;
+
+                                /*{ sregex_iterator { ALL(sLastIndicator),
+                                                    fRegexHeaderInd },
+                                                               sregex_iterator {} };*/
+                                bool           bIsTrueMatchInd = false;
+                                for (const auto& HeaderInd : arrRegexHeaderInd)
+                                {
+                                    vector<smatch> matchesBuf {
+                                        sregex_iterator { ALL(sLastIndicator),
+                                                          HeaderInd },
+                                        sregex_iterator {}
+                                    };
+                                    if (matchesBuf.size() > 0)
+                                    {
+                                        matchesHeaderInd = matchesBuf;
+                                        bIsTrueMatchInd = true;
+                                        break;
+                                    }
+                                }
+
+
                                 for (auto sData : matchesHeaderInd)
                                 {
                                     string sCompHeaderName = sData[1].str();

@@ -178,7 +178,7 @@ private:
                                              // класс, так как много методов)
     FGlobal* ptrGlobal;    // Синглтон
     regex    fRegexComp;
-    regex    fRegexHeaderComp;
-    regex    fRegexHeaderInd;
+    vector<regex> arrRegexHeaderInd;     // Может быть несколько, поэтому вектор
+    vector<regex> arrRegexHeaderComp;    // Может быть несколько, поэтому вектор
 
 };

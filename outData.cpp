@@ -576,7 +576,8 @@ void FOutData::Out(string sOutPath)
     vector<vector<string>> arrAllCurriculaTotalData;
     CreateAllCurriculaTotalData(arrAllCurriculaTotalData);
     OutTableInfo(iShiftX, 1, arrAllCurriculaTotalData, wks);
-    OutTableInfoCSV(arrAllCurriculaTotalData, sOutPath, "",
+    if (ptrGlobal->ptrConfig->bIsOutCSVDate)
+        OutTableInfoCSV(arrAllCurriculaTotalData, sOutPath, "",
                     "Total Data");
 
     iShiftX += arrAllCurriculaTotalData.front().size() - iSizeOnlyAllow;
@@ -607,8 +608,8 @@ void FOutData::Out(string sOutPath)
         vector<vector<string>> arrAllCoursesGraphData;
         CreateSummaryTotalData(arrAllCoursesGraphData, FGraph::iCommon);
         OutTableInfo(1, 1, arrAllCoursesGraphData, wks);
-
-        OutTableInfoCSV(arrAllCoursesGraphData, sOutPath, "",
+        if (ptrGlobal->ptrConfig->bIsOutCSVDate)
+            OutTableInfoCSV(arrAllCoursesGraphData, sOutPath, "",
                         sNamePage);
     }
 
@@ -643,8 +644,8 @@ void FOutData::Out(string sOutPath)
             OutTableInfo(1, 1, arrCourseGraphData, wks);
 
             string sNameCSV = ptrGlobal->ReversUTF16RU(sNamePage);
-
-            OutTableInfoCSV(arrCourseGraphData, sOutPath, "", sNameCSV);
+            if (ptrGlobal->ptrConfig->bIsOutCSVDate)
+                OutTableInfoCSV(arrCourseGraphData, sOutPath, "", sNameCSV);
         }
     }
 
@@ -692,7 +693,8 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
                         true);    //, ptrCurrentTree->dChosenSum);
 
     OutTableInfo(iXShift, 1, arrDataAll, arrSinglOpenWKS.back());
-    OutTableInfoCSV(arrDataAll, sPath, sName, "Data");
+    if (ptrGlobal->ptrConfig->bIsOutCSVDate)
+        OutTableInfoCSV(arrDataAll, sPath, sName, "Data");
 
     iXShift +=
         arrDataAll.front().size();    // Сдвигаемся на ширину выведеной таблицы
@@ -708,7 +710,8 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
                             false);    // ptrCurrentTree->dChosenSum);
 
         OutTableInfo(iXShift, 1, arrDataAllCourse, arrSinglOpenWKS.back());
-        OutTableInfoCSV(arrDataAllCourse, sPath, sName, "Data_" + sKey);
+        if (ptrGlobal->ptrConfig->bIsOutCSVDate)
+            OutTableInfoCSV(arrDataAllCourse, sPath, sName, "Data_" + sKey);
 
         iXShift += arrDataAllCourse.front()
                        .size();    // Сдвигаемся на ширину выведеной таблицы

@@ -36,7 +36,14 @@ bool FSolve::Init()
 
     try
     {
-        fRegexHeaderComp = ptrGlobal->ptrConfig->sRegexHeaderComp;
+        //fRegexHeaderComp = ptrGlobal->ptrConfig->sRegexHeaderComp;
+        arrRegexHeaderComp.resize(
+            ptrGlobal->ptrConfig->arrRegexHeaderComp.size());
+        for (int i = 0;
+             i < ptrGlobal->ptrConfig->arrRegexHeaderComp.size();
+             ++i)
+            arrRegexHeaderComp[i] =
+                ptrGlobal->ptrConfig->arrRegexHeaderComp[i];
     }
     catch (...)
     {
@@ -46,7 +53,14 @@ bool FSolve::Init()
 
     try
     {
-        fRegexHeaderInd = ptrGlobal->ptrConfig->sRegexHeaderIndicator;
+        //fRegexHeaderInd = ptrGlobal->ptrConfig->sRegexHeaderIndicator;
+        arrRegexHeaderInd.resize(
+            ptrGlobal->ptrConfig->arrRegexHeaderInd.size());
+        for (int i = 0;
+             i < ptrGlobal->ptrConfig->arrRegexHeaderInd.size();
+             ++i)
+            arrRegexHeaderInd[i] =
+                ptrGlobal->ptrConfig->arrRegexHeaderInd[i];
     }
     catch (...)
     {

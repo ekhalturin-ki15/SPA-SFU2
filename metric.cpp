@@ -99,7 +99,14 @@ FMetric::FMetric(FTreeDisc* _ptrTree) : ptrTree(_ptrTree)
 
     try
     {
-        fRegexHeaderComp = _ptrTree->ptrGlobal->ptrConfig->sRegexHeaderComp;
+        //fRegexHeaderComp = _ptrTree->ptrGlobal->ptrConfig->sRegexHeaderComp;
+        arrRegexHeaderComp.resize(
+            _ptrTree->ptrGlobal->ptrConfig->arrRegexHeaderComp.size());
+        for (int i = 0;
+             i < _ptrTree->ptrGlobal->ptrConfig->arrRegexHeaderComp.size();
+             ++i)
+            arrRegexHeaderComp[i] =
+                _ptrTree->ptrGlobal->ptrConfig->arrRegexHeaderComp[i];
     }
     catch (...)
     {
@@ -109,7 +116,14 @@ FMetric::FMetric(FTreeDisc* _ptrTree) : ptrTree(_ptrTree)
 
     try
     {
-        fRegexHeaderInd = _ptrTree->ptrGlobal->ptrConfig->sRegexHeaderIndicator;
+        //fRegexHeaderInd = _ptrTree->ptrGlobal->ptrConfig->sRegexHeaderIndicator;
+        arrRegexHeaderInd.resize(
+            _ptrTree->ptrGlobal->ptrConfig->arrRegexHeaderInd.size());
+        for (int i = 0;
+             i < _ptrTree->ptrGlobal->ptrConfig->arrRegexHeaderInd.size();
+             ++i)
+            arrRegexHeaderInd[i] =
+                _ptrTree->ptrGlobal->ptrConfig->arrRegexHeaderInd[i];
     }
     catch (...)
     {
@@ -225,28 +239,68 @@ void FMetric::Create()
         {
             for (const auto& ind : arrInd)
             {
-                vector<smatch> matchesInd { sregex_iterator { ALL(ind),
-                                                              fRegexHeaderInd },
-                                            sregex_iterator {} };
+                string         sCompName;
+                string         sCompNumber;
+                string         sIndicatorNumber;
+                int            iTrueMatchInd = 0; // Не самое гибкое решение
+                vector<smatch> matchesInd;
 
-                string sCompName;
-                string sCompNumber;
-                string sIndicatorNumber;
-                if (matchesInd.size() > 0)
+                int i = 0;
+                for (const auto& HeaderInd : arrRegexHeaderInd)
+                {
+                    ++i;
+                    vector<smatch> matchesBuf { sregex_iterator { ALL(ind),
+                                                                  HeaderInd },
+                                                sregex_iterator {} };
+                    if (matchesBuf.size() > 0)
+                    {
+                        matchesInd = matchesBuf;
+                        iTrueMatchInd = i;
+                        break;
+                    }
+                }
+
+                if (iTrueMatchInd)
                 {
                     for (const auto& sData : matchesInd)
                     {
-                        sCompName        = sData[1].str();
-                        sCompNumber      = sData[2].str();
-                        sIndicatorNumber = sData[3].str();
+                        if (iTrueMatchInd == 1)
+                        {
+                            sCompName        = sData[1].str();
+                            sCompNumber      = sData[2].str();
+                            sIndicatorNumber = sData[3].str();
+                        }
+                        else if (iTrueMatchInd == 2)
+                        {
+                            sCompName        = sData[2].str();
+                            sCompNumber      = sData[3].str();
+                            sIndicatorNumber = sData[1].str();
+                        }
                     }
                 }
                 else
                 {
-                    vector<smatch> matchesComp {
-                        sregex_iterator { ALL(comp), fRegexHeaderComp },
-                        sregex_iterator {}
-                    };
+
+                    bool bIsTrueMatchComp = false;
+                    vector<smatch> matchesComp;
+
+                    for (const auto& HeaderComp : arrRegexHeaderComp)
+                    {
+                        vector<smatch> matchesBuf { sregex_iterator {
+                                                        ALL(comp), HeaderComp },
+                                                    sregex_iterator {} };
+                        if (matchesBuf.size() > 0)
+                        {
+                            matchesComp = matchesBuf;
+                            bIsTrueMatchComp = true;
+                            break;
+                        }
+                    }
+
+                    //vector<smatch> matchesComp {
+                    //    sregex_iterator { ALL(comp), fRegexHeaderComp },
+                    //    sregex_iterator {}
+                    //};
                     for (const auto& sData : matchesComp)
                     {
                         sCompName        = sData[1].str();

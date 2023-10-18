@@ -31,11 +31,10 @@ struct FTreeMetric
 
     void InitChosenScore(const bool& bIsPercentRegAll,
                          const bool& bCompInterDelete);
-    void InitChosenScoreDFS(
-        FTreeMetric*                            th,
-        const double&                           dAllSum,
-        const bool& bIsPercentRegAll,
-        const bool& bCompInterDelete);
+    void InitChosenScoreDFS(FTreeMetric*  th,
+                            const double& dAllSum,
+                            const bool&   bIsPercentRegAll,
+                            const bool&   bCompInterDelete);
 
     // map<string, double> mapCompDistr; //ЗЕ у каждой компетенции по
     // отдельности map<string, double> mapBalancAmountCompDistr;//Всего ЗЕ с
@@ -60,11 +59,10 @@ struct FMetric
     FTreeMetric* ptrTreeMetric;
 
 private:
-    void UpdateCourseMetric(
-        FTreeMetric*          ptrRootTree,
-        set<vector<string>>&  setIsTakenScore,
-        const vector<string>& arrRectUpdate,
-        const double&         dScore   );
+    void UpdateCourseMetric(FTreeMetric*          ptrRootTree,
+                            set<vector<string>>&  setIsTakenScore,
+                            const vector<string>& arrRectUpdate,
+                            const double&         dScore);
 
     // Смотрим, какие компетенции мы уже учитывали ранее, а если не учитывали,
     // то на сколько ЗЕ изменить
@@ -78,9 +76,9 @@ private:
                               const vector<string>& sCurrent,
                               const double&         dScore);
 
-    FTreeDisc* ptrTree;
-    regex      fRegexHeaderInd;
-    regex      fRegexHeaderComp;
+    FTreeDisc*    ptrTree;
+    vector<regex> arrRegexHeaderInd; // Может быть несколько, поэтому вектор
+    vector<regex> arrRegexHeaderComp;// Может быть несколько, поэтому вектор
 
     // mapAllowDisc теперь в FSolve вместе с УП
     // map<wstring, FTreeElement*> mapAllowDisc;   // Оставляем только

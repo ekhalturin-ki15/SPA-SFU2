@@ -49,6 +49,22 @@ void FGlobal::TakeData(vector<wstring>&       outArrData,
             throw std::out_of_range("No equeal " + to_string(i));
 }
 
+void FGlobal::TakeData(vector<string>&       outArrData,
+                       const OpenXLSX::XLRow& row,
+                       int                    iSize)
+{
+    outArrData.clear();
+    int i = -1;
+    for (auto& it : row.cells())    // Считываем, начиная со 2 ячейки
+    {
+        i++;
+        if (i) outArrData.push_back(it.value().get<string>());
+    }
+    if (iSize)
+        if (i != (iSize - 1))
+            throw std::out_of_range("No equeal " + to_string(i));
+}
+
 void FGlobal::TakeData(wstring& outWsData, const OpenXLSX::XLRow& row)
 {
     for (auto& it : row.cells(2, 2))    // Считываем только вторую ячейку

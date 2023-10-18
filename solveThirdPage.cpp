@@ -1,4 +1,4 @@
-#include "config.h"
+п»ї#include "config.h"
 #include "error.h"
 #include "global.h"
 #include "solve.h"
@@ -14,7 +14,7 @@ void FSolve::FindTypePlanThirdPage(const OpenXLSX::XLWorksheet& fSheet,
     {
         ++iCurrentRow;
 
-        //if (iCurrentRow == h) break;    // Далее только пустые строки
+        //if (iCurrentRow == h) break;    // Р”Р°Р»РµРµ С‚РѕР»СЊРєРѕ РїСѓСЃС‚С‹Рµ СЃС‚СЂРѕРєРё
 
         for (auto it : row.cells())
         {

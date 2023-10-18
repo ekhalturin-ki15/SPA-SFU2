@@ -47,8 +47,8 @@ struct FConfig
     string sPrefFullNameCourse;
 
     string sRegexComp;
-    string sRegexHeaderIndicator;
-    string sRegexHeaderComp;
+    vector<string> arrRegexHeaderInd;
+    vector<string> arrRegexHeaderComp;
     string sFormula;
 
     // wstring wsOutPrefMinMax;
@@ -65,6 +65,7 @@ struct FConfig
     bool bCompactOutput;
     bool bCourseOutput;
     bool bReloadLogFile;
+    bool bIsOutCSVDate;
     bool bMultiIndicator;
     bool bCompInterDelete;
     bool bIsPercentRegAll;
