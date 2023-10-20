@@ -104,6 +104,12 @@ void FGraph::CountAllMetric(int iTypeGraph)
                  mapGraph[iTypeGraph].fAdjList,
                  std::greater<pair<double, pair<int, int>>>());
 #pragma endregion
+
+    double dRes = 0;
+    CalculateAllPairDistance(dRes ,
+                             mapGraph[iTypeGraph].fAdjList,
+                             std::greater<double>());
+
 }
 
 void FGraph::CalcAllScoreAndAmount(FGraphType& fGraph)
@@ -504,15 +510,50 @@ void FGraph::GenerateCourseGraph()
     }
 }
 
+void FGraph::CalculateAllPairDistance(
+    double& dResult, const vector<vector<pair<int, double>>>& fCurrentAdj,
+    auto cmp)
+{
+    const int              N = fCurrentAdj.size();
+    vector<vector<double>> arrAllDistance(N, vector<double>(N, 1e8));
+
+    for (int L = 0; L < N; ++L)
+    {
+        for (const auto& [R, dDis] : fCurrentAdj[L])
+        {
+            arrAllDistance[L][R] = dDis;
+            arrAllDistance[R][L] = dDis;
+        }
+    }
+
+    for (int k = 0; k < N; ++k)
+    {
+        for (int i = 0; i < N; ++i)
+        {
+            for (int j = 0; j < N; ++j)
+            {
+                if (cmp(arrAllDistance[i][j], arrAllDistance[i][k] + arrAllDistance[k][j]))
+                {
+                    arrAllDistance[i][j] =
+                        arrAllDistance[i][k] + arrAllDistance[k][j];
+                }
+            }
+        }
+    }
+
+
+
+}
+
 void FGraph::CalculateMST(double&                                  dResult,
                           const vector<vector<pair<int, double>>>& fCurrentAdj,
                           auto                                     cmp)
 {
     dResult = 0;
     vector<pair<double, pair<int, int>>> q;
-    int                                  n = fCurrentAdj.size();
+    const int N = fCurrentAdj.size();
 
-    for (int l = 0; l < n; ++l)
+    for (int l = 0; l < N; ++l)
     {
         for (const auto& [r, len] : fCurrentAdj[l])
         {
@@ -523,7 +564,7 @@ void FGraph::CalculateMST(double&                                  dResult,
     }
     sort(ALL(q), cmp);
 
-    vector<int> arrDSU(n);
+    vector<int> arrDSU(N);
     int         i = 0;
     for (auto& it : arrDSU) it = i++;
     True_DSU<int> fDSU(arrDSU);
@@ -546,10 +587,10 @@ void FGraph::CalcDiametrAndComp(
 {
     dResult    = 0.;
     iComponent = 0;
-    int n      = fCurrentAdj.size();
+    const int N      = fCurrentAdj.size();
 
-    vector<int> arrColor(n);
-    for (int i = 0; i < n; ++i)
+    vector<int> arrColor(N);
+    for (int i = 0; i < N; ++i)
     {
         double dTempLen;
         int    iTemp = i;
@@ -570,7 +611,7 @@ void FGraph::MaxDist(double& dMaxDist, int& iIdNode, vector<int>& arrColor,
                      int iIdStart, bool IsСonsDist,
                      const vector<vector<pair<int, double>>>& fCurrentAdj)
 {
-    int n = fCurrentAdj.size();
+    const int N = fCurrentAdj.size();
 
     dMaxDist = 0.;
     iIdNode  = iIdStart;
@@ -578,8 +619,8 @@ void FGraph::MaxDist(double& dMaxDist, int& iIdNode, vector<int>& arrColor,
     priority_queue<pair<double, int>> q;
     q.push({ 0., iIdStart });
 
-    vector<double> arrLen(n, 1e9);
-    vector<int>    arrPass(n, 0);
+    vector<double> arrLen(N, 1e8);
+    vector<int>    arrPass(N, 0);
     arrLen[iIdStart] = 0.;
 
     while (q.size())

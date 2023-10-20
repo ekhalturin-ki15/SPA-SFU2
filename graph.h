@@ -81,6 +81,12 @@ struct FGraph
         const vector<vector<pair<int, double>>>& fCurrentAdj,
         bool IsConsLen);    // Высчитываем диаметр и кол-во компонент
                             // связности за O(n log(n))
+
+    void CalculateAllPairDistance(
+        double&                                  dResult,
+        const vector<vector<pair<int, double>>>& fCurrentAdj,
+        auto cmp);    // Высчитываем минимальные пути алгоритмом Флойда - Уоршелла (O(n^3))
+
     void CalculateMST(
         double&                                  dResult,
         const vector<vector<pair<int, double>>>& fCurrentAdj,
