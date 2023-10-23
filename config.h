@@ -43,7 +43,7 @@ struct FConfig
     string sNameLabelHeader;
     string sNameRibHeader;
     string sNameRibDir;
-    string sPrefCourseNumber;
+    string sSeparator;
     string sPrefFullNameCourse;
 
     string sRegexComp;
@@ -99,6 +99,7 @@ struct FConfig
     int iCourseLen;
     int iIgnoreEmptyLine;
     int iSoMachComp;
+    int iAmountQuar;
     int iPrecision;
     int iIndicatorDeep;
 

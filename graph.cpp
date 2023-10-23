@@ -105,10 +105,8 @@ void FGraph::CountAllMetric(int iTypeGraph)
                  std::greater<pair<double, pair<int, int>>>());
 #pragma endregion
 
-    double dRes = 0;
-    CalculateAllPairDistance(dRes ,
-                             mapGraph[iTypeGraph].fAdjList,
-                             std::greater<double>());
+    CalculateAllPairDistance(mapGraph[iTypeGraph].arrAllPairDistanceQuartile,
+                             mapGraph[iTypeGraph].fAdjList);
 
 }
 
@@ -511,11 +509,14 @@ void FGraph::GenerateCourseGraph()
 }
 
 void FGraph::CalculateAllPairDistance(
-    double& dResult, const vector<vector<pair<int, double>>>& fCurrentAdj,
-    auto cmp)
+    vector<int>&                             arrQuarAmount,
+    const vector<vector<pair<int, double>>>& fCurrentAdj)
 {
+    arrQuarAmount.clear();
+
     const int              N = fCurrentAdj.size();
-    vector<vector<double>> arrAllDistance(N, vector<double>(N, 1e8));
+    const double           INF = 1e8;
+    vector<vector<double>> arrAllDistance(N, vector<double>(N, INF));
 
     for (int L = 0; L < N; ++L)
     {
@@ -532,7 +533,7 @@ void FGraph::CalculateAllPairDistance(
         {
             for (int j = 0; j < N; ++j)
             {
-                if (cmp(arrAllDistance[i][j], arrAllDistance[i][k] + arrAllDistance[k][j]))
+                if (arrAllDistance[i][j] > arrAllDistance[i][k] + arrAllDistance[k][j])
                 {
                     arrAllDistance[i][j] =
                         arrAllDistance[i][k] + arrAllDistance[k][j];
@@ -541,7 +542,45 @@ void FGraph::CalculateAllPairDistance(
         }
     }
 
+    double dMinVal = INF, dMaxVal = 0;
+    int    iAmountNoLink = 0;
+    for (int i = 0; i < N; ++i)
+    {
+        for (int j = 0; j < N; ++j)
+        {
+            if (arrAllDistance[i][j] == INF)
+            {
+                ++iAmountNoLink;
+                continue;
+            }
 
+            if (arrAllDistance[i][j] < dMinVal) dMinVal = arrAllDistance[i][j];
+            if (arrAllDistance[i][j] > dMaxVal) dMaxVal = arrAllDistance[i][j];
+        }
+    }
+
+    double dLenght = dMaxVal - dMinVal;
+    // iAmountQuar
+    int         iAmountQuar = ptrTree->ptrGlobal->ptrConfig->iAmountQuar;
+    arrQuarAmount.resize(iAmountQuar);
+    for (int i = 0; i < N; ++i)
+    {
+        for (int j = 0; j < N; ++j)
+        {
+            if (arrAllDistance[i][j] == INF)
+            {
+                continue;
+            }
+            if (arrAllDistance[i][j] == dMaxVal)
+            {
+                ++arrQuarAmount.back();
+                continue;
+            }
+            double index = (arrAllDistance[i][j] - dMinVal) / dLenght;
+            ++arrQuarAmount[int(index * iAmountQuar)];
+        }
+    }
+    arrQuarAmount.push_back(iAmountNoLink);
 
 }
 
@@ -619,7 +658,8 @@ void FGraph::MaxDist(double& dMaxDist, int& iIdNode, vector<int>& arrColor,
     priority_queue<pair<double, int>> q;
     q.push({ 0., iIdStart });
 
-    vector<double> arrLen(N, 1e8);
+    const double   INF = 1e8;
+    vector<double> arrLen(N, INF);
     vector<int>    arrPass(N, 0);
     arrLen[iIdStart] = 0.;
 

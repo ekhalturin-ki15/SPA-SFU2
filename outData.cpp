@@ -9,7 +9,8 @@
 #include <iomanip>
 #include <sstream>
 
-FOutData::FOutData(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
+FOutData::FOutData(FGlobal* _ptrGlobal)
+    : ptrGlobal(_ptrGlobal), iSizeOnlyAllow(0)
 
 // arrCompetenceHead(
 //     {
@@ -93,7 +94,7 @@ void FOutData::CreateTotalInfo(vector<double>&   arrReturnDataMetrics,
     }
 
     wstring wsNameSoMachComp =
-        L"Количество дисциплин с несколькими дисциплинами";
+        L"Количество дисциплин, формирующих несколько компетенций";
     if (ptrGlobal->ptrConfig->mapArrOutParams[wsNameSoMachComp].at(eOutType) ==
         L"да")
     {
@@ -104,6 +105,16 @@ void FOutData::CreateTotalInfo(vector<double>&   arrReturnDataMetrics,
         {
             arrReturnDataMetrics.push_back(
                 fGraph->arrAmountCountCompDisc[iAmountComp]);
+        }
+    }
+
+     wstring wsRibQuartile = L"Количество рёбер указанного квартиля";
+    if (ptrGlobal->ptrConfig->mapArrOutParams[wsRibQuartile].at(eOutType) ==
+        L"да")
+    {
+        for (auto& it : fGraph->arrAllPairDistanceQuartile)
+        {
+            arrReturnDataMetrics.push_back(it);
         }
     }
 }
@@ -139,7 +150,7 @@ void FOutData::CreateTotalInfo(vector<string>&   arrReturnDataHeader,
     }
 
     wstring wsNameSoMachComp =
-        L"Количество дисциплин с несколькими дисциплинами";
+        L"Количество дисциплин, формирующих несколько компетенций";
     if (ptrGlobal->ptrConfig->mapArrOutParams[wsNameSoMachComp].at(eOutType) ==
         L"да")
     {
@@ -150,15 +161,45 @@ void FOutData::CreateTotalInfo(vector<string>&   arrReturnDataHeader,
             string sAddedHead = ptrGlobal->ConwertToString(
                 ptrGlobal->ptrConfig->mapArrOutParams[wsNameSoMachComp].at(0));
 
-            sAddedHead += " ";
+            sAddedHead += ptrGlobal->ptrConfig->sSeparator;
             if (iAmountComp == ptrGlobal->ptrConfig->iSoMachComp)
                 sAddedHead += ">=";
 
-            sAddedHead += to_string(iAmountComp) + " ";
+            sAddedHead +=
+                to_string(iAmountComp) + ptrGlobal->ptrConfig->sSeparator;
             sAddedHead += ptrGlobal->ConwertToString(
                 ptrGlobal->ptrConfig
                     ->mapArrOutParams[L"Суффикс после вывода кол-во "
                                       L"компетенций у дисциплины"]
+                    .at(0));
+            // sAddedHead += ptrGlobal->ConwertToString(
+            //     ptrGlobal->ptrConfig->wsOutSufAmountComp);
+
+            arrReturnDataHeader.push_back(sAddedHead);
+        }
+    }
+
+     wstring wsRibQuartile =
+        L"Количество рёбер указанного квартиля";
+    if (ptrGlobal->ptrConfig->mapArrOutParams[wsRibQuartile].at(eOutType) ==
+        L"да")
+    {
+        int iAmountQuartile = -1;
+        for (auto& it : fGraph->arrAllPairDistanceQuartile)
+        {
+            ++iAmountQuartile;
+            string sAddedHead = ptrGlobal->ConwertToString(
+                ptrGlobal->ptrConfig->mapArrOutParams[wsRibQuartile].at(0));
+
+            sAddedHead += ptrGlobal->ptrConfig->sSeparator;
+            if (iAmountQuartile == ptrGlobal->ptrConfig->iAmountQuar)
+                sAddedHead += "No" + ptrGlobal->ptrConfig->sSeparator + "Path";
+
+            sAddedHead +=
+                to_string(iAmountQuartile) + ptrGlobal->ptrConfig->sSeparator;
+            sAddedHead += ptrGlobal->ConwertToString(
+                ptrGlobal->ptrConfig
+                    ->mapArrOutParams[L"Суффикс после вывода квартиля распределения весов рёбер"]
                     .at(0));
             // sAddedHead += ptrGlobal->ConwertToString(
             //     ptrGlobal->ptrConfig->wsOutSufAmountComp);
@@ -208,6 +249,7 @@ void FOutData::CreateOnlyAllowedHeaderRow(vector<string>&        arrReturn,
     set<wstring> setOnlyAllow = { arrOnlyAllow.begin(), arrOnlyAllow.end() };
 
     int iAmountComp = 1;    // Так как предметы с 0-компетенциями исключаются
+    int iQuartile = 1;    // Номер квартиля
     int i = 0;
     for (const auto& it : arrParams)
     {
@@ -230,21 +272,39 @@ void FOutData::CreateOnlyAllowedHeaderRow(vector<string>&        arrReturn,
             {
                 string sOut = ptrGlobal->ConwertToString(
                     ptrGlobal->ptrConfig->mapArrOutParams[it].at(0));
-                if (it == L"Количество дисциплин с несколькими дисциплинами")
+                if (it == L"Количество дисциплин, формирующих несколько компетенций")
                 {
-                    sOut += " ";
+                    sOut += ptrGlobal->ptrConfig->sSeparator;
                     if (iAmountComp == ptrGlobal->ptrConfig->iSoMachComp)
                         sOut += ">=";
 
-                    sOut += to_string(iAmountComp++) + " ";
+                    sOut += to_string(iAmountComp++) + ptrGlobal->ptrConfig->sSeparator;
                     sOut += ptrGlobal->ConwertToString(
                         ptrGlobal->ptrConfig
                             ->mapArrOutParams[L"Суффикс после вывода кол-во "
                                               L"компетенций у дисциплины"]
                             .at(0));
+                }
 
-                    // sOut += ptrGlobal->ConwertToString(
-                    //     ptrGlobal->ptrConfig->wsOutSufAmountComp);
+                if (it ==
+                    L"Количество рёбер указанного квартиля")
+                {
+                    sOut += ptrGlobal->ptrConfig->sSeparator;
+                    if (iQuartile > ptrGlobal->ptrConfig->iAmountQuar)
+                    {
+                        sOut = "";
+                        sOut += "No" + ptrGlobal->ptrConfig->sSeparator +
+                                "Path" + ptrGlobal->ptrConfig->sSeparator;
+                    }
+                    else
+                    {
+                        sOut += to_string(iQuartile++) +
+                                ptrGlobal->ptrConfig->sSeparator;
+                    }
+                    sOut += ptrGlobal->ConwertToString(
+                        ptrGlobal->ptrConfig
+                            ->mapArrOutParams[L"Суффикс после вывода квартиля распределения весов рёбер"]
+                            .at(0));
                 }
 
                 arrReturn.push_back(sOut);
@@ -287,14 +347,14 @@ void FOutData::CreateOnlyAllowedResultRow(vector<string>& arrReturn,
 
     vector<string> arrAllowData = {
         ptrTree->sCurName,
-        ptrTree->sShortNamePlan.substr(ptrTree->sShortNamePlan.size() - 2),
-        ptrTree->sTypePlan,
+        //ptrTree->sShortNamePlan.substr(ptrTree->sShortNamePlan.size() - 2),
+        //ptrTree->sTypePlan,
     };
 
     for (const auto& sData : arrAllowData)
     {
         if (TakePasteData(x, arrReturn, arrIsAllowed[i++], sData.size(), sData,
-                          sData, false, mapCorridorData))
+                          ptrTree->sCurName, true, mapCorridorData))
         {
             x++;
         }
@@ -345,6 +405,8 @@ void FOutData::AddTableMaxMinData(vector<vector<string>>& arrToAddedData,
 
                 for (auto& [id, fСorridor] : mapCorridorData)
                 {
+                    if (id == 0) continue;  // Не выводим название дисциплин в строки Мин-Мак
+
                     arrMinMaxData.push_back(
                         ptrGlobal->DoubletWithPrecision(fСorridor.dMaxMin[i]) +
                         " (" +
@@ -372,12 +434,12 @@ void FOutData::CreateAllCurriculaTotalData(
 
     // Параметры для всего УП целиком
     vector<wstring> arrOnlyAllowHead = { L"Название учебного плана",
-                                         L"Год начала подготовки",
                                          L"Тип учебного плана" };
 
     iSizeOnlyAllow = arrOnlyAllowHead.size();
 
-    vector<wstring> arrAddHead = { L"Код направления", L"Общее кол-во ЗЕ в УП",
+    vector<wstring> arrAddHead = { L"Год начала подготовки", L"Код направления",
+                                   L"Общее кол-во ЗЕ в УП",
                                    L"Общее кол-во дисциплин в УП" };
 
     vector<wstring> arrBuf = arrOnlyAllowHead;
@@ -418,6 +480,7 @@ void FOutData::CreateAllCurriculaTotalData(
 #pragma region FormationData
         vector<double> arrAllResult;
         // Общие для УП метрики (перечислены в arrPrefixHead)
+        arrAllResult.push_back(atoi(it->sShortNamePlan.substr(it->sShortNamePlan.size() - 2).c_str()));
         arrAllResult.push_back(atoi(it->sShortNamePlan.substr(0, 2).c_str()));
         arrAllResult.push_back(it->dAllSumScore);
         arrAllResult.push_back(it->iExtendedAmountDisc);
@@ -506,8 +569,9 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
     int y = 0;
 
     vector<wstring> arrOnlyAllowHead = { L"Название учебного плана",
-                                         L"Год начала подготовки",
-                                         L"Тип учебного плана" };
+                                         //L"Год начала подготовки",
+                                         //L"Тип учебного плана" 
+    };
     vector<wstring> arrAddedHead = arrOnlyAllowHead;
 
     arrAddedHead.insert(arrAddedHead.end(),
@@ -515,13 +579,24 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
                         arrMetricHead.end());
 
     wstring wsNameSoMachComp =
-        L"Количество дисциплин с несколькими дисциплинами";
+        L"Количество дисциплин, формирующих несколько компетенций"; 
+    
+    wstring wsNameQuartileRib =
+        L"Количество рёбер указанного квартиля";
 
+    //Вывод компетенций по количеству
     for (int iAmountComp = 1;
          iAmountComp <= this->ptrGlobal->ptrConfig->iSoMachComp;
          ++iAmountComp)
     {
         arrAddedHead.push_back(wsNameSoMachComp);
+    }
+
+    
+    for (int iQuar = 0; iQuar <= this->ptrGlobal->ptrConfig->iAmountQuar;
+         ++iQuar) // На один больше квартилей, так как есть отдельно то количество, сколько рёбер не соединены
+    {
+        arrAddedHead.push_back(wsNameQuartileRib);
     }
 
     // Флаги того, какие столбцы выводить
@@ -1211,7 +1286,8 @@ vector<string> FOutData::CreateCommonNameLabel(const int& iGraphType,
         // Не забываем про нуль нумерацию курсов
         if (iGraphType == FGraph::iAlt)
         {
-            sName += ptrGlobal->ptrConfig->sPrefCourseNumber +
+            sName +=
+                ptrGlobal->ptrConfig->sSeparator +
                      to_string(it.second + 1);
         }
 

@@ -35,6 +35,21 @@ private:
 
     int iSizeOnlyAllow;
 
+
+    // void OutAddTotalInfo(FTreeDisc* ptrTree, int y);
+    // Составляет таблицу для вывода информации общего вида (не имеющей
+    // отношения к графам) всех УП FSolve
+    void CreateAllCurriculaTotalData(vector<vector<string>>& arrReturnData);
+
+    // Составляет таблицу для вывода информации о всех графов одного типа из
+    // всех УП FSolve
+    // Метрики графового представления УП
+    void CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
+                                const int&              iGraphType);
+
+    // Данные про дерево компетенций УП
+    void OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree);
+
     //Нельзя обобщать заголовки, это нарушает правило Лисков
     //const vector<wstring> arrMetricHead;    // Единожды задаётся в конструкторе
     //const vector<wstring>
@@ -58,9 +73,6 @@ private:
         string sName,
         string sPath);    // Вывод через глобальные fOpenFile и fOpenWKS
 
-    void OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree);
-    // void OutAddTotalInfo(FTreeDisc* ptrTree, int y);
-
     // Записать в arrReturn только те Заголовки, которые разрешены в
     // arrIsAllowed
     void CreateOnlyAllowedHeaderRow(vector<string>&        arrReturn,
@@ -82,15 +94,6 @@ private:
 
     void AddTableMaxMinData(vector<vector<string>>& arrToAddedData,
                             map<int, FСorridor>&    mapCorridorData);
-
-    // Составляет таблицу для вывода информации общего вида (не имеющей
-    // отношения к графам) всех УП FSolve
-    void CreateAllCurriculaTotalData(vector<vector<string>>& arrReturnData);
-
-    // Составляет таблицу для вывода информации о всех графов одного типа из
-    // всех УП FSolve
-    void CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
-                                const int&              iGraphType);
 
     void CreateTotalInfo(vector<vector<string>>& arrReturnData,
                          const FGraphType* fGraph, const EOutType& eOutType);

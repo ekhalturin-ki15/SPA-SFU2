@@ -39,12 +39,11 @@ struct FGraphType
     double dMinSpanTree = FGraphType::dNoInit;
     double dMaxSpanTree = FGraphType::dNoInit;
 
+    vector<int> arrAllPairDistanceQuartile;
 
-
-    double             dGraphAllScore   = FGraphType::dNoInit;
-    int                iGraphAmountDisc = FGraphType::dNoInit;
-    double             dDense           = FGraphType::dNoInit;
-
+    double dGraphAllScore   = FGraphType::dNoInit;
+    int    iGraphAmountDisc = FGraphType::dNoInit;
+    double dDense           = FGraphType::dNoInit;
 
     map<ETypeDisc, int> mapGraphAmountTypeDisc;
     vector<int>         arrAmountCountCompDisc;
@@ -83,9 +82,9 @@ struct FGraph
                             // связности за O(n log(n))
 
     void CalculateAllPairDistance(
-        double&                                  dResult,
-        const vector<vector<pair<int, double>>>& fCurrentAdj,
-        auto cmp);    // Высчитываем минимальные пути алгоритмом Флойда - Уоршелла (O(n^3))
+        vector<int>& arrQuarAmount,
+        const vector<vector<pair<int, double>>>& fCurrentAdj);    // Высчитываем минимальные пути алгоритмом Флойда -
+                      // Уоршелла (O(n^3))
 
     void CalculateMST(
         double&                                  dResult,
@@ -100,9 +99,9 @@ private:
     FTreeDisc* ptrTree;
 
     // mapAllowDisc теперь в FSolve вместе с УП
-    //map<wstring, FTreeElement*>
+    // map<wstring, FTreeElement*>
     //    mapAllowDisc;    // Оставляем только разрешённые дисциплины (без
-                         // модулей) для анализа (и без тех, у кого ЗЕ = 0)
+    // модулей) для анализа (и без тех, у кого ЗЕ = 0)
 
     // Регулирование посещённых вершин 0 - не были, 1 - были
     // vector<int> arrColor;

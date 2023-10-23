@@ -430,10 +430,10 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
-        wsPatern = L"Разделитель между названием дисциплины и её курсом";
+        wsPatern = L"Разделитель в названиях";
         if (wsKey == wsPatern)
         {
-            ptrGlobal->TakeData(sPrefCourseNumber, row);
+            ptrGlobal->TakeData(sSeparator, row);
             return true;
         }
 
@@ -457,6 +457,13 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(iSoMachComp, row);
+            return true;
+        }
+        
+        wsPatern = L"Количество квартилей";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(iAmountQuar, row);
             return true;
         }
 
