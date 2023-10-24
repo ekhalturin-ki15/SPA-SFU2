@@ -754,7 +754,23 @@ void FOutData::Out(string sOutPath)
     {
         OpenXLSX::XLDocument fTotalAddOutFile;
         const string               sPageName = "Total_" + sKey;
-        fTotalAddOutFile.create(sOutPath + "/" + sPageName+ ".xlsx");   
+       
+        string sNewFile = sOutPath + "/TotalCompData";
+
+        if (!filesystem::exists(sNewFile))
+        {
+            try
+            {
+                filesystem::create_directories(sNewFile);
+            }
+            catch (...)
+            {
+                ptrGlobal->ptrError->ErrorOutFileCreate(sNewFile);
+                continue;    // Продолжаем работать, но с другим файлом
+            }
+        }
+
+        fTotalAddOutFile.create(sOutPath + "/TotalCompData/" + sPageName + ".xlsx");   
         fTotalAddOutFile.workbook().addWorksheet(sPageName);
         fTotalAddOutFile.workbook().deleteSheet(
             "Sheet1");    // Стартовая страница не нужна
@@ -762,7 +778,7 @@ void FOutData::Out(string sOutPath)
             fTotalAddOutFile.workbook().worksheet(sPageName);
         OutTableInfo(1, 1, arrData, wks);
         if (ptrGlobal->ptrConfig->bIsOutCSVDate)
-            OutTableInfoCSV(arrData, sOutPath, "", sPageName);
+            OutTableInfoCSV(arrData, sOutPath, "TotalCompData", sPageName);
 
         fTotalAddOutFile.save();
         fTotalAddOutFile.close();
