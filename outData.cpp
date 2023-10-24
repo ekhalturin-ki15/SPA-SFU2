@@ -15,18 +15,13 @@ FOutData::FOutData(FGlobal* _ptrGlobal)
 // arrCompetenceHead(
 //     {
 //        L"Название УП", L"За какой курс",
-
 //      L"Заголовок компетенции", L"ЗЕ Заголовка компетенции",
 //      L"Кол-во дисциплин заголовка компетенции",
-
 //      L"Процент распределения Заголовка компетенции",
-
 //      L"Компетенция", L"ЗЕ Компетенций", L"Кол-во дисциплин компетенции",
 //      L"Процент распределения Компетенции",
-
 //      L"Индикатор", L"ЗЕ индикаторов", L"Кол-во дисциплин индикатора",
 //      L"Процент распределения Индикатора" }),
-
 // arrMetricHead(
 //     { // L"Название учебного плана",
 //       L"Всего ЗЕ в графе", L"Кол-во дисциплин в графе",
@@ -642,18 +637,18 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
 void FOutData::Out(string sOutPath)
 {
     OpenXLSX::XLDocument fOutFile;
+    const string         sPageName = "TotalData";
     fOutFile.create(sOutPath + "/TotalData.xlsx");
-    fOutFile.workbook().addWorksheet("Total Data");
+    fOutFile.workbook().addWorksheet(sPageName);
     fOutFile.workbook().deleteSheet("Sheet1");    // Стартовая страница не нужна
-    OpenXLSX::XLWorksheet wks = fOutFile.workbook().worksheet("Total Data");
+    OpenXLSX::XLWorksheet wks = fOutFile.workbook().worksheet(sPageName);
 
     int                    iShiftX = 1;
     vector<vector<string>> arrAllCurriculaTotalData;
     CreateAllCurriculaTotalData(arrAllCurriculaTotalData);
     OutTableInfo(iShiftX, 1, arrAllCurriculaTotalData, wks);
     if (ptrGlobal->ptrConfig->bIsOutCSVDate)
-        OutTableInfoCSV(arrAllCurriculaTotalData, sOutPath, "",
-                    "Total Data");
+        OutTableInfoCSV(arrAllCurriculaTotalData, sOutPath, "", sPageName);
 
     iShiftX += arrAllCurriculaTotalData.front().size() - iSizeOnlyAllow;
     if (ptrGlobal->ptrConfig->bArrIsconcatGraphData.at(0))
@@ -753,6 +748,25 @@ void FOutData::Out(string sOutPath)
         CreateAndTake(sCurPlanName, sOutPath);
         OutAddInfo(sCurPlanName, sOutPath, it);
     }
+
+    //Выводим файл единых данных 
+    for (const auto& [sKey, arrData] : mapTotalDataOut)
+    {
+        OpenXLSX::XLDocument fTotalAddOutFile;
+        const string               sPageName = "Total_" + sKey;
+        fTotalAddOutFile.create(sOutPath + "/" + sPageName+ ".xlsx");   
+        fTotalAddOutFile.workbook().addWorksheet(sPageName);
+        fTotalAddOutFile.workbook().deleteSheet(
+            "Sheet1");    // Стартовая страница не нужна
+        OpenXLSX::XLWorksheet wks =
+            fTotalAddOutFile.workbook().worksheet(sPageName);
+        OutTableInfo(1, 1, arrData, wks);
+        if (ptrGlobal->ptrConfig->bIsOutCSVDate)
+            OutTableInfoCSV(arrData, sOutPath, "", sPageName);
+
+        fTotalAddOutFile.save();
+        fTotalAddOutFile.close();
+    }
 }
 
 void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
@@ -767,9 +781,9 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
     CreateTableInfoInit(arrDataAll, ptrCurrentTree,
                         true);    //, ptrCurrentTree->dChosenSum);
 
-    OutTableInfo(iXShift, 1, arrDataAll, arrSinglOpenWKS.back());
-    if (ptrGlobal->ptrConfig->bIsOutCSVDate)
-        OutTableInfoCSV(arrDataAll, sPath, sName, "Data");
+    //OutTableInfo(iXShift, 1, arrDataAll, arrSinglOpenWKS.back());
+    //if (ptrGlobal->ptrConfig->bIsOutCSVDate)
+    //    OutTableInfoCSV(arrDataAll, sPath, sName, FMetric::sAllMetric);
 
     iXShift +=
         arrDataAll.front().size();    // Сдвигаемся на ширину выведеной таблицы
@@ -777,12 +791,26 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
     for (auto& [sKey, ptrCurrentTree] :
          ptrTree->ptrMetric->ptrTreeMetric->mapChild)
     {
-        if (sKey == FMetric::sAllMetric) continue;
+        //if (sKey == FMetric::sAllMetric) continue;
 
         vector<vector<string>> arrDataAllCourse;
         // Вывод конкретного курса
         CreateTableInfoInit(arrDataAllCourse, ptrCurrentTree,
-                            false);    // ptrCurrentTree->dChosenSum);
+                            true);    // ptrCurrentTree->dChosenSum);
+
+        if (mapTotalDataOut[sKey].empty()) //Если пусто, то копируем с заголовками
+        {
+            mapTotalDataOut[sKey] = arrDataAllCourse;
+        }
+        else
+        {
+            //Копируем без заголовка
+            for (int y = 1; y < arrDataAllCourse.size(); ++y)
+            {
+                mapTotalDataOut[sKey].push_back(arrDataAllCourse[y]);
+            }
+        }
+
 
         OutTableInfo(iXShift, 1, arrDataAllCourse, arrSinglOpenWKS.back());
         if (ptrGlobal->ptrConfig->bIsOutCSVDate)

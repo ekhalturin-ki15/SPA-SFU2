@@ -377,7 +377,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
-        wsPatern = L"Не оставлять пустые ячейки во время вывода дерева компетенций";
+        wsPatern = L"Не оставлять пустые ячейки при выводе дерева компетенций";
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(bOutWithoutEmptyCell, row);

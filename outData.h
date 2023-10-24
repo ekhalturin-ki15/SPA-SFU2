@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "global.h"
+#include <map>
 
 struct FGlobal;
 struct FTreeDisc;
@@ -34,6 +35,8 @@ private:
     string sCurPlanName;
 
     int iSizeOnlyAllow;
+
+    std::map< string, vector<vector<string>>> mapTotalDataOut;
 
 
     // void OutAddTotalInfo(FTreeDisc* ptrTree, int y);
