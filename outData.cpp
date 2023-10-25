@@ -343,7 +343,7 @@ void FOutData::CreateOnlyAllowedResultRow(vector<string>& arrReturn,
     vector<string> arrAllowData = {
         ptrTree->sCurName,
         //ptrTree->sShortNamePlan.substr(ptrTree->sShortNamePlan.size() - 2),
-        //ptrTree->sTypePlan,
+        ptrTree->sTypePlan,
     };
 
     for (const auto& sData : arrAllowData)
@@ -565,7 +565,7 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
 
     vector<wstring> arrOnlyAllowHead = { L"Название учебного плана",
                                          //L"Год начала подготовки",
-                                         //L"Тип учебного плана" 
+                                         L"Тип учебного плана" 
     };
     vector<wstring> arrAddedHead = arrOnlyAllowHead;
 
