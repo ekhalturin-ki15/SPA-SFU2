@@ -49,7 +49,8 @@ struct FConfig
     string sRegexComp;
     vector<string> arrRegexHeaderInd;
     vector<string> arrRegexHeaderComp;
-    string sFormula;
+    string         sFormula;
+    string         sFormulaReverseGraph;
 
     // wstring wsOutPrefMinMax;
     // string sOutPrefAllCurriculaAllCourse;

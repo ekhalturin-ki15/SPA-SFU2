@@ -55,6 +55,7 @@ struct FGraph
 {
     static const int    iCommon;
     static const int    iAlt;
+    static const int    iReverse;
     static const double dAllScoreNotEqualError;
 
     // Инверсия зависимости
@@ -117,6 +118,9 @@ private:
 
     void GenerateGraph();
     void GenerateAltGraph();
+
+    void GenerateReverseGraph(); // Граф, где вершины - это компетенции
+
     void GenerateCourseGraph();    // Графы для каждого курса по отдельности
 
     void CountAllMetric(int iTypeGraph);

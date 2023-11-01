@@ -9,6 +9,94 @@
 #include <iomanip>
 #include <sstream>
 
+map<int, vector<pair<double, string>>> FCorridorAdapter::Take(const int& iSize)
+{
+    map<int, vector<pair<double, string>>> mapReturn;
+
+    for (auto& [key, fData] : mapCorridorData)
+    {
+        auto& arrData = fData.arrAllData;
+        sort(arrData.begin(), arrData.end());
+
+        mapReturn[key].resize(iSize);
+
+        int iIndex = 0;
+        // [0] - Макс [1] - Мин  [2] - Мода [3] - Медиана [4] - Среднее
+        if (iIndex >= iSize)
+            continue;
+        else
+            mapReturn[key][iIndex++] = arrData.back();    // Макс
+
+        if (iIndex >= iSize)
+            continue;
+        else
+            mapReturn[key][iIndex++] = arrData.front();    // Мин
+
+        if (iIndex >= iSize)    // Мода
+            continue;
+        else
+        {
+            map<double, int> mapCounting;
+            int              iMax = 0;
+
+            for (const auto& it : arrData)
+            {
+                auto& fDataLocal = mapCounting[it.first];
+                ++fDataLocal;
+
+                if (iMax < fDataLocal)
+                {
+                    iMax                   = fDataLocal;
+                    mapReturn[key][iIndex] = it;
+                }
+            }
+
+            ++iIndex;
+        }
+
+        if (iIndex >= iSize)    // Медиана
+            continue;
+        else
+        {
+            mapReturn[key][iIndex] = arrData[arrData.size() / 2];
+            if (arrData.size() & 1)    // Нечётное
+            {
+            }
+            else    // Чётное
+            {
+                if (arrData.size() > 0)
+                {
+                    mapReturn[key][iIndex].first =
+                        (arrData[arrData.size() / 2].first +
+                         arrData[(arrData.size() / 2) - 1].first) /
+                        2.0;
+                }
+            }
+            ++iIndex;
+        }
+
+        if (iIndex >= iSize)
+            continue;
+        else
+        {
+            if (fData.arrAllData.size())
+            {
+                mapReturn[key][iIndex].first =
+                    fData.dSum / fData.arrAllData.size();    // Среднее
+            }
+            ++iIndex;
+        }
+    }
+
+    return mapReturn;
+}
+
+void FCorridorAdapter::Add(int key, pair<double, string> fData)
+{
+    mapCorridorData[key].arrAllData.push_back(fData);
+    mapCorridorData[key].dSum += fData.first;
+}
+
 FOutData::FOutData(FGlobal* _ptrGlobal)
     : ptrGlobal(_ptrGlobal), iSizeOnlyAllow(0)
 
@@ -103,7 +191,7 @@ void FOutData::CreateTotalInfo(vector<double>&   arrReturnDataMetrics,
         }
     }
 
-     wstring wsRibQuartile = L"Количество рёбер указанного квартиля";
+    wstring wsRibQuartile = L"Количество рёбер указанного квартиля";
     if (ptrGlobal->ptrConfig->mapArrOutParams[wsRibQuartile].at(eOutType) ==
         L"да")
     {
@@ -174,8 +262,7 @@ void FOutData::CreateTotalInfo(vector<string>&   arrReturnDataHeader,
         }
     }
 
-     wstring wsRibQuartile =
-        L"Количество рёбер указанного квартиля";
+    wstring wsRibQuartile = L"Количество рёбер указанного квартиля";
     if (ptrGlobal->ptrConfig->mapArrOutParams[wsRibQuartile].at(eOutType) ==
         L"да")
     {
@@ -194,7 +281,8 @@ void FOutData::CreateTotalInfo(vector<string>&   arrReturnDataHeader,
                 to_string(iAmountQuartile) + ptrGlobal->ptrConfig->sSeparator;
             sAddedHead += ptrGlobal->ConwertToString(
                 ptrGlobal->ptrConfig
-                    ->mapArrOutParams[L"Суффикс после вывода квартиля распределения весов рёбер"]
+                    ->mapArrOutParams[L"Суффикс после вывода квартиля "
+                                      L"распределения весов рёбер"]
                     .at(0));
             // sAddedHead += ptrGlobal->ConwertToString(
             //     ptrGlobal->ptrConfig->wsOutSufAmountComp);
@@ -244,8 +332,8 @@ void FOutData::CreateOnlyAllowedHeaderRow(vector<string>&        arrReturn,
     set<wstring> setOnlyAllow = { arrOnlyAllow.begin(), arrOnlyAllow.end() };
 
     int iAmountComp = 1;    // Так как предметы с 0-компетенциями исключаются
-    int iQuartile = 1;    // Номер квартиля
-    int i = 0;
+    int iQuartile = 1;      // Номер квартиля
+    int i         = 0;
     for (const auto& it : arrParams)
     {
         if (ptrGlobal->ptrConfig->mapArrOutParams.count(it))
@@ -267,13 +355,15 @@ void FOutData::CreateOnlyAllowedHeaderRow(vector<string>&        arrReturn,
             {
                 string sOut = ptrGlobal->ConwertToString(
                     ptrGlobal->ptrConfig->mapArrOutParams[it].at(0));
-                if (it == L"Количество дисциплин, формирующих несколько компетенций")
+                if (it ==
+                    L"Количество дисциплин, формирующих несколько компетенций")
                 {
                     sOut += ptrGlobal->ptrConfig->sSeparator;
                     if (iAmountComp == ptrGlobal->ptrConfig->iSoMachComp)
                         sOut += ">=";
 
-                    sOut += to_string(iAmountComp++) + ptrGlobal->ptrConfig->sSeparator;
+                    sOut += to_string(iAmountComp++) +
+                            ptrGlobal->ptrConfig->sSeparator;
                     sOut += ptrGlobal->ConwertToString(
                         ptrGlobal->ptrConfig
                             ->mapArrOutParams[L"Суффикс после вывода кол-во "
@@ -281,8 +371,7 @@ void FOutData::CreateOnlyAllowedHeaderRow(vector<string>&        arrReturn,
                             .at(0));
                 }
 
-                if (it ==
-                    L"Количество рёбер указанного квартиля")
+                if (it == L"Количество рёбер указанного квартиля")
                 {
                     sOut += ptrGlobal->ptrConfig->sSeparator;
                     if (iQuartile > ptrGlobal->ptrConfig->iAmountQuar)
@@ -298,7 +387,8 @@ void FOutData::CreateOnlyAllowedHeaderRow(vector<string>&        arrReturn,
                     }
                     sOut += ptrGlobal->ConwertToString(
                         ptrGlobal->ptrConfig
-                            ->mapArrOutParams[L"Суффикс после вывода квартиля распределения весов рёбер"]
+                            ->mapArrOutParams[L"Суффикс после вывода квартиля "
+                                              L"распределения весов рёбер"]
                             .at(0));
                 }
 
@@ -328,9 +418,9 @@ void FOutData::CreateOnlyAllowedResultRow(vector<string>& arrReturn,
                                           const int&      iSizeHeader,
                                           vector<bool>&   arrIsAllowed,
                                           // const string&         sCurName,
-                                          const vector<double>& arrResult,
-                                          map<int, FСorridor>&  mapCorridorData,
-                                          FTreeDisc*            ptrTree,
+                                          const vector<double>&  arrResult,
+                                          FCorridorAdapter&      fCorridorData,
+                                          FTreeDisc*             ptrTree,
                                           const vector<wstring>& arrOnlyAllow)
 {
     int i = 0;
@@ -342,14 +432,14 @@ void FOutData::CreateOnlyAllowedResultRow(vector<string>& arrReturn,
 
     vector<string> arrAllowData = {
         ptrTree->sCurName,
-        //ptrTree->sShortNamePlan.substr(ptrTree->sShortNamePlan.size() - 2),
+        // ptrTree->sShortNamePlan.substr(ptrTree->sShortNamePlan.size() - 2),
         ptrTree->sTypePlan,
     };
 
     for (const auto& sData : arrAllowData)
     {
         if (TakePasteData(x, arrReturn, arrIsAllowed[i++], sData.size(), sData,
-                          ptrTree->sCurName, true, mapCorridorData))
+                          ptrTree->sCurName, true, fCorridorData))
         {
             x++;
         }
@@ -365,7 +455,7 @@ void FOutData::CreateOnlyAllowedResultRow(vector<string>& arrReturn,
 
             if (TakePasteData(x, arrReturn, arrIsAllowed[i++], it,
                               ptrGlobal->DoubletWithPrecision(it),
-                              ptrTree->sCurName, true, mapCorridorData))
+                              ptrTree->sCurName, true, fCorridorData))
             {
                 x++;
             }
@@ -373,7 +463,7 @@ void FOutData::CreateOnlyAllowedResultRow(vector<string>& arrReturn,
         else
         {
             if (TakePasteData(x, arrReturn, arrIsAllowed[i++], it, "-",
-                              ptrTree->sCurName, false, mapCorridorData))
+                              ptrTree->sCurName, false, fCorridorData))
             {
                 x++;
             }
@@ -381,39 +471,53 @@ void FOutData::CreateOnlyAllowedResultRow(vector<string>& arrReturn,
     }
 }
 
-void FOutData::AddTableMaxMinData(vector<vector<string>>& arrToAddedData,
-                                  map<int, FСorridor>&    mapCorridorData)
+void FOutData::AddTableCommonData(vector<vector<string>>& arrToAddedData,
+                                  FCorridorAdapter&       fCorridorData)
 {
+    // Надо посчитать общие данные о среднем и моде
+
+    vector<wstring> arrHeader({ L"Максимальные значения:",
+                                L"Минимальные значения:", L"Мода:", L"Медиана:",
+                                L"Среднее:" });
+
+    auto mapCorridorData = fCorridorData.Take(arrHeader.size());
+
     int i = -1;
-    for (const auto& wsName : vector<wstring>(
-             { L"Максимальные значения:", L"Минимальные значения:" }))
+    for (const auto& wsName : arrHeader)
     {
         ++i;
         if (ptrGlobal->ptrConfig->mapArrOutParams.count(wsName))
         {
             if (ptrGlobal->ptrConfig->mapArrOutParams[wsName].at(1) == L"да")
             {
-                vector<string> arrMinMaxData;
+                vector<string> arrCommonData;
 
-                arrMinMaxData.push_back(ptrGlobal->ConwertToString(
-                    ptrGlobal->ptrConfig->mapArrOutParams[wsName].at(0)));
+                // arrMinMaxData.push_back(ptrGlobal->ConwertToString(ptrGlobal->ptrConfig->mapArrOutParams[wsName].at(0)));
 
-                for (auto& [id, fСorridor] : mapCorridorData)
+                for (const auto& [id, fСorridor] : mapCorridorData)
                 {
-                    if (id == 0) continue;  // Не выводим название дисциплин в строки Мин-Мак
+                    const auto& [dVal, sName] = fСorridor[i];
+                    if (id == 0)
+                    {
+                        // Выводим заголовок
+                        arrCommonData.push_back(ptrGlobal->ConwertToString(
+                            ptrGlobal->ptrConfig->mapArrOutParams[wsName].at(
+                                0)));
+                        continue;
+                    }
+                    // в строки Мин-Мак
 
-                    arrMinMaxData.push_back(
-                        ptrGlobal->DoubletWithPrecision(fСorridor.dMaxMin[i]) +
-                        " (" +
+                    arrCommonData.push_back(
+                        ptrGlobal->DoubletWithPrecision(dVal) + " (" +
                         ptrGlobal->ConwertToString(
                             ptrGlobal->ptrConfig
-                                ->mapArrOutParams[L"Предлог перед выводом "
-                                                  L"результата мин. макс."]
+                                ->mapArrOutParams
+                                    [L"Предлог перед выводом общих результатов"]
                                 .at(0)) +
-                        fСorridor.sMaxMin[i] + ")");
+                        sName + ")");
                 }
 
-                arrToAddedData.push_back(arrMinMaxData);
+                arrToAddedData.push_back(arrCommonData);
             }
         }
     }
@@ -464,7 +568,9 @@ void FOutData::CreateAllCurriculaTotalData(
     arrReturnData.push_back(arrHeader);
 
     // Вывод данных
-    map<int, FСorridor> mapSaveСorridorData;
+    // map<int, FСorridor> mapSaveСorridorData;
+    FCorridorAdapter fSaveСorridorData;
+
     for (const auto& it : ptrGlobal->ptrSolve->arrDisc)
     {
         // Выводить короткое, или помное имя
@@ -475,7 +581,8 @@ void FOutData::CreateAllCurriculaTotalData(
 #pragma region FormationData
         vector<double> arrAllResult;
         // Общие для УП метрики (перечислены в arrPrefixHead)
-        arrAllResult.push_back(atoi(it->sShortNamePlan.substr(it->sShortNamePlan.size() - 2).c_str()));
+        arrAllResult.push_back(atoi(
+            it->sShortNamePlan.substr(it->sShortNamePlan.size() - 2).c_str()));
         arrAllResult.push_back(atoi(it->sShortNamePlan.substr(0, 2).c_str()));
         arrAllResult.push_back(it->dAllSumScore);
         arrAllResult.push_back(it->iExtendedAmountDisc);
@@ -535,14 +642,14 @@ void FOutData::CreateAllCurriculaTotalData(
 
         vector<string> arrCurData;
         CreateOnlyAllowedResultRow(arrCurData, arrHeader.size(), arrOutColm,
-                                   arrAllResult, mapSaveСorridorData, it,
+                                   arrAllResult, fSaveСorridorData, it,
                                    arrOnlyAllowHead);
 
         arrReturnData.push_back(arrCurData);
     }
 
     //  Вывод коридора минимума максимума
-    AddTableMaxMinData(arrReturnData, mapSaveСorridorData);
+    AddTableCommonData(arrReturnData, fSaveСorridorData);
 }
 
 void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
@@ -564,9 +671,8 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
     int y = 0;
 
     vector<wstring> arrOnlyAllowHead = { L"Название учебного плана",
-                                         //L"Год начала подготовки",
-                                         L"Тип учебного плана" 
-    };
+                                         // L"Год начала подготовки",
+                                         L"Тип учебного плана" };
     vector<wstring> arrAddedHead = arrOnlyAllowHead;
 
     arrAddedHead.insert(arrAddedHead.end(),
@@ -574,12 +680,11 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
                         arrMetricHead.end());
 
     wstring wsNameSoMachComp =
-        L"Количество дисциплин, формирующих несколько компетенций"; 
-    
-    wstring wsNameQuartileRib =
-        L"Количество рёбер указанного квартиля";
+        L"Количество дисциплин, формирующих несколько компетенций";
 
-    //Вывод компетенций по количеству
+    wstring wsNameQuartileRib = L"Количество рёбер указанного квартиля";
+
+    // Вывод компетенций по количеству
     for (int iAmountComp = 1;
          iAmountComp <= this->ptrGlobal->ptrConfig->iSoMachComp;
          ++iAmountComp)
@@ -587,9 +692,9 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
         arrAddedHead.push_back(wsNameSoMachComp);
     }
 
-    
     for (int iQuar = 0; iQuar <= this->ptrGlobal->ptrConfig->iAmountQuar;
-         ++iQuar) // На один больше квартилей, так как есть отдельно то количество, сколько рёбер не соединены
+         ++iQuar)    // На один больше квартилей, так как есть отдельно то
+                     // количество, сколько рёбер не соединены
     {
         arrAddedHead.push_back(wsNameQuartileRib);
     }
@@ -604,7 +709,8 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
     arrReturnData.push_back(arrHeader);
 
     // Вывод данных
-    map<int, FСorridor> mapSaveСorridorData;
+    // map<int, FСorridor> mapSaveСorridorData;
+    FCorridorAdapter fСorridorData;
 
     for (const auto& it : ptrGlobal->ptrSolve->arrDisc)
     {
@@ -625,13 +731,13 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
         vector<string> arrCurData;
         CreateOnlyAllowedResultRow(arrCurData, arrHeader.size(), arrOutColm,
                                    // sCurPlanName,
-                                   arrAllResult, mapSaveСorridorData, it,
+                                   arrAllResult, fСorridorData, it,
                                    arrOnlyAllowHead);
 
         arrReturnData.push_back(arrCurData);
     }
 
-    AddTableMaxMinData(arrReturnData, mapSaveСorridorData);
+    AddTableCommonData(arrReturnData, fСorridorData);
 }
 
 void FOutData::Out(string sOutPath)
@@ -679,8 +785,7 @@ void FOutData::Out(string sOutPath)
         CreateSummaryTotalData(arrAllCoursesGraphData, FGraph::iCommon);
         OutTableInfo(1, 1, arrAllCoursesGraphData, wks);
         if (ptrGlobal->ptrConfig->bIsOutCSVDate)
-            OutTableInfoCSV(arrAllCoursesGraphData, sOutPath, "",
-                        sNamePage);
+            OutTableInfoCSV(arrAllCoursesGraphData, sOutPath, "", sNamePage);
     }
 
     for (int iCourse = 0; iCourse < this->ptrGlobal->ptrSolve->iMaxCourse;
@@ -749,12 +854,12 @@ void FOutData::Out(string sOutPath)
         OutAddInfo(sCurPlanName, sOutPath, it);
     }
 
-    //Выводим файл единых данных 
+    // Выводим файл единых данных
     for (const auto& [sKey, arrData] : mapTotalDataOut)
     {
         OpenXLSX::XLDocument fTotalAddOutFile;
-        const string               sPageName = "Total_" + sKey;
-       
+        const string         sPageName = "Total_" + sKey;
+
         string sNewFile = sOutPath + "/TotalCompData";
 
         if (!filesystem::exists(sNewFile))
@@ -770,7 +875,8 @@ void FOutData::Out(string sOutPath)
             }
         }
 
-        fTotalAddOutFile.create(sOutPath + "/TotalCompData/" + sPageName + ".xlsx");   
+        fTotalAddOutFile.create(sOutPath + "/TotalCompData/" + sPageName +
+                                ".xlsx");
         fTotalAddOutFile.workbook().addWorksheet(sPageName);
         fTotalAddOutFile.workbook().deleteSheet(
             "Sheet1");    // Стартовая страница не нужна
@@ -797,9 +903,10 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
     CreateTableInfoInit(arrDataAll, ptrCurrentTree,
                         true);    //, ptrCurrentTree->dChosenSum);
 
-    //OutTableInfo(iXShift, 1, arrDataAll, arrSinglOpenWKS.back());
-    //if (ptrGlobal->ptrConfig->bIsOutCSVDate)
-    //    OutTableInfoCSV(arrDataAll, sPath, sName, FMetric::sAllMetric);
+    // Вывод данных в TotalData файле
+    OutTableInfo(iXShift, 1, arrDataAll, arrSinglOpenWKS.back());
+    if (ptrGlobal->ptrConfig->bIsOutCSVDate)
+        OutTableInfoCSV(arrDataAll, sPath, sName, FMetric::sAllMetric);
 
     iXShift +=
         arrDataAll.front().size();    // Сдвигаемся на ширину выведеной таблицы
@@ -807,26 +914,26 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
     for (auto& [sKey, ptrCurrentTree] :
          ptrTree->ptrMetric->ptrTreeMetric->mapChild)
     {
-        //if (sKey == FMetric::sAllMetric) continue;
+        // if (sKey == FMetric::sAllMetric) continue;
 
         vector<vector<string>> arrDataAllCourse;
         // Вывод конкретного курса
         CreateTableInfoInit(arrDataAllCourse, ptrCurrentTree,
                             true);    // ptrCurrentTree->dChosenSum);
 
-        if (mapTotalDataOut[sKey].empty()) //Если пусто, то копируем с заголовками
+        if (mapTotalDataOut[sKey]
+                .empty())    // Если пусто, то копируем с заголовками
         {
             mapTotalDataOut[sKey] = arrDataAllCourse;
         }
         else
         {
-            //Копируем без заголовка
+            // Копируем без заголовка
             for (int y = 1; y < arrDataAllCourse.size(); ++y)
             {
                 mapTotalDataOut[sKey].push_back(arrDataAllCourse[y]);
             }
         }
-
 
         OutTableInfo(iXShift, 1, arrDataAllCourse, arrSinglOpenWKS.back());
         if (ptrGlobal->ptrConfig->bIsOutCSVDate)
@@ -994,7 +1101,8 @@ void FOutData::OutTableInfo(const int& iShiftX, const int& iShiftY,
 
 void FOutData::OutTableInfoCSV(
     const vector<vector<string>>& arrData,    // Что выводим
-    const string& sPath, const string& sNameFile, const string& sName, const int& iShiftDataX,    // С каким смещением выводим
+    const string& sPath, const string& sNameFile, const string& sName,
+    const int& iShiftDataX,    // С каким смещением выводим
     const int& iShiftDataY)    // С каким смещением выводим)
 {
     string sAllPath = sPath;
@@ -1303,14 +1411,19 @@ string FOutData::AddCompString(const map<string, vector<string>>& mapComp)
     return sReturn;
 }
 
-vector<string> FOutData::CreateTag(const int& iGraphType, FTreeDisc* fTree)
+vector<string> FOutData::CreateTag(const int& iGraphType, FTreeDisc* fTree,
+                                   bool bCheckTag)
 {
     vector<string> arrTag;
     for (auto& [key, val] : fTree->ptrGraph->mapGraph[iGraphType].mapReversRel)
     {
         string sTag = "-";
-        if (fTree->mapDisc[key.first]->setTagDisc.size() > 0)
-            sTag = to_string(*fTree->mapDisc[key.first]->setTagDisc.begin());
+        if (bCheckTag)
+        {
+            if (fTree->mapDisc[key.first]->setTagDisc.size() > 0)
+                sTag =
+                    to_string(*fTree->mapDisc[key.first]->setTagDisc.begin());
+        }
         arrTag.push_back(sTag);
     }
 
@@ -1323,6 +1436,12 @@ vector<string> FOutData::CreateCommonNameLabel(const int& iGraphType,
     vector<string> arrCommonNameLabel;
     for (auto& it : fTree->ptrGraph->mapGraph[iGraphType].arrRel)
     {
+        if (iGraphType == FGraph::iReverse)
+        {
+            arrCommonNameLabel.push_back(ptrGlobal->ConwertToString(it.first));
+            continue;
+        }
+
         FTreeElement* fThis = fTree->mapDisc[it.first];
         // wstring       wsNameRaw = fThis->wsName;
         string sName = fThis->sName;
@@ -1331,8 +1450,7 @@ vector<string> FOutData::CreateCommonNameLabel(const int& iGraphType,
         if (iGraphType == FGraph::iAlt)
         {
             sName +=
-                ptrGlobal->ptrConfig->sSeparator +
-                     to_string(it.second + 1);
+                ptrGlobal->ptrConfig->sSeparator + to_string(it.second + 1);
         }
 
         // ptrGlobal->ReversUTF16RU(ptrGlobal->ConwertToString(wsNameRaw));
@@ -1348,37 +1466,51 @@ vector<string> FOutData::CreateCommonNameLabel(const int& iGraphType,
 
 void FOutData::OutGephiData(string sName, string sPath, FTreeDisc* fTree)
 {
-    OutGephiLabel(sPath, sName, sName,
-                  CreateCommonNameLabel(FGraph::iCommon, fTree),
-                  fTree->ptrGraph->mapGraph[FGraph::iCommon].arrNodeWeight,
-                  CreateTag(FGraph::iCommon, fTree));
-    OutGephiRib(sName, sName, sPath,
-                fTree->ptrGraph->mapGraph[FGraph::iCommon].fAdjList);
+    {
+        const int& iTag = FGraph::iCommon;
+        OutGephiLabel(sPath, sName, sName, CreateCommonNameLabel(iTag, fTree),
+                      fTree->ptrGraph->mapGraph[iTag].arrNodeWeight,
+                      CreateTag(iTag, fTree));
+        OutGephiRib(sName, sName, sPath,
+                    fTree->ptrGraph->mapGraph[iTag].fAdjList);
+    }
 
-    OutGephiLabel(
-        sPath,
-        sName +
+    // Вывод графа, где вершины - это компетенции
+    {
+        const int& iTag = FGraph::iReverse;
+        string     sFileName =
+            sName + ptrGlobal->ConwertToString(
+                        ptrGlobal->ptrConfig
+                            ->mapArrOutParams
+                                [L"Суффикс названия обратного графа при выводе"]
+                            .at(0));
+
+        OutGephiLabel(sPath, sFileName, sName,
+                      CreateCommonNameLabel(iTag, fTree),
+                      fTree->ptrGraph->mapGraph[iTag].arrNodeWeight,
+                      CreateTag(iTag, fTree, false));
+        OutGephiRib(sName, sFileName, sPath,
+                    fTree->ptrGraph->mapGraph[iTag].fAdjList);
+    }
+
+    {
+        const int& iTag = FGraph::iAlt;
+        string     sFileName =
+            sName +
             ptrGlobal->ConwertToString(
                 ptrGlobal->ptrConfig
-                    ->mapArrOutParams
-                        [L"Суффикс названия альтернативного графа при выводе"]
-                    .at(0)),
+                    ->mapArrOutParams[L"Суффикс названия альтернативного "
+                                      L"графа при выводе"]
+                    .at(0));
 
-        sName,
-        CreateCommonNameLabel(FGraph::iAlt, fTree),
-        fTree->ptrGraph->mapGraph[FGraph::iAlt].arrNodeWeight,
-        CreateTag(FGraph::iAlt, fTree));
+        OutGephiLabel(sPath, sFileName, sName,
+                      CreateCommonNameLabel(iTag, fTree),
+                      fTree->ptrGraph->mapGraph[iTag].arrNodeWeight,
+                      CreateTag(iTag, fTree));
 
-    OutGephiRib(
-        sName,
-        sName +
-            ptrGlobal->ConwertToString(
-                ptrGlobal->ptrConfig
-                    ->mapArrOutParams
-                        [L"Суффикс названия альтернативного графа при выводе"]
-                    .at(0)),
-        sPath,
-        fTree->ptrGraph->mapGraph[FGraph::iAlt].fAdjList);
+        OutGephiRib(sName, sFileName, sPath,
+                    fTree->ptrGraph->mapGraph[iTag].fAdjList);
+    }
 
     if (fTree->ptrGlobal->ptrConfig->bCourseOutput)
     {
@@ -1446,32 +1578,33 @@ void FOutData::OutGephiRib(const string& sName, const string& sNameFile,
     }
 }
 
-void FOutData::RetakeMinMax(FСorridor& fSaveData, const double& dNewData,
-                            const string& sNewData)
+void FOutData::RetakeCommon(FCorridorAdapter& fSaveData, const int& iKey,
+                            const double& dNewData, const string& sNewData)
 {
-    if ((dNewData > fSaveData.dMaxMin[0]) || (fSaveData.sMaxMin[0] == ""))
-    {
-        fSaveData.dMaxMin[0] = dNewData;
-        fSaveData.sMaxMin[0] = sNewData;
-    }
+    fSaveData.Add(iKey, { dNewData, sNewData });
+    /*  if ((dNewData > fSaveData.dMaxMin[0]) || (fSaveData.sMaxMin[0] == ""))
+      {
+          fSaveData.dMaxMin[0] = dNewData;
+          fSaveData.sMaxMin[0] = sNewData;
+      }
 
-    if ((dNewData < fSaveData.dMaxMin[1]) || (fSaveData.sMaxMin[1] == ""))
-    {
-        fSaveData.dMaxMin[1] = dNewData;
-        fSaveData.sMaxMin[1] = sNewData;
-    }
+      if ((dNewData < fSaveData.dMaxMin[1]) || (fSaveData.sMaxMin[1] == ""))
+      {
+          fSaveData.dMaxMin[1] = dNewData;
+          fSaveData.sMaxMin[1] = sNewData;
+      }*/
     return;
 }
 
 bool FOutData::TakePasteData(const int& x, vector<string>& arrCurRow,
                              const bool& bIsOutData, const double& dDate,
                              const string& sOutData, const string& sCurName,
-                             const bool&          bIsConsider,
-                             map<int, FСorridor>& mapCorridorData)
+                             const bool&       bIsConsider,
+                             FCorridorAdapter& fSaveData)
 {
     if (bIsOutData)
     {
-        if (bIsConsider) RetakeMinMax(mapCorridorData[x], dDate, sCurName);
+        if (bIsConsider) RetakeCommon(fSaveData, x, dDate, sCurName);
 
         arrCurRow[x] = ptrGlobal->ConwertUTF16RU(sOutData);
         return true;

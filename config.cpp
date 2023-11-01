@@ -32,8 +32,8 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       bOutTotalInfo(true),
       bOutWithoutEmptyCell(true),
       bIsOutCSVDate(false),
-      //bSetNameIfNotIndex(true),
-      //bOutIndicatorsInfo(true),
+      // bSetNameIfNotIndex(true),
+      // bOutIndicatorsInfo(true),
       wsNameConfig(L"./config.xlsx"),
       wsNamePage(L"Параметры"),
       sNameLabelHeader("Id;Label"),
@@ -47,9 +47,10 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       // wsOutPrefAllCourse(L"Все курсы"),
       // sPrefCourseNumber("_"),
       // sSufAltGraphFile("Alt"),
-      //sRegexComp("{0, 1}(.{0, } ? ); "),
-      //sRegexHeaderIndicator("(.{1,})-(.{1,})\.(.{1,})"),
-      sFormula("((L + R) / 2) * K")
+      // sRegexComp("{0, 1}(.{0, } ? ); "),
+      // sRegexHeaderIndicator("(.{1,})-(.{1,})\.(.{1,})"),
+      sFormula("((L + R) / 2) * K"),
+      sFormulaReverseGraph("((L + R) / 2) * K")
 {
     if (iSinglControll > 0) throw std::runtime_error("Re-creation Singleton");
     ++iSinglControll;
@@ -423,10 +424,17 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
-        wsPatern = L"Формула расчёта весов рёбер";
+        wsPatern = L"Формула расчёта весов рёбер графа, где вершины - это дисциплина";
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(sFormula, row);
+            return true;
+        }
+
+        wsPatern = L"Формула расчёта весов рёбер графа, где вершины - это компетенция";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(sFormulaReverseGraph, row);
             return true;
         }
 

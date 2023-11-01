@@ -11,6 +11,8 @@ struct Expression
     explicit Expression(string _sToken, Expression fArg) : sToken(_sToken), arrArgument { fArg } {}
     explicit Expression(string _sToken, Expression fLeftArg, Expression fRightArg) : sToken(_sToken), arrArgument { fLeftArg, fRightArg } {}
 
+    explicit Expression() = default;
+
     double Calculate(const Expression& fExp);
 
 private:
@@ -42,4 +44,6 @@ private:
     int iGetPriority(const string& sOperation);
 
     int i = 0;    // Указатель на позицию строки
+
+    //Expression fFormula;
 };

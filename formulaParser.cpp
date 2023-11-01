@@ -1,10 +1,11 @@
 ﻿#include "formulaParser.h"
-
+#include  <utility>
 FormulaParser::FormulaParser(string _sInput, double _dSumScore, int _iAmountDisc)
     : sInput(_sInput),
       dSumScore(_dSumScore),
       iAmountDisc(_iAmountDisc)
 {
+    
 }
 
 std::string FormulaParser::ParserToken()
@@ -172,7 +173,6 @@ double FormulaParser::TakeResult(double _dLeft, double _dRight, int _iPowerComp)
     // dSumScore = _dSumScore;
     // iAmountDisc = _iAmountDisc;
     iPowerComp = _iPowerComp;
-
-    Expression ex = Parse();
-    return ex.Calculate(ex);
+    Expression fFormula = Parse();
+    return fFormula.Calculate(fFormula);
 }

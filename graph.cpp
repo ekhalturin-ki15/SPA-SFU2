@@ -8,6 +8,7 @@
 const int FGraph::iCommon =
     -1;    // Так как 0 - ... зарезервированы для графов по курсам
 const int    FGraph::iAlt                   = -2;
+const int    FGraph::iReverse               = -3;
 const double FGraph::dAllScoreNotEqualError = -10;
 
 const double FGraphType::dNoInit = -2e4;
@@ -15,8 +16,8 @@ const double FGraphType::dNoInit = -2e4;
 // Инверсия зависимости
 FGraph::FGraph(FTreeDisc* _ptrTree) : ptrTree(_ptrTree)
 {
-    //Теперь mapAllowDisc хранится в _ptrTree
-    //mapAllowDisc = _ptrTree->GewMapAllowDisc(true, true);
+    // Теперь mapAllowDisc хранится в _ptrTree
+    // mapAllowDisc = _ptrTree->GewMapAllowDisc(true, true);
 }
 
 void FGraph::Create()
@@ -26,6 +27,9 @@ void FGraph::Create()
 
     // Теперь генерируем альтернативный граф
     GenerateAltGraph();
+
+    // Создание обрартного графа, в котором компетенции - это вершины
+    GenerateReverseGraph();
 
     if (mapGraph[FGraph::iAlt].fAdjList.size() != 0)    // Т.е альт граф создан
     {
@@ -107,7 +111,6 @@ void FGraph::CountAllMetric(int iTypeGraph)
 
     CalculateAllPairDistance(mapGraph[iTypeGraph].arrAllPairDistanceQuartile,
                              mapGraph[iTypeGraph].fAdjList);
-
 }
 
 void FGraph::CalcAllScoreAndAmount(FGraphType& fGraph)
@@ -115,8 +118,8 @@ void FGraph::CalcAllScoreAndAmount(FGraphType& fGraph)
     const int& iSoManyComp = this->ptrTree->ptrGlobal->ptrConfig->iSoMachComp;
     fGraph.arrAmountCountCompDisc.resize(iSoManyComp + 1);
 
-    fGraph.iGraphAmountDisc = 0; // Отчёт от нуля
-    fGraph.dGraphAllScore   = 0; // Отчёт от нуля
+    fGraph.iGraphAmountDisc = 0;    // Отчёт от нуля
+    fGraph.dGraphAllScore   = 0;    // Отчёт от нуля
 
     for (const auto& [l, r] : fGraph.arrRel)
     {
@@ -241,8 +244,96 @@ void FGraph::CalcMinMaxEdge(
     }
 }
 
+void FGraph::GenerateReverseGraph()
+{
+    FGraphType& fGraph = mapGraph[iReverse];
+
+    int i = -1;
+    for (const auto& sKeyIt : ptrTree->fAllComp)
+    {
+        ++i;
+        wstring wsKeyIt = ptrTree->ptrGlobal->ConwertToWstring(sKeyIt);
+        fGraph.mapReversRel[{ wsKeyIt, FGraph::iReverse }] = i;
+    }
+
+    int n;
+    n = fGraph.mapReversRel.size();    // Для альтернативного графа аналогично
+    fGraph.arrRel.resize(n);
+    fGraph.fAdjList.resize(n);
+
+    // Сопостовление в обратную сторону
+    for (const auto& [key, val] : fGraph.mapReversRel) fGraph.arrRel[val] = key;
+
+    map<wstring, set<wstring>>
+        mapReverseCompDisc;    // Для кажлой компетенции указываются, какие
+                               // дисциплины её формируют
+
+    fGraph.arrNodeWeight.resize(n);
+    for (const auto& [key, it] : ptrTree->mapAllowDisc)
+    {
+        for (const auto& [sComp, arrInd] : it->mapComp)
+        {
+            wstring wsComp  = ptrTree->ptrGlobal->ConwertToWstring(sComp);
+            double& dWeight = fGraph.arrNodeWeight[fGraph.mapReversRel[{
+                wsComp, FGraph::iReverse }]];
+
+            dWeight +=
+                it->dSumScore /
+                it->mapComp.size();    // Нормализируем, так как одна дисциплина
+                                       // может отвечать за несколько дисциплин
+            mapReverseCompDisc[wsComp].insert(key);
+        }
+    }
+
+    FormulaParser fFormulaParser(
+        ptrTree->ptrGlobal->ptrConfig->sFormulaReverseGraph,
+        ptrTree->dAllSumScore,
+        ptrTree->iAmountDisc);
+    for (int iL = 0; iL < n - 1; ++iL)
+    {
+        const auto& L = fGraph.arrRel[iL].first;
+        for (int iR = iL + 1; iR < n; ++iR)
+        {
+            const auto& R = fGraph.arrRel[iR].first;
+
+            int iPowerComp = 0;    // Сколько дисциплин совпало
+
+            for (auto& wsNameDisc : mapReverseCompDisc[L])
+            {
+                if (mapReverseCompDisc[R].count(wsNameDisc))
+                    ++iPowerComp;    // Совпала дисциплина
+            }
+
+             try
+            {
+                double dRibWeight =
+                    fFormulaParser.TakeResult(fGraph.arrNodeWeight[iL],
+                                              fGraph.arrNodeWeight[iR],
+                                                              iPowerComp);
+
+                if (dRibWeight > ptrTree->ptrGlobal->ptrConfig->dMinWeigthRib)
+                {
+                    fGraph.fAdjList[iL].push_back({ iR, dRibWeight });
+                    fGraph.fAdjList[iR].push_back({ iL, dRibWeight });
+                }
+            }
+            catch (runtime_error eError)
+            {
+                ptrTree->ptrGlobal->ptrError->ErrorBadFormula();
+                return;
+            }
+            catch (...)
+            {
+                // Игнорируем ошибки, работаем как ни в чём не бывало
+            }
+        }
+    }
+}
+
 void FGraph::GenerateGraph()
 {
+    FGraphType& fGraph = mapGraph[iCommon];
+
     int i;
 
     i = -1;
@@ -250,29 +341,27 @@ void FGraph::GenerateGraph()
     {
         ++i;
         // arrRel[i] = key;
-        mapGraph[iCommon].mapReversRel[{ key, FGraph::iCommon }] =
+        fGraph.mapReversRel[{ key, FGraph::iCommon }] =
             i;    // FGraph::iCommon - это заглушка (или некий коментарий к
                   // дисциплине) В данной заглушке предполагалось записывать
                   // номер курса
     }
     int n;
 
-    n = mapGraph[iCommon]
-            .mapReversRel.size();    // Кол-во вершин в графе (У нас несколько
+    n = fGraph.mapReversRel.size();    // Кол-во вершин в графе (У нас несколько
                                      // графов, убрал из полей)
-    mapGraph[iCommon].arrRel.resize(n);
-    mapGraph[iCommon].fAdjList.resize(n);
-    for (auto& [key, val] : mapGraph[iCommon].mapReversRel)
-        mapGraph[iCommon].arrRel[val] = key;
+    fGraph.arrRel.resize(n);
+    fGraph.fAdjList.resize(n);
+    for (auto& [key, val] : fGraph.mapReversRel)
+        fGraph.arrRel[val] = key;
 
-    //Сохраняем вес каждой вершины
-    mapGraph[iCommon].arrNodeWeight.resize(n);
+    // Сохраняем вес каждой вершины
+    fGraph.arrNodeWeight.resize(n);
     for (int i = 0; i < n; ++i)
     {
-        const auto& Disc = ptrTree->mapDisc[mapGraph[iCommon].arrRel[i].first];
-        mapGraph[iCommon].arrNodeWeight[i] = Disc->dSumScore;
+        const auto& Disc = ptrTree->mapDisc[fGraph.arrRel[i].first];
+        fGraph.arrNodeWeight[i] = Disc->dSumScore;
     }
-
 
     FormulaParser fFormulaParser(ptrTree->ptrGlobal->ptrConfig->sFormula,
                                  ptrTree->dAllSumScore,
@@ -280,16 +369,16 @@ void FGraph::GenerateGraph()
 
     for (int iL = 0; iL < n - 1; ++iL)
     {
-        const auto& L = ptrTree->mapDisc[mapGraph[iCommon].arrRel[iL].first];
+        const auto& L = ptrTree->mapDisc[fGraph.arrRel[iL].first];
 
         // Теперь считается в CountAllMetric
-        // if (mapGraph[iCommon].dMaxDiscScore < L->dSumScore)
-        // mapGraph[iCommon].dMaxDiscScore = L->dSumScore;
+        // if (fGraph.dMaxDiscScore < L->dSumScore)
+        // fGraph.dMaxDiscScore = L->dSumScore;
 
         for (int iR = iL + 1; iR < n; ++iR)
         {
             const auto& R =
-                ptrTree->mapDisc[mapGraph[iCommon].arrRel[iR].first];
+                ptrTree->mapDisc[fGraph.arrRel[iR].first];
 
             int iPowerComp = 0;    // Сколько компетенций совпало
 
@@ -307,9 +396,9 @@ void FGraph::GenerateGraph()
 
                 if (dRibWeight > ptrTree->ptrGlobal->ptrConfig->dMinWeigthRib)
                 {
-                    mapGraph[iCommon].fAdjList[iL].push_back(
+                    fGraph.fAdjList[iL].push_back(
                         { iR, dRibWeight });
-                    mapGraph[iCommon].fAdjList[iR].push_back(
+                    fGraph.fAdjList[iR].push_back(
                         { iL, dRibWeight });
                 }
             }
@@ -328,6 +417,8 @@ void FGraph::GenerateGraph()
 
 void FGraph::GenerateAltGraph()
 {
+    FGraphType& fGraph = mapGraph[iAlt];
+
     int i;
     i = -1;
     for (const auto& [key, it] : ptrTree->mapAllowDisc)
@@ -335,33 +426,33 @@ void FGraph::GenerateAltGraph()
         for (const auto& [iCourse, val] : it->mapCourseScore)
         {
             ++i;
-            mapGraph[iAlt].mapReversRel[{ key, iCourse }] = i;
+            fGraph.mapReversRel[{ key, iCourse }] = i;
         }
     }
 
     int n;
-    n = mapGraph[iAlt]
+    n = fGraph
             .mapReversRel.size();    // Для альтернативного графа аналогично
-    mapGraph[iAlt].arrRel.resize(n);
-    mapGraph[iAlt].fAdjList.resize(n);
+    fGraph.arrRel.resize(n);
+    fGraph.fAdjList.resize(n);
     // Сопостовление в обратную сторону
-    for (const auto& [key, val] : mapGraph[iAlt].mapReversRel)
-        mapGraph[iAlt].arrRel[val] = key;
+    for (const auto& [key, val] : fGraph.mapReversRel)
+        fGraph.arrRel[val] = key;
 
     // Сохраняем вес каждой вершины
-    mapGraph[iAlt].arrNodeWeight.resize(n);
+    fGraph.arrNodeWeight.resize(n);
     for (int i = 0; i < n; ++i)
     {
-        const auto& Disc    = ptrTree->mapDisc[mapGraph[iAlt].arrRel[i].first];
-        const auto& iCourse                = mapGraph[iAlt].arrRel[i].second;
+        const auto& Disc    = ptrTree->mapDisc[fGraph.arrRel[i].first];
+        const auto& iCourse = fGraph.arrRel[i].second;
         if (Disc->mapCourseScore.count(iCourse))
         {
-            mapGraph[iAlt].arrNodeWeight[i] = Disc->mapCourseScore[iCourse];
+            fGraph.arrNodeWeight[i] = Disc->mapCourseScore[iCourse];
         }
         else
         {
             ptrTree->ptrGlobal->ptrError->ErrorNoFindCourse(
-                mapGraph[iAlt].arrRel[i].first);
+                fGraph.arrRel[i].first);
         }
     }
 
@@ -371,16 +462,16 @@ void FGraph::GenerateAltGraph()
 
     for (int iL = 0; iL < n - 1; ++iL)
     {
-        const auto& L = ptrTree->mapDisc[mapGraph[iAlt].arrRel[iL].first];
-        const auto& iCourseL = mapGraph[iAlt].arrRel[iL].second;
+        const auto& L = ptrTree->mapDisc[fGraph.arrRel[iL].first];
+        const auto& iCourseL = fGraph.arrRel[iL].second;
         // Теперь считается в CountAllMetric
-        // if (mapGraph[iAlt].dMaxDiscScore < L->mapCourseScore[iCourseL])
-        // mapGraph[iAlt].dMaxDiscScore = L->mapCourseScore[iCourseL];
+        // if (fGraph.dMaxDiscScore < L->mapCourseScore[iCourseL])
+        // fGraph.dMaxDiscScore = L->mapCourseScore[iCourseL];
 
         for (int iR = iL + 1; iR < n; ++iR)
         {
-            const auto& R = ptrTree->mapDisc[mapGraph[iAlt].arrRel[iR].first];
-            const auto& iCourseR = mapGraph[iAlt].arrRel[iR].second;
+            const auto& R = ptrTree->mapDisc[fGraph.arrRel[iR].first];
+            const auto& iCourseR = fGraph.arrRel[iR].second;
 
             if (iCourseL != iCourseR) continue;    // Только одинаковые курсы
 
@@ -401,8 +492,8 @@ void FGraph::GenerateAltGraph()
 
                 if (dRibWeight > ptrTree->ptrGlobal->ptrConfig->dMinWeigthRib)
                 {
-                    mapGraph[iAlt].fAdjList[iL].push_back({ iR, dRibWeight });
-                    mapGraph[iAlt].fAdjList[iR].push_back({ iL, dRibWeight });
+                    fGraph.fAdjList[iL].push_back({ iR, dRibWeight });
+                    fGraph.fAdjList[iR].push_back({ iL, dRibWeight });
                 }
             }
             catch (runtime_error eError)
@@ -416,14 +507,14 @@ void FGraph::GenerateAltGraph()
                 // Игнорируем ошибки, работаем как ни в чём не бывало
             }
         }
-        if (mapGraph[iAlt].mapReversRel.count(
-                { mapGraph[iAlt].arrRel[iL].first,
+        if (fGraph.mapReversRel.count(
+                { fGraph.arrRel[iL].first,
                   iCourseL - 1 }))    // То есть, если есть предыдущий курс
         {
-            int         iR = mapGraph[iAlt].mapReversRel[{
-                mapGraph[iAlt].arrRel[iL].first, iCourseL - 1 }];
-            const auto& R  = ptrTree->mapDisc[mapGraph[iAlt].arrRel[iR].first];
-            const auto& iCourseR = mapGraph[iAlt].arrRel[iR].second;
+            int         iR = fGraph.mapReversRel[{
+                fGraph.arrRel[iL].first, iCourseL - 1 }];
+            const auto& R  = ptrTree->mapDisc[fGraph.arrRel[iR].first];
+            const auto& iCourseR = fGraph.arrRel[iR].second;
 
             int iPowerComp = L->mapComp.size();    // С сами собой все совпали
 
@@ -436,8 +527,8 @@ void FGraph::GenerateAltGraph()
 
                 if (dRibWeight > ptrTree->ptrGlobal->ptrConfig->dMinWeigthRib)
                 {
-                    mapGraph[iAlt].fAdjList[iL].push_back({ iR, dRibWeight });
-                    mapGraph[iAlt].fAdjList[iR].push_back({ iL, dRibWeight });
+                    fGraph.fAdjList[iL].push_back({ iR, dRibWeight });
+                    fGraph.fAdjList[iR].push_back({ iL, dRibWeight });
                 }
             }
             catch (runtime_error eError)
@@ -484,7 +575,6 @@ void FGraph::GenerateCourseGraph()
                 ++i;
                 mapGraph[iCourse].arrNodeWeight[i] =
                     mapGraph[FGraph::iAlt].arrNodeWeight[it.first];
-                
             }
         }
 
@@ -514,7 +604,7 @@ void FGraph::CalculateAllPairDistance(
 {
     arrQuarAmount.clear();
 
-    const int              N = fCurrentAdj.size();
+    const int              N   = fCurrentAdj.size();
     const double           INF = 1e8;
     vector<vector<double>> arrAllDistance(N, vector<double>(N, INF));
 
@@ -533,7 +623,8 @@ void FGraph::CalculateAllPairDistance(
         {
             for (int j = 0; j < N; ++j)
             {
-                if (arrAllDistance[i][j] > arrAllDistance[i][k] + arrAllDistance[k][j])
+                if (arrAllDistance[i][j] >
+                    arrAllDistance[i][k] + arrAllDistance[k][j])
                 {
                     arrAllDistance[i][j] =
                         arrAllDistance[i][k] + arrAllDistance[k][j];
@@ -561,7 +652,7 @@ void FGraph::CalculateAllPairDistance(
 
     double dLenght = dMaxVal - dMinVal;
     // iAmountQuar
-    int         iAmountQuar = ptrTree->ptrGlobal->ptrConfig->iAmountQuar;
+    int iAmountQuar = ptrTree->ptrGlobal->ptrConfig->iAmountQuar;
     arrQuarAmount.resize(iAmountQuar);
     for (int i = 0; i < N; ++i)
     {
@@ -581,7 +672,6 @@ void FGraph::CalculateAllPairDistance(
         }
     }
     arrQuarAmount.push_back(iAmountNoLink);
-
 }
 
 void FGraph::CalculateMST(double&                                  dResult,
@@ -590,7 +680,7 @@ void FGraph::CalculateMST(double&                                  dResult,
 {
     dResult = 0;
     vector<pair<double, pair<int, int>>> q;
-    const int N = fCurrentAdj.size();
+    const int                            N = fCurrentAdj.size();
 
     for (int l = 0; l < N; ++l)
     {
@@ -624,9 +714,9 @@ void FGraph::CalcDiametrAndComp(
     double& dResult, int& iComponent,
     const vector<vector<pair<int, double>>>& fCurrentAdj, bool IsConsLen)
 {
-    dResult    = 0.;
-    iComponent = 0;
-    const int N      = fCurrentAdj.size();
+    dResult     = 0.;
+    iComponent  = 0;
+    const int N = fCurrentAdj.size();
 
     vector<int> arrColor(N);
     for (int i = 0; i < N; ++i)

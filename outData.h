@@ -15,10 +15,33 @@ enum EOutType : int
     EOT_Added
 };
 
+struct FСorridor;
+
+struct FCorridorAdapter
+{
+public:
+    map<int, vector<pair<double, string>>> Take(const int& iSize); 
+
+    void Add(int key, pair<double, string> fData);
+
+private:
+    map<int, FСorridor> mapCorridorData;
+};
+
 struct FСorridor
 {
-    vector<double> dMaxMin = { 0, 0 };
-    vector<string> sMaxMin = { "", "" };
+    //friend struct FCorridorAdapter;
+
+    //private: Мешает использовать map
+    //FСorridor();    // Нельзя создавать напрямую, может только адаптер, так как
+                      // он friend
+
+    // [0] - Макс [1] - Мин  [2] - Мода [3] - Медиана [4] - Среднее
+    // vector<double> dMaxMin = { 0, 0 };
+    // vector<string> sMaxMin = { "", "" };
+    vector<pair<double, string>>
+        arrAllData;    // Собираем все данные для нахождения Моды и Среднего
+    double dSum = 0;
 };
 
 struct FOutData
@@ -91,12 +114,24 @@ private:
                                     const int&            iSizeHeader,
                                     vector<bool>&         arrIsAllowed,
                                     //const string&         sCurName, // Лучше передать FTreeDisc*
-                                    const vector<double>& arrResult,
-                                    map<int, FСorridor>&  mapCorridorData,
+                                    const vector<double>& arrResult, FCorridorAdapter& fCorridorData,
         FTreeDisc* ptrTree, const vector<wstring>& arrOnlyAllow);
 
-    void AddTableMaxMinData(vector<vector<string>>& arrToAddedData,
-                            map<int, FСorridor>&    mapCorridorData);
+    void AddTableCommonData(vector<vector<string>>& arrToAddedData,
+                            FCorridorAdapter&       fCorridorData);
+
+    
+    // map<int, FСorridor> mapSaveData;
+    void RetakeCommon(FCorridorAdapter& fSaveData, const int& iKey,
+                      const double& dNewData, const string& sNewData);
+
+    // Вместо вывода теперь формирую строки при помощи TakePasteData, а потом
+    // единожды всё вывожу
+    // Возвращает true, если данные выводятся и надо увеличить значение x
+    bool TakePasteData(const int& x, vector<string>& arrCurRow,
+                       const bool& bIsOutData, const double& dDate,
+                       const string& sOutData, const string& sCurName,
+                       const bool& bIsConsider, FCorridorAdapter& fSaveData);
 
     void CreateTotalInfo(vector<vector<string>>& arrReturnData,
                          const FGraphType* fGraph, const EOutType& eOutType);
@@ -189,26 +224,14 @@ private:
     vector<string> CreateCommonNameLabel(const int& iGraphType,
                                          FTreeDisc* fTree);
 
-    vector<string> CreateTag(const int& iGraphType, FTreeDisc* fTree);
+    vector<string> CreateTag(const int& iGraphType, FTreeDisc* fTree, bool bCheckTag = true);
+
     void           OutGephiData(
                   string sName,
                   string sPath,
                   FTreeDisc* fTree);    // Вывод данных о графе для Gephi в формате csv
 
     FGlobal* ptrGlobal;    // Синглтон
-
-    // map<int, FСorridor> mapSaveData;
-    void RetakeMinMax(FСorridor& fSaveData, const double& dNewData,
-                      const string& sNewData);
-
-    // Вместо вывода теперь формирую строки при помощи TakePasteData, а потом
-    // единожды всё вывожу
-    // Возвращает true, если данные выводятся и надо увеличить значение x
-    bool TakePasteData(const int& x, vector<string>& arrCurRow,
-                       const bool& bIsOutData, const double& dDate,
-                       const string& sOutData, const string& sCurName,
-                       const bool&          bIsConsider,
-                       map<int, FСorridor>& mapCorridorData);
 
     string AddCompString(const map<string, vector<string>>& mapComp);
 

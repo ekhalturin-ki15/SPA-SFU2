@@ -210,8 +210,7 @@ void FAdapOutData::Create(string sOutPath)
 //                        " (" +
 //                        ptrGlobal->ConwertToString(
 //                            ptrGlobal->ptrConfig
-//                                ->mapArrOutParams[L"Предлог перед выводом "
-//                                                  L"результата мин. макс."]
+//                                ->mapArrOutParams
 //                                .at(0)) +
 //                        fСorridor.sMaxMin[i] + ")");
 //                }
