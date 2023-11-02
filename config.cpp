@@ -15,6 +15,7 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       dMinWeigthRib(0.01),
       dMinComp(0.01),
       dAnomalBigScore(40.0),
+      dTruncationAvg(0.07),
       bCreateFolder(true),
       bCompactOutput(true),
       bCourseOutput(true),
@@ -242,6 +243,16 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
+        wsPatern = L"Усечение среднего (процент)";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(dTruncationAvg, row);
+            if (dTruncationAvg > 0.5)
+                dTruncationAvg = 0.5;    // Нет смысла ставить больше 50% так
+                                         // как уже не будет выборки
+            return true;
+        }
+
         wsPatern = L"Размер рёбер";
         if (wsKey == wsPatern)
         {
@@ -392,7 +403,6 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
-
         wsPatern = L"Спецсимволы для удаления из наименования компетенции";
         if (wsKey == wsPatern)
         {
@@ -424,17 +434,48 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
-        wsPatern = L"Формула расчёта весов рёбер графа, где вершины - это дисциплина";
+        wsPatern =
+            L"Формула расчёта весов рёбер графа, где вершины - это дисциплина";
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(sFormula, row);
             return true;
         }
 
-        wsPatern = L"Формула расчёта весов рёбер графа, где вершины - это компетенция";
+        wsPatern =
+            L"Формула расчёта весов рёбер графа, где вершины - это компетенция";
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(sFormulaReverseGraph, row);
+            return true;
+        }
+
+        wsPatern = L"Вывод строки, если данные не определены";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(sNoInitData, row);
+            return true;
+        }
+
+        wsPatern = L"Название файла вывода общей статистике по всей выборке УП";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(sNameFileTotalData, row);
+            return true;
+        }
+
+        wsPatern = L"Название файла вывода общей локальной статистики по "
+                   L"конкретному УП";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(sNameFileLocalData, row);
+            return true;
+        }
+
+        wsPatern = L"Названия файлов с данными компетенций";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(sNameFileCompetenceData, row);
             return true;
         }
 
@@ -445,7 +486,8 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
-        wsPatern = L"Разделитель для вывода полного названия компетенций и индикаторов";
+        wsPatern = L"Разделитель для вывода полного названия компетенций и "
+                   L"индикаторов";
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(sPrefFullNameCourse, row);
@@ -467,7 +509,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             ptrGlobal->TakeData(iSoMachComp, row);
             return true;
         }
-        
+
         wsPatern = L"Количество квартилей";
         if (wsKey == wsPatern)
         {
@@ -522,7 +564,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
                              0))
                     {
                         int iNum = -1;
-                        if (key.size() < 3)// У нас не будет более 100 тегов
+                        if (key.size() < 3)    // У нас не будет более 100 тегов
                         {
                             try
                             {
@@ -539,9 +581,9 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
                             if (val.size() != 1)    // Если это id тега, то у
                                                     // него ровно одно значение
                             {
-                                throw std::out_of_range("Tag size no equeal 1 (" +
-                                                        to_string(val.size()) +
-                                                        ")!+");
+                                throw std::out_of_range(
+                                    "Tag size no equeal 1 (" +
+                                    to_string(val.size()) + ")!+");
                             }
 
                             arrTagName.push_back(val.at(0));
@@ -581,7 +623,8 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
                     for (auto& [key, val] : ptrGlobal->SetMapParams(
                              fBook.worksheet(
                                  ptrGlobal->ConwertToString(wsNamePage)),
-                             3)) //Теперь ещё и считываем, требуется ли выводить
+                             3))    // Теперь ещё и считываем, требуется ли
+                                    // выводить
                     {
                         mapAddOutParams[key] = val;
                     }
@@ -612,7 +655,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             }
             // Принудительно ставим "да", так как имя у УП обязательно нужно
             // выводить
-            //mapArrOutParams[L"Название учебного плана"].push_back(L"да");
+            // mapArrOutParams[L"Название учебного плана"].push_back(L"да");
 
             return true;
         }

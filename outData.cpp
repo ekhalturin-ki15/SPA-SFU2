@@ -9,6 +9,10 @@
 #include <iomanip>
 #include <sstream>
 
+FCorridorAdapter::FCorridorAdapter(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
+{
+}
+
 map<int, vector<pair<double, string>>> FCorridorAdapter::Take(const int& iSize)
 {
     map<int, vector<pair<double, string>>> mapReturn;
@@ -18,73 +22,97 @@ map<int, vector<pair<double, string>>> FCorridorAdapter::Take(const int& iSize)
         auto& arrData = fData.arrAllData;
         sort(arrData.begin(), arrData.end());
 
-        mapReturn[key].resize(iSize);
+        mapReturn[key].resize(
+            iSize, { FGraphType::dNoInit, ptrGlobal->ptrConfig->sNoInitData });
 
-        int iIndex = 0;
-        // [0] - Макс [1] - Мин  [2] - Мода [3] - Медиана [4] - Среднее
-        if (iIndex >= iSize)
-            continue;
-        else
-            mapReturn[key][iIndex++] = arrData.back();    // Макс
-
-        if (iIndex >= iSize)
-            continue;
-        else
-            mapReturn[key][iIndex++] = arrData.front();    // Мин
-
-        if (iIndex >= iSize)    // Мода
-            continue;
-        else
+        try
         {
-            map<double, int> mapCounting;
-            int              iMax = 0;
+            int iIndex = 0;
+            // [0] - Макс [1] - Мин  [2] - Мода [3] - Медиана [4] - Среднее
+            // усечённое
+            if (iIndex >= iSize)
+                continue;
+            else
+                mapReturn[key][iIndex++] = arrData.back();    // Макс
 
-            for (const auto& it : arrData)
+            if (iIndex >= iSize)
+                continue;
+            else
+                mapReturn[key][iIndex++] = arrData.front();    // Мин
+
+            if (iIndex >= iSize)    // Мода
+                continue;
+            else
             {
-                auto& fDataLocal = mapCounting[it.first];
-                ++fDataLocal;
+                map<double, int> mapCounting;
+                int              iMax = 0;
 
-                if (iMax < fDataLocal)
+                for (const auto& it : arrData)
                 {
-                    iMax                   = fDataLocal;
-                    mapReturn[key][iIndex] = it;
+                    auto& fDataLocal = mapCounting[it.first];
+                    ++fDataLocal;
+
+                    if (iMax < fDataLocal)
+                    {
+                        iMax                   = fDataLocal;
+                        mapReturn[key][iIndex] = it;
+                    }
                 }
+
+                ++iIndex;
             }
 
-            ++iIndex;
-        }
-
-        if (iIndex >= iSize)    // Медиана
-            continue;
-        else
-        {
-            mapReturn[key][iIndex] = arrData[arrData.size() / 2];
-            if (arrData.size() & 1)    // Нечётное
+            if (iIndex >= iSize)    // Медиана
+                continue;
+            else
             {
-            }
-            else    // Чётное
-            {
-                if (arrData.size() > 0)
+                mapReturn[key][iIndex] = arrData[arrData.size() / 2];
+                if (arrData.size() & 1)    // Нечётное
                 {
-                    mapReturn[key][iIndex].first =
-                        (arrData[arrData.size() / 2].first +
-                         arrData[(arrData.size() / 2) - 1].first) /
-                        2.0;
                 }
+                else    // Чётное
+                {
+                    if (arrData.size() > 0)
+                    {
+                        mapReturn[key][iIndex].first =
+                            (arrData[arrData.size() / 2].first +
+                             arrData[(arrData.size() / 2) - 1].first) /
+                            2.0;
+                    }
+                }
+                ++iIndex;
             }
-            ++iIndex;
-        }
 
-        if (iIndex >= iSize)
-            continue;
-        else
-        {
-            if (fData.arrAllData.size())
+            if (iIndex >= iSize)
+                continue;
+            else
             {
-                mapReturn[key][iIndex].first =
-                    fData.dSum / fData.arrAllData.size();    // Среднее
+                if (fData.arrAllData.size())
+                {
+                    double dSum       = 0;
+                    int    iAmountCut = fData.arrAllData.size() *
+                                     ptrGlobal->ptrConfig->dTruncationAvg;
+
+                    int iSizeSampling =
+                        fData.arrAllData.size() - 2 * iAmountCut;
+
+                    if (iSizeSampling > 0)
+                    {
+                        for (int i = iAmountCut;
+                             i < fData.arrAllData.size() - iAmountCut;
+                             ++i)
+                        {
+                            dSum += fData.arrAllData[i].first;
+                        }
+                        mapReturn[key][iIndex].first =
+                            dSum / iSizeSampling;    // Усечённое среднее
+                    }
+                }
+                ++iIndex;
             }
-            ++iIndex;
+        }
+        catch (...)    // Продолжать работать даже в случае ошибки
+        {
         }
     }
 
@@ -94,7 +122,7 @@ map<int, vector<pair<double, string>>> FCorridorAdapter::Take(const int& iSize)
 void FCorridorAdapter::Add(int key, pair<double, string> fData)
 {
     mapCorridorData[key].arrAllData.push_back(fData);
-    mapCorridorData[key].dSum += fData.first;
+    // mapCorridorData[key].dSum += fData.first;
 }
 
 FOutData::FOutData(FGlobal* _ptrGlobal)
@@ -462,7 +490,8 @@ void FOutData::CreateOnlyAllowedResultRow(vector<string>& arrReturn,
         }
         else
         {
-            if (TakePasteData(x, arrReturn, arrIsAllowed[i++], it, "-",
+            if (TakePasteData(x, arrReturn, arrIsAllowed[i++], it,
+                              ptrGlobal->ptrConfig->sNoInitData,
                               ptrTree->sCurName, false, fCorridorData))
             {
                 x++;
@@ -478,7 +507,7 @@ void FOutData::AddTableCommonData(vector<vector<string>>& arrToAddedData,
 
     vector<wstring> arrHeader({ L"Максимальные значения:",
                                 L"Минимальные значения:", L"Мода:", L"Медиана:",
-                                L"Среднее:" });
+                                L"Среднее усечённое:" });
 
     auto mapCorridorData = fCorridorData.Take(arrHeader.size());
 
@@ -497,24 +526,35 @@ void FOutData::AddTableCommonData(vector<vector<string>>& arrToAddedData,
                 for (const auto& [id, fСorridor] : mapCorridorData)
                 {
                     const auto& [dVal, sName] = fСorridor[i];
+                    string sResult = ptrGlobal->ptrConfig->sNoInitData;
                     if (id == 0)
                     {
                         // Выводим заголовок
-                        arrCommonData.push_back(ptrGlobal->ConwertToString(
+                        sResult = ptrGlobal->ConwertToString(
                             ptrGlobal->ptrConfig->mapArrOutParams[wsName].at(
-                                0)));
-                        continue;
+                                0));
                     }
-                    // в строки Мин-Мак
+                    else
+                    {
+                        if (dVal != FGraphType::dNoInit)
+                        {
+                            sResult = ptrGlobal->DoubletWithPrecision(dVal);
+                            if (sName != ptrGlobal->ptrConfig->sNoInitData)
+                            {
+                                sResult +=
+                                    " (" +
+                                    ptrGlobal->ConwertToString(
+                                        ptrGlobal->ptrConfig
+                                            ->mapArrOutParams
+                                                [L"Предлог перед выводом "
+                                                 L"общих результатов"]
+                                            .at(0)) +
+                                    sName + ")";
+                            }
+                        }
+                    }
 
-                    arrCommonData.push_back(
-                        ptrGlobal->DoubletWithPrecision(dVal) + " (" +
-                        ptrGlobal->ConwertToString(
-                            ptrGlobal->ptrConfig
-                                ->mapArrOutParams
-                                    [L"Предлог перед выводом общих результатов"]
-                                .at(0)) +
-                        sName + ")");
+                    arrCommonData.push_back(sResult);
                 }
 
                 arrToAddedData.push_back(arrCommonData);
@@ -569,7 +609,7 @@ void FOutData::CreateAllCurriculaTotalData(
 
     // Вывод данных
     // map<int, FСorridor> mapSaveСorridorData;
-    FCorridorAdapter fSaveСorridorData;
+    FCorridorAdapter fSaveСorridorData(ptrGlobal);
 
     for (const auto& it : ptrGlobal->ptrSolve->arrDisc)
     {
@@ -710,7 +750,7 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
 
     // Вывод данных
     // map<int, FСorridor> mapSaveСorridorData;
-    FCorridorAdapter fСorridorData;
+    FCorridorAdapter fСorridorData(ptrGlobal);
 
     for (const auto& it : ptrGlobal->ptrSolve->arrDisc)
     {
@@ -744,7 +784,7 @@ void FOutData::Out(string sOutPath)
 {
     OpenXLSX::XLDocument fOutFile;
     const string         sPageName = "TotalData";
-    fOutFile.create(sOutPath + "/TotalData.xlsx");
+    fOutFile.create(sOutPath + "/" + ptrGlobal->ptrConfig->sNameFileTotalData);
     fOutFile.workbook().addWorksheet(sPageName);
     fOutFile.workbook().deleteSheet("Sheet1");    // Стартовая страница не нужна
     OpenXLSX::XLWorksheet wks = fOutFile.workbook().worksheet(sPageName);
@@ -937,7 +977,10 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
 
         OutTableInfo(iXShift, 1, arrDataAllCourse, arrSinglOpenWKS.back());
         if (ptrGlobal->ptrConfig->bIsOutCSVDate)
-            OutTableInfoCSV(arrDataAllCourse, sPath, sName, "Data_" + sKey);
+            OutTableInfoCSV(arrDataAllCourse, sPath, sName,
+                            ptrGlobal->ptrConfig->sNameFileCompetenceData +
+                                ptrGlobal->ptrConfig->sSeparator +
+                                sKey);
 
         iXShift += arrDataAllCourse.front()
                        .size();    // Сдвигаемся на ширину выведеной таблицы
@@ -948,7 +991,9 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
             arrSinglLocalCurrentCourseOpenWKS.clear();
             arrSinglLocalCurrentCourseOpenWKS.resize(1);
             arrSinglLocalCurrentCourseOpenFile[0].create(
-                sPath + "/" + sName + "/" + "Data_" + sKey + ".xlsx");
+                sPath + "/" + sName + "/" +
+                ptrGlobal->ptrConfig->sNameFileCompetenceData +
+                ptrGlobal->ptrConfig->sSeparator + sKey + ".xlsx");
             arrSinglLocalCurrentCourseOpenFile[0].workbook().addWorksheet(
                 sName);
             arrSinglLocalCurrentCourseOpenFile[0].workbook().deleteSheet(
@@ -1378,7 +1423,8 @@ void FOutData::CreateAndTake(string sName, string sPath)
 
     if (ptrGlobal->ptrConfig->bCompactOutput)
     {
-        arrSinglOpenFile[0].open(sPath + "/TotalData.xlsx");
+        arrSinglOpenFile[0].open(sPath + "/" +
+                                 ptrGlobal->ptrConfig->sNameFileTotalData);
         if (arrSinglOpenFile[0].workbook().worksheetExists(sName))
             arrSinglOpenFile[0].workbook().deleteSheet(sName);
 
@@ -1388,7 +1434,8 @@ void FOutData::CreateAndTake(string sName, string sPath)
     }
     else
     {
-        arrSinglOpenFile[0].create(sPath + "/" + sName + "/" + "Data.xlsx");
+        arrSinglOpenFile[0].create(sPath + "/" + sName + "/" +
+                                   ptrGlobal->ptrConfig->sNameFileLocalData);
         arrSinglOpenFile[0].workbook().addWorksheet(sName);
         arrSinglOpenFile[0].workbook().deleteSheet(
             "Sheet1");    // Стартовая страница не нужна
@@ -1417,7 +1464,7 @@ vector<string> FOutData::CreateTag(const int& iGraphType, FTreeDisc* fTree,
     vector<string> arrTag;
     for (auto& [key, val] : fTree->ptrGraph->mapGraph[iGraphType].mapReversRel)
     {
-        string sTag = "-";
+        string sTag = ptrGlobal->ptrConfig->sNoInitData;
         if (bCheckTag)
         {
             if (fTree->mapDisc[key.first]->setTagDisc.size() > 0)

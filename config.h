@@ -51,6 +51,12 @@ struct FConfig
     vector<string> arrRegexHeaderComp;
     string         sFormula;
     string         sFormulaReverseGraph;
+    string         sNoInitData;
+
+    string sNameFileTotalData;
+    string sNameFileLocalData;
+
+    string sNameFileCompetenceData;
 
     // wstring wsOutPrefMinMax;
     // string sOutPrefAllCurriculaAllCourse;
@@ -94,6 +100,7 @@ struct FConfig
     double dMinComp;
 
     double dAnomalBigScore;
+    double dTruncationAvg;
 
     int iMaxNameDiscLen;
     int iWeigthRib;

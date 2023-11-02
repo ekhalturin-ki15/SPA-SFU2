@@ -20,12 +20,15 @@ struct FСorridor;
 struct FCorridorAdapter
 {
 public:
+    explicit FCorridorAdapter(FGlobal* _ptrGlobal);
+
     map<int, vector<pair<double, string>>> Take(const int& iSize); 
 
     void Add(int key, pair<double, string> fData);
 
 private:
     map<int, FСorridor> mapCorridorData;
+    FGlobal* ptrGlobal;    // Синглтон
 };
 
 struct FСorridor
@@ -36,12 +39,12 @@ struct FСorridor
     //FСorridor();    // Нельзя создавать напрямую, может только адаптер, так как
                       // он friend
 
-    // [0] - Макс [1] - Мин  [2] - Мода [3] - Медиана [4] - Среднее
+    // [0] - Макс [1] - Мин  [2] - Мода [3] - Медиана [4] - Усечённое среднее
     // vector<double> dMaxMin = { 0, 0 };
     // vector<string> sMaxMin = { "", "" };
     vector<pair<double, string>>
         arrAllData;    // Собираем все данные для нахождения Моды и Среднего
-    double dSum = 0;
+    //double dSum = 0; //Ранее не было усечение среднего
 };
 
 struct FOutData
