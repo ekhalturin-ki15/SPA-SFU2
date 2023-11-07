@@ -25,7 +25,7 @@ bool FSolve::Init()
 {
     try
     {
-        fRegexComp = ptrGlobal->ptrConfig->sRegexComp;
+        fRegexComp = ptrGlobal->ptrConfig->GetSRegexComp();
     }
     catch (...)
     {
@@ -91,33 +91,33 @@ bool FSolve::Read(string _sInPath, string sNamePlan)
         arrDisc.back()->sShortNamePlan =
             sNamePlan.substr(0, sNamePlan.find('.'));
 
-        arrDisc.back()->sCurName = (ptrGlobal->ptrConfig->bOutShortNameCur)
+        arrDisc.back()->sCurName = (ptrGlobal->ptrConfig->GetBOutShortNameCur())
                                        ? arrDisc.back()->sShortNamePlan
                                        : arrDisc.back()->sNamePlan;
 
         fDoc.open(sInPath);
         fBook = fDoc.workbook();
         CreateDiscTreeZeroPage(
-            fBook.worksheet(ptrGlobal->ConwertToString(
-                ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].wsName)),
+            fBook.worksheet(
+                ptrGlobal->ptrConfig->GetKeyPage(iCurrentPage).sName),
             iCurrentPage);
         ++iCurrentPage;
 
         AddCompIndicatorFirstPage(
-            fBook.worksheet(ptrGlobal->ConwertToString(
-                ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].wsName)),
+            fBook.worksheet(
+                ptrGlobal->ptrConfig->GetKeyPage(iCurrentPage).sName),
             iCurrentPage);
         ++iCurrentPage;
 
         ptrSolveSecondPage->AddDiscScore(
-            fBook.worksheet(ptrGlobal->ConwertToString(
-                ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].wsName)),
+            fBook.worksheet(
+                ptrGlobal->ptrConfig->GetKeyPage(iCurrentPage).sName),
             iCurrentPage);
         ++iCurrentPage;
 
         FindTypePlanThirdPage(
-            fBook.worksheet(ptrGlobal->ConwertToString(
-                ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].wsName)),
+            fBook.worksheet(
+                ptrGlobal->ptrConfig->GetKeyPage(iCurrentPage).sName),
             iCurrentPage);
         ++iCurrentPage;
 

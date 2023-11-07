@@ -19,7 +19,7 @@ void FGlobal::DeleteSpechChars(string& sData) const
 string FGlobal::DoubletWithPrecision(const double& dNum) const
 { 
     std::ostringstream fOut;
-    fOut << std::setprecision(ptrConfig->iPrecision)
+    fOut << std::setprecision(ptrConfig->GetIPrecision())
         << std::noshowpoint << dNum;
     return fOut.str();
 }
@@ -209,14 +209,14 @@ int FGlobal::HeightPage(const OpenXLSX::XLWorksheet& fSheet)
         if (bIsEmpty)
         {
             arrEmptyRow.push_back(h);
-            if (arrEmptyRow.size() >= ptrConfig->iIgnoreEmptyLine)
+            if (arrEmptyRow.size() >= ptrConfig->GetIIgnoreEmptyLine())
             {
                 if (arrEmptyRow[arrEmptyRow.size() -
-                                ptrConfig->iIgnoreEmptyLine] ==
-                    (h - ptrConfig->iIgnoreEmptyLine +
+                                ptrConfig->GetIIgnoreEmptyLine()] ==
+                    (h - ptrConfig->GetIIgnoreEmptyLine() +
                      1))    // Нашли iIgnoreEmptyLine подряд идущих пустых строк
                 {
-                    return h - ptrConfig->iIgnoreEmptyLine + 1;
+                    return h - ptrConfig->GetIIgnoreEmptyLine() + 1;
                 }
             }
         }

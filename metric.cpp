@@ -95,7 +95,7 @@ FMetric::FMetric(FTreeDisc* _ptrTree) : ptrTree(_ptrTree)
         _ptrTree->ptrGlobal->ptrConfig
             ->mapArrOutParams
                 [L"Предлог перед выводом статистики по всем курсам"]
-            .at(0));
+            .GetName());
 
     try
     {
@@ -311,7 +311,7 @@ void FMetric::Create()
 
                 {
                     double dNormalizeScore = it->dSumScore;
-                    if (ptrTree->ptrGlobal->ptrConfig->bIsNormalizeScoreComp)
+                    if (ptrTree->ptrGlobal->ptrConfig->GetBIsNormalizeScoreComp())
                     {
                         // Делим всё на кол-во индикаторов, так как считаем, что
                         // все ЗЕ равномерно делятся на изучение каждого
@@ -326,7 +326,7 @@ void FMetric::Create()
                         dNormalizeScore);
 
                     //В холостую пройдёмся по дереву, чтобы сохдать недостающие нулевые узлы
-                    if (ptrTree->ptrGlobal->ptrConfig->bOutEmptyComp)
+                    if (ptrTree->ptrGlobal->ptrConfig->GetBOutEmptyComp())
                     {
                         for (int iCourse = 1;
                              iCourse <= ptrTree->iAmountCourse;
@@ -356,7 +356,7 @@ void FMetric::Create()
                 for (const auto& [iCourse, dScore] : it->mapCourseScore)
                 {
                     double dNormalizeScore = dScore;
-                    if (ptrTree->ptrGlobal->ptrConfig->bIsNormalizeScoreComp)
+                    if (ptrTree->ptrGlobal->ptrConfig->GetBIsNormalizeScoreComp())
                     {
                         dNormalizeScore /= dAmountInd;
                     }
@@ -377,6 +377,6 @@ void FMetric::Create()
     }
 
     ptrTreeMetric->InitChosenScore(
-        ptrTree->ptrGlobal->ptrConfig->bIsPercentRegAll,
-        ptrTree->ptrGlobal->ptrConfig->bCompInterDelete);
+        ptrTree->ptrGlobal->ptrConfig->GetBIsPercentRegAll(),
+        ptrTree->ptrGlobal->ptrConfig->GetBCompInterDelete());
 }

@@ -89,7 +89,7 @@ int main()
             return 0;        // Аварийное завершение
 #endif
 
-        if (ptrGlobal->ptrConfig->arrKeyPage.size() < 3)
+        if (ptrGlobal->ptrConfig->GetSizeKeyPage() < 3)
         {
             ptrGlobal->ptrError
                 ->FatalErrorFewConfigPages();    // Не хватает данных для
@@ -121,7 +121,7 @@ int main()
                 fFile / ptrGlobal->ptrConfig->arrNameFileOut[category];
             if (!filesystem::exists(fOutFile))
             {
-                if (ptrGlobal->ptrConfig->bCreateFolder)
+                if (ptrGlobal->ptrConfig->GetBCreateFolder())
                 {
                     try
                     {

@@ -115,7 +115,7 @@ void FGraph::CountAllMetric(int iTypeGraph)
 
 void FGraph::CalcAllScoreAndAmount(FGraphType& fGraph)
 {
-    const int& iSoManyComp = this->ptrTree->ptrGlobal->ptrConfig->iSoMachComp;
+    const int& iSoManyComp = this->ptrTree->ptrGlobal->ptrConfig->GetISoMachComp();
     fGraph.arrAmountCountCompDisc.resize(iSoManyComp + 1);
 
     fGraph.iGraphAmountDisc = 0;    // Отчёт от нуля
@@ -171,7 +171,7 @@ void FGraph::CalcAllScoreAndAmount(FGraphType& fGraph)
 
     double N    = fGraph.fAdjList.size();
     double dMul = 1;
-    if (this->ptrTree->ptrGlobal->ptrConfig->bIsUnDirected)
+    if (this->ptrTree->ptrGlobal->ptrConfig->GetBIsUnDirected())
         dMul =
             2;    // Умножаю на 2, так как неориетированный, и рёбра дублируются
     fGraph.dDense = dAmountRib / (dMul * N * (N - 1));
@@ -286,7 +286,7 @@ void FGraph::GenerateReverseGraph()
     }
 
     FormulaParser fFormulaParser(
-        ptrTree->ptrGlobal->ptrConfig->sFormulaReverseGraph,
+        ptrTree->ptrGlobal->ptrConfig->GetSFormulaReverseGraph(),
         ptrTree->dAllSumScore,
         ptrTree->iAmountDisc);
     for (int iL = 0; iL < n - 1; ++iL)
@@ -363,7 +363,7 @@ void FGraph::GenerateGraph()
         fGraph.arrNodeWeight[i] = Disc->dSumScore;
     }
 
-    FormulaParser fFormulaParser(ptrTree->ptrGlobal->ptrConfig->sFormula,
+    FormulaParser fFormulaParser(ptrTree->ptrGlobal->ptrConfig->GetSFormula(),
                                  ptrTree->dAllSumScore,
                                  ptrTree->iAmountDisc);
 
@@ -456,7 +456,7 @@ void FGraph::GenerateAltGraph()
         }
     }
 
-    FormulaParser fFormulaParser(ptrTree->ptrGlobal->ptrConfig->sFormula,
+    FormulaParser fFormulaParser(ptrTree->ptrGlobal->ptrConfig->GetSFormula(),
                                  ptrTree->dAllSumScore,
                                  ptrTree->iAmountDisc);
 
@@ -652,7 +652,7 @@ void FGraph::CalculateAllPairDistance(
 
     double dLenght = dMaxVal - dMinVal;
     // iAmountQuar
-    int iAmountQuar = ptrTree->ptrGlobal->ptrConfig->iAmountQuar;
+    int iAmountQuar = ptrTree->ptrGlobal->ptrConfig->GetIAmountQuar();
     arrQuarAmount.resize(iAmountQuar);
     for (int i = 0; i < N; ++i)
     {
@@ -687,7 +687,7 @@ void FGraph::CalculateMST(double&                                  dResult,
         for (const auto& [r, len] : fCurrentAdj[l])
         {
             // Чтобы не дублировать, он же неориентированный
-            if ((l < r) || (!ptrTree->ptrGlobal->ptrConfig->bIsUnDirected))
+            if ((l < r) || (!ptrTree->ptrGlobal->ptrConfig->GetBIsUnDirected()))
                 q.push_back({ len, { l, r } });
         }
     }

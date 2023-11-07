@@ -19,11 +19,12 @@ map<int, vector<pair<double, string>>> FCorridorAdapter::Take(const int& iSize)
 
     for (auto& [key, fData] : mapCorridorData)
     {
-        auto& arrData = fData.arrAllData;
+        auto& arrData = fData;
         sort(arrData.begin(), arrData.end());
 
         mapReturn[key].resize(
-            iSize, { FGraphType::dNoInit, ptrGlobal->ptrConfig->sNoInitData });
+            iSize,
+            { FGraphType::dNoInit, ptrGlobal->ptrConfig->GetSNoInitData() });
 
         try
         {
@@ -87,22 +88,20 @@ map<int, vector<pair<double, string>>> FCorridorAdapter::Take(const int& iSize)
                 continue;
             else
             {
-                if (fData.arrAllData.size())
+                if (fData.size())
                 {
-                    double dSum       = 0;
-                    int    iAmountCut = fData.arrAllData.size() *
-                                     ptrGlobal->ptrConfig->dTruncationAvg;
+                    double dSum = 0;
+                    int    iAmountCut =
+                        fData.size() * ptrGlobal->ptrConfig->dTruncationAvg;
 
-                    int iSizeSampling =
-                        fData.arrAllData.size() - 2 * iAmountCut;
+                    int iSizeSampling = fData.size() - 2 * iAmountCut;
 
                     if (iSizeSampling > 0)
                     {
-                        for (int i = iAmountCut;
-                             i < fData.arrAllData.size() - iAmountCut;
+                        for (int i = iAmountCut; i < fData.size() - iAmountCut;
                              ++i)
                         {
-                            dSum += fData.arrAllData[i].first;
+                            dSum += fData[i].first;
                         }
                         mapReturn[key][iIndex].first =
                             dSum / iSizeSampling;    // Усечённое среднее
@@ -121,9 +120,11 @@ map<int, vector<pair<double, string>>> FCorridorAdapter::Take(const int& iSize)
 
 void FCorridorAdapter::Add(int key, pair<double, string> fData)
 {
-    mapCorridorData[key].arrAllData.push_back(fData);
+    mapCorridorData[key].push_back(fData);
     // mapCorridorData[key].dSum += fData.first;
 }
+
+int FOutData::iSinglControll = 0;
 
 FOutData::FOutData(FGlobal* _ptrGlobal)
     : ptrGlobal(_ptrGlobal), iSizeOnlyAllow(0)
@@ -154,6 +155,10 @@ FOutData::FOutData(FGlobal* _ptrGlobal)
 //       L"Количество основных дисциплин", L"Количество дисциплин по выбору",
 //       L"Количество факультативов" })
 {
+    if (iSinglControll > 0) throw std::runtime_error("Re-creation Singleton");
+    ++iSinglControll;
+
+    fFileCache = new FFileCache(this);
 }
 
 void FOutData::CreateTotalInfo(vector<double>&   arrReturnDataMetrics,
@@ -196,8 +201,8 @@ void FOutData::CreateTotalInfo(vector<double>&   arrReturnDataMetrics,
     {
         if (ptrGlobal->ptrConfig->mapArrOutParams.count(arrMetricHead[y]))
         {
-            if (ptrGlobal->ptrConfig->mapArrOutParams[arrMetricHead[y]].at(
-                    eOutType) == L"да")
+            if (ptrGlobal->ptrConfig->mapArrOutParams[arrMetricHead[y]].GetType(
+                    eOutType))
             {
                 arrReturnDataMetrics.push_back(arrResult[y]);
             }
@@ -206,12 +211,12 @@ void FOutData::CreateTotalInfo(vector<double>&   arrReturnDataMetrics,
 
     wstring wsNameSoMachComp =
         L"Количество дисциплин, формирующих несколько компетенций";
-    if (ptrGlobal->ptrConfig->mapArrOutParams[wsNameSoMachComp].at(eOutType) ==
-        L"да")
+    if (ptrGlobal->ptrConfig->mapArrOutParams[wsNameSoMachComp].GetType(
+            eOutType))
     {
         // Так как дисциплин с 0-компетенциями исключаются
         for (int iAmountComp = 1;
-             iAmountComp <= this->ptrGlobal->ptrConfig->iSoMachComp;
+             iAmountComp <= this->ptrGlobal->ptrConfig->GetISoMachComp();
              ++iAmountComp)
         {
             arrReturnDataMetrics.push_back(
@@ -220,8 +225,7 @@ void FOutData::CreateTotalInfo(vector<double>&   arrReturnDataMetrics,
     }
 
     wstring wsRibQuartile = L"Количество рёбер указанного квартиля";
-    if (ptrGlobal->ptrConfig->mapArrOutParams[wsRibQuartile].at(eOutType) ==
-        L"да")
+    if (ptrGlobal->ptrConfig->mapArrOutParams[wsRibQuartile].GetType(eOutType))
     {
         for (auto& it : fGraph->arrAllPairDistanceQuartile)
         {
@@ -250,39 +254,40 @@ void FOutData::CreateTotalInfo(vector<string>&   arrReturnDataHeader,
     {
         if (ptrGlobal->ptrConfig->mapArrOutParams.count(arrMetricHead[y]))
         {
-            if (ptrGlobal->ptrConfig->mapArrOutParams[arrMetricHead[y]].at(
-                    eOutType) == L"да")
+            if (ptrGlobal->ptrConfig->mapArrOutParams[arrMetricHead[y]].GetType(
+                    eOutType))
             {
                 arrReturnDataHeader.push_back(ptrGlobal->ConwertToString(
-                    ptrGlobal->ptrConfig->mapArrOutParams[arrMetricHead[y]].at(
-                        0)));
+                    ptrGlobal->ptrConfig->mapArrOutParams[arrMetricHead[y]]
+                        .GetName()));
             }
         }
     }
 
     wstring wsNameSoMachComp =
         L"Количество дисциплин, формирующих несколько компетенций";
-    if (ptrGlobal->ptrConfig->mapArrOutParams[wsNameSoMachComp].at(eOutType) ==
-        L"да")
+    if (ptrGlobal->ptrConfig->mapArrOutParams[wsNameSoMachComp].GetType(
+            eOutType))
     {
         for (int iAmountComp = 1;
-             iAmountComp <= this->ptrGlobal->ptrConfig->iSoMachComp;
+             iAmountComp <= this->ptrGlobal->ptrConfig->GetISoMachComp();
              ++iAmountComp)
         {
             string sAddedHead = ptrGlobal->ConwertToString(
-                ptrGlobal->ptrConfig->mapArrOutParams[wsNameSoMachComp].at(0));
+                ptrGlobal->ptrConfig->mapArrOutParams[wsNameSoMachComp]
+                    .GetName());
 
-            sAddedHead += ptrGlobal->ptrConfig->sSeparator;
-            if (iAmountComp == ptrGlobal->ptrConfig->iSoMachComp)
+            sAddedHead += ptrGlobal->ptrConfig->GetSSeparator();
+            if (iAmountComp == ptrGlobal->ptrConfig->GetISoMachComp())
                 sAddedHead += ">=";
 
             sAddedHead +=
-                to_string(iAmountComp) + ptrGlobal->ptrConfig->sSeparator;
+                to_string(iAmountComp) + ptrGlobal->ptrConfig->GetSSeparator();
             sAddedHead += ptrGlobal->ConwertToString(
                 ptrGlobal->ptrConfig
                     ->mapArrOutParams[L"Суффикс после вывода кол-во "
                                       L"компетенций у дисциплины"]
-                    .at(0));
+                    .GetName());
             // sAddedHead += ptrGlobal->ConwertToString(
             //     ptrGlobal->ptrConfig->wsOutSufAmountComp);
 
@@ -291,27 +296,27 @@ void FOutData::CreateTotalInfo(vector<string>&   arrReturnDataHeader,
     }
 
     wstring wsRibQuartile = L"Количество рёбер указанного квартиля";
-    if (ptrGlobal->ptrConfig->mapArrOutParams[wsRibQuartile].at(eOutType) ==
-        L"да")
+    if (ptrGlobal->ptrConfig->mapArrOutParams[wsRibQuartile].GetType(eOutType))
     {
         int iAmountQuartile = -1;
         for (auto& it : fGraph->arrAllPairDistanceQuartile)
         {
             ++iAmountQuartile;
             string sAddedHead = ptrGlobal->ConwertToString(
-                ptrGlobal->ptrConfig->mapArrOutParams[wsRibQuartile].at(0));
+                ptrGlobal->ptrConfig->mapArrOutParams[wsRibQuartile].GetName());
 
-            sAddedHead += ptrGlobal->ptrConfig->sSeparator;
-            if (iAmountQuartile == ptrGlobal->ptrConfig->iAmountQuar)
-                sAddedHead += "No" + ptrGlobal->ptrConfig->sSeparator + "Path";
+            sAddedHead += ptrGlobal->ptrConfig->GetSSeparator();
+            if (iAmountQuartile == ptrGlobal->ptrConfig->GetIAmountQuar())
+                sAddedHead +=
+                    "No" + ptrGlobal->ptrConfig->GetSSeparator() + "Path";
 
-            sAddedHead +=
-                to_string(iAmountQuartile) + ptrGlobal->ptrConfig->sSeparator;
+            sAddedHead += to_string(iAmountQuartile) +
+                          ptrGlobal->ptrConfig->GetSSeparator();
             sAddedHead += ptrGlobal->ConwertToString(
                 ptrGlobal->ptrConfig
                     ->mapArrOutParams[L"Суффикс после вывода квартиля "
                                       L"распределения весов рёбер"]
-                    .at(0));
+                    .GetName());
             // sAddedHead += ptrGlobal->ConwertToString(
             //     ptrGlobal->ptrConfig->wsOutSufAmountComp);
 
@@ -373,51 +378,51 @@ void FOutData::CreateOnlyAllowedHeaderRow(vector<string>&        arrReturn,
             else
             {
                 arrIsAllowed.push_back(
-                    (ptrGlobal->ptrConfig->mapArrOutParams[it].at(
-                         EOutType::EOT_Head) ==
-                     L"да"));    // Так как глобальная информация, то
-                                 // работаем с EOutType::EOT_Head
+                    (ptrGlobal->ptrConfig->mapArrOutParams[it].GetType(
+                        EOutType::EOT_Head)));    // Так как глобальная
+                                                  // информация, то работаем с
+                                                  // EOutType::EOT_Head
             }
 
             if (arrIsAllowed.back())
             {
                 string sOut = ptrGlobal->ConwertToString(
-                    ptrGlobal->ptrConfig->mapArrOutParams[it].at(0));
+                    ptrGlobal->ptrConfig->mapArrOutParams[it].GetName());
                 if (it ==
                     L"Количество дисциплин, формирующих несколько компетенций")
                 {
-                    sOut += ptrGlobal->ptrConfig->sSeparator;
-                    if (iAmountComp == ptrGlobal->ptrConfig->iSoMachComp)
+                    sOut += ptrGlobal->ptrConfig->GetSSeparator();
+                    if (iAmountComp == ptrGlobal->ptrConfig->GetISoMachComp())
                         sOut += ">=";
 
                     sOut += to_string(iAmountComp++) +
-                            ptrGlobal->ptrConfig->sSeparator;
+                            ptrGlobal->ptrConfig->GetSSeparator();
                     sOut += ptrGlobal->ConwertToString(
                         ptrGlobal->ptrConfig
                             ->mapArrOutParams[L"Суффикс после вывода кол-во "
                                               L"компетенций у дисциплины"]
-                            .at(0));
+                            .GetName());
                 }
 
                 if (it == L"Количество рёбер указанного квартиля")
                 {
-                    sOut += ptrGlobal->ptrConfig->sSeparator;
-                    if (iQuartile > ptrGlobal->ptrConfig->iAmountQuar)
+                    sOut += ptrGlobal->ptrConfig->GetSSeparator();
+                    if (iQuartile > ptrGlobal->ptrConfig->GetIAmountQuar())
                     {
                         sOut = "";
-                        sOut += "No" + ptrGlobal->ptrConfig->sSeparator +
-                                "Path" + ptrGlobal->ptrConfig->sSeparator;
+                        sOut += "No" + ptrGlobal->ptrConfig->GetSSeparator() +
+                                "Path" + ptrGlobal->ptrConfig->GetSSeparator();
                     }
                     else
                     {
                         sOut += to_string(iQuartile++) +
-                                ptrGlobal->ptrConfig->sSeparator;
+                                ptrGlobal->ptrConfig->GetSSeparator();
                     }
                     sOut += ptrGlobal->ConwertToString(
                         ptrGlobal->ptrConfig
                             ->mapArrOutParams[L"Суффикс после вывода квартиля "
                                               L"распределения весов рёбер"]
-                            .at(0));
+                            .GetName());
                 }
 
                 arrReturn.push_back(sOut);
@@ -428,10 +433,10 @@ void FOutData::CreateOnlyAllowedHeaderRow(vector<string>&        arrReturn,
             arrIsAllowed.push_back(true);
             if (it.find(
                     ptrGlobal->ptrConfig->mapArrOutParams[L"ЗЕ у компетенции"]
-                        .at(0)) != wstring::npos)
+                        .GetName()) != wstring::npos)
             {
                 if (ptrGlobal->ptrConfig->mapArrOutParams[L"ЗЕ у компетенции"]
-                        .at(EOutType::EOT_Head) != L"да")
+                        .GetType(EOutType::EOT_Head))
                     arrIsAllowed.back() = false;
             }
             if (arrIsAllowed.back())
@@ -491,7 +496,7 @@ void FOutData::CreateOnlyAllowedResultRow(vector<string>& arrReturn,
         else
         {
             if (TakePasteData(x, arrReturn, arrIsAllowed[i++], it,
-                              ptrGlobal->ptrConfig->sNoInitData,
+                              ptrGlobal->ptrConfig->GetSNoInitData(),
                               ptrTree->sCurName, false, fCorridorData))
             {
                 x++;
@@ -517,7 +522,7 @@ void FOutData::AddTableCommonData(vector<vector<string>>& arrToAddedData,
         ++i;
         if (ptrGlobal->ptrConfig->mapArrOutParams.count(wsName))
         {
-            if (ptrGlobal->ptrConfig->mapArrOutParams[wsName].at(1) == L"да")
+            if (ptrGlobal->ptrConfig->mapArrOutParams[wsName].GetTotal())
             {
                 vector<string> arrCommonData;
 
@@ -526,20 +531,20 @@ void FOutData::AddTableCommonData(vector<vector<string>>& arrToAddedData,
                 for (const auto& [id, fСorridor] : mapCorridorData)
                 {
                     const auto& [dVal, sName] = fСorridor[i];
-                    string sResult = ptrGlobal->ptrConfig->sNoInitData;
+                    string sResult = ptrGlobal->ptrConfig->GetSNoInitData();
                     if (id == 0)
                     {
                         // Выводим заголовок
                         sResult = ptrGlobal->ConwertToString(
-                            ptrGlobal->ptrConfig->mapArrOutParams[wsName].at(
-                                0));
+                            ptrGlobal->ptrConfig->mapArrOutParams[wsName]
+                                .GetName());
                     }
                     else
                     {
                         if (dVal != FGraphType::dNoInit)
                         {
                             sResult = ptrGlobal->DoubletWithPrecision(dVal);
-                            if (sName != ptrGlobal->ptrConfig->sNoInitData)
+                            if (sName != ptrGlobal->ptrConfig->GetSNoInitData())
                             {
                                 sResult +=
                                     " (" +
@@ -548,7 +553,7 @@ void FOutData::AddTableCommonData(vector<vector<string>>& arrToAddedData,
                                             ->mapArrOutParams
                                                 [L"Предлог перед выводом "
                                                  L"общих результатов"]
-                                            .at(0)) +
+                                            .GetName()) +
                                     sName + ")";
                             }
                         }
@@ -592,9 +597,9 @@ void FOutData::CreateAllCurriculaTotalData(
     for (auto& sHeaderComp : ptrGlobal->ptrSolve->setHeaderComp)
     {
         wstring wsCompScore = ptrGlobal->ConwertToWstring(sHeaderComp);
-        wsCompScore =
-            ptrGlobal->ptrConfig->mapArrOutParams[L"ЗЕ у компетенции"].at(0) +
-            wsCompScore;
+        wsCompScore = ptrGlobal->ptrConfig->mapArrOutParams[L"ЗЕ у компетенции"]
+                          .GetName() +
+                      wsCompScore;
         arrBuf.push_back(wsCompScore);
         arrBuf.push_back(ptrGlobal->ConwertToWstring(sHeaderComp));
     }
@@ -726,13 +731,13 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
 
     // Вывод компетенций по количеству
     for (int iAmountComp = 1;
-         iAmountComp <= this->ptrGlobal->ptrConfig->iSoMachComp;
+         iAmountComp <= this->ptrGlobal->ptrConfig->GetISoMachComp();
          ++iAmountComp)
     {
         arrAddedHead.push_back(wsNameSoMachComp);
     }
 
-    for (int iQuar = 0; iQuar <= this->ptrGlobal->ptrConfig->iAmountQuar;
+    for (int iQuar = 0; iQuar <= this->ptrGlobal->ptrConfig->GetIAmountQuar();
          ++iQuar)    // На один больше квартилей, так как есть отдельно то
                      // количество, сколько рёбер не соединены
     {
@@ -784,7 +789,10 @@ void FOutData::Out(string sOutPath)
 {
     OpenXLSX::XLDocument fOutFile;
     const string         sPageName = "TotalData";
-    fOutFile.create(sOutPath + "/" + ptrGlobal->ptrConfig->sNameFileTotalData);
+    const string         sCreatePath =
+        sOutPath + "/" + ptrGlobal->ptrConfig->GetSNameFileTotalData();
+
+    fOutFile.create(sCreatePath);
     fOutFile.workbook().addWorksheet(sPageName);
     fOutFile.workbook().deleteSheet("Sheet1");    // Стартовая страница не нужна
     OpenXLSX::XLWorksheet wks = fOutFile.workbook().worksheet(sPageName);
@@ -793,7 +801,7 @@ void FOutData::Out(string sOutPath)
     vector<vector<string>> arrAllCurriculaTotalData;
     CreateAllCurriculaTotalData(arrAllCurriculaTotalData);
     OutTableInfo(iShiftX, 1, arrAllCurriculaTotalData, wks);
-    if (ptrGlobal->ptrConfig->bIsOutCSVDate)
+    if (ptrGlobal->ptrConfig->GetBIsOutCSVDate())
         OutTableInfoCSV(arrAllCurriculaTotalData, sOutPath, "", sPageName);
 
     iShiftX += arrAllCurriculaTotalData.front().size() - iSizeOnlyAllow;
@@ -814,7 +822,7 @@ void FOutData::Out(string sOutPath)
             ptrGlobal->ptrConfig
                 ->mapArrOutParams
                     [L"Предлог перед выводом статистики по всем курсам"]
-                .at(0));
+                .GetName());
 
         /*string sNamePage = this->ptrGlobal->ConwertToString(
             ptrGlobal->ptrConfig->wsOutPrefAllCourse);*/
@@ -824,7 +832,7 @@ void FOutData::Out(string sOutPath)
         vector<vector<string>> arrAllCoursesGraphData;
         CreateSummaryTotalData(arrAllCoursesGraphData, FGraph::iCommon);
         OutTableInfo(1, 1, arrAllCoursesGraphData, wks);
-        if (ptrGlobal->ptrConfig->bIsOutCSVDate)
+        if (ptrGlobal->ptrConfig->GetBIsOutCSVDate())
             OutTableInfoCSV(arrAllCoursesGraphData, sOutPath, "", sNamePage);
     }
 
@@ -849,7 +857,7 @@ void FOutData::Out(string sOutPath)
                     ->mapArrOutParams
                         [L"Предлог перед выводом статистики по курсу "
                          L"определённого номера"]
-                    .at(0));
+                    .GetName());
 
             sNamePage = sNamePage + " " + to_string(iCourse + 1);
             fOutFile.workbook().addWorksheet(sNamePage);
@@ -859,7 +867,7 @@ void FOutData::Out(string sOutPath)
             OutTableInfo(1, 1, arrCourseGraphData, wks);
 
             string sNameCSV = ptrGlobal->ReversUTF16RU(sNamePage);
-            if (ptrGlobal->ptrConfig->bIsOutCSVDate)
+            if (ptrGlobal->ptrConfig->GetBIsOutCSVDate())
                 OutTableInfoCSV(arrCourseGraphData, sOutPath, "", sNameCSV);
         }
     }
@@ -870,7 +878,7 @@ void FOutData::Out(string sOutPath)
     for (auto& it : ptrGlobal->ptrSolve->arrDisc)
     {
         // Выводить короткое, или помное имя
-        sCurPlanName = (ptrGlobal->ptrConfig->bOutShortNameCur)
+        sCurPlanName = (ptrGlobal->ptrConfig->GetBOutShortNameCur())
                            ? it->sShortNamePlan
                            : it->sNamePlan;
 
@@ -923,7 +931,7 @@ void FOutData::Out(string sOutPath)
         OpenXLSX::XLWorksheet wks =
             fTotalAddOutFile.workbook().worksheet(sPageName);
         OutTableInfo(1, 1, arrData, wks);
-        if (ptrGlobal->ptrConfig->bIsOutCSVDate)
+        if (ptrGlobal->ptrConfig->GetBIsOutCSVDate())
             OutTableInfoCSV(arrData, sOutPath, "TotalCompData", sPageName);
 
         fTotalAddOutFile.save();
@@ -944,8 +952,8 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
                         true);    //, ptrCurrentTree->dChosenSum);
 
     // Вывод данных в TotalData файле
-    OutTableInfo(iXShift, 1, arrDataAll, arrSinglOpenWKS.back());
-    if (ptrGlobal->ptrConfig->bIsOutCSVDate)
+    OutTableInfo(iXShift, 1, arrDataAll, fFileCache->arrOpenWKS.back());
+    if (ptrGlobal->ptrConfig->GetBIsOutCSVDate())
         OutTableInfoCSV(arrDataAll, sPath, sName, FMetric::sAllMetric);
 
     iXShift +=
@@ -975,33 +983,31 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
             }
         }
 
-        OutTableInfo(iXShift, 1, arrDataAllCourse, arrSinglOpenWKS.back());
-        if (ptrGlobal->ptrConfig->bIsOutCSVDate)
+        OutTableInfo(iXShift, 1, arrDataAllCourse,
+                     fFileCache->arrOpenWKS.back());
+        if (ptrGlobal->ptrConfig->GetBIsOutCSVDate())
             OutTableInfoCSV(arrDataAllCourse, sPath, sName,
-                            ptrGlobal->ptrConfig->sNameFileCompetenceData +
-                                ptrGlobal->ptrConfig->sSeparator +
-                                sKey);
+                            ptrGlobal->ptrConfig->GetSNameFileCompData() +
+                                ptrGlobal->ptrConfig->GetSSeparator() + sKey);
 
         iXShift += arrDataAllCourse.front()
                        .size();    // Сдвигаемся на ширину выведеной таблицы
         iYShift = max(iYShift + 0ull, arrDataAllCourse.size() + 0ull);
         {
-            arrSinglLocalCurrentCourseOpenFile.clear();
-            arrSinglLocalCurrentCourseOpenFile.resize(1);
-            arrSinglLocalCurrentCourseOpenWKS.clear();
-            arrSinglLocalCurrentCourseOpenWKS.resize(1);
-            arrSinglLocalCurrentCourseOpenFile[0].create(
+            fFileCache->arrCourseOpenFile.clear();
+            fFileCache->arrCourseOpenFile.resize(1);
+            fFileCache->arrCourseOpenWKS.clear();
+            fFileCache->arrCourseOpenWKS.resize(1);
+            fFileCache->arrCourseOpenFile[0].create(
                 sPath + "/" + sName + "/" +
-                ptrGlobal->ptrConfig->sNameFileCompetenceData +
-                ptrGlobal->ptrConfig->sSeparator + sKey + ".xlsx");
-            arrSinglLocalCurrentCourseOpenFile[0].workbook().addWorksheet(
-                sName);
-            arrSinglLocalCurrentCourseOpenFile[0].workbook().deleteSheet(
+                ptrGlobal->ptrConfig->GetSNameFileCompData() +
+                ptrGlobal->ptrConfig->GetSSeparator() + sKey + ".xlsx");
+            fFileCache->arrCourseOpenFile[0].workbook().addWorksheet(sName);
+            fFileCache->arrCourseOpenFile[0].workbook().deleteSheet(
                 "Sheet1");    // Стартовая страница не нужна
-            arrSinglLocalCurrentCourseOpenFile[0].save();
-            arrSinglLocalCurrentCourseOpenWKS[0] =
-                arrSinglLocalCurrentCourseOpenFile[0].workbook().worksheet(
-                    sName);
+            fFileCache->arrCourseOpenFile[0].save();
+            fFileCache->arrCourseOpenWKS[0] =
+                fFileCache->arrCourseOpenFile[0].workbook().worksheet(sName);
             // Теперь это выводится в OutAddInfoInit
 
             // Выводим локально в отдельный файл
@@ -1013,9 +1019,9 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
             OutTableInfo(1,
                          1,
                          arrDataAllCourseOnFile,
-                         arrSinglLocalCurrentCourseOpenWKS.back());
+                         fFileCache->arrCourseOpenWKS.back());
 
-            if (ptrGlobal->ptrConfig->bOutTotalInfo)
+            if (ptrGlobal->ptrConfig->GetBOutTotalInfo())
             {
                 vector<vector<string>> arrTotalCourseGraphData;
                 CreateTotalInfo(arrTotalCourseGraphData,
@@ -1026,26 +1032,26 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
                              arrDataAllCourse.size() +
                                  1,    // Так как 1-индексация
                              arrTotalCourseGraphData,
-                             arrSinglLocalCurrentCourseOpenWKS.back());
+                             fFileCache->arrCourseOpenWKS.back());
             }
 
-            arrSinglLocalCurrentCourseOpenFile.back().save();
-            arrSinglLocalCurrentCourseOpenFile.back().close();
+            fFileCache->arrCourseOpenFile.back().save();
+            fFileCache->arrCourseOpenFile.back().close();
 
             // Очищаем память от использованных объектов
-            arrSinglLocalCurrentCourseOpenFile.clear();
-            arrSinglLocalCurrentCourseOpenWKS.clear();
+            fFileCache->arrCourseOpenFile.clear();
+            fFileCache->arrCourseOpenWKS.clear();
         }
     }
 
-    if (ptrGlobal->ptrConfig->bOutTotalInfo)
+    if (ptrGlobal->ptrConfig->GetBOutTotalInfo())
     {
         vector<vector<string>> arrTotalGraphData;
         CreateTotalInfo(arrTotalGraphData,
                         &ptrTree->ptrGraph->mapGraph[FGraph::iCommon],
                         EOutType::EOT_Added);
         OutTableInfo(1, iYShift + 1,    // Так как 1-индексация
-                     arrTotalGraphData, arrSinglOpenWKS.back());
+                     arrTotalGraphData, fFileCache->arrOpenWKS.back());
     }
 
     {
@@ -1092,42 +1098,41 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
         // Добавим обозначение того, что выводим курсы
         if (ptrGlobal->ptrConfig->mapAddOutParams.count(L"За какой курс"))
             arrData.back().front() = ptrGlobal->ConwertToString(
-                ptrGlobal->ptrConfig->mapAddOutParams[L"За какой курс"].at(0));
+                ptrGlobal->ptrConfig->mapAddOutParams[L"За какой курс"]
+                    .GetName());
 
-        arrSinglLocalCurrentCourseOpenFile.clear();
-        arrSinglLocalCurrentCourseOpenFile.resize(1);
-        arrSinglLocalCurrentCourseOpenWKS.clear();
-        arrSinglLocalCurrentCourseOpenWKS.resize(1);
+        fFileCache->arrCourseOpenFile.clear();
+        fFileCache->arrCourseOpenFile.resize(1);
+        fFileCache->arrCourseOpenWKS.clear();
+        fFileCache->arrCourseOpenWKS.resize(1);
 
-        arrSinglLocalCurrentCourseOpenFile[0].create(sPath + "/" + sName + "/" +
-                                                     "E1Diagram.xlsx");
-        arrSinglLocalCurrentCourseOpenFile[0].workbook().addWorksheet(
-            "E1Diagram");
-        arrSinglLocalCurrentCourseOpenFile[0].workbook().deleteSheet(
+        fFileCache->arrCourseOpenFile[0].create(sPath + "/" + sName + "/" +
+                                                "E1Diagram.xlsx");
+        fFileCache->arrCourseOpenFile[0].workbook().addWorksheet("E1Diagram");
+        fFileCache->arrCourseOpenFile[0].workbook().deleteSheet(
             "Sheet1");    // Стартовая страница не нужна
-        arrSinglLocalCurrentCourseOpenFile[0].save();
-        arrSinglLocalCurrentCourseOpenWKS[0] =
-            arrSinglLocalCurrentCourseOpenFile[0].workbook().worksheet(
-                "E1Diagram");
+        fFileCache->arrCourseOpenFile[0].save();
+        fFileCache->arrCourseOpenWKS[0] =
+            fFileCache->arrCourseOpenFile[0].workbook().worksheet("E1Diagram");
         // Теперь это выводится в OutAddInfoInit
 
         // Выводим локально в отдельный файл
-        OutTableInfo(1, 1, arrData, arrSinglLocalCurrentCourseOpenWKS.back());
+        OutTableInfo(1, 1, arrData, fFileCache->arrCourseOpenWKS.back());
 
-        arrSinglLocalCurrentCourseOpenFile.back().save();
-        arrSinglLocalCurrentCourseOpenFile.back().close();
+        fFileCache->arrCourseOpenFile.back().save();
+        fFileCache->arrCourseOpenFile.back().close();
 
         // Очищаем память от использованных объектов
-        arrSinglLocalCurrentCourseOpenFile.clear();
-        arrSinglLocalCurrentCourseOpenWKS.clear();
+        fFileCache->arrCourseOpenFile.clear();
+        fFileCache->arrCourseOpenWKS.clear();
     }
 
-    arrSinglOpenFile.back().save();
-    arrSinglOpenFile.back().close();
+    fFileCache->arrOpenFile.back().save();
+    fFileCache->arrOpenFile.back().close();
 
     // Очищаем память от использованных объектов
-    arrSinglOpenFile.clear();
-    arrSinglOpenWKS.clear();
+    fFileCache->arrOpenFile.clear();
+    fFileCache->arrOpenWKS.clear();
 }
 
 void FOutData::OutTableInfo(const int& iShiftX, const int& iShiftY,
@@ -1219,7 +1224,7 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
             if (this->ptrGlobal->ptrConfig->mapAddOutParams.count(it))
             {
                 arrAllData[0][x] = this->ptrGlobal->ConwertToString(
-                    this->ptrGlobal->ptrConfig->mapAddOutParams[it].at(0));
+                    this->ptrGlobal->ptrConfig->mapAddOutParams[it].GetName());
             }
         }
     }
@@ -1248,8 +1253,7 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
                 if (x >= iSizeX) break;
                 if (this->ptrGlobal->ptrConfig->mapAddOutParams.count(it))
                 {
-                    if (ptrGlobal->ptrConfig->mapAddOutParams[it].at(1) ==
-                        L"да")
+                    if (ptrGlobal->ptrConfig->mapAddOutParams[it].GetTotal())
                     {
                         if ((y == 1) && (it == L"Название УП"))
                             arrAllData[y][x] =
@@ -1272,7 +1276,7 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
         }
     }
 
-    if (ptrGlobal->ptrConfig->bOutWithoutEmptyCell)
+    if (ptrGlobal->ptrConfig->GetBOutWithoutEmptyCell())
     {
         for (int y = 1; y < arrReturnData.size(); ++y)
         {
@@ -1331,7 +1335,7 @@ void FOutData::CreateTableRectInfo(
                 arrReturnData[iCurrentY][x] += arrName[i];
                 if (i)
                     arrReturnData[iCurrentY][x] +=
-                        ptrGlobal->ptrConfig->sPrefFullNameCourse;
+                        ptrGlobal->ptrConfig->GetSPrefFullNameCourse();
             }
         }
     }
@@ -1343,7 +1347,7 @@ void FOutData::CreateTableRectInfo(
         if (!bIsCounting)
         {
             double dRes = 0.;
-            dRes        = (ptrGlobal->ptrConfig->bCompInterDelete)
+            dRes        = (ptrGlobal->ptrConfig->GetBCompInterDelete())
                               ? ptrMetric->dBalanceSum
                               : ptrMetric->dNoBalanceSum;
 
@@ -1370,9 +1374,9 @@ void FOutData::CreateTableRectInfo(
         if (!bIsCounting)
         {
             double dRes = 0.;
-            if (ptrGlobal->ptrConfig->bIsPercentRegAll)
+            if (ptrGlobal->ptrConfig->GetBIsPercentRegAll())
             {
-                dRes = (ptrGlobal->ptrConfig->bCompInterDelete)
+                dRes = (ptrGlobal->ptrConfig->GetBCompInterDelete())
                            ? ptrMetric->dBalanceSum /
                                  ptrMetric->ptrParent->dBalanceSum
                            : ptrMetric->dNoBalanceSum /
@@ -1380,7 +1384,7 @@ void FOutData::CreateTableRectInfo(
             }
             else
             {
-                dRes = (ptrGlobal->ptrConfig->bCompInterDelete)
+                dRes = (ptrGlobal->ptrConfig->GetBCompInterDelete())
                            ? ptrMetric->dBalanceSum /
                                  ptrMetric->ptrParent->dBalanceSum
                            : ptrMetric->dNoBalanceSum /
@@ -1415,32 +1419,35 @@ void FOutData::CreateTableRectInfo(
 
 void FOutData::CreateAndTake(string sName, string sPath)
 {
-    arrSinglOpenFile.clear();
-    arrSinglOpenFile.resize(1);
+    fFileCache->arrOpenFile.clear();
+    fFileCache->arrOpenFile.resize(1);
 
-    arrSinglOpenWKS.clear();
-    arrSinglOpenWKS.resize(1);
+    fFileCache->arrOpenWKS.clear();
+    fFileCache->arrOpenWKS.resize(1);
 
-    if (ptrGlobal->ptrConfig->bCompactOutput)
+    if (ptrGlobal->ptrConfig->GetBCompactOutput())
     {
-        arrSinglOpenFile[0].open(sPath + "/" +
-                                 ptrGlobal->ptrConfig->sNameFileTotalData);
-        if (arrSinglOpenFile[0].workbook().worksheetExists(sName))
-            arrSinglOpenFile[0].workbook().deleteSheet(sName);
+        fFileCache->arrOpenFile[0].open(
+            sPath + "/" + ptrGlobal->ptrConfig->GetSNameFileTotalData());
+        if (fFileCache->arrOpenFile[0].workbook().worksheetExists(sName))
+            fFileCache->arrOpenFile[0].workbook().deleteSheet(sName);
 
-        arrSinglOpenFile[0].workbook().addWorksheet(sName);
-        arrSinglOpenWKS[0] = arrSinglOpenFile[0].workbook().worksheet(sName);
+        fFileCache->arrOpenFile[0].workbook().addWorksheet(sName);
+        fFileCache->arrOpenWKS[0] =
+            fFileCache->arrOpenFile[0].workbook().worksheet(sName);
         return;
     }
     else
     {
-        arrSinglOpenFile[0].create(sPath + "/" + sName + "/" +
-                                   ptrGlobal->ptrConfig->sNameFileLocalData);
-        arrSinglOpenFile[0].workbook().addWorksheet(sName);
-        arrSinglOpenFile[0].workbook().deleteSheet(
+        fFileCache->arrOpenFile[0].create(
+            sPath + "/" + sName + "/" +
+            ptrGlobal->ptrConfig->GetSNameFileLocalData());
+        fFileCache->arrOpenFile[0].workbook().addWorksheet(sName);
+        fFileCache->arrOpenFile[0].workbook().deleteSheet(
             "Sheet1");    // Стартовая страница не нужна
-        arrSinglOpenFile[0].save();
-        arrSinglOpenWKS[0] = arrSinglOpenFile[0].workbook().worksheet(sName);
+        fFileCache->arrOpenFile[0].save();
+        fFileCache->arrOpenWKS[0] =
+            fFileCache->arrOpenFile[0].workbook().worksheet(sName);
     }
 }
 
@@ -1464,7 +1471,7 @@ vector<string> FOutData::CreateTag(const int& iGraphType, FTreeDisc* fTree,
     vector<string> arrTag;
     for (auto& [key, val] : fTree->ptrGraph->mapGraph[iGraphType].mapReversRel)
     {
-        string sTag = ptrGlobal->ptrConfig->sNoInitData;
+        string sTag = ptrGlobal->ptrConfig->GetSNoInitData();
         if (bCheckTag)
         {
             if (fTree->mapDisc[key.first]->setTagDisc.size() > 0)
@@ -1496,13 +1503,13 @@ vector<string> FOutData::CreateCommonNameLabel(const int& iGraphType,
         // Не забываем про нуль нумерацию курсов
         if (iGraphType == FGraph::iAlt)
         {
-            sName +=
-                ptrGlobal->ptrConfig->sSeparator + to_string(it.second + 1);
+            sName += ptrGlobal->ptrConfig->GetSSeparator() +
+                     to_string(it.second + 1);
         }
 
         // ptrGlobal->ReversUTF16RU(ptrGlobal->ConwertToString(wsNameRaw));
         // Выводим ещё и компетенции
-        if (ptrGlobal->ptrConfig->bOutCompWithName)
+        if (ptrGlobal->ptrConfig->GetBOutCompWithName())
         {
             sName += AddCompString(fThis->mapComp);
         }
@@ -1530,7 +1537,7 @@ void FOutData::OutGephiData(string sName, string sPath, FTreeDisc* fTree)
                         ptrGlobal->ptrConfig
                             ->mapArrOutParams
                                 [L"Суффикс названия обратного графа при выводе"]
-                            .at(0));
+                            .GetName());
 
         OutGephiLabel(sPath, sFileName, sName,
                       CreateCommonNameLabel(iTag, fTree),
@@ -1548,7 +1555,7 @@ void FOutData::OutGephiData(string sName, string sPath, FTreeDisc* fTree)
                 ptrGlobal->ptrConfig
                     ->mapArrOutParams[L"Суффикс названия альтернативного "
                                       L"графа при выводе"]
-                    .at(0));
+                    .GetName());
 
         OutGephiLabel(sPath, sFileName, sName,
                       CreateCommonNameLabel(iTag, fTree),
@@ -1559,7 +1566,7 @@ void FOutData::OutGephiData(string sName, string sPath, FTreeDisc* fTree)
                     fTree->ptrGraph->mapGraph[iTag].fAdjList);
     }
 
-    if (fTree->ptrGlobal->ptrConfig->bCourseOutput)
+    if (fTree->ptrGlobal->ptrConfig->GetBCourseOutput())
     {
         for (int iCourse = 0; iCourse < fTree->iAmountCourse; ++iCourse)
         {
@@ -1585,7 +1592,7 @@ void FOutData::OutGephiLabel(const string& sPath, const string& sNameFile,
 {
     ofstream outLabel(sPath + "/" + sName + "/" + sNameFile + "Label.csv");
 
-    outLabel << ptrGlobal->ptrConfig->sNameLabelHeader << "\n";
+    outLabel << ptrGlobal->ptrConfig->GetSNameLabelHeader() << "\n";
 
     // id, имя, вес узла
 
@@ -1605,7 +1612,7 @@ void FOutData::OutGephiRib(const string& sName, const string& sNameFile,
 {
     ofstream outLabel(sPath + "/" + sName + "/" + sNameFile + "Rib.csv");
 
-    outLabel << ptrGlobal->ptrConfig->sNameRibHeader << "\n";
+    outLabel << ptrGlobal->ptrConfig->GetSNameRibHeader() << "\n";
 
     // Откуда, куда, тип (неориентированный), Вес
     for (int l = 0; l < fAdjList.size(); ++l)
@@ -1613,11 +1620,11 @@ void FOutData::OutGephiRib(const string& sName, const string& sNameFile,
         for (const auto& [r, dLen] : fAdjList[l])
         {
             // Чтобы не дублировать, он же неориентированный
-            if ((l < r) || (!ptrGlobal->ptrConfig->bIsUnDirected))
+            if ((l < r) || (!ptrGlobal->ptrConfig->GetBIsUnDirected()))
             {
                 outLabel << l << ";";
                 outLabel << r << ";";
-                outLabel << ptrGlobal->ptrConfig->sNameRibDir << ";";
+                outLabel << ptrGlobal->ptrConfig->GetSNameRibDir() << ";";
                 outLabel << dLen << "";
                 outLabel << "\n";
             }
@@ -1758,7 +1765,7 @@ void FOutData::CreateGraphE1TableRectInfo(
         if (!bIsCounting)
         {
             double dRes = 0.;
-            dRes        = (ptrGlobal->ptrConfig->bCompInterDelete)
+            dRes        = (ptrGlobal->ptrConfig->GetBCompInterDelete())
                               ? ptrMetric->dBalanceSum
                               : ptrMetric->dNoBalanceSum;
 
@@ -1785,9 +1792,9 @@ void FOutData::CreateGraphE1TableRectInfo(
         if (!bIsCounting)
         {
             double dRes = 0.;
-            if (ptrGlobal->ptrConfig->bIsPercentRegAll)
+            if (ptrGlobal->ptrConfig->GetBIsPercentRegAll())
             {
-                dRes = (ptrGlobal->ptrConfig->bCompInterDelete)
+                dRes = (ptrGlobal->ptrConfig->GetBCompInterDelete())
                            ? ptrMetric->dBalanceSum /
                                  ptrMetric->ptrParent->dBalanceSum
                            : ptrMetric->dNoBalanceSum /
@@ -1795,7 +1802,7 @@ void FOutData::CreateGraphE1TableRectInfo(
             }
             else
             {
-                dRes = (ptrGlobal->ptrConfig->bCompInterDelete)
+                dRes = (ptrGlobal->ptrConfig->GetBCompInterDelete())
                            ? ptrMetric->dBalanceSum /
                                  ptrMetric->ptrParent->dBalanceSum
                            : ptrMetric->dNoBalanceSum /
@@ -1826,4 +1833,10 @@ void FOutData::CreateGraphE1TableRectInfo(
                                                                      // bIsLocal
         );
     }
+}
+
+FOutData::~FOutData()
+{
+    delete fFileCache;
+    --iSinglControll;
 }

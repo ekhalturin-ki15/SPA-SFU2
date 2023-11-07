@@ -24,7 +24,7 @@ FError::FError(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal), bIsPrint(false)
 
 bool FError::Init()
 {
-    if (ptrGlobal->ptrConfig->bReloadLogFile)
+    if (ptrGlobal->ptrConfig->GetBReloadLogFile())
     {
         ofstream out(ptrGlobal->ptrConfig->wsNameLogFile);
         out << "";
@@ -46,9 +46,9 @@ ofstream FError::OutHeader() const
     int&     iCurrentPage                  = ptrGlobal->ptrSolve->iCurrentPage;
     int&     iCurrentRow                   = ptrGlobal->ptrSolve->iCurrentRow;
     ptrGlobal->ptrSolve->bIsCorrectParsing = false;
-    if (iCurrentPage < ptrGlobal->ptrConfig->arrKeyPage.size())
+    if (iCurrentPage < ptrGlobal->ptrConfig->GetSizeKeyPage())
         out << ptrGlobal->ReversUTF16RU(
-            ptrGlobal->ptrConfig->arrKeyPage[iCurrentPage].sName);
+            ptrGlobal->ptrConfig->GetKeyPage(iCurrentPage).sName);
     else
         out << "! Страница не определена";
 
@@ -397,7 +397,7 @@ void FError::OutDiscWithoutTag() const
         for (auto& [fData, wsName] : mapIndexDiscWithoutTag)
         {
             const auto& [wsIndex, sCurricula] = fData;
-            if (ptrGlobal->ptrConfig->bOutAllInfoWithoutTag)
+            if (ptrGlobal->ptrConfig->GetBOutAllInfoWithoutTag())
             {
                 out << "\t\t";
                 out <<
@@ -405,7 +405,7 @@ void FError::OutDiscWithoutTag() const
                 out << " : ";
             }
             out << ptrGlobal->ReversUTF16RU(ptrGlobal->ConwertToString(wsName));
-            if (ptrGlobal->ptrConfig->bOutAllInfoWithoutTag)
+            if (ptrGlobal->ptrConfig->GetBOutAllInfoWithoutTag())
             {
                 out << " (";
                 out << sCurricula;

@@ -27,14 +27,12 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       bOutShortNameCur(true),
       bIsUnDirected(true),
       bIsNormalizeScoreComp(true),
-      bDeletingSpecCharDiscName(true),
+      bDelSpecCharDiscName(true),
       bOutAllInfoWithoutTag(true),
       bOutEmptyComp(true),
       bOutTotalInfo(true),
       bOutWithoutEmptyCell(true),
       bIsOutCSVDate(false),
-      // bSetNameIfNotIndex(true),
-      // bOutIndicatorsInfo(true),
       wsNameConfig(L"./config.xlsx"),
       wsNamePage(L"Параметры"),
       sNameLabelHeader("Id;Label"),
@@ -44,17 +42,107 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       arrNameFileOut({ L"result\grad", L"result\spec" }),
       wsNameDebugFile(L"debugFile.txt"),
       wsNameLogFile(L"logFile.txt"),
-      // wsOutPrefMinMax(L"у УП "),
-      // wsOutPrefAllCourse(L"Все курсы"),
-      // sPrefCourseNumber("_"),
-      // sSufAltGraphFile("Alt"),
-      // sRegexComp("{0, 1}(.{0, } ? ); "),
-      // sRegexHeaderIndicator("(.{1,})-(.{1,})\.(.{1,})"),
+      sPrefFullNameCourse("_"),
+      sRegexComp("{0, 1}(.{0, } ? ); "),
       sFormula("((L + R) / 2) * K"),
       sFormulaReverseGraph("((L + R) / 2) * K")
 {
     if (iSinglControll > 0) throw std::runtime_error("Re-creation Singleton");
+
     ++iSinglControll;
+
+    InitStringMap();
+    InitIntMap();
+    InitBoolMap();
+}
+
+void FConfig::InitStringMap()
+{
+    mapStringParamsReadKey[L"Заголовок файла с названиями вершин"] =
+        &sNameLabelHeader;
+
+    mapStringParamsReadKey[L"Заголовок файла с рёбрами"] = &sNameRibHeader;
+
+    mapStringParamsReadKey[L"Тип рёбер"] = &sNameRibDir;
+
+    mapStringParamsReadKey[L"Регулярное выражение разбивки строки "
+                           L"([Компетенции(2)] Формируемые компетенции)"] =
+        &sRegexComp;
+
+    mapStringParamsReadKey
+        [L"Формула расчёта весов рёбер графа, где вершины - это дисциплина"] =
+            &sFormula;
+
+    mapStringParamsReadKey
+        [L"Формула расчёта весов рёбер графа, где вершины - это компетенция"] =
+            &sFormulaReverseGraph;
+
+    mapStringParamsReadKey[L"Вывод строки, если данные не определены"] =
+        &sNoInitData;
+
+    mapStringParamsReadKey
+        [L"Название файла вывода общей статистике по всей выборке УП"] =
+            &sNameFileTotalData;
+
+    mapStringParamsReadKey[L"Название файла вывода общей локальной статистики "
+                           L"по конкретному УП"] = &sNameFileLocalData;
+
+    mapStringParamsReadKey[L"Названия файлов с данными компетенций"] =
+        &sNameFileCompData;
+
+    mapStringParamsReadKey[L"Разделитель в названиях"] = &sSeparator;
+
+    mapStringParamsReadKey
+        [L"Разделитель для вывода полного названия компетенций и индикаторов"] =
+            &sPrefFullNameCourse;
+}
+
+void FConfig::InitIntMap()
+{
+    mapIntParamsReadKey[L"Макс длина названия дисциплин"]   = &iMaxNameDiscLen;
+    mapIntParamsReadKey[L"Сколько семестров в одном курсе"] = &iCourseLen;
+    mapIntParamsReadKey[L"Размер рёбер"]                    = &iWeigthRib;
+    mapIntParamsReadKey
+        [L"Игнорировать пустые строки в конце странице, если их не менее X ="] =
+            &iIgnoreEmptyLine;
+    mapIntParamsReadKey[L"Считать, что у дисциплины компетенций много, если их "
+                        L"число больше X ="]                  = &iSoMachComp;
+    mapIntParamsReadKey[L"Количество квартилей"]              = &iAmountQuar;
+    mapIntParamsReadKey[L"Макс кол-во знаков после запятой"]  = &iPrecision;
+    mapIntParamsReadKey[L"Индикатор находится на глубине X="] = &iIndicatorDeep;
+}
+
+void FConfig::InitBoolMap()
+{
+    mapBoolParamsReadKey[L"Создать новый каталог"]       = &bCreateFolder;
+    mapBoolParamsReadKey[L"Компактный вывод результата"] = &bCompactOutput;
+    mapBoolParamsReadKey[L"Выводить графы по курсам"]    = &bCourseOutput;
+    mapBoolParamsReadKey[L"Если у предмета несколько групп компетенций, "
+                         L"учитывать пересечение дважды (для 100% суммы)"] =
+        &bCompInterDelete;
+    mapBoolParamsReadKey[L"Выводить процентную долю индикатора от всех ЗЕ УП"] =
+        &bIsPercentRegAll;
+    mapBoolParamsReadKey[L"Отображать компетенции в названии"] =
+        &bOutCompWithName;
+    mapBoolParamsReadKey[L"Выводить короткое имя для УП"] = &bOutShortNameCur;
+    mapBoolParamsReadKey[L"Удалить спецсимволы из названия дисциплин (не "
+                         L"влияет на игнорируемые)"] = &bDelSpecCharDiscName;
+    mapBoolParamsReadKey
+        [L"Делить ЗЕ у компетениции на кол-во компетенций в дисциплине"] =
+            &bIsNormalizeScoreComp;
+    mapBoolParamsReadKey[L"Граф неориентированный"]  = &bIsUnDirected;
+    mapBoolParamsReadKey[L"Перезаписывать лог файл"] = &bReloadLogFile;
+    mapBoolParamsReadKey[L"Вывод доп файлов csv"]    = &bIsOutCSVDate;
+    mapBoolParamsReadKey[L"Использовать многоуровневые индикаторы"] =
+        &bMultiIndicator;
+    mapBoolParamsReadKey[L"Вывод полной информации о дисциплин без тега"] =
+        &bOutAllInfoWithoutTag;
+
+    mapBoolParamsReadKey[L"Выводить компетенции с 0 ЗЕ"] = &bOutEmptyComp;
+    mapBoolParamsReadKey[L"Выводить итоговую статистику"] = &bOutTotalInfo;
+    mapBoolParamsReadKey
+        [L"Не оставлять пустые ячейки при выводе дерева компетенций"] =
+        &bOutWithoutEmptyCell;
 }
 
 bool FConfig::Init()
@@ -87,6 +175,22 @@ bool FConfig::Init()
     return true;
 }
 
+const FPageInfo& FConfig::GetKeyPage(int iIndex) const
+{
+    if (iIndex < arrKeyPage.size()) return arrKeyPage[iIndex];
+    throw(std::out_of_range("Bad data access index (arrKeyPage): " +
+                            to_string(iIndex)));
+}
+
+int FConfig::GetSizeKeyPage() const { return arrKeyPage.size(); }
+//
+// const string& FConfig::GetStringParams(string sKey) const
+//{
+//    if (mapStringParamsData.count(sKey)) return mapStringParamsData.at(sKey);
+//    throw(std::out_of_range("Bad data access key (mapStringParamsData): " +
+//                            sKey));
+//}
+
 bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
                         OpenXLSX::XLRow row)
 {
@@ -94,6 +198,27 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
     try
     {
         if (wsKey == L"") return true;
+
+        // Считать переменную из config.xlsx с типом данных string
+        if (mapStringParamsReadKey.count(wsKey))
+        {
+            ptrGlobal->TakeData(*mapStringParamsReadKey[wsKey], row);
+            return true;
+        }
+
+        // Считать переменную из config.xlsx с типом данных int
+        if (mapIntParamsReadKey.count(wsKey))
+        {
+            ptrGlobal->TakeData(*mapIntParamsReadKey[wsKey], row);
+            return true;
+        }
+
+        // Считать переменную из config.xlsx с типом данных bool
+        if (mapBoolParamsReadKey.count(wsKey))
+        {
+            ptrGlobal->TakeData(*mapBoolParamsReadKey[wsKey], row);
+            return true;
+        }
 
         // Названия анализируемых страниц
         wsPatern = L"Названия анализируемых страниц";
@@ -186,41 +311,6 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
-        wsPatern = L"Заголовок файла с названиями вершин";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(sNameLabelHeader, row);
-            return true;
-        }
-
-        wsPatern = L"Заголовок файла с рёбрами";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(sNameRibHeader, row);
-            return true;
-        }
-
-        wsPatern = L"Тип рёбер";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(sNameRibDir, row);
-            return true;
-        }
-
-        wsPatern = L"Макс длина названия дисциплин";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(iMaxNameDiscLen, row);
-            return true;
-        }
-
-        wsPatern = L"Сколько семестров в одном курсе";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(iCourseLen, row);
-            return true;
-        }
-
         wsPatern = L"Создавать ребро, если его вес больше X=";
         if (wsKey == wsPatern)
         {
@@ -253,13 +343,6 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
-        wsPatern = L"Размер рёбер";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(iWeigthRib, row);
-            return true;
-        }
-
         wsPatern = L"Название файла отладки";
         if (wsKey == wsPatern)
         {
@@ -274,149 +357,12 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
-        wsPatern = L"Создать новый каталог";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(bCreateFolder, row);
-            return true;
-        }
-
-        wsPatern = L"Компактный вывод результата";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(bCompactOutput, row);
-            return true;
-        }
-
-        wsPatern = L"Выводить графы по курсам";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(bCourseOutput, row);
-            return true;
-        }
-
-        wsPatern = L"Если у предмета несколько групп компетенций, учитывать "
-                   L"пересечение дважды (для 100% суммы)";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(bCompInterDelete, row);
-            return true;
-        }
-
-        wsPatern = L"Выводить процентную долю индикатора от всех ЗЕ УП";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(bIsPercentRegAll, row);
-            return true;
-        }
-
-        wsPatern = L"Отображать компетенции в названии";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(bOutCompWithName, row);
-            return true;
-        }
-
-        wsPatern = L"Выводить короткое имя для УП";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(bOutShortNameCur, row);
-            return true;
-        }
-
-        wsPatern = L"Удалить спецсимволы из названия дисциплин (не влияет на "
-                   L"игнорируемые)";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(bDeletingSpecCharDiscName, row);
-            return true;
-        }
-
-        wsPatern =
-            L"Делить ЗЕ у компетениции на кол-во компетенций в дисциплине";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(bIsNormalizeScoreComp, row);
-            return true;
-        }
-
-        wsPatern = L"Граф неориентированный";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(bIsUnDirected, row);
-            return true;
-        }
-
-        wsPatern = L"Перезаписывать лог файл";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(bReloadLogFile, row);
-            return true;
-        }
-
-        wsPatern = L"Вывод доп файлов csv";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(bIsOutCSVDate, row);
-            return true;
-        }
-
-        wsPatern = L"Использовать многоуровневые индикаторы";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(bMultiIndicator, row);
-            return true;
-        }
-
-        wsPatern = L"Вывод полной информации о дисциплин без тега";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(bOutAllInfoWithoutTag, row);
-            return true;
-        }
-
-        wsPatern = L"Выводить компетенции с 0 ЗЕ";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(bOutEmptyComp, row);
-            return true;
-        }
-
-        wsPatern = L"Выводить итоговую статистику";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(bOutTotalInfo, row);
-            return true;
-        }
-
-        wsPatern = L"Не оставлять пустые ячейки при выводе дерева компетенций";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(bOutWithoutEmptyCell, row);
-            return true;
-        }
-
-        wsPatern = L"Индикатор находится на глубине X=";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(iIndicatorDeep, row);
-            return true;
-        }
-
         wsPatern = L"Спецсимволы для удаления из наименования компетенции";
         if (wsKey == wsPatern)
         {
             string sData;
             ptrGlobal->TakeData(sData, row);
             for (auto& it : sData) setIgnoreCharCompHeader.insert(it);
-            return true;
-        }
-
-        wsPatern = L"Регулярное выражение разбивки строки ([Компетенции(2)] "
-                   L"Формируемые компетенции)";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(sRegexComp, row);
             return true;
         }
 
@@ -431,96 +377,6 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(arrRegexHeaderComp, row, 0);
-            return true;
-        }
-
-        wsPatern =
-            L"Формула расчёта весов рёбер графа, где вершины - это дисциплина";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(sFormula, row);
-            return true;
-        }
-
-        wsPatern =
-            L"Формула расчёта весов рёбер графа, где вершины - это компетенция";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(sFormulaReverseGraph, row);
-            return true;
-        }
-
-        wsPatern = L"Вывод строки, если данные не определены";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(sNoInitData, row);
-            return true;
-        }
-
-        wsPatern = L"Название файла вывода общей статистике по всей выборке УП";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(sNameFileTotalData, row);
-            return true;
-        }
-
-        wsPatern = L"Название файла вывода общей локальной статистики по "
-                   L"конкретному УП";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(sNameFileLocalData, row);
-            return true;
-        }
-
-        wsPatern = L"Названия файлов с данными компетенций";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(sNameFileCompetenceData, row);
-            return true;
-        }
-
-        wsPatern = L"Разделитель в названиях";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(sSeparator, row);
-            return true;
-        }
-
-        wsPatern = L"Разделитель для вывода полного названия компетенций и "
-                   L"индикаторов";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(sPrefFullNameCourse, row);
-            return true;
-        }
-
-        wsPatern = L"Игнорировать пустые строки в конце странице, если их не "
-                   L"менее X =";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(iIgnoreEmptyLine, row);
-            return true;
-        }
-
-        wsPatern = L"Считать, что у дисциплины компетенций много, если их "
-                   L"число больше X =";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(iSoMachComp, row);
-            return true;
-        }
-
-        wsPatern = L"Количество квартилей";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(iAmountQuar, row);
-            return true;
-        }
-
-        wsPatern = L"Макс кол-во знаков после запятой";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(iPrecision, row);
             return true;
         }
 
@@ -626,7 +482,14 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
                              3))    // Теперь ещё и считываем, требуется ли
                                     // выводить
                     {
-                        mapAddOutParams[key] = val;
+
+                        auto& it  = mapAddOutParams[key];
+                        it.wsName = val.at(0);
+
+                        for (int k = 1; k < val.size(); ++k)
+                        {
+                            it.arrFlag.push_back(val[k] == L"да");
+                        }
                     }
                 }
             }
@@ -649,7 +512,13 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
                                  ptrGlobal->ConwertToString(wsNamePage)),
                              { 2, 3, 4 }))
                     {
-                        mapArrOutParams[key] = val;
+                        auto& it = mapArrOutParams[key];
+                        it.wsName = val.at(0);
+
+                        for (int k = 1; k < val.size(); ++k)
+                        {
+                            it.arrFlag.push_back(val[k] == L"да");
+                        }
                     }
                 }
             }

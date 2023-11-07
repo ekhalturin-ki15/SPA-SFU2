@@ -53,15 +53,15 @@ void FSolveSecondPage::AddDiscScore(const OpenXLSX::XLWorksheet& fSheet,
 
             if (wsData != L"")
             {
-                if (ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber]
+                if (ptrGlobal->ptrConfig->GetKeyPage(iKeyPageNumber)
                         .arrHeader[0]
                         .count(wsData))
                     iIdAllow = x;
-                if (ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber]
+                if (ptrGlobal->ptrConfig->GetKeyPage(iKeyPageNumber)
                         .arrHeader[1]
                         .count(wsData))
                     iIdIndex = x;
-                if (ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber]
+                if (ptrGlobal->ptrConfig->GetKeyPage(iKeyPageNumber)
                         .arrHeader[2]
                         .count(wsData))
                     iIdName =
@@ -70,11 +70,11 @@ void FSolveSecondPage::AddDiscScore(const OpenXLSX::XLWorksheet& fSheet,
                                   // ориентироваться по ним не получится, зато
                                   // получится ориентироваться по следующему за
                                   // ним столбцу
-                if (ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber]
+                if (ptrGlobal->ptrConfig->GetKeyPage(iKeyPageNumber)
                         .arrHeader[3]
                         .count(wsData))
                     iIdLScore = x;
-                if (ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber]
+                if (ptrGlobal->ptrConfig->GetKeyPage(iKeyPageNumber)
                         .arrHeader[4]
                         .count(wsData))
                     iIdRScore = x;
@@ -123,7 +123,7 @@ void FSolveSecondPage::AddDiscScore(const OpenXLSX::XLWorksheet& fSheet,
                         iNumCource =
                             x - iIdLScore;    // Нуль нумерация семестров
                         iNumCource /= ptrGlobal->ptrConfig
-                                          ->iCourseLen;    // Определяем курс, а
+                                          ->GetICourseLen();    // Определяем курс, а
                                                            // не семестр
                         dScore =
                             atof(ptrGlobal->ConwertToString(wsData).c_str());
@@ -157,7 +157,7 @@ void FSolveSecondPage::AddDiscScore(const OpenXLSX::XLWorksheet& fSheet,
     }
 
     auto& iAmountCource = ptrGlobal->ptrSolve->arrDisc.back()->iAmountCourse =
-        ((iIdRScore - iIdLScore) / ptrGlobal->ptrConfig->iCourseLen);
+        ((iIdRScore - iIdLScore) / ptrGlobal->ptrConfig->GetICourseLen());
 
     if (ptrGlobal->ptrSolve->iMaxCourse < iAmountCource)
         ptrGlobal->ptrSolve->iMaxCourse =

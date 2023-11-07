@@ -19,17 +19,17 @@ void FSolve::CreateDiscTreeZeroPage(const OpenXLSX::XLWorksheet& fSheet,
         int x = 0;
         for (const auto& it : fSheet.rows().begin()->cells())
         {
-            if (ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber]
+            if (ptrGlobal->ptrConfig->GetKeyPage(iKeyPageNumber)
                     .arrHeader[0]
                     .count(ptrGlobal->GetValue(it)))
                 iIdIndex = x;
 
-            if (ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber]
+            if (ptrGlobal->ptrConfig->GetKeyPage(iKeyPageNumber)
                     .arrHeader[1]
                     .count(ptrGlobal->GetValue(it)))
                 iIdName = x;
 
-            if (ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber]
+            if (ptrGlobal->ptrConfig->GetKeyPage(iKeyPageNumber)
                     .arrHeader[2]
                     .count(ptrGlobal->GetValue(it)))
                 iIdComp = x;
@@ -152,9 +152,9 @@ void FSolve::CreateDiscTreeZeroPage(const OpenXLSX::XLWorksheet& fSheet,
 
                             ptrNewNode->sName = ptrNewNode->sName.substr(
                                 0,
-                                ptrGlobal->ptrConfig->iMaxNameDiscLen);
+                                ptrGlobal->ptrConfig->GetIMaxNameDiscLen());
 
-                            if (ptrGlobal->ptrConfig->bDeletingSpecCharDiscName)
+                            if (ptrGlobal->ptrConfig->GetBDelSpecCharDiscName())
                             {
                                 ptrNewNode->sName =
                                     std::regex_replace(ptrNewNode->sName,
@@ -215,7 +215,7 @@ void FSolve::CreateDiscTreeZeroPage(const OpenXLSX::XLWorksheet& fSheet,
                             string sCompName = sData[1].str();
                             // Есть ошибка оператора: иногда вместо компетенции
                             // указан индикатор
-                            if (ptrGlobal->ptrConfig->bMultiIndicator)
+                            if (ptrGlobal->ptrConfig->GetBMultiIndicator())
                                 sCompName =
                                     sCompName.substr(0, sCompName.find('.'));
 

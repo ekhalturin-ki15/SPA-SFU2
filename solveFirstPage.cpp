@@ -16,7 +16,10 @@ void FSolve::AddCompIndicatorFirstPage(const OpenXLSX::XLWorksheet& fSheet, int 
         for (auto it : fSheet.rows().begin()->cells())
         {
             ++x;
-            if (ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].arrHeader[0].count(ptrGlobal->GetValue(it))) iIdIndex = x;
+            if (ptrGlobal->ptrConfig->GetKeyPage(iKeyPageNumber)
+                    .arrHeader[0]
+                    .count(ptrGlobal->GetValue(it)))
+                iIdIndex = x;
         }
     }
 

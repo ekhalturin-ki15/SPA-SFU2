@@ -6,6 +6,7 @@ struct FGlobal;
 struct FTreeDisc;
 struct FTreeMetric;
 struct FGraphType;
+struct FOutData;
 
 // Куда производится вывод (на главную горизонтально, или в побочные файлы
 // вертикально)
@@ -14,8 +15,6 @@ enum EOutType : int
     EOT_Head = 1,
     EOT_Added
 };
-
-struct FСorridor;
 
 struct FCorridorAdapter
 {
@@ -27,34 +26,38 @@ public:
     void Add(int key, pair<double, string> fData);
 
 private:
-    map<int, FСorridor> mapCorridorData;
+    map<int, vector<pair<double, string>>> mapCorridorData;
     FGlobal* ptrGlobal;    // Синглтон
 };
 
-struct FСorridor
+struct FFileCache
 {
-    //friend struct FCorridorAdapter;
+    explicit FFileCache(FOutData* _ptrPerent) : ptrPerent(_ptrPerent) {};
 
-    //private: Мешает использовать map
-    //FСorridor();    // Нельзя создавать напрямую, может только адаптер, так как
-                      // он friend
+    // Проброска страницы Excel для вывода данных (например, при помощи
+    // OutAddInfo)
 
-    // [0] - Макс [1] - Мин  [2] - Мода [3] - Медиана [4] - Усечённое среднее
-    // vector<double> dMaxMin = { 0, 0 };
-    // vector<string> sMaxMin = { "", "" };
-    vector<pair<double, string>>
-        arrAllData;    // Собираем все данные для нахождения Моды и Среднего
-    //double dSum = 0; //Ранее не было усечение среднего
+    // Библиотека OpenXLSX кривая, объекты XLDocument не очищаются после close,
+    // поэтому, делаем дубликаты Синглтон использование
+    vector<OpenXLSX::XLDocument>  arrOpenFile;
+    vector<OpenXLSX::XLWorksheet> arrOpenWKS;
+
+    vector<OpenXLSX::XLDocument>  arrCourseOpenFile;
+    vector<OpenXLSX::XLWorksheet> arrCourseOpenWKS;
+
+private:
+    FOutData* ptrPerent;
 };
 
 struct FOutData
 {
     explicit FOutData(FGlobal* _ptrGlobal);
+    ~FOutData();
+
+    bool Init();
 
     // Начальная точка входа
     void Out(string sOutPath);    // sOutPath - Каталог, где будут файлы
-
-    bool Init();
 
 private:
 
@@ -64,8 +67,8 @@ private:
 
     std::map< string, vector<vector<string>>> mapTotalDataOut;
 
+    FFileCache* fFileCache; // Класс хранения информации о файлах Excel для FOutData (агрегация, а не композиция, чтобы сделать методы Out константными)
 
-    // void OutAddTotalInfo(FTreeDisc* ptrTree, int y);
     // Составляет таблицу для вывода информации общего вида (не имеющей
     // отношения к графам) всех УП FSolve
     void CreateAllCurriculaTotalData(vector<vector<string>>& arrReturnData);
@@ -79,24 +82,6 @@ private:
     // Данные про дерево компетенций УП
     void OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree);
 
-    //Нельзя обобщать заголовки, это нарушает правило Лисков
-    //const vector<wstring> arrMetricHead;    // Единожды задаётся в конструкторе
-    //const vector<wstring>
-    //    arrCompetenceHead;    // Единожды задаётся в конструкторе
-
-    // vector<int> arrOutColm;
-    // vector<double>  arrResult;
-
-    // Пропроска страницы Excel для вывода данных (например, при помощи
-    // OutAddInfo)
-
-    // Библиотека OpenXLSX кривая, объекты XLDocument не очищаются после close,
-    // поэтому, делаем дубликаты Синглтон использование
-    vector<OpenXLSX::XLDocument>  arrSinglOpenFile;
-    vector<OpenXLSX::XLWorksheet> arrSinglOpenWKS;
-
-    vector<OpenXLSX::XLDocument>  arrSinglLocalCurrentCourseOpenFile;
-    vector<OpenXLSX::XLWorksheet> arrSinglLocalCurrentCourseOpenWKS;
 
     void CreateAndTake(
         string sName,
@@ -165,10 +150,6 @@ private:
                         const int& iShiftX = 0,    // С каким смещением выводим
                         const int& iShiftY = 0   // С каким смещением выводим
     );    // Куда выводим
-    // int OutRectAddInfo(int x, int y, FTreeMetric* ptrMetric, bool bIsCourse,
-    // const double dAllSum, bool bIsLocal = false);    // Возвращает Актуальное
-    // занчение y
-
 
     
     void OutGephiLabel(
@@ -217,13 +198,6 @@ private:
         FTreeMetric* ptrMetric,
         int iDeep);    // Возвращает Актуальное значение y
 
-    //// Проход рекурсии вхолостую (теперь находится в CreateTableRectInfo)
-    // void CountRectArraySize(
-    //     int& iSizeX,
-    //     int& iSizeY,
-    //     int  x,
-    //     FTreeMetric* ptrMetric);    // Возвращает Актуальное занчение y
-
     vector<string> CreateCommonNameLabel(const int& iGraphType,
                                          FTreeDisc* fTree);
 
@@ -234,9 +208,10 @@ private:
                   string sPath,
                   FTreeDisc* fTree);    // Вывод данных о графе для Gephi в формате csv
 
+
+private:
+    static int iSinglControll;    // Проверка на синглтон
+
     FGlobal* ptrGlobal;    // Синглтон
-
     string AddCompString(const map<string, vector<string>>& mapComp);
-
-    // int iXShift, iYShift;
 };

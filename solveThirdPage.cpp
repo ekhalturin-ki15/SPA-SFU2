@@ -22,7 +22,7 @@ void FSolve::FindTypePlanThirdPage(const OpenXLSX::XLWorksheet& fSheet,
             if (wsData == L"") continue;
 
             for (const auto& setFinder :
-                 ptrGlobal->ptrConfig->arrKeyPage[iKeyPageNumber].arrHeader)
+                 ptrGlobal->ptrConfig->GetKeyPage(iKeyPageNumber).arrHeader)
             {
                 for (const auto& wData : setFinder)
                 {
