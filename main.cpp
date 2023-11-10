@@ -106,11 +106,11 @@ int main()
                                                     // расположения exe файла
 
         for (int category = 0;
-             category < ptrGlobal->ptrConfig->arrNameFileIn.size();
+             category < ptrGlobal->ptrConfig->GetArrNameFileIn().size();
              ++category)
         {
             auto fInFile =
-                fFile / ptrGlobal->ptrConfig->arrNameFileIn[category];
+                fFile / ptrGlobal->ptrConfig->GetArrNameFileIn()[category];
             if (!filesystem::exists(fInFile))
             {
                 ptrGlobal->ptrError->ErrorInFileNotFind(fInFile);
@@ -118,7 +118,7 @@ int main()
                              // которых ожидалось считывание
             }
             auto fOutFile =
-                fFile / ptrGlobal->ptrConfig->arrNameFileOut[category];
+                fFile / ptrGlobal->ptrConfig->GetArrNameFileOut()[category];
             if (!filesystem::exists(fOutFile))
             {
                 if (ptrGlobal->ptrConfig->GetBCreateFolder())
@@ -166,7 +166,7 @@ int main()
             auto sTotalOutName =
                 fFile /
                 ptrGlobal->ptrConfig
-                    ->arrNameFileOut[category];    // / "TotalData.xlsx";
+                    ->GetArrNameFileOut()[category];    // / "TotalData.xlsx";
 
             ptrGlobal->ptrAdapOutData->Create(sTotalOutName.string());
             ptrGlobal->ptrOutData->Out(sTotalOutName.string());

@@ -4,7 +4,6 @@
 struct FGlobal;
 struct FConfig;
 
-
 struct FPageInfo
 {
     wstring wsName;
@@ -13,15 +12,14 @@ struct FPageInfo
         arrHeader;    // Для каждого столбца есть множество синонимов
 };
 
-
 struct FTranslateData
 {
     friend class FConfig;
 
     wstring GetName() const { return wsName; }
-    
-    bool GetTotal() const 
-    {  
+
+    bool GetTotal() const
+    {
         if (arrFlag.size() < 1)
             throw std::out_of_range("Do not have Total Data |_|");
         return arrFlag.at(0);
@@ -41,8 +39,8 @@ struct FTranslateData
         return arrFlag.at(iType - 1);
     }
 
-private: 
-    wstring wsName;
+private:
+    wstring           wsName;
     std::vector<bool> arrFlag;
 };
 
@@ -83,18 +81,21 @@ private:
     map<wstring, string*>
         mapStringParamsReadKey;    // Инициализируется в конструкторе
 public:
-    string GetSNameLabelHeader() const { return sNameLabelHeader; }
-    string GetSNameRibHeader() const { return sNameRibHeader; }
-    string GetSNameRibDir() const { return sNameRibDir; }
-    string GetSSeparator() const { return sSeparator; }
-    string GetSPrefFullNameCourse() const { return sPrefFullNameCourse; }
-    string GetSRegexComp() const { return sRegexComp; }
-    string GetSFormula() const { return sFormula; }
-    string GetSFormulaReverseGraph() const { return sFormulaReverseGraph; }
-    string GetSNoInitData() const { return sNoInitData; }
-    string GetSNameFileTotalData() const { return sNameFileTotalData; }
-    string GetSNameFileLocalData() const { return sNameFileLocalData; }
-    string GetSNameFileCompData() const { return sNameFileCompData; }
+    const string& GetSNameLabelHeader() const { return sNameLabelHeader; }
+    const string& GetSNameRibHeader() const { return sNameRibHeader; }
+    const string& GetSNameRibDir() const { return sNameRibDir; }
+    const string& GetSSeparator() const { return sSeparator; }
+    const string& GetSPrefFullNameCourse() const { return sPrefFullNameCourse; }
+    const string& GetSRegexComp() const { return sRegexComp; }
+    const string& GetSFormula() const { return sFormula; }
+    const string& GetSFormulaReverseGraph() const
+    {
+        return sFormulaReverseGraph;
+    }
+    const string& GetSNoInitData() const { return sNoInitData; }
+    const string& GetSNameFileTotalData() const { return sNameFileTotalData; }
+    const string& GetSNameFileLocalData() const { return sNameFileLocalData; }
+    const string& GetSNameFileCompData() const { return sNameFileCompData; }
 
     // Int Params
 private:
@@ -113,14 +114,14 @@ private:
     map<wstring, int*>
         mapIntParamsReadKey;    // Инициализируется в конструкторе
 public:
-    int GetIMaxNameDiscLen() const { return iMaxNameDiscLen; }
-    int GetIWeigthRib() const { return iWeigthRib; }
-    int GetICourseLen() const { return iCourseLen; }
-    int GetIIgnoreEmptyLine() const { return iIgnoreEmptyLine; }
-    int GetISoMachComp() const { return iSoMachComp; }
-    int GetIAmountQuar() const { return iAmountQuar; }
-    int GetIPrecision() const { return iPrecision; }
-    int GetIIndicatorDeep() const { return iIndicatorDeep; }
+    const int& GetIMaxNameDiscLen() const { return iMaxNameDiscLen; }
+    const int& GetIWeigthRib() const { return iWeigthRib; }
+    const int& GetICourseLen() const { return iCourseLen; }
+    const int& GetIIgnoreEmptyLine() const { return iIgnoreEmptyLine; }
+    const int& GetISoMachComp() const { return iSoMachComp; }
+    const int& GetIAmountQuar() const { return iAmountQuar; }
+    const int& GetIPrecision() const { return iPrecision; }
+    const int& GetIIndicatorDeep() const { return iIndicatorDeep; }
 
     // Bool Params
 private:
@@ -148,39 +149,100 @@ private:
     map<wstring, bool*>
         mapBoolParamsReadKey;    // Инициализируется в конструкторе
 public:
-    bool GetBCreateFolder() const { return bCreateFolder; }
-    bool GetBCompactOutput() const { return bCompactOutput; }
-    bool GetBCourseOutput() const { return bCourseOutput; }
-    bool GetBReloadLogFile() const { return bReloadLogFile; }
-    bool GetBIsOutCSVDate() const { return bIsOutCSVDate; }
-    bool GetBMultiIndicator() const { return bMultiIndicator; }
-    bool GetBCompInterDelete() const { return bCompInterDelete; }
-    bool GetBIsPercentRegAll() const { return bIsPercentRegAll; }
-    bool GetBOutCompWithName() const { return bOutCompWithName; }
-    bool GetBOutShortNameCur() const { return bOutShortNameCur; }
-    bool GetBIsUnDirected() const { return bIsUnDirected; }
-    bool GetBDelSpecCharDiscName() const { return bDelSpecCharDiscName; }
-    bool GetBIsNormalizeScoreComp() const { return bIsNormalizeScoreComp; }
-    bool GetBOutAllInfoWithoutTag() const { return bOutAllInfoWithoutTag; }
-    bool GetBOutEmptyComp() const { return bOutEmptyComp; }
-    bool GetBOutTotalInfo() const { return bOutTotalInfo; }
-    bool GetBOutWithoutEmptyCell() const { return bOutWithoutEmptyCell; }
+    const bool& GetBCreateFolder() const { return bCreateFolder; }
+    const bool& GetBCompactOutput() const { return bCompactOutput; }
+    const bool& GetBCourseOutput() const { return bCourseOutput; }
+    const bool& GetBReloadLogFile() const { return bReloadLogFile; }
+    const bool& GetBIsOutCSVDate() const { return bIsOutCSVDate; }
+    const bool& GetBMultiIndicator() const { return bMultiIndicator; }
+    const bool& GetBCompInterDelete() const { return bCompInterDelete; }
+    const bool& GetBIsPercentRegAll() const { return bIsPercentRegAll; }
+    const bool& GetBOutCompWithName() const { return bOutCompWithName; }
+    const bool& GetBOutShortNameCur() const { return bOutShortNameCur; }
+    const bool& GetBIsUnDirected() const { return bIsUnDirected; }
+    const bool& GetBDelSpecCharDiscName() const { return bDelSpecCharDiscName; }
+    const bool& GetBIsNormalizeScoreComp() const
+    {
+        return bIsNormalizeScoreComp;
+    }
+    const bool& GetBOutAllInfoWithoutTag() const
+    {
+        return bOutAllInfoWithoutTag;
+    }
+    const bool& GetBOutEmptyComp() const { return bOutEmptyComp; }
+    const bool& GetBOutTotalInfo() const { return bOutTotalInfo; }
+    const bool& GetBOutWithoutEmptyCell() const { return bOutWithoutEmptyCell; }
+
+    // double Params
+private:
+    double dMinWeigthRib;
+    double dMinComp;
+    double dAnomalBigScore;
+    double dTruncAvg;
+    double dTruncQuarPathLen;
+
+    // double Params adapter
+private:
+    void InitDoubleMap();
+    map<wstring, double*>
+        mapDoubleParamsReadKey;    // Инициализируется в конструкторе
+                                   // (значение и размер (ограничение))
+public:
+    const double& GetDMinWeigthRib() const { return dMinWeigthRib; }
+    const double& GetDMinComp() const { return dMinComp; }
+    const double& GetDAnomalBigScore() const { return dAnomalBigScore; }
+    const double& GetDTruncAvg() const { return dTruncAvg; }
+    const double& GetDTruncQuarPathLen() const { return dTruncQuarPathLen; }
+
+    // wstring Params
+private:
+    wstring wsNameDebugFile;
+    wstring wsNameLogFile;
+
+    // wstring Params adapter
+private:
+    void InitWStringMap();
+    map<wstring, wstring*>
+        mapWStringParamsReadKey;    // Инициализируется в конструкторе
+                                    // (значение и размер (ограничение))
 
 public:
+    const wstring& GetWSNameDebugFile() const { return wsNameDebugFile; }
+    const wstring& GetWSNameLogFile() const { return wsNameLogFile; }
+
+    // vector<wstring> Params
+private:
     vector<wstring>
         arrTypeDisc;    // Определяем вид дисциплины (основ, факульт, по выбору)
     vector<wstring> arrNameTypeDisc;
-
     vector<wstring> arrNameFileIn;
     vector<wstring> arrNameFileOut;
+    vector<wstring> arrTagName;
 
-    map < wstring, FTranslateData > mapArrOutParams;
+    // vector<wstring> Params adapter
+private:
+    void InitVectorWStringMap();
+    map<wstring, pair<vector<wstring>*, int>>
+        mapVectorWStringParamsReadKey;    // Инициализируется в конструкторе
+                                          // (значение и размер (ограничение))
+
+public:
+    const vector<wstring>& GetArrTypeDisc() const { return arrTypeDisc; }
+    const vector<wstring>& GetArrNameTypeDisc() const
+    {
+        return arrNameTypeDisc;
+    }
+    const vector<wstring>& GetArrNameFileIn() const { return arrNameFileIn; }
+    const vector<wstring>& GetArrNameFileOut() const { return arrNameFileOut; }
+    const vector<wstring>& GetArrTagName() const { return arrTagName; }
+
+public:
+    map<wstring, FTranslateData> mapArrOutParams;
     map<wstring, FTranslateData>
         mapAddOutParams;    // Вывод рекурсивного дерева
 
     map<wstring, wstring> mapAliasRename;
 
-    vector<wstring> arrTagName;
     map<wstring, set<int>> mapTagDisc;    // Определяем, какая дисциплина
                                           // (гуманитарна, естеств, общепроф)
 
@@ -192,22 +254,10 @@ public:
     vector<string> arrRegexHeaderInd;
     vector<string> arrRegexHeaderComp;
 
-    wstring wsNameDebugFile;
-    wstring wsNameLogFile;
-
     vector<bool> bArrIsSolveGraphMetric;
 
     // Объединять ли данные УП с данными графов
     vector<bool> bArrIsconcatGraphData;
-
-    double dMinWeigthRib;
-    double dMinComp;
-
-    double dAnomalBigScore;
-    double dTruncationAvg;
-
-    wstring wsNameConfig;    // "Параметры"
-    wstring wsNamePage;
 
 private:
     static int iSinglControll;
@@ -216,5 +266,8 @@ private:
                                    OpenXLSX::XLRow row);
     vector<set<wstring>> SetParsingParams(OpenXLSX::XLWorksheet& fPage);
 
-    FGlobal* ptrGlobal;    // Синглтон
+    wstring wsNamePage;    // Страница, откуда следует начать считывать
+                           // параметры
+    wstring  wsNameConfig;    // "Параметры"
+    FGlobal* ptrGlobal;       // Синглтон
 };

@@ -115,7 +115,8 @@ void FGraph::CountAllMetric(int iTypeGraph)
 
 void FGraph::CalcAllScoreAndAmount(FGraphType& fGraph)
 {
-    const int& iSoManyComp = this->ptrTree->ptrGlobal->ptrConfig->GetISoMachComp();
+    const int& iSoManyComp =
+        this->ptrTree->ptrGlobal->ptrConfig->GetISoMachComp();
     fGraph.arrAmountCountCompDisc.resize(iSoManyComp + 1);
 
     fGraph.iGraphAmountDisc = 0;    // Отчёт от нуля
@@ -304,14 +305,15 @@ void FGraph::GenerateReverseGraph()
                     ++iPowerComp;    // Совпала дисциплина
             }
 
-             try
+            try
             {
                 double dRibWeight =
                     fFormulaParser.TakeResult(fGraph.arrNodeWeight[iL],
                                               fGraph.arrNodeWeight[iR],
-                                                              iPowerComp);
+                                              iPowerComp);
 
-                if (dRibWeight > ptrTree->ptrGlobal->ptrConfig->dMinWeigthRib)
+                if (dRibWeight >
+                    ptrTree->ptrGlobal->ptrConfig->GetDMinWeigthRib())
                 {
                     fGraph.fAdjList[iL].push_back({ iR, dRibWeight });
                     fGraph.fAdjList[iR].push_back({ iL, dRibWeight });
@@ -349,17 +351,16 @@ void FGraph::GenerateGraph()
     int n;
 
     n = fGraph.mapReversRel.size();    // Кол-во вершин в графе (У нас несколько
-                                     // графов, убрал из полей)
+                                       // графов, убрал из полей)
     fGraph.arrRel.resize(n);
     fGraph.fAdjList.resize(n);
-    for (auto& [key, val] : fGraph.mapReversRel)
-        fGraph.arrRel[val] = key;
+    for (auto& [key, val] : fGraph.mapReversRel) fGraph.arrRel[val] = key;
 
     // Сохраняем вес каждой вершины
     fGraph.arrNodeWeight.resize(n);
     for (int i = 0; i < n; ++i)
     {
-        const auto& Disc = ptrTree->mapDisc[fGraph.arrRel[i].first];
+        const auto& Disc        = ptrTree->mapDisc[fGraph.arrRel[i].first];
         fGraph.arrNodeWeight[i] = Disc->dSumScore;
     }
 
@@ -377,8 +378,7 @@ void FGraph::GenerateGraph()
 
         for (int iR = iL + 1; iR < n; ++iR)
         {
-            const auto& R =
-                ptrTree->mapDisc[fGraph.arrRel[iR].first];
+            const auto& R = ptrTree->mapDisc[fGraph.arrRel[iR].first];
 
             int iPowerComp = 0;    // Сколько компетенций совпало
 
@@ -394,12 +394,11 @@ void FGraph::GenerateGraph()
                                                               R->dSumScore,
                                                               iPowerComp);
 
-                if (dRibWeight > ptrTree->ptrGlobal->ptrConfig->dMinWeigthRib)
+                if (dRibWeight >
+                    ptrTree->ptrGlobal->ptrConfig->GetDMinWeigthRib())
                 {
-                    fGraph.fAdjList[iL].push_back(
-                        { iR, dRibWeight });
-                    fGraph.fAdjList[iR].push_back(
-                        { iL, dRibWeight });
+                    fGraph.fAdjList[iL].push_back({ iR, dRibWeight });
+                    fGraph.fAdjList[iR].push_back({ iL, dRibWeight });
                 }
             }
             catch (runtime_error eError)
@@ -431,13 +430,11 @@ void FGraph::GenerateAltGraph()
     }
 
     int n;
-    n = fGraph
-            .mapReversRel.size();    // Для альтернативного графа аналогично
+    n = fGraph.mapReversRel.size();    // Для альтернативного графа аналогично
     fGraph.arrRel.resize(n);
     fGraph.fAdjList.resize(n);
     // Сопостовление в обратную сторону
-    for (const auto& [key, val] : fGraph.mapReversRel)
-        fGraph.arrRel[val] = key;
+    for (const auto& [key, val] : fGraph.mapReversRel) fGraph.arrRel[val] = key;
 
     // Сохраняем вес каждой вершины
     fGraph.arrNodeWeight.resize(n);
@@ -462,7 +459,7 @@ void FGraph::GenerateAltGraph()
 
     for (int iL = 0; iL < n - 1; ++iL)
     {
-        const auto& L = ptrTree->mapDisc[fGraph.arrRel[iL].first];
+        const auto& L        = ptrTree->mapDisc[fGraph.arrRel[iL].first];
         const auto& iCourseL = fGraph.arrRel[iL].second;
         // Теперь считается в CountAllMetric
         // if (fGraph.dMaxDiscScore < L->mapCourseScore[iCourseL])
@@ -470,7 +467,7 @@ void FGraph::GenerateAltGraph()
 
         for (int iR = iL + 1; iR < n; ++iR)
         {
-            const auto& R = ptrTree->mapDisc[fGraph.arrRel[iR].first];
+            const auto& R        = ptrTree->mapDisc[fGraph.arrRel[iR].first];
             const auto& iCourseR = fGraph.arrRel[iR].second;
 
             if (iCourseL != iCourseR) continue;    // Только одинаковые курсы
@@ -490,7 +487,8 @@ void FGraph::GenerateAltGraph()
                                               R->mapCourseScore[iCourseR],
                                               iPowerComp);
 
-                if (dRibWeight > ptrTree->ptrGlobal->ptrConfig->dMinWeigthRib)
+                if (dRibWeight >
+                    ptrTree->ptrGlobal->ptrConfig->GetDMinWeigthRib())
                 {
                     fGraph.fAdjList[iL].push_back({ iR, dRibWeight });
                     fGraph.fAdjList[iR].push_back({ iL, dRibWeight });
@@ -511,9 +509,9 @@ void FGraph::GenerateAltGraph()
                 { fGraph.arrRel[iL].first,
                   iCourseL - 1 }))    // То есть, если есть предыдущий курс
         {
-            int         iR = fGraph.mapReversRel[{
-                fGraph.arrRel[iL].first, iCourseL - 1 }];
-            const auto& R  = ptrTree->mapDisc[fGraph.arrRel[iR].first];
+            int iR =
+                fGraph.mapReversRel[{ fGraph.arrRel[iL].first, iCourseL - 1 }];
+            const auto& R        = ptrTree->mapDisc[fGraph.arrRel[iR].first];
             const auto& iCourseR = fGraph.arrRel[iR].second;
 
             int iPowerComp = L->mapComp.size();    // С сами собой все совпали
@@ -525,7 +523,8 @@ void FGraph::GenerateAltGraph()
                                               R->mapCourseScore[iCourseR],
                                               iPowerComp);
 
-                if (dRibWeight > ptrTree->ptrGlobal->ptrConfig->dMinWeigthRib)
+                if (dRibWeight >
+                    ptrTree->ptrGlobal->ptrConfig->GetDMinWeigthRib())
                 {
                     fGraph.fAdjList[iL].push_back({ iR, dRibWeight });
                     fGraph.fAdjList[iR].push_back({ iL, dRibWeight });
@@ -633,45 +632,53 @@ void FGraph::CalculateAllPairDistance(
         }
     }
 
-    double dMinVal = INF, dMaxVal = 0;
     int    iAmountNoLink = 0;
+
+    // Усечение выборки разбития по квартилям
+    vector<double> arrPathLen;
+
     for (int i = 0; i < N; ++i)
     {
-        for (int j = 0; j < N; ++j)
+        for (int j = i + 1; j < N; ++j)
         {
             if (arrAllDistance[i][j] == INF)
             {
                 ++iAmountNoLink;
                 continue;
             }
-
-            if (arrAllDistance[i][j] < dMinVal) dMinVal = arrAllDistance[i][j];
-            if (arrAllDistance[i][j] > dMaxVal) dMaxVal = arrAllDistance[i][j];
+            arrPathLen.push_back(arrAllDistance[i][j]);
         }
     }
 
-    double dLenght = dMaxVal - dMinVal;
-    // iAmountQuar
+    sort(arrPathLen.begin(), arrPathLen.end());
+
+    const double& dTranc =
+        ptrTree->ptrGlobal->ptrConfig->GetDTruncQuarPathLen();
+
+    int iMinInd = arrPathLen.size() * dTranc;
+    int iMaxInd = arrPathLen.size() - iMinInd - 1;
+
     int iAmountQuar = ptrTree->ptrGlobal->ptrConfig->GetIAmountQuar();
     arrQuarAmount.resize(iAmountQuar);
-    for (int i = 0; i < N; ++i)
-    {
-        for (int j = 0; j < N; ++j)
-        {
-            if (arrAllDistance[i][j] == INF)
-            {
-                continue;
-            }
-            if (arrAllDistance[i][j] == dMaxVal)
-            {
-                ++arrQuarAmount.back();
-                continue;
-            }
-            double index = (arrAllDistance[i][j] - dMinVal) / dLenght;
-            ++arrQuarAmount[int(index * iAmountQuar)];
-        }
-    }
     arrQuarAmount.push_back(iAmountNoLink);
+
+    if (iMinInd > iMaxInd) return;
+
+    double dMinVal = arrPathLen[iMinInd], dMaxVal = arrPathLen[iMaxInd];
+    double dLenght = dMaxVal - dMinVal;
+    // iAmountQuar
+    
+    for (int i = iMinInd; i <= iMaxInd; ++i)
+    {
+        if (arrPathLen[i] == dMaxVal)
+        {
+            ++arrQuarAmount.back();
+            continue;
+        }
+
+        double index = (arrPathLen[i] - dMinVal) / dLenght;
+        ++arrQuarAmount[int(index * iAmountQuar)];
+    }
 }
 
 void FGraph::CalculateMST(double&                                  dResult,

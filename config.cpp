@@ -15,7 +15,8 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       dMinWeigthRib(0.01),
       dMinComp(0.01),
       dAnomalBigScore(40.0),
-      dTruncationAvg(0.07),
+      dTruncAvg(0.07),
+      dTruncQuarPathLen(0.05),
       bCreateFolder(true),
       bCompactOutput(true),
       bCourseOutput(true),
@@ -33,8 +34,6 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       bOutTotalInfo(true),
       bOutWithoutEmptyCell(true),
       bIsOutCSVDate(false),
-      wsNameConfig(L"./config.xlsx"),
-      wsNamePage(L"Параметры"),
       sNameLabelHeader("Id;Label"),
       sNameRibHeader("Source;Target;Type;Weight"),
       sNameRibDir("Undirected"),
@@ -50,10 +49,16 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
     if (iSinglControll > 0) throw std::runtime_error("Re-creation Singleton");
 
     ++iSinglControll;
+    
+    wsNameConfig = L"./config.xlsx";
+    wsNamePage = L"Параметры";
 
     InitStringMap();
     InitIntMap();
     InitBoolMap();
+    InitDoubleMap();
+    InitWStringMap();
+    InitVectorWStringMap();
 }
 
 void FConfig::InitStringMap()
@@ -138,11 +143,41 @@ void FConfig::InitBoolMap()
     mapBoolParamsReadKey[L"Вывод полной информации о дисциплин без тега"] =
         &bOutAllInfoWithoutTag;
 
-    mapBoolParamsReadKey[L"Выводить компетенции с 0 ЗЕ"] = &bOutEmptyComp;
+    mapBoolParamsReadKey[L"Выводить компетенции с 0 ЗЕ"]  = &bOutEmptyComp;
     mapBoolParamsReadKey[L"Выводить итоговую статистику"] = &bOutTotalInfo;
     mapBoolParamsReadKey
         [L"Не оставлять пустые ячейки при выводе дерева компетенций"] =
-        &bOutWithoutEmptyCell;
+            &bOutWithoutEmptyCell;
+}
+
+
+void FConfig::InitDoubleMap()
+{
+    mapDoubleParamsReadKey[L"Создавать ребро, если его вес больше X="] =
+        &dMinWeigthRib;
+    mapDoubleParamsReadKey
+        [L"Считать компетенцию отсутсвующей, если значение меньше X="] =
+            &dMinComp;
+    mapDoubleParamsReadKey
+        [L"Считать кол-во ЗЕ аномально большим, если его значение больше X="] =
+            &dAnomalBigScore;
+}
+
+void FConfig::InitWStringMap() 
+{
+    mapWStringParamsReadKey[L"Название файла отладки"] = &wsNameDebugFile;
+    mapWStringParamsReadKey[L"Название лог файла (для пользователя)"] =
+        &wsNameLogFile;
+}
+
+void FConfig::InitVectorWStringMap()
+{
+    mapVectorWStringParamsReadKey[L"Определение вида дисциплины"] = {
+        &arrTypeDisc, 0
+    };
+
+    mapVectorWStringParamsReadKey[L"Каталоги данных УП"] = { &arrNameFileIn,
+                                                             0 };
 }
 
 bool FConfig::Init()
@@ -213,10 +248,33 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
+        // Считать переменную из config.xlsx с типом данных double
+        if (mapDoubleParamsReadKey.count(wsKey))
+        {
+            ptrGlobal->TakeData(*mapDoubleParamsReadKey[wsKey], row);
+            return true;
+        }
+
         // Считать переменную из config.xlsx с типом данных bool
         if (mapBoolParamsReadKey.count(wsKey))
         {
             ptrGlobal->TakeData(*mapBoolParamsReadKey[wsKey], row);
+            return true;
+        }
+
+        // Считать переменную из config.xlsx с типом данных wstring
+        if (mapWStringParamsReadKey.count(wsKey))
+        {
+            ptrGlobal->TakeData(*mapWStringParamsReadKey[wsKey], row);
+            return true;
+        }
+
+        // Считать переменную из config.xlsx с типом данных vector<wstring>
+        if (mapVectorWStringParamsReadKey.count(wsKey))
+        {
+            ptrGlobal->TakeData(*mapVectorWStringParamsReadKey[wsKey].first,
+                                row,
+                                mapVectorWStringParamsReadKey[wsKey].second);
             return true;
         }
 
@@ -272,17 +330,6 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
-        // Категории дисциплин (основные, по выбору, факультативы)
-        wsPatern = L"Определение вида дисциплины";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(arrTypeDisc, row,
-                                0);    // Нет ограничение на кол-во тегов,
-            // но считается, что 0 - основной, 1 - по выбору, 2 - факультатив
-            // (используется enum) Далее используется ETagDisc из solve.h
-            return true;
-        }
-
         // Проверка, что размер совпадает с arrTypeDisc.size()
         wsPatern = L"Названия видов дисциплин при выводе количества";
         if (wsKey == wsPatern)
@@ -290,14 +337,6 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             int iSize = 0;
             if (arrTypeDisc.size() != 0) iSize = arrTypeDisc.size() + 1;
             ptrGlobal->TakeData(arrNameTypeDisc, row, iSize);
-            return true;
-        }
-
-        // Каталог данных УП
-        wsPatern = L"Каталоги данных УП";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(arrNameFileIn, row, 0);
             return true;
         }
 
@@ -311,49 +350,24 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
-        wsPatern = L"Создавать ребро, если его вес больше X=";
+        wsPatern = L"Усечение среднего для мер центральной тенденции (процент)";
         if (wsKey == wsPatern)
         {
-            ptrGlobal->TakeData(dMinWeigthRib, row);
-            return true;
-        }
-
-        wsPatern = L"Считать компетенцию отсутсвующей, если значение меньше X=";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(dMinComp, row);
-            return true;
-        }
-
-        wsPatern =
-            L"Считать кол-во ЗЕ аномально большим, если его значение больше X=";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(dAnomalBigScore, row);
-            return true;
-        }
-
-        wsPatern = L"Усечение среднего (процент)";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(dTruncationAvg, row);
-            if (dTruncationAvg > 0.5)
-                dTruncationAvg = 0.5;    // Нет смысла ставить больше 50% так
+            ptrGlobal->TakeData(dTruncAvg, row);
+            if (dTruncAvg > 0.5)
+                dTruncAvg = 0.5;    // Нет смысла ставить больше 50% так
                                          // как уже не будет выборки
             return true;
         }
 
-        wsPatern = L"Название файла отладки";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(wsNameDebugFile, row);
-            return true;
-        }
 
-        wsPatern = L"Название лог файла (для пользователя)";
+        wsPatern = L"Усечение среднего для квартилей (процент)";
         if (wsKey == wsPatern)
         {
-            ptrGlobal->TakeData(wsNameLogFile, row);
+            ptrGlobal->TakeData(dTruncQuarPathLen, row);
+            if (dTruncQuarPathLen > 0.5)
+                dTruncQuarPathLen = 0.5;    // Нет смысла ставить больше 50% так
+                                    // как уже не будет выборки
             return true;
         }
 
@@ -482,7 +496,6 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
                              3))    // Теперь ещё и считываем, требуется ли
                                     // выводить
                     {
-
                         auto& it  = mapAddOutParams[key];
                         it.wsName = val.at(0);
 
@@ -512,7 +525,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
                                  ptrGlobal->ConwertToString(wsNamePage)),
                              { 2, 3, 4 }))
                     {
-                        auto& it = mapArrOutParams[key];
+                        auto& it  = mapArrOutParams[key];
                         it.wsName = val.at(0);
 
                         for (int k = 1; k < val.size(); ++k)

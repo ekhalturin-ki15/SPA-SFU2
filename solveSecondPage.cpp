@@ -135,7 +135,8 @@ void FSolveSecondPage::AddDiscScore(const OpenXLSX::XLWorksheet& fSheet,
                                            0))    // Т.е разрешён и является
                                                   // дисциплиной (не модулем)
                         {
-                            if (dScore > ptrGlobal->ptrConfig->dAnomalBigScore)
+                            if (dScore >
+                                ptrGlobal->ptrConfig->GetDAnomalBigScore())
                             {
                                 ptrGlobal->ptrError->ErrorAnomalBigScore(
                                     dScore);

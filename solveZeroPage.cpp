@@ -46,7 +46,7 @@ void FSolve::CreateDiscTreeZeroPage(const OpenXLSX::XLWorksheet& fSheet,
     //}
 
 #ifdef DEBUG
-    ofstream out(ptrGlobal->ptrConfig->wsNameDebugFile);
+    ofstream out(ptrGlobal->ptrConfig->GetWSNameDebugFile());
 #endif    // DEBUG
 
     int iPreX = -1;    // Root вне учебного плана (в нём все модули) у него
@@ -104,7 +104,7 @@ void FSolve::CreateDiscTreeZeroPage(const OpenXLSX::XLWorksheet& fSheet,
                         // или факультатив)
                         int iTypeNumber = 0;
                         for (const auto& wsType :
-                             ptrGlobal->ptrConfig->arrTypeDisc)
+                             ptrGlobal->ptrConfig->GetArrTypeDisc())
                         {
                             if (wsData.find(wsType) != wstring::npos)
                             {

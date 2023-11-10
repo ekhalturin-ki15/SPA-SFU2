@@ -92,7 +92,7 @@ map<int, vector<pair<double, string>>> FCorridorAdapter::Take(const int& iSize)
                 {
                     double dSum = 0;
                     int    iAmountCut =
-                        fData.size() * ptrGlobal->ptrConfig->dTruncationAvg;
+                        fData.size() * ptrGlobal->ptrConfig->GetDTruncAvg();
 
                     int iSizeSampling = fData.size() - 2 * iAmountCut;
 
@@ -589,7 +589,7 @@ void FOutData::CreateAllCurriculaTotalData(
     vector<wstring> arrBuf = arrOnlyAllowHead;
     arrBuf.insert(arrBuf.end(), arrAddHead.begin(), arrAddHead.end());
 
-    for (auto& wsNameType : ptrGlobal->ptrConfig->arrNameTypeDisc)
+    for (auto& wsNameType : ptrGlobal->ptrConfig->GetArrNameTypeDisc())
     {
         arrBuf.push_back(L"!" + wsNameType);
     }
@@ -635,7 +635,7 @@ void FOutData::CreateAllCurriculaTotalData(
         // Дисциплин основных, по выбору, факультативов и т.д во всём УП
         {
             int iNumberType = -1;
-            for (auto& wsNameType : ptrGlobal->ptrConfig->arrNameTypeDisc)
+            for (auto& wsNameType : ptrGlobal->ptrConfig->GetArrNameTypeDisc())
             {
                 ++iNumberType;
                 arrAllResult.push_back(
@@ -673,7 +673,7 @@ void FOutData::CreateAllCurriculaTotalData(
                     arrAllResult.push_back(FGraphType::dNoInit);
                 }
 
-                if (dRes > ptrGlobal->ptrConfig->dMinComp)
+                if (dRes > ptrGlobal->ptrConfig->GetDMinComp())
                 {
                     arrAllResult.push_back(dRes * 100);
                 }
