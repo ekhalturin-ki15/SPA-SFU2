@@ -435,9 +435,9 @@ void FOutData::CreateOnlyAllowedHeaderRow(vector<string>&        arrReturn,
                     ptrGlobal->ptrConfig->mapArrOutParams[L"ЗЕ у компетенции"]
                         .GetName()) != wstring::npos)
             {
-                if (ptrGlobal->ptrConfig->mapArrOutParams[L"ЗЕ у компетенции"]
-                        .GetType(EOutType::EOT_Head))
-                    arrIsAllowed.back() = false;
+                arrIsAllowed.back() =
+                    (ptrGlobal->ptrConfig->mapArrOutParams[L"ЗЕ у компетенции"]
+                         .GetType(EOutType::EOT_Head));
             }
             if (arrIsAllowed.back())
             {
@@ -962,7 +962,8 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
     for (auto& [sKey, ptrCurrentTree] :
          ptrTree->ptrMetric->ptrTreeMetric->mapChild)
     {
-        // if (sKey == FMetric::sAllMetric) continue;
+        if (sKey == FMetric::sAllMetric)
+            continue;    // Мы его уже ранее проверили
 
         vector<vector<string>> arrDataAllCourse;
         // Вывод конкретного курса
