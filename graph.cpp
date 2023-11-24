@@ -700,10 +700,7 @@ void FGraph::CalculateMST(double&                                  dResult,
     }
     sort(ALL(q), cmp);
 
-    vector<int> arrDSU(N);
-    int         i = 0;
-    for (auto& it : arrDSU) it = i++;
-    True_DSU<int> fDSU(arrDSU);
+    True_DSU<int> fDSU(N);
 
     for (const auto& it : q)
     {

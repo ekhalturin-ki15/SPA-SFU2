@@ -5,19 +5,16 @@
 #include <vector>
 using namespace std;
 
-// Система непересекающихся множеств, своя реализация (https://github.com/ekhalturin-ki15/Kata)
+// Система непересекающихся множеств, своя реализация
+// (https://github.com/ekhalturin-ki15/Kata)
 template<typename T>
 struct True_DSU
 {
-    vector<T> v, rank, pr, s;
-    int       n;
-    int       count;
-
+public:
     True_DSU() = delete;
 
-    True_DSU(const vector<T>& v_) : v { v_ }
+    True_DSU(int _n) : n { _n }
     {
-        n     = v.size();
         count = n;
         rank.assign(n, 0);
         s.assign(n, 1);
@@ -53,4 +50,11 @@ struct True_DSU
         s[r] += s[l];
         pr[l] = r;
     }
+
+    int GetCount() const { return count; }
+
+private:
+    vector<T> rank, pr, s;
+    int       n;
+    int       count;
 };

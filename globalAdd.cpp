@@ -20,8 +20,16 @@ string FGlobal::DoubletWithPrecision(const double& dNum) const
 { 
     std::ostringstream fOut;
     fOut << std::setprecision(ptrConfig->GetIPrecision())
-        << std::noshowpoint << dNum;
-    return fOut.str();
+        << std::fixed << dNum;
+
+    string buf = fOut.str();
+    if (buf.find('.') != string::npos)
+    {
+        while (buf.back() == '0') buf.pop_back();
+    }
+    if (buf.back() == '.') buf.pop_back();
+
+    return buf;
 }
 
 void FGlobal::TakeData(bool& outBData, const OpenXLSX::XLRow& row) 
