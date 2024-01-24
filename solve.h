@@ -54,6 +54,7 @@ struct FTreeElement
     // компетенцию)
 };
 
+//Один конкретный УП
 struct FTreeDisc
 {
     friend class FSolve;
@@ -76,8 +77,10 @@ struct FTreeDisc
     string sNamePlan;
     string sShortNamePlan;    // Имя УП без расширения
     string sCurName;    // Имя УП без расширения
-    string sTypePlan =
-        "None";    // Указывается: бакалавр, магистр, специалист или абитуриент
+    string sTypePlan;   // Указывается: бакалавр, магистр, специалист или абитуриент
+
+    int iYearStart; // Год начала обучения
+    int iCodeUGSN;         // Год начала обучения
 
     int iAmountCourse;    // Количество курсов (именно курсов, не семестров)
     double dAllSumScore;    // Общее кол-во ЗЕ курса (только дисциплин, и только
@@ -161,14 +164,15 @@ private:
 
     // По идеи, там передаётся всегда this->iKeyPageNumber
 
-    void CreateDiscTreeZeroPage(
+    void ZeroPageCreateDiscTree(
         const OpenXLSX::XLWorksheet& fSheet,
                         int iKeyPageNumber);    // Находится в solveZeroPage.cpp
-    void AddCompIndicatorFirstPage(
+
+    void FirstPageAddCompIndicator(
         const OpenXLSX::XLWorksheet& fSheet,
         int iKeyPageNumber);    // Находится в solveFirstPage.cpp
 
-    void FindTypePlanThirdPage(
+    void ThirdPageFindTypePlan(
         const OpenXLSX::XLWorksheet& fSheet,
         int iKeyPageNumber);    // Находится в solveFirstPage.cpp
 
@@ -180,5 +184,6 @@ private:
     regex    fRegexComp;
     vector<regex> arrRegexHeaderInd;     // Может быть несколько, поэтому вектор
     vector<regex> arrRegexHeaderComp;    // Может быть несколько, поэтому вектор
+    vector<regex> arrRegexCodeUGSN;    // Может быть несколько, поэтому вектор
 
 };

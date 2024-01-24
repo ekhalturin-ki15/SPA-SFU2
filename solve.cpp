@@ -44,6 +44,12 @@ bool FSolve::Init()
              ++i)
             arrRegexHeaderComp[i] =
                 ptrGlobal->ptrConfig->arrRegexHeaderComp[i];
+
+
+        arrRegexCodeUGSN.resize(ptrGlobal->ptrConfig->arrRegexCodeUGSN.size());
+        for (int i = 0; i < ptrGlobal->ptrConfig->arrRegexCodeUGSN.size();
+             ++i)
+            arrRegexCodeUGSN[i] = ptrGlobal->ptrConfig->arrRegexCodeUGSN[i];
     }
     catch (...)
     {
@@ -97,13 +103,13 @@ bool FSolve::Read(string _sInPath, string sNamePlan)
 
         fDoc.open(sInPath);
         fBook = fDoc.workbook();
-        CreateDiscTreeZeroPage(
+        ZeroPageCreateDiscTree(
             fBook.worksheet(
                 ptrGlobal->ptrConfig->GetKeyPage(iCurrentPage).sName),
             iCurrentPage);
         ++iCurrentPage;
 
-        AddCompIndicatorFirstPage(
+        FirstPageAddCompIndicator(
             fBook.worksheet(
                 ptrGlobal->ptrConfig->GetKeyPage(iCurrentPage).sName),
             iCurrentPage);
@@ -115,7 +121,7 @@ bool FSolve::Read(string _sInPath, string sNamePlan)
             iCurrentPage);
         ++iCurrentPage;
 
-        FindTypePlanThirdPage(
+        ThirdPageFindTypePlan(
             fBook.worksheet(
                 ptrGlobal->ptrConfig->GetKeyPage(iCurrentPage).sName),
             iCurrentPage);

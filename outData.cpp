@@ -626,9 +626,11 @@ void FOutData::CreateAllCurriculaTotalData(
 #pragma region FormationData
         vector<double> arrAllResult;
         // Общие для УП метрики (перечислены в arrPrefixHead)
-        arrAllResult.push_back(atoi(
-            it->sShortNamePlan.substr(it->sShortNamePlan.size() - 2).c_str()));
-        arrAllResult.push_back(atoi(it->sShortNamePlan.substr(0, 2).c_str()));
+        //arrAllResult.push_back(atoi(
+        //    it->sShortNamePlan.substr(it->sShortNamePlan.size() - 2).c_str()));
+        //arrAllResult.push_back(atoi(it->sShortNamePlan.substr(0, 2).c_str()));
+        arrAllResult.push_back(it->iYearStart);
+        arrAllResult.push_back(it->iCodeUGSN);
         arrAllResult.push_back(it->dAllSumScore);
         arrAllResult.push_back(it->iExtendedAmountDisc);
 

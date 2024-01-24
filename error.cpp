@@ -176,6 +176,20 @@ void FError::ErrorOutFileNotFind(wstring wsPathName) const
     ErrorOutFileNotFind(ptrGlobal->ConwertToString(wsPathName));
 }
 
+void FError::ErrorParams(wstring wsPathName) const 
+{
+    ErrorParams(ptrGlobal->ConwertToString(wsPathName));
+}
+
+void FError::ErrorParams(string sPathName) const
+{
+    ofstream out(ptrGlobal->ptrConfig->GetWSNameLogFile(), std::ios::app);
+    out << "Неправильно указан параметр " + sPathName;
+    out << END;
+    out.close();
+}
+
+
 void FError::ErrorUncorrectExtension() const
 {
     ofstream out(ptrGlobal->ptrConfig->GetWSNameLogFile(), std::ios::app);

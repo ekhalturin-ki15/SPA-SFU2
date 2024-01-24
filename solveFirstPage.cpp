@@ -3,7 +3,8 @@
 #include "global.h"
 #include "solve.h"
 
-void FSolve::AddCompIndicatorFirstPage(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageNumber)
+void FSolve::FirstPageAddCompIndicator(const OpenXLSX::XLWorksheet& fSheet,
+                                       int iKeyPageNumber)
 {
     int h = ptrGlobal->HeightPage(fSheet);
 

@@ -4,7 +4,7 @@
 #include "solve.h"
 
 
-void FSolve::FindTypePlanThirdPage(const OpenXLSX::XLWorksheet& fSheet,
+void FSolve::ThirdPageFindTypePlan(const OpenXLSX::XLWorksheet& fSheet,
                                    int                          iKeyPageNumber)
 {
     //int h = ptrGlobal->HeightPage(fSheet);
@@ -21,19 +21,66 @@ void FSolve::FindTypePlanThirdPage(const OpenXLSX::XLWorksheet& fSheet,
             wstring wsData = ptrGlobal->GetValue(it);
             if (wsData == L"") continue;
 
-            for (const auto& setFinder :
-                 ptrGlobal->ptrConfig->GetKeyPage(iKeyPageNumber).arrHeader)
+            if (arrDisc.back()->sTypePlan == "None")
             {
-                for (const auto& wData : setFinder)
+                for (const auto& setFinder :
+                     ptrGlobal->ptrConfig->GetKeyPage(iKeyPageNumber).arrHeader)
                 {
-                    if (wsData.find(wData) != wstring::npos)
+                    for (const auto& wData : setFinder)
                     {
-                        arrDisc.back()->sTypePlan =
-                            ptrGlobal->ConwertToString(*setFinder.begin());
-                        return;
+                        if (wsData.find(wData) != wstring::npos)
+                        {
+                            arrDisc.back()->sTypePlan =
+                                ptrGlobal->ConwertToString(*setFinder.begin());
+                            // return;
+                        }
                     }
                 }
             }
+
+            string sData = ptrGlobal->ConwertToString(
+                ptrGlobal->ConwertPathFormat(wsData));
+            if (arrDisc.back()->iYearStart == 0)
+                if (sData.size() == 4)    // Скорее всего год начала подготовки
+                {
+                    int iBuf = atoi(sData.c_str());
+                    if ((iBuf) && (iBuf > 1000))
+                    {
+                        arrDisc.back()->iYearStart = iBuf;
+                    }
+                }
+
+            if (arrDisc.back()->iCodeUGSN == 0)
+            {
+                bool bIsTrueMatchComp = false;
+                vector<smatch> matchesHeaderComp;
+
+                for (const auto& HeaderComp : arrRegexCodeUGSN)
+                {
+                    vector<smatch> matchesBuf { sregex_iterator { ALL(sData),
+                                                                  HeaderComp },
+                        sregex_iterator {}
+                    };
+                    if (matchesBuf.size() == 3)
+                    {
+                        matchesHeaderComp = matchesBuf;
+                        bIsTrueMatchComp  = true;
+                        break;
+                    }
+                }
+
+                if (bIsTrueMatchComp)
+                {
+                    string sCodeUGSN = matchesHeaderComp[0][1].str();
+                    int    iBuf      = atoi(sCodeUGSN.c_str());
+                    if (iBuf)
+                    {
+                        arrDisc.back()->iCodeUGSN = iBuf;
+                    }
+                    
+                }
+            }
+
         }
     }
 }

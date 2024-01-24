@@ -202,7 +202,11 @@ bool FConfig::Init()
         auto    it        = row.cells().begin();
         wstring sDescript = ptrGlobal->GetValue(*it);
 
-        if (!SetParams(fBook, sDescript, row)) return false;
+        if (!SetParams(fBook, sDescript, row))
+        {
+            ptrGlobal->ptrError->ErrorParams(sDescript);
+            return false;
+        }
     }
 
     fDoc.close();
@@ -391,6 +395,13 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(arrRegexHeaderComp, row, 0);
+            return true;
+        }
+
+        wsPatern = L"Регулярное выражение разбивки кода направления подготовки";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(arrRegexCodeUGSN, row, 0);
             return true;
         }
 

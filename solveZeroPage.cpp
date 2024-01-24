@@ -3,7 +3,7 @@
 #include "global.h"
 #include "solve.h"
 
-void FSolve::CreateDiscTreeZeroPage(const OpenXLSX::XLWorksheet& fSheet,
+void FSolve::ZeroPageCreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
                             int                          iKeyPageNumber)
 {
     int h = ptrGlobal->HeightPage(fSheet);

@@ -253,6 +253,7 @@ public:
 
     vector<string> arrRegexHeaderInd;
     vector<string> arrRegexHeaderComp;
+    vector<string> arrRegexCodeUGSN;
 
     vector<bool> bArrIsSolveGraphMetric;
 

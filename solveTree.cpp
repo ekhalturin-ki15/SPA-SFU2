@@ -17,8 +17,11 @@ FTreeElement::FTreeElement()
 }
 
 FTreeDisc::FTreeDisc(FGlobal* _ptrGlobal)
-    : ptrGlobal(_ptrGlobal), iAmountCourse(0), dAllSumScore(0.), iAmountDisc(0)
-    , iExtendedAmountDisc(0)
+    : ptrGlobal(_ptrGlobal), iAmountCourse(0), dAllSumScore(0.), iAmountDisc(0),
+      iExtendedAmountDisc(0),
+      iYearStart(0),
+      iCodeUGSN(0),
+      sTypePlan("None")
 {
     ptrRoot = new FTreeElement;
     ptrGraph = nullptr;    // Только после Read можно строить граф

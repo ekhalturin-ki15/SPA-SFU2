@@ -21,8 +21,11 @@ struct FError
     void ErrorInFileNotFind(wstring wsPathName)
         const;    // Если ошибки при открытии файла в виде zip
 
-    void ErrorOutFileNotFind(string wsPathName) const;
+    void ErrorOutFileNotFind(string sPathName) const;
     void ErrorOutFileNotFind(wstring wsPathName) const;
+
+    void ErrorParams(string sPathName) const;
+    void ErrorParams(wstring wsPathName) const;
 
     void ErrorOutFileCreate(string wsPathName) const;
     void ErrorOutFileCreate(wstring wsPathName) const;
