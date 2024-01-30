@@ -3,7 +3,7 @@
 
 int FConfig::iSinglControll = 0;
 
-FConfig::FConfig(FGlobal* _ptrGlobal)
+FConfig::FConfig(shared_ptr<FGlobal> _ptrGlobal)
     : ptrGlobal(_ptrGlobal),
       iCourseLen(2),
       iMaxNameDiscLen(15),
@@ -46,12 +46,13 @@ FConfig::FConfig(FGlobal* _ptrGlobal)
       sFormula("((L + R) / 2) * K"),
       sFormulaReverseGraph("((L + R) / 2) * K")
 {
-    if (iSinglControll > 0) throw std::runtime_error("Re-creation Singleton");
+    //Unit test против такого
+    //if (iSinglControll > 0) throw std::runtime_error("Re-creation Singleton");
 
     ++iSinglControll;
-    
-    wsNameConfig = L"./config.xlsx";
-    wsNamePage = L"Параметры";
+
+    wsNameConfig = L"/config.xlsx";
+    wsNamePage   = L"Параметры";
 
     InitStringMap();
     InitIntMap();
@@ -150,7 +151,6 @@ void FConfig::InitBoolMap()
             &bOutWithoutEmptyCell;
 }
 
-
 void FConfig::InitDoubleMap()
 {
     mapDoubleParamsReadKey[L"Создавать ребро, если его вес больше X="] =
@@ -163,7 +163,7 @@ void FConfig::InitDoubleMap()
             &dAnomalBigScore;
 }
 
-void FConfig::InitWStringMap() 
+void FConfig::InitWStringMap()
 {
     mapWStringParamsReadKey[L"Название файла отладки"] = &wsNameDebugFile;
     mapWStringParamsReadKey[L"Название лог файла (для пользователя)"] =
@@ -184,9 +184,14 @@ bool FConfig::Init()
 {
     OpenXLSX::XLDocument fDoc;
     OpenXLSX::XLWorkbook fBook;
+
+    filesystem::path wsFile = ptrGlobal->GetCurrentPath();
+    wsFile         = ptrGlobal->ConwertPathFormat(wsFile, false);
+    wsFile += wsNameConfig;
+
     try
     {
-        fDoc.open(ptrGlobal->ConwertToString(wsNameConfig));
+        fDoc.open(ptrGlobal->ConwertToString(wsFile));
     }
     catch (...)
     {
@@ -197,8 +202,10 @@ bool FConfig::Init()
     auto arrNamePage = fBook.worksheetNames();
 
     auto fMainPage = fBook.worksheet(ptrGlobal->ConwertToString(wsNamePage));
+    int  i         = -1;
     for (auto& row : fMainPage.rows())
     {
+        ++i;
         auto    it        = row.cells().begin();
         wstring sDescript = ptrGlobal->GetValue(*it);
 
@@ -316,7 +323,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             bArrIsSolveGraphMetric.resize(arrBool.size());
             for (int i = 0; i < arrBool.size(); ++i)
                 bArrIsSolveGraphMetric[i] =
-                    (arrBool[i].find(L"да") != wstring::npos);
+                    (ptrGlobal->IsThatIsTrue(arrBool[i]));
 
             return true;
         }
@@ -328,8 +335,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             ptrGlobal->TakeData(arrBool, row, 3);
             bArrIsconcatGraphData.resize(arrBool.size());
             for (int i = 0; i < arrBool.size(); ++i)
-                bArrIsconcatGraphData[i] =
-                    (arrBool[i].find(L"да") != wstring::npos);
+                bArrIsconcatGraphData[i] = ptrGlobal->IsThatIsTrue(arrBool[i]);
 
             return true;
         }
@@ -360,10 +366,9 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             ptrGlobal->TakeData(dTruncAvg, row);
             if (dTruncAvg > 0.5)
                 dTruncAvg = 0.5;    // Нет смысла ставить больше 50% так
-                                         // как уже не будет выборки
+                                    // как уже не будет выборки
             return true;
         }
-
 
         wsPatern = L"Усечение среднего для квартилей (процент)";
         if (wsKey == wsPatern)
@@ -371,7 +376,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             ptrGlobal->TakeData(dTruncQuarPathLen, row);
             if (dTruncQuarPathLen > 0.5)
                 dTruncQuarPathLen = 0.5;    // Нет смысла ставить больше 50% так
-                                    // как уже не будет выборки
+                                            // как уже не будет выборки
             return true;
         }
 
@@ -481,7 +486,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
                             for (auto& it : val)
                             {
                                 int iIdTag = stoi(it);
-                                mapTagDisc[key].insert(iIdTag);
+                                mapTagDisc[key].insert(ETagDisc(iIdTag));
                             }
                         }
                     }
@@ -512,7 +517,8 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
 
                         for (int k = 1; k < val.size(); ++k)
                         {
-                            it.arrFlag.push_back(val[k] == L"да");
+                            it.arrFlag.push_back(
+                                ptrGlobal->IsThatIsTrue(val[k]));
                         }
                     }
                 }
@@ -541,7 +547,8 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
 
                         for (int k = 1; k < val.size(); ++k)
                         {
-                            it.arrFlag.push_back(val[k] == L"да");
+                            it.arrFlag.push_back(
+                                ptrGlobal->IsThatIsTrue(val[k]));
                         }
                     }
                 }

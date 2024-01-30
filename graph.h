@@ -59,7 +59,7 @@ struct FGraph
     static const double dAllScoreNotEqualError;
 
     // Инверсия зависимости
-    explicit FGraph(FTreeDisc* _ptrTree);
+    explicit FGraph(shared_ptr<FTreeDisc> _ptrTree);
 
     // Использовать только после вызова Read у ptrSolve, то есть, когда ptrTree
     // заполнен
@@ -97,7 +97,7 @@ struct FGraph
                      // iAlt - альтернативный
 
 private:
-    FTreeDisc* ptrTree;
+    shared_ptr<FTreeDisc> ptrTree;
 
     // mapAllowDisc теперь в FSolve вместе с УП
     // map<wstring, FTreeElement*>

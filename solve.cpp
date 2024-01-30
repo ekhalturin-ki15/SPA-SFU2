@@ -7,18 +7,18 @@
 
 int FSolve::iSinglControll = 0;
 
-FSolve::FSolve(FGlobal* _ptrGlobal)
+FSolve::FSolve(shared_ptr < FGlobal > _ptrGlobal)
     : ptrGlobal(_ptrGlobal),
       bIsCorrectParsing(true),
       iCurrentPage(0),
       iCurrentRow(0),
       iMaxCourse(0)
 {
-    if (iSinglControll > 0) throw std::runtime_error("Re-creation Singleton");
+    // Unit test против такого
+    //if (iSinglControll > 0) throw std::runtime_error("Re-creation Singleton");
     ++iSinglControll;
 
-    ptrSolveSecondPage = new FSolveSecondPage(_ptrGlobal);
-    // fSolveSecondPage.ptrGlobal = _ptrGlobal;
+    ptrSolveSecondPage = make_unique<FSolveSecondPage>(_ptrGlobal);
 }
 
 bool FSolve::Init()
@@ -91,7 +91,7 @@ bool FSolve::Read(string _sInPath, string sNamePlan)
 
     try
     {
-        FTreeDisc* ptrTree = new FTreeDisc(ptrGlobal);
+        shared_ptr<FTreeDisc> ptrTree = make_shared<FTreeDisc> (ptrGlobal);
         arrDisc.push_back(ptrTree);
         arrDisc.back()->sNamePlan = sNamePlan;
         arrDisc.back()->sShortNamePlan =
@@ -143,7 +143,7 @@ bool FSolve::Read(string _sInPath, string sNamePlan)
     }
     catch (logic_error eError)
     {
-        delete arrDisc.back();
+        arrDisc.back().reset();
         arrDisc.pop_back();
         /*if (FError::sDontHaveIndex== eError.what())
         {
@@ -192,7 +192,7 @@ void FSolve::CreateAllGraph()
 {
     for (auto& it : arrDisc)
     {
-        it->ptrGraph = new FGraph(it);
+        it->ptrGraph = make_shared< FGraph>(it);
         it->ptrGraph->Create();    // А теперь, построй граф на основе УП
     }
 }
@@ -201,15 +201,16 @@ void FSolve::CreateAllMetric()
 {
     for (auto& it : arrDisc)
     {
-        it->ptrMetric = new FMetric(it);
-        it->ptrMetric->Create();    // А теперь, посчитай метрики УП
+        it->ptrMetric = make_shared< FMetric>(it);
+        it->ptrMetric->Init(); 
+        //it->ptrMetric->Create();    // А теперь, посчитай метрики УП
     }
 }
 
 FSolve::~FSolve()
 {
-    for (auto& it : arrDisc) delete it;
+    for (auto& it : arrDisc) it.reset();
 
-    delete ptrSolveSecondPage;
+    ptrSolveSecondPage.reset();
     --iSinglControll;
 }

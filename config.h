@@ -4,6 +4,16 @@
 struct FGlobal;
 struct FConfig;
 
+// Тег дисциплины (гуманитарные, технические, естественнонаучные)
+enum ETagDisc : int
+{
+    ETagD_Human, // гуманитарные
+    ETagD_Tech, // технические
+    ETagD_Natur, // естественнонаучные
+    ETagD_Another, // те, что не были определены или сопоставленны чему-либо (ОШИБКА)
+    ETagD_Size
+};
+
 struct FPageInfo
 {
     wstring wsName;
@@ -14,7 +24,7 @@ struct FPageInfo
 
 struct FTranslateData
 {
-    friend class FConfig;
+    friend struct FConfig;
 
     wstring GetName() const { return wsName; }
 
@@ -47,7 +57,7 @@ private:
 struct FConfig
 {
 public:
-    explicit FConfig(FGlobal* _ptrGlobal);
+    explicit FConfig(shared_ptr<FGlobal> _ptrGlobal);
     ~FConfig();
 
     bool Init();
@@ -243,7 +253,7 @@ public:
 
     map<wstring, wstring> mapAliasRename;
 
-    map<wstring, set<int>> mapTagDisc;    // Определяем, какая дисциплина
+    map<wstring, set<ETagDisc>> mapTagDisc;    // Определяем, какая дисциплина
                                           // (гуманитарна, естеств, общепроф)
 
     set<wstring> setIgnoreDisc;
@@ -270,5 +280,5 @@ private:
     wstring wsNamePage;    // Страница, откуда следует начать считывать
                            // параметры
     wstring  wsNameConfig;    // "Параметры"
-    FGlobal* ptrGlobal;       // Синглтон
+    shared_ptr<FGlobal> ptrGlobal;       // Синглтон
 };

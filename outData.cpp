@@ -9,7 +9,8 @@
 #include <iomanip>
 #include <sstream>
 
-FCorridorAdapter::FCorridorAdapter(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
+FCorridorAdapter::FCorridorAdapter(shared_ptr < FGlobal > _ptrGlobal)
+    : ptrGlobal(_ptrGlobal)
 {
 }
 
@@ -126,7 +127,7 @@ void FCorridorAdapter::Add(int key, pair<double, string> fData)
 
 int FOutData::iSinglControll = 0;
 
-FOutData::FOutData(FGlobal* _ptrGlobal)
+FOutData::FOutData(shared_ptr < FGlobal > _ptrGlobal)
     : ptrGlobal(_ptrGlobal), iSizeOnlyAllow(0)
 
 // arrCompetenceHead(
@@ -155,14 +156,15 @@ FOutData::FOutData(FGlobal* _ptrGlobal)
 //       L"Количество основных дисциплин", L"Количество дисциплин по выбору",
 //       L"Количество факультативов" })
 {
-    if (iSinglControll > 0) throw std::runtime_error("Re-creation Singleton");
+    // Unit test против такого
+    //if (iSinglControll > 0) throw std::runtime_error("Re-creation Singleton");
     ++iSinglControll;
 
-    fFileCache = new FFileCache(this);
+    fFileCache = make_shared<FFileCache>(ptrGlobal->ptrOutData);
 }
 
 void FOutData::CreateTotalInfo(vector<double>&   arrReturnDataMetrics,
-                               const FGraphType* fGraph,
+                               const shared_ptr < FGraphType > fGraph,
                                const EOutType&   eOutType)
 {
     const vector<wstring> arrMetricHead(
@@ -235,7 +237,7 @@ void FOutData::CreateTotalInfo(vector<double>&   arrReturnDataMetrics,
 }
 
 void FOutData::CreateTotalInfo(vector<string>&   arrReturnDataHeader,
-                               const FGraphType* fGraph,
+                               const shared_ptr < FGraphType > fGraph,
                                const EOutType&   eOutType)
 {
     const vector<wstring> arrMetricHead(
@@ -326,7 +328,7 @@ void FOutData::CreateTotalInfo(vector<string>&   arrReturnDataHeader,
 }
 
 void FOutData::CreateTotalInfo(vector<vector<string>>& arrReturnData,
-                               const FGraphType*       fGraph,
+                               const shared_ptr < FGraphType > fGraph,
                                const EOutType&         eOutType)
 {
     arrReturnData.clear();
@@ -453,7 +455,7 @@ void FOutData::CreateOnlyAllowedResultRow(vector<string>& arrReturn,
                                           // const string&         sCurName,
                                           const vector<double>&  arrResult,
                                           FCorridorAdapter&      fCorridorData,
-                                          FTreeDisc*             ptrTree,
+                                          shared_ptr < FTreeDisc > ptrTree,
                                           const vector<wstring>& arrOnlyAllow)
 {
     int i = 0;
@@ -772,7 +774,7 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
         vector<double> arrAllResult;
 
         CreateTotalInfo(arrAllResult,
-                        &it->ptrGraph->mapGraph[iGraphType],
+            make_shared<FGraphType>(it->ptrGraph->mapGraph[iGraphType]),
                         EOutType::EOT_Head);
 
         vector<string> arrCurData;
@@ -941,7 +943,8 @@ void FOutData::Out(string sOutPath)
     }
 }
 
-void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
+void FOutData::OutAddInfo(string sName, string sPath,
+                          shared_ptr < FTreeDisc > ptrTree)
 {
     auto& ptrCurrentTree =
         ptrTree->ptrMetric->ptrTreeMetric->mapChild[FMetric::sAllMetric];
@@ -1028,7 +1031,8 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
             {
                 vector<vector<string>> arrTotalCourseGraphData;
                 CreateTotalInfo(arrTotalCourseGraphData,
-                                &ptrTree->ptrGraph->mapGraph[sKey[0] - '1'],
+                                make_shared<FGraphType> (ptrTree->ptrGraph
+                                    ->mapGraph[sKey[0] - '1']),
                                 EOutType::EOT_Added);
 
                 OutTableInfo(1,    // Так как 1-индексация
@@ -1051,7 +1055,7 @@ void FOutData::OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree)
     {
         vector<vector<string>> arrTotalGraphData;
         CreateTotalInfo(arrTotalGraphData,
-                        &ptrTree->ptrGraph->mapGraph[FGraph::iCommon],
+                        make_shared<FGraphType> (ptrTree->ptrGraph->mapGraph[FGraph::iCommon]),
                         EOutType::EOT_Added);
         OutTableInfo(1, iYShift + 1,    // Так как 1-индексация
                      arrTotalGraphData, fFileCache->arrOpenWKS.back());
@@ -1175,7 +1179,8 @@ void FOutData::OutTableInfoCSV(
 }
 
 void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
-                                   FTreeMetric* ptrMetric, bool bIsOutNameCur
+                                   shared_ptr<FTreeMetric>  ptrMetric,
+                                   bool                    bIsOutNameCur
                                    // const double            dAllSum,
                                    // bool bIsLocal
 )
@@ -1295,7 +1300,8 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
 void FOutData::CreateTableRectInfo(
     const bool& bIsCounting,
     vector<vector<string>>& arrReturnData,    // Возвращаемое значение с функции
-    int x, int& iSizeX, int& iCurrentY, FTreeMetric* ptrMetric, int iDeep
+    int x, int& iSizeX, int& iCurrentY, shared_ptr<FTreeMetric> ptrMetric,
+    int iDeep
     // const bool& bIsLocal
 )
 {
@@ -1468,7 +1474,8 @@ string FOutData::AddCompString(const map<string, vector<string>>& mapComp)
     return sReturn;
 }
 
-vector<string> FOutData::CreateTag(const int& iGraphType, FTreeDisc* fTree,
+vector<string> FOutData::CreateTag(const int&           iGraphType,
+                                   shared_ptr<FTreeDisc> fTree,
                                    bool bCheckTag)
 {
     vector<string> arrTag;
@@ -1488,7 +1495,7 @@ vector<string> FOutData::CreateTag(const int& iGraphType, FTreeDisc* fTree,
 }
 
 vector<string> FOutData::CreateCommonNameLabel(const int& iGraphType,
-                                               FTreeDisc* fTree)
+                                               shared_ptr < FTreeDisc > fTree)
 {
     vector<string> arrCommonNameLabel;
     for (auto& it : fTree->ptrGraph->mapGraph[iGraphType].arrRel)
@@ -1499,7 +1506,7 @@ vector<string> FOutData::CreateCommonNameLabel(const int& iGraphType,
             continue;
         }
 
-        FTreeElement* fThis = fTree->mapDisc[it.first];
+        shared_ptr<FTreeElement> fThis = fTree->mapDisc[it.first];
         // wstring       wsNameRaw = fThis->wsName;
         string sName = fThis->sName;
 
@@ -1521,7 +1528,8 @@ vector<string> FOutData::CreateCommonNameLabel(const int& iGraphType,
     return arrCommonNameLabel;
 }
 
-void FOutData::OutGephiData(string sName, string sPath, FTreeDisc* fTree)
+void FOutData::OutGephiData(string sName, string sPath,
+                            shared_ptr < FTreeDisc > fTree)
 {
     {
         const int& iTag = FGraph::iCommon;
@@ -1671,7 +1679,7 @@ bool FOutData::TakePasteData(const int& x, vector<string>& arrCurRow,
 
 void FOutData::CreateGraphE1TableInfoInit(
     map<string, map<string, string>>& fReturnData,
-    FTreeMetric*                      ptrMetric)
+    shared_ptr < FTreeMetric > ptrMetric)
 {
     int                    iSizeX = 0, iSizeY = 0;
     vector<vector<string>> arrAllData;
@@ -1746,7 +1754,8 @@ void FOutData::CreateGraphE1TableInfoInit(
 void FOutData::CreateGraphE1TableRectInfo(
     const bool& bIsCounting,
     vector<vector<string>>& arrReturnData,    // Возвращаемое значение с функции
-    int x, int& iSizeX, int& iCurrentY, FTreeMetric* ptrMetric, int iDeep
+    int x, int& iSizeX, int& iCurrentY, shared_ptr < FTreeMetric > ptrMetric,
+    int iDeep
     // const bool& bIsLocal
 )
 {
@@ -1840,6 +1849,6 @@ void FOutData::CreateGraphE1TableRectInfo(
 
 FOutData::~FOutData()
 {
-    delete fFileCache;
+    fFileCache.reset();
     --iSinglControll;
 }

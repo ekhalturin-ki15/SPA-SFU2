@@ -19,20 +19,21 @@ enum EOutType : int
 struct FCorridorAdapter
 {
 public:
-    explicit FCorridorAdapter(FGlobal* _ptrGlobal);
+    explicit FCorridorAdapter(shared_ptr<FGlobal> _ptrGlobal);
 
-    map<int, vector<pair<double, string>>> Take(const int& iSize); 
+    map<int, vector<pair<double, string>>> Take(const int& iSize);
 
     void Add(int key, pair<double, string> fData);
 
 private:
     map<int, vector<pair<double, string>>> mapCorridorData;
-    FGlobal* ptrGlobal;    // Синглтон
+    shared_ptr<FGlobal>                    ptrGlobal;
 };
 
 struct FFileCache
 {
-    explicit FFileCache(FOutData* _ptrPerent) : ptrPerent(_ptrPerent) {};
+    explicit FFileCache(shared_ptr < FOutData > _ptrPerent)
+        : ptrPerent(_ptrPerent) {};
 
     // Проброска страницы Excel для вывода данных (например, при помощи
     // OutAddInfo)
@@ -46,12 +47,12 @@ struct FFileCache
     vector<OpenXLSX::XLWorksheet> arrCourseOpenWKS;
 
 private:
-    FOutData* ptrPerent;
+    shared_ptr < FOutData > ptrPerent;
 };
 
 struct FOutData
 {
-    explicit FOutData(FGlobal* _ptrGlobal);
+    explicit FOutData(shared_ptr<FGlobal> _ptrGlobal);
     ~FOutData();
 
     bool Init();
@@ -60,14 +61,16 @@ struct FOutData
     void Out(string sOutPath);    // sOutPath - Каталог, где будут файлы
 
 private:
-
     string sCurPlanName;
 
     int iSizeOnlyAllow;
 
-    std::map< string, vector<vector<string>>> mapTotalDataOut;
+    std::map<string, vector<vector<string>>> mapTotalDataOut;
 
-    FFileCache* fFileCache; // Класс хранения информации о файлах Excel для FOutData (агрегация, а не композиция, чтобы сделать методы Out константными)
+    shared_ptr <FFileCache> fFileCache;    // Класс хранения информации о файлах Excel
+                                   // для
+                               // FOutData (агрегация, а не композиция, чтобы
+                               // сделать методы Out константными)
 
     // Составляет таблицу для вывода информации общего вида (не имеющей
     // отношения к графам) всех УП FSolve
@@ -80,8 +83,8 @@ private:
                                 const int&              iGraphType);
 
     // Данные про дерево компетенций УП
-    void OutAddInfo(string sName, string sPath, FTreeDisc* ptrTree);
-
+    void OutAddInfo(string sName, string sPath,
+                    shared_ptr < FTreeDisc > ptrTree);
 
     void CreateAndTake(
         string sName,
@@ -98,17 +101,16 @@ private:
     // arrIsAllowed
 
     // Вначале строки добавляет имя учебного плана (sCurName)
-    void CreateOnlyAllowedResultRow(vector<string>&       arrReturn,
-                                    const int&            iSizeHeader,
-                                    vector<bool>&         arrIsAllowed,
-                                    //const string&         sCurName, // Лучше передать FTreeDisc*
-                                    const vector<double>& arrResult, FCorridorAdapter& fCorridorData,
-        FTreeDisc* ptrTree, const vector<wstring>& arrOnlyAllow);
+    void CreateOnlyAllowedResultRow(
+        vector<string>& arrReturn, const int& iSizeHeader,
+        vector<bool>& arrIsAllowed,
+        // const string&         sCurName, // Лучше передать FTreeDisc*
+        const vector<double>& arrResult, FCorridorAdapter& fCorridorData,
+        shared_ptr < FTreeDisc > ptrTree, const vector<wstring>& arrOnlyAllow);
 
     void AddTableCommonData(vector<vector<string>>& arrToAddedData,
                             FCorridorAdapter&       fCorridorData);
 
-    
     // map<int, FСorridor> mapSaveData;
     void RetakeCommon(FCorridorAdapter& fSaveData, const int& iKey,
                       const double& dNewData, const string& sNewData);
@@ -122,13 +124,16 @@ private:
                        const bool& bIsConsider, FCorridorAdapter& fSaveData);
 
     void CreateTotalInfo(vector<vector<string>>& arrReturnData,
-                         const FGraphType* fGraph, const EOutType& eOutType);
+                         const shared_ptr < FGraphType > fGraph,
+                         const EOutType& eOutType);
 
     void CreateTotalInfo(vector<double>&   arrReturnDataMetrics,
-                         const FGraphType* fGraph, const EOutType& eOutType);
+                         const shared_ptr < FGraphType > fGraph,
+                         const EOutType& eOutType);
 
     void CreateTotalInfo(vector<string>&   arrReturnDataHeader,
-                         const FGraphType* fGraph, const EOutType& eOutType);
+                         const shared_ptr < FGraphType > fGraph,
+                         const EOutType& eOutType);
 
     // Лучше буду генерировать матрицу, и выводить её сразу же
     // Не забываем, что OpenXLSX нумерует всё от единицы (1)
@@ -143,15 +148,14 @@ private:
 
     );    // Куда выводим
 
-    void OutTableInfoCSV(
-        const vector<vector<string>>& arrData,    // Что выводим
+    void
+        OutTableInfoCSV(const vector<vector<string>>& arrData,    // Что выводим
                         const string& sPath, const string& sNameFile,
                         const string& sName,
                         const int& iShiftX = 0,    // С каким смещением выводим
-                        const int& iShiftY = 0   // С каким смещением выводим
-    );    // Куда выводим
+                        const int& iShiftY = 0    // С каким смещением выводим
+        );                                        // Куда выводим
 
-    
     void OutGephiLabel(
         const string& sPath, const string& sNameFile, const string& sName,
         const vector<string>& arrNameLabel, const vector<double>& arrWeightNode,
@@ -164,7 +168,7 @@ private:
             fAdjList);    // Вывод данных о графе для Gephi в формате csv
 
     void CreateTableInfoInit(vector<vector<string>>& arrReturnData,
-                             FTreeMetric*            ptrMetric,
+                             shared_ptr < FTreeMetric > ptrMetric,
                              bool bIsOutNameCur    // const double dAllSum,
                              // bool         bIsLocal = false
     );
@@ -178,13 +182,13 @@ private:
         int& iSizeX,    // Если считаем вхолостую, когда bIsCounting == true, то
                         // записываем в iSizeX результат
         int&         iCurrentY,    // Глобальная переменая
-        FTreeMetric* ptrMetric, int iDeep
+        shared_ptr < FTreeMetric > ptrMetric, int iDeep
         // const bool& bIsLocal = false
     );    // Возвращает Актуальное значение y
 
     void CreateGraphE1TableInfoInit(
         map<string, map<string, string>>& fReturnData,
-        FTreeMetric*                      ptrMetric);
+        shared_ptr < FTreeMetric > ptrMetric);
 
     void CreateGraphE1TableRectInfo(
         const bool& bIsCounting,    // Если true - то проход в холостую для
@@ -195,23 +199,26 @@ private:
         int& iSizeX,    // Если считаем вхолостую, когда bIsCounting == true, то
                         // записываем в iSizeX результат
         int&         iCurrentY,    // Глобальная переменая
-        FTreeMetric* ptrMetric,
+        shared_ptr < FTreeMetric > ptrMetric,
         int iDeep);    // Возвращает Актуальное значение y
 
     vector<string> CreateCommonNameLabel(const int& iGraphType,
-                                         FTreeDisc* fTree);
+                                         shared_ptr < FTreeDisc > fTree);
 
-    vector<string> CreateTag(const int& iGraphType, FTreeDisc* fTree, bool bCheckTag = true);
+    vector<string> CreateTag(const int& iGraphType,
+                             shared_ptr < FTreeDisc > fTree,
+                             bool bCheckTag = true);
 
-    void           OutGephiData(
-                  string sName,
-                  string sPath,
-                  FTreeDisc* fTree);    // Вывод данных о графе для Gephi в формате csv
-
+    void OutGephiData(
+        string sName,
+        string sPath,
+        shared_ptr <
+            FTreeDisc >
+                fTree);    // Вывод данных о графе для Gephi в формате csv
 
 private:
     static int iSinglControll;    // Проверка на синглтон
 
-    FGlobal* ptrGlobal;    // Синглтон
-    string AddCompString(const map<string, vector<string>>& mapComp);
+    shared_ptr < FGlobal> ptrGlobal;    // Синглтон
+    string   AddCompString(const map<string, vector<string>>& mapComp);
 };

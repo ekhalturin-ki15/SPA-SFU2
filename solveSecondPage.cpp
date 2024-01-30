@@ -4,7 +4,7 @@
 #include "global.h"
 #include "solve.h"
 
-FSolveSecondPage::FSolveSecondPage(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal)
+FSolveSecondPage::FSolveSecondPage(shared_ptr<FGlobal> _ptrGlobal) : ptrGlobal(_ptrGlobal)
 {
 }
 
@@ -82,7 +82,7 @@ void FSolveSecondPage::AddDiscScore(const OpenXLSX::XLWorksheet& fSheet,
                 if ((iIdAllow != -1) && (iIdAllow <= x) && (!bReadAllow))
                 {
                     bReadAllow = true;
-                    bIsAllow   = (wsData.find(L"+") != wstring::npos);
+                    bIsAllow   = ptrGlobal->IsThatIsTrue(wsData);
                 }
 
                 if (((iIdIndex != -1) && (iIdIndex <= x) && (x < iIdLScore) &&
@@ -92,6 +92,7 @@ void FSolveSecondPage::AddDiscScore(const OpenXLSX::XLWorksheet& fSheet,
                 {
                     if (iIdIndex == -1)
                     {
+                        //Если нет индексов, то ориентируемся по названиям
                         wsData = ptrGlobal->ptrSolve->arrDisc.back()
                                      ->mapNameToIndexDisc[wsData];
                     }
@@ -166,7 +167,7 @@ void FSolveSecondPage::AddDiscScore(const OpenXLSX::XLWorksheet& fSheet,
                               // которые вводятся
 }
 
-double FSolveSecondPage::DFSCountingScore(FTreeElement* ptrThis)
+double FSolveSecondPage::DFSCountingScore(shared_ptr<FTreeElement> ptrThis)
 {
     if (ptrThis->arrChild.size() == 0)
     {

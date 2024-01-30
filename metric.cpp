@@ -8,13 +8,19 @@
 string       FMetric::sAllMetric      = "All";
 const string FMetric::sEmptyIndicator = "-";
 
-void FTreeMetric::DeleteDFS(FTreeMetric* th)
+
+FTreeMetric::FTreeMetric(shared_ptr<FMetric> _ptrMetric)
+    : ptrMetric(_ptrMetric)
 {
-    for (auto& [key, val] : th->mapChild) DeleteDFS(val);
-    delete th;
 }
 
-void FTreeMetric::InitBalanceScoreDFS(FTreeMetric* th)
+void FTreeMetric::DeleteDFS(shared_ptr<FTreeMetric> th)
+{
+    for (auto& [key, val] : th->mapChild) DeleteDFS(val);
+    th.reset();
+}
+
+void FTreeMetric::InitBalanceScoreDFS(shared_ptr<FTreeMetric> th)
 {
     if (th->mapChild.size() == 0)
     {
@@ -33,10 +39,10 @@ void FTreeMetric::InitBalanceScoreDFS(FTreeMetric* th)
     th->dBalanceSum = dScore;
 }
 
-
-void FTreeMetric::InitChosenScoreDFS(FTreeMetric* th, const double& dAllSum,
-                                     const bool& bIsPercentRegAll,
-                                     const bool& bCompInterDelete)
+void FTreeMetric::InitChosenScoreDFS(shared_ptr<FTreeMetric> th,
+                                     const double&           dAllSum,
+                                     const bool&             bIsPercentRegAll,
+                                     const bool&             bCompInterDelete)
 {
     th->dChosenSum = (bCompInterDelete) ? th->dBalanceSum : th->dNoBalanceSum;
     if (bIsPercentRegAll)
@@ -48,23 +54,23 @@ void FTreeMetric::InitChosenScoreDFS(FTreeMetric* th, const double& dAllSum,
     else
     {
         th->dInclusionPercent =
-            (bCompInterDelete) ? th->dBalanceSum / th->ptrParent->dBalanceSum
+            (bCompInterDelete)
+                ? th->dBalanceSum / th->ptrParent->dBalanceSum
                 : th->dNoBalanceSum / th->ptrParent->dNoBalanceSum;
     }
-    //if (th->mapChild.size() == 0) return;
+    // if (th->mapChild.size() == 0) return;
     for (auto& [key, val] : th->mapChild)
     {
         InitChosenScoreDFS(val, dAllSum, bIsPercentRegAll, bCompInterDelete);
     }
-
-
 }
 
+void FTreeMetric::Delete() { DeleteDFS(this->ptrMetric->ptrTreeMetric); }
 
-
-void FTreeMetric::Delete() { DeleteDFS(this); }
-
-void FTreeMetric::InitBalanceScore() { InitBalanceScoreDFS(this); }
+void FTreeMetric::InitBalanceScore()
+{
+    InitBalanceScoreDFS(this->ptrMetric->ptrTreeMetric);
+}
 
 void FTreeMetric::InitChosenScore(const bool& bIsPercentRegAll,
                                   const bool& bCompInterDelete)
@@ -80,83 +86,90 @@ void FTreeMetric::InitChosenScore(const bool& bIsPercentRegAll,
 
 FMetric::~FMetric() { ptrTreeMetric->Delete(); }
 
-void FMetric::InitBalanceScore()
-{ 
-    ptrTreeMetric->InitBalanceScore(); 
-}
+void FMetric::InitBalanceScore() { ptrTreeMetric->InitBalanceScore(); }
 
 // Инверсия зависимости
-FMetric::FMetric(FTreeDisc* _ptrTree) : ptrTree(_ptrTree)
+FMetric::FMetric(shared_ptr<FTreeDisc> _ptrTree) : ptrTree(_ptrTree) {}
+
+void FMetric::Init()
 {
     // sAllMetric = _ptrTree->ptrGlobal->ConwertToString(
     //     _ptrTree->ptrGlobal->ptrConfig->wsOutPrefAllCourse);
 
-    sAllMetric = _ptrTree->ptrGlobal->ConwertToString(
-        _ptrTree->ptrGlobal->ptrConfig
+    sAllMetric = ptrTree->ptrGlobal->ConwertToString(
+        ptrTree->ptrGlobal->ptrConfig
             ->mapArrOutParams
                 [L"Предлог перед выводом статистики по всем курсам"]
             .GetName());
 
     try
     {
-        //fRegexHeaderComp = _ptrTree->ptrGlobal->ptrConfig->sRegexHeaderComp;
+        // fRegexHeaderComp = _ptrTree->ptrGlobal->ptrConfig->sRegexHeaderComp;
         arrRegexHeaderComp.resize(
-            _ptrTree->ptrGlobal->ptrConfig->arrRegexHeaderComp.size());
+            ptrTree->ptrGlobal->ptrConfig->arrRegexHeaderComp.size());
         for (int i = 0;
-             i < _ptrTree->ptrGlobal->ptrConfig->arrRegexHeaderComp.size();
+             i < ptrTree->ptrGlobal->ptrConfig->arrRegexHeaderComp.size();
              ++i)
             arrRegexHeaderComp[i] =
-                _ptrTree->ptrGlobal->ptrConfig->arrRegexHeaderComp[i];
+                ptrTree->ptrGlobal->ptrConfig->arrRegexHeaderComp[i];
     }
     catch (...)
     {
-        _ptrTree->ptrGlobal->ptrError->ErrorBadRegex(
+        ptrTree->ptrGlobal->ptrError->ErrorBadRegex(
             "Регулярное выражение поиска заголовка компетенции");
     }
 
     try
     {
-        //fRegexHeaderInd = _ptrTree->ptrGlobal->ptrConfig->sRegexHeaderIndicator;
+        // fRegexHeaderInd =
+        // _ptrTree->ptrGlobal->ptrConfig->sRegexHeaderIndicator;
         arrRegexHeaderInd.resize(
-            _ptrTree->ptrGlobal->ptrConfig->arrRegexHeaderInd.size());
+            ptrTree->ptrGlobal->ptrConfig->arrRegexHeaderInd.size());
         for (int i = 0;
-             i < _ptrTree->ptrGlobal->ptrConfig->arrRegexHeaderInd.size();
+             i < ptrTree->ptrGlobal->ptrConfig->arrRegexHeaderInd.size();
              ++i)
             arrRegexHeaderInd[i] =
-                _ptrTree->ptrGlobal->ptrConfig->arrRegexHeaderInd[i];
+                ptrTree->ptrGlobal->ptrConfig->arrRegexHeaderInd[i];
     }
     catch (...)
     {
-        _ptrTree->ptrGlobal->ptrError->ErrorBadRegex(
+        ptrTree->ptrGlobal->ptrError->ErrorBadRegex(
             "Регулярное выражение поиска заголовка индикатора");
     }
-    //mapAllowDisc = _ptrTree->GewMapAllowDisc(true, true);
+    // mapAllowDisc = _ptrTree->GewMapAllowDisc(true, true);
 
-    ptrTreeMetric            = new FTreeMetric;
+    ptrTreeMetric            = make_shared<FTreeMetric>(ptrTree->ptrMetric);
     ptrTreeMetric->ptrParent = nullptr;
     ptrTreeMetric->sName     = "Root";
 
-    ptrTreeMetric->mapChild[sAllMetric]            = new FTreeMetric;
+    ptrTreeMetric->mapChild[sAllMetric] =
+        make_shared<FTreeMetric>(ptrTree->ptrMetric);
+
     ptrTreeMetric->mapChild[sAllMetric]->ptrParent = ptrTreeMetric;
     ptrTreeMetric->mapChild[sAllMetric]->sName     = sAllMetric;
 
-    for (int iCourse = 1; iCourse <= _ptrTree->iAmountCourse;
+    for (int iCourse = 1; iCourse <= ptrTree->iAmountCourse;
          ++iCourse)    // Делаем 1 нумерацию
     {
-        ptrTreeMetric->mapChild[to_string(iCourse)] = new FTreeMetric;
+        ptrTreeMetric->mapChild[to_string(iCourse)] =
+            make_shared<FTreeMetric>(ptrTree->ptrMetric);
         ptrTreeMetric->mapChild[to_string(iCourse)]->ptrParent = ptrTreeMetric;
         ptrTreeMetric->mapChild[to_string(iCourse)]->sName = to_string(iCourse);
     }
+
+
+    Create();
 }
 
-void FMetric::UpdateMetricBranch(FTreeMetric*         ptrNowTree,
-                                 set<vector<string>>& setIsTakenScore,
-                                 const string&        sName,
-                                 const double&        dScore)
+void FMetric::UpdateMetricBranch(shared_ptr<FTreeMetric> ptrNowTree,
+                                 set<vector<string>>&    setIsTakenScore,
+                                 const string&           sName,
+                                 const double&           dScore)
 {
     if (!ptrNowTree->mapChild.count(sName))
     {
-        ptrNowTree->mapChild[sName]            = new FTreeMetric;
+        ptrNowTree->mapChild[sName] =
+            make_shared<FTreeMetric>(ptrTree->ptrMetric);
         ptrNowTree->mapChild[sName]->ptrParent = ptrNowTree;
         ptrNowTree->mapChild[sName]->sName     = sName;
     }
@@ -170,35 +183,36 @@ void FMetric::UpdateMetricBranch(FTreeMetric*         ptrNowTree,
         ptrRec = ptrRec->ptrParent;
     }
     AddScoreNoBalanceSum(ptrNowTree->mapChild[sName], setIsTakenScore,
-                          arrCurrent , dScore);
+                         arrCurrent, dScore);
 
-    //if (!setIsTakenScore.count( arrCurrent ))
+    // if (!setIsTakenScore.count( arrCurrent ))
     //{
-    //    ptrNowTree->mapChild[sName]->dNoBalanceSum += dScore;
-    //    ptrNowTree->mapChild[sName]->iAmountUsingDisc += 1; // Подсчитываем кол-во дисциплин, которые участвовали в формировании компетенции
-    //    setIsTakenScore.insert( arrCurrent );
-    //}
+    //     ptrNowTree->mapChild[sName]->dNoBalanceSum += dScore;
+    //     ptrNowTree->mapChild[sName]->iAmountUsingDisc += 1; // Подсчитываем
+    //     кол-во дисциплин, которые участвовали в формировании компетенции
+    //     setIsTakenScore.insert( arrCurrent );
+    // }
 }
 
-void FMetric::AddScoreNoBalanceSum(FTreeMetric*         ptrNowTree,
-                                   set<vector<string>>& setIsTakenScore,
-                                   const vector<string>& sCurrent,
-                                   const double&        dScore)
+void FMetric::AddScoreNoBalanceSum(shared_ptr<FTreeMetric> ptrNowTree,
+                                   set<vector<string>>&    setIsTakenScore,
+                                   const vector<string>&   sCurrent,
+                                   const double&           dScore)
 {
     if (!setIsTakenScore.count({ sCurrent }))
     {
         ptrNowTree->dNoBalanceSum += dScore;
-        ptrNowTree->iAmountUsingDisc += 1;    // Подсчитываем кол-во дисциплин, которые участвовали в
+        ptrNowTree->iAmountUsingDisc +=
+            1;    // Подсчитываем кол-во дисциплин, которые участвовали в
                   // формировании компетенции
         setIsTakenScore.insert({ sCurrent });
     }
-
 }
 
-void FMetric::UpdateCourseMetric(FTreeMetric*          ptrRootTree,
+void FMetric::UpdateCourseMetric(shared_ptr<FTreeMetric> ptrRootTree,
                                  set<vector<string>>&  setIsTakenScore,
                                  const vector<string>& arrRectUpdate,
-                                 const double& dScore)
+                                 const double&         dScore)
 {
     auto ptrNowTree = ptrRootTree;
     for (const auto& sCurName : arrRectUpdate)
@@ -215,6 +229,7 @@ void FMetric::UpdateCourseMetric(FTreeMetric*          ptrRootTree,
         setIsTakenScore.insert({ ptrRootTree->sName });
     }*/
 }
+
 void FMetric::Create()
 {
     // Сначало для общего, потом для курсов по отдельности
@@ -239,10 +254,10 @@ void FMetric::Create()
         {
             for (const auto& ind : arrInd)
             {
-                string         sCompName;
-                string         sCompNumber;
-                string         sIndicatorNumber;
-                int            iTrueMatchInd = 0; // Не самое гибкое решение
+                string sCompName;
+                string sCompNumber;
+                string sIndicatorNumber;
+                int iTrueMatchInd = 0;    // Не самое гибкое решение
                 vector<smatch> matchesInd;
 
                 int i = 0;
@@ -254,7 +269,7 @@ void FMetric::Create()
                                                 sregex_iterator {} };
                     if (matchesBuf.size() > 0)
                     {
-                        matchesInd = matchesBuf;
+                        matchesInd    = matchesBuf;
                         iTrueMatchInd = i;
                         break;
                     }
@@ -280,8 +295,7 @@ void FMetric::Create()
                 }
                 else
                 {
-
-                    bool bIsTrueMatchComp = false;
+                    bool           bIsTrueMatchComp = false;
                     vector<smatch> matchesComp;
 
                     for (const auto& HeaderComp : arrRegexHeaderComp)
@@ -291,16 +305,16 @@ void FMetric::Create()
                                                     sregex_iterator {} };
                         if (matchesBuf.size() > 0)
                         {
-                            matchesComp = matchesBuf;
+                            matchesComp      = matchesBuf;
                             bIsTrueMatchComp = true;
                             break;
                         }
                     }
 
-                    //vector<smatch> matchesComp {
-                    //    sregex_iterator { ALL(comp), fRegexHeaderComp },
-                    //    sregex_iterator {}
-                    //};
+                    // vector<smatch> matchesComp {
+                    //     sregex_iterator { ALL(comp), fRegexHeaderComp },
+                    //     sregex_iterator {}
+                    // };
                     for (const auto& sData : matchesComp)
                     {
                         sCompName        = sData[1].str();
@@ -311,7 +325,8 @@ void FMetric::Create()
 
                 {
                     double dNormalizeScore = it->dSumScore;
-                    if (ptrTree->ptrGlobal->ptrConfig->GetBIsNormalizeScoreComp())
+                    if (ptrTree->ptrGlobal->ptrConfig
+                            ->GetBIsNormalizeScoreComp())
                     {
                         // Делим всё на кол-во индикаторов, так как считаем, что
                         // все ЗЕ равномерно делятся на изучение каждого
@@ -325,11 +340,11 @@ void FMetric::Create()
                         { sCompName, sCompNumber, sIndicatorNumber },
                         dNormalizeScore);
 
-                    //В холостую пройдёмся по дереву, чтобы сохдать недостающие нулевые узлы
+                    // В холостую пройдёмся по дереву, чтобы сохдать недостающие
+                    // нулевые узлы
                     if (ptrTree->ptrGlobal->ptrConfig->GetBOutEmptyComp())
                     {
-                        for (int iCourse = 1;
-                             iCourse <= ptrTree->iAmountCourse;
+                        for (int iCourse = 1; iCourse <= ptrTree->iAmountCourse;
                              ++iCourse)    // Делаем 1 нумерацию
                         {
                             auto ptrNowTree =
@@ -340,7 +355,8 @@ void FMetric::Create()
                                 if (!ptrNowTree->mapChild.count(sCurName))
                                 {
                                     ptrNowTree->mapChild[sCurName] =
-                                        new FTreeMetric;
+                                        make_shared<FTreeMetric>(
+                                            ptrTree->ptrMetric);
                                     ptrNowTree->mapChild[sCurName]->ptrParent =
                                         ptrNowTree;
                                     ptrNowTree->mapChild[sCurName]->sName =
@@ -352,11 +368,12 @@ void FMetric::Create()
                     }
                 }
 
-                //Только для определённого курса
+                // Только для определённого курса
                 for (const auto& [iCourse, dScore] : it->mapCourseScore)
                 {
                     double dNormalizeScore = dScore;
-                    if (ptrTree->ptrGlobal->ptrConfig->GetBIsNormalizeScoreComp())
+                    if (ptrTree->ptrGlobal->ptrConfig
+                            ->GetBIsNormalizeScoreComp())
                     {
                         dNormalizeScore /= dAmountInd;
                     }
@@ -372,7 +389,7 @@ void FMetric::Create()
         }
 
         // Восходящая инициализация (с листьев) для высчитывания iBalanceSum
-        //А также для расчёта dChosenSum и dInclusionPercent
+        // А также для расчёта dChosenSum и dInclusionPercent
         InitBalanceScore();
     }
 

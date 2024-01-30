@@ -26,7 +26,7 @@ void FSolve::FirstPageAddCompIndicator(const OpenXLSX::XLWorksheet& fSheet,
 
     string        sLastComp      = "";
     string        sLastIndicator = "";
-    FTreeElement* ptrThis        = nullptr;
+    shared_ptr<FTreeElement> ptrThis        = nullptr;
 
     iCurrentRow = -1;
     for (auto row : fSheet.rows())

@@ -16,9 +16,11 @@ const string FError::sNotInitSolve = "Not init Solve pointer";
 
 int FError::iSinglControll = 0;
 
-FError::FError(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal), bIsPrint(false)
+FError::FError(shared_ptr<FGlobal> _ptrGlobal)
+    : ptrGlobal(_ptrGlobal), bIsPrint(false)
 {
-    if (iSinglControll > 0) throw std::runtime_error("Re-creation Singleton");
+    // Unit test против такого
+    //if (iSinglControll > 0) throw std::runtime_error("Re-creation Singleton");
     ++iSinglControll;
 }
 

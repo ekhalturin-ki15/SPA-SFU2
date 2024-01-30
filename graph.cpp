@@ -14,7 +14,7 @@ const double FGraph::dAllScoreNotEqualError = -10;
 const double FGraphType::dNoInit = -2e4;
 
 // Инверсия зависимости
-FGraph::FGraph(FTreeDisc* _ptrTree) : ptrTree(_ptrTree)
+FGraph::FGraph(shared_ptr<FTreeDisc> _ptrTree) : ptrTree(_ptrTree)
 {
     // Теперь mapAllowDisc хранится в _ptrTree
     // mapAllowDisc = _ptrTree->GewMapAllowDisc(true, true);

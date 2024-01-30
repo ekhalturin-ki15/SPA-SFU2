@@ -32,7 +32,7 @@ struct FGlobal
     ~FGlobal();
 
     bool ReCreate();
-    bool Init();
+    bool Init(shared_ptr<FGlobal> _ptrThis);
 
     wstring GetValue(const OpenXLSX::XLCell& cell);
 
@@ -52,6 +52,10 @@ struct FGlobal
     string  ConwertPathFormat(string sFileName, bool bRename = false) const;
     wstring ConwertPathFormat(wstring wsFileName, bool bRename = false) const;
 
+    // В Юнит-тестах неправильно определялся текущий путь, поэтому было решено
+    // сделать разделяемый через Препроцессорные переменные метод
+    filesystem::path GetCurrentPath() const;
+
     void TakeData(
         bool& outBData,
         const OpenXLSX::XLRow& row);    // Возвращение результата через
@@ -61,7 +65,7 @@ struct FGlobal
                   int iSize);    // Возвращение результата через параметры
                                  // (значение со втрой ячейки)
 
-    void TakeData(vector<string>&       outArrData,
+    void TakeData(vector<string>&        outArrData,
                   const OpenXLSX::XLRow& row,
                   int iSize);    // Возвращение результата через параметры
                                  // (значение со втрой ячейки)
@@ -99,12 +103,16 @@ struct FGlobal
 
     string DoubletWithPrecision(const double& dNum) const;
 
-    FError*       ptrError;          // Синглтон
-    FConfig*      ptrConfig;         // Синглтон
-    FSolve*       ptrSolve;          // Синглтон
-    FOutData*     ptrOutData;        // Синглтон
-    FAdapOutData* ptrAdapOutData;    // Синглтон
-    // FGraph* ptrGraph; //У каждого УП свой Граф
+    bool IsThatIsTrue(wstring wsData);    // Не const, так как использует
+                                          // преобразование wstring в string
+    bool IsThatIsTrue(string sData) const;
+
+    shared_ptr<FError>       ptrError;          // Синглтон
+    shared_ptr<FConfig>      ptrConfig;         // Синглтон
+    shared_ptr<FSolve>       ptrSolve;          // Синглтон
+    shared_ptr<FOutData>     ptrOutData;        // Синглтон
+    shared_ptr<FAdapOutData> ptrAdapOutData;    // Синглтон
+    // shared_ptr<FGraph> ptrGraph; //У каждого УП свой Граф
 
 private:
     static int iSinglControll;
@@ -119,4 +127,6 @@ private:
     map<char, char>             mapFirstUnicRU;
     map<char, char>             mapLastUnicRU;
     map<pair<char, char>, char> mapReversUnic;
+
+    shared_ptr<FGlobal> ptrThis;
 };

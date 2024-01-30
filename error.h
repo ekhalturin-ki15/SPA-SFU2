@@ -12,7 +12,7 @@ struct FError
     static const string sNotInitConfig;
     static const string sNotInitSolve;
 
-    explicit FError(FGlobal* _ptrGlobal);
+    explicit FError(shared_ptr<FGlobal> _ptrGlobal);
     ~FError();
     bool Init();
 
@@ -104,5 +104,5 @@ private:
 
     ofstream OutHeader() const;
 
-    FGlobal* ptrGlobal;    // Синглтон
+    shared_ptr<FGlobal> ptrGlobal;    // Синглтон
 };

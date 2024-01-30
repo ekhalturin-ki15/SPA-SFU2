@@ -12,8 +12,8 @@ void FSolve::ZeroPageCreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
     int iIdName  = -1;
     int iIdComp  = -1;
 
-    FTreeElement* ptrThis    = arrDisc.back()->ptrRoot;
-    FTreeElement* ptrNewNode = nullptr;
+    shared_ptr<FTreeElement> ptrThis    = arrDisc.back()->ptrRoot;
+    shared_ptr<FTreeElement> ptrNewNode = nullptr;
     // Считываем заголовок
     {
         int x = 0;
@@ -93,7 +93,7 @@ void FSolve::ZeroPageCreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
                             iPreX--;
                         }
                         iPreX      = x;
-                        ptrNewNode = new FTreeElement;
+                        ptrNewNode = make_shared< FTreeElement>();
                         ptrThis->arrChild.push_back(ptrNewNode);
                         ptrNewNode->ptrParent = ptrThis;
                         ptrThis               = ptrNewNode;

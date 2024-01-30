@@ -16,14 +16,14 @@ FTreeElement::FTreeElement()
 {
 }
 
-FTreeDisc::FTreeDisc(FGlobal* _ptrGlobal)
+FTreeDisc::FTreeDisc(shared_ptr<FGlobal> _ptrGlobal)
     : ptrGlobal(_ptrGlobal), iAmountCourse(0), dAllSumScore(0.), iAmountDisc(0),
       iExtendedAmountDisc(0),
       iYearStart(0),
       iCodeUGSN(0),
       sTypePlan("None")
 {
-    ptrRoot = new FTreeElement;
+    ptrRoot = make_shared< FTreeElement> ();
     ptrGraph = nullptr;    // Только после Read можно строить граф
     ptrMetric = nullptr;    // Только после Read высчитывать метрики
 }
@@ -33,21 +33,21 @@ FTreeDisc::~FTreeDisc()
     DeleteDFS(ptrRoot);
     if (ptrGraph)
     {
-        delete ptrGraph;
+        ptrGraph.reset();
     }
     if (ptrMetric)
     {
-        delete ptrMetric;
+        ptrMetric.reset();
     }
 }
 
-void FTreeDisc::DeleteDFS(FTreeElement* ptrThis)
+void FTreeDisc::DeleteDFS(shared_ptr < FTreeElement > ptrThis)
 {
     for (auto it : ptrThis->arrChild)
     {
         DeleteDFS(it);
     }
-    delete ptrThis;
+    ptrThis.reset();
 }
 
 void FTreeDisc::CountDisc()
@@ -70,6 +70,11 @@ void FTreeDisc::CountDisc()
         {
             this->iExtendedAmountDisc++;
             mapAmountTypeDisc[it->eTypeDisc]++;
+            //Нераспознаный тег дисциплины (указания о тегах данной дисциплины нет в файле config)
+            if (it->setTagDisc.size() == 0)
+            {
+                mapAmountTagDisc[ETagDisc::ETagD_Another]++;
+            }
             for (const auto& et : it->setTagDisc)
             {
                 mapAmountTagDisc[et]++;
@@ -79,10 +84,10 @@ void FTreeDisc::CountDisc()
     return;
 }
 
-map<wstring, FTreeElement*>
+map < wstring, shared_ptr<FTreeElement>>
     FTreeDisc::GewMapAllowDisc(bool IsNecessaryAllow, bool IsNecessaryNotIgnore)
 {
-    map<wstring, FTreeElement*> mapReturn;
+    map < wstring, shared_ptr<FTreeElement>> mapReturn;
     for (const auto& [key, it] : mapDisc)
     {
         // Нулевые дисциплины тоже нужно убрать

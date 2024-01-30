@@ -15,106 +15,87 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="logFile.txt">
-      <Filter>Файлы ресурсов</Filter>
-    </Text>
-    <Text Include="debugFile.txt">
-      <Filter>Файлы ресурсов</Filter>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="0903010030-21.plm.plx.xlsx">
-      <Filter>Файлы ресурсов</Filter>
-    </None>
-    <None Include=".clang-format">
-      <Filter>Файлы ресурсов</Filter>
-    </None>
-    <None Include=".gitignore">
-      <Filter>Файлы ресурсов</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="adapOutData.cpp">
+    <ClCompile Include="UnitTest.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="config.cpp">
+    <ClCompile Include="..\solveZeroPage.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="error.cpp">
+    <ClCompile Include="..\adapOutData.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="formulaParser.cpp">
+    <ClCompile Include="..\config.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="global.cpp">
+    <ClCompile Include="..\error.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="globalAdd.cpp">
+    <ClCompile Include="..\formulaParser.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="graph.cpp">
+    <ClCompile Include="..\global.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="..\globalAdd.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="metric.cpp">
+    <ClCompile Include="..\graph.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="outData.cpp">
+    <ClCompile Include="..\metric.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="solve.cpp">
+    <ClCompile Include="..\outData.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="solveFirstPage.cpp">
+    <ClCompile Include="..\solve.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="solveSecondPage.cpp">
+    <ClCompile Include="..\solveFirstPage.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="solveThirdPage.cpp">
+    <ClCompile Include="..\solveSecondPage.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="solveTree.cpp">
+    <ClCompile Include="..\solveThirdPage.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="solveZeroPage.cpp">
+    <ClCompile Include="..\solveTree.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="solveSecondPage.h">
+    <ClInclude Include="..\solveSecondPage.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="adapOutData.h">
+    <ClInclude Include="..\adapOutData.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="config.h">
+    <ClInclude Include="..\config.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="dsu.h">
+    <ClInclude Include="..\dsu.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="error.h">
+    <ClInclude Include="..\error.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="formulaParser.h">
+    <ClInclude Include="..\formulaParser.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="global.h">
+    <ClInclude Include="..\global.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="graph.h">
+    <ClInclude Include="..\graph.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="metric.h">
+    <ClInclude Include="..\metric.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="outData.h">
+    <ClInclude Include="..\outData.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="solve.h">
+    <ClInclude Include="..\solve.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

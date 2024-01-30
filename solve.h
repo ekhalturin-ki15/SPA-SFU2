@@ -8,13 +8,16 @@ struct FGraph;
 struct FMetric;
 
 struct FSolve;
-    // struct FSemesterScore
+// struct FSemesterScore
 //{
 //	int iNumSemester;
 //	double dScore;
 // };
 
 // Тип дисциплины (основная, по выбору, факультатив)
+
+enum ETagDisc;
+
 enum ETypeDisc : int
 {
     ETD_Common,
@@ -38,8 +41,8 @@ struct FTreeElement
     string  sName;
     wstring wsIndexName;
 
-    FTreeElement* ptrParent;
-    vector<FTreeElement*> arrChild;    // Дисциплины внутри модуля
+    shared_ptr<FTreeElement> ptrParent;
+    vector<shared_ptr<FTreeElement>> arrChild;    // Дисциплины внутри модуля
     // Указаны компетенции с индикаторами для дополнительной валидации УП (что у
     // страницы Компетенции (2) есть весь перечень компетенций)
     map<string, vector<string>>
@@ -48,27 +51,27 @@ struct FTreeElement
     ETypeDisc eTypeDisc = ETypeDisc::ETD_Common;
     // Перечисляются теги дисциплины (Гуманитарная, естеств., общепроф.)
     // Может быть несколько тегов у одной дисциплины
-    set<int> setTagDisc;
+    set<ETagDisc> setTagDisc;
 
     // vector<string> arrIndicator; // Индикаторы (из индикатора можно извлечь
     // компетенцию)
 };
 
-//Один конкретный УП
+// Один конкретный УП
 struct FTreeDisc
 {
-    friend class FSolve;
+    friend struct FSolve;
 
-    explicit FTreeDisc(FGlobal* _ptrGlobal);
+    explicit FTreeDisc(shared_ptr<FGlobal> _ptrGlobal);
     ~FTreeDisc();
 
     void CountDisc();
 
-    FTreeElement* ptrRoot;
-    map<wstring, FTreeElement*>
+    shared_ptr<FTreeElement> ptrRoot;
+    map<wstring, shared_ptr<FTreeElement>>
         mapDisc;    // Поиск указателя на дисциплину по её индексу
 
-    map<wstring, FTreeElement*>
+    map<wstring, shared_ptr<FTreeElement>>
         mapAllowDisc;    // Оставляем только разрешённые дисциплины (без
                          // модулей) для анализа (и без тех, у кого ЗЕ = 0)
 
@@ -76,11 +79,12 @@ struct FTreeDisc
 
     string sNamePlan;
     string sShortNamePlan;    // Имя УП без расширения
-    string sCurName;    // Имя УП без расширения
-    string sTypePlan;   // Указывается: бакалавр, магистр, специалист или абитуриент
+    string sCurName;          // Имя УП без расширения
+    string sTypePlan;    // Указывается: бакалавр, магистр, специалист или
+                         // абитуриент
 
-    int iYearStart; // Год начала обучения
-    int iCodeUGSN;         // Год начала обучения
+    int iYearStart;    // Год начала обучения
+    int iCodeUGSN;     // Год начала обучения
 
     int iAmountCourse;    // Количество курсов (именно курсов, не семестров)
     double dAllSumScore;    // Общее кол-во ЗЕ курса (только дисциплин, и только
@@ -89,10 +93,11 @@ struct FTreeDisc
     int iExtendedAmountDisc;    // Количество всех дисциплин (не модулей)
     map<ETypeDisc, int>
         mapAmountTypeDisc;    // Количество дисциплин по типу (основные, по
-                              // выбору, факультативы)
+                              // выбору, факультативы), Учитываются в том числе и те, что не считаются в Плане
 
-    map<int, int> mapAmountTagDisc;// Количество дисциплин по теги (гуманитарные, технические, естествонаучные)
-
+    map<ETagDisc, int>
+        mapAmountTagDisc;    // Количество дисциплин по теги (гуманитарные,
+                             // технические, естествонаучные)
 
     set<string> fAllComp;    // Множество всех компетенций, присутствующих в
                              // учебном плане (УП)
@@ -102,27 +107,25 @@ struct FTreeDisc
     // outIAmountDisc);    // Вывод через параметры void FindAllScore(double&
     // outDSum);
 
-    
-
-    FMetric* ptrMetric;    // У каждого УП свой объект класса FMetric
-    FGraph* ptrGraph;    // У каждого УП свой объект класса FGraph
+    shared_ptr<FMetric> ptrMetric;    // У каждого УП свой объект класса FMetric
+    shared_ptr<FGraph> ptrGraph;    // У каждого УП свой объект класса FGraph
 
     // Добавил, чтобы можно было обращаться к Config
-    FGlobal* ptrGlobal;    // Синглтон
+    shared_ptr<FGlobal> ptrGlobal;    // Синглтон
 
 private:
-    void DeleteDFS(
-        FTreeElement* ptrThis);    // Поиск в глубину для очистки памяти
-        
+    void DeleteDFS(shared_ptr<FTreeElement>
+                       ptrThis);    // Поиск в глубину для очистки памяти
+
     // Получить только дисциплины (без модулей)
-    map<wstring, FTreeElement*>
+    map<wstring, shared_ptr<FTreeElement>>
         GewMapAllowDisc(bool IsNecessaryAllow,
                                                 bool IsNecessaryNotIgnore);
 };
 
 struct FSolve
 {
-    explicit FSolve(FGlobal* _ptrGlobal);
+    explicit FSolve(shared_ptr<FGlobal> _ptrGlobal);
     ~FSolve();
 
     bool Init();
@@ -139,8 +142,9 @@ struct FSolve
     void CreateAllMetric();
 
 public:
-    vector<FTreeDisc*> arrDisc;    // Указатели на все УП, которые считали (все
-                                   // они одновременно хранятся в памяти)
+    vector<shared_ptr<FTreeDisc>>
+        arrDisc;    // Указатели на все УП, которые считали (все
+                    // они одновременно хранятся в памяти)
 
     int iCurrentPage;    // Какая по счёту страница обрабатывается в данный
                          // момент
@@ -166,7 +170,7 @@ private:
 
     void ZeroPageCreateDiscTree(
         const OpenXLSX::XLWorksheet& fSheet,
-                        int iKeyPageNumber);    // Находится в solveZeroPage.cpp
+        int iKeyPageNumber);    // Находится в solveZeroPage.cpp
 
     void FirstPageAddCompIndicator(
         const OpenXLSX::XLWorksheet& fSheet,
@@ -176,14 +180,13 @@ private:
         const OpenXLSX::XLWorksheet& fSheet,
         int iKeyPageNumber);    // Находится в solveFirstPage.cpp
 
-
     // В solveSecondPage.h и solveSecondPage.cpp
-    FSolveSecondPage* ptrSolveSecondPage;    // Композиция (вынес в отдельный
+    unique_ptr<FSolveSecondPage>
+        ptrSolveSecondPage;    // Композиция (вынес в отдельный
                                              // класс, так как много методов)
-    FGlobal* ptrGlobal;    // Синглтон
-    regex    fRegexComp;
-    vector<regex> arrRegexHeaderInd;     // Может быть несколько, поэтому вектор
+    shared_ptr<FGlobal> ptrGlobal;    // Синглтон
+    regex               fRegexComp;
+    vector<regex> arrRegexHeaderInd;    // Может быть несколько, поэтому вектор
     vector<regex> arrRegexHeaderComp;    // Может быть несколько, поэтому вектор
     vector<regex> arrRegexCodeUGSN;    // Может быть несколько, поэтому вектор
-
 };

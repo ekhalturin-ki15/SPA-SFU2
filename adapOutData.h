@@ -22,7 +22,7 @@ struct FGraphType;
 
 struct FAdapOutData
 {
-    explicit FAdapOutData(FGlobal* _ptrGlobal);
+    explicit FAdapOutData(shared_ptr<FGlobal> _ptrGlobal);
 
     bool Init();
 
@@ -116,5 +116,7 @@ private:
 
     //string AddCompString(const map<string, vector<string>>& mapComp);
 
-    FGlobal* ptrGlobal;    // Синглтон
+private:
+    static int iSinglControll;        // Проверка на синглтон
+    shared_ptr<FGlobal> ptrGlobal;    // Синглтон
 };

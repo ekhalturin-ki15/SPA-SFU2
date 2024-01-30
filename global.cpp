@@ -1,9 +1,9 @@
 ﻿#include "global.h"
 
+#include "adapOutData.h"
 #include "config.h"
 #include "error.h"
 #include "graph.h"
-#include "adapOutData.h"
 #include "outData.h"
 #include "solve.h"
 
@@ -11,7 +11,8 @@ int FGlobal::iSinglControll = 0;
 
 FGlobal::FGlobal()
 {
-    if (iSinglControll > 0) throw std::runtime_error("Re-creation Singleton");
+    // Unit test против такого
+    //if (iSinglControll > 0) throw std::runtime_error("Re-creation Singleton");
     ++iSinglControll;
 
     mapTranslit = {
@@ -134,13 +135,14 @@ FGlobal::FGlobal()
                       { { -48, -82 }, s[64] },  { { -48, -81 }, s[65] } };
 }
 
-bool FGlobal::Init()
+bool FGlobal::Init(shared_ptr<FGlobal> _ptrThis)
 {
-    ptrConfig      = new FConfig(this);
-    ptrSolve       = new FSolve(this);
-    ptrError       = new FError(this);
-    ptrAdapOutData = new FAdapOutData(this);
-    ptrOutData     = new FOutData(this);
+    ptrThis        = _ptrThis;
+    ptrConfig      = make_shared<FConfig>(ptrThis);
+    ptrSolve       = make_shared<FSolve>(ptrThis);
+    ptrError       = make_shared<FError>(ptrThis);
+    ptrAdapOutData = make_shared<FAdapOutData>(ptrThis);
+    ptrOutData     = make_shared<FOutData>(ptrThis);
 
     if (!ptrConfig->Init()) return false;
     if (!ptrError->Init()) return false;
@@ -291,30 +293,25 @@ wstring FGlobal::ConwertPathFormat(wstring wsFileName, bool bRename) const
 
 FGlobal::~FGlobal()
 {
-    delete ptrError;
-    ptrError = nullptr;
-    delete ptrConfig;
-    ptrConfig = nullptr;
-    delete ptrSolve;
-    ptrSolve = nullptr;
-    delete ptrOutData;
-    ptrOutData = nullptr;
+    ptrError.reset();
+    ptrConfig.reset();
+    ptrSolve.reset();
+    ptrOutData.reset();
+    // ptrGraph.reset();
+
     --iSinglControll;
-    // delete ptrGraph;
 }
 
 bool FGlobal::ReCreate()
 {
     // Всё, кроме ptrError и ptrConfig нужно пересоздать
-    delete ptrSolve;
-    ptrSolve = nullptr;
-    delete ptrAdapOutData;
-    ptrAdapOutData = nullptr;
-    delete ptrOutData;
-    ptrOutData = nullptr;
+    ptrSolve.reset();
+    ptrAdapOutData.reset();
+    ptrOutData.reset();
 
-    ptrSolve   = new FSolve(this);
-    ptrOutData = new FOutData(this);
+    ptrSolve       = make_shared<FSolve>(ptrThis);
+    ptrAdapOutData = make_shared<FAdapOutData>(ptrThis);
+    ptrOutData     = make_shared<FOutData>(ptrThis);
 
     if (!ptrSolve->Init()) return false;
     if (!ptrAdapOutData->Init()) return false;

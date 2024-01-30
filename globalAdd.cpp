@@ -32,6 +32,33 @@ string FGlobal::DoubletWithPrecision(const double& dNum) const
     return buf;
 }
 
+
+filesystem::path FGlobal::GetCurrentPath() const
+{ 
+#ifdef UNIT_TEST
+    filesystem::path fFile = filesystem::current_path().parent_path().parent_path(); 
+    fFile /= "UnitTest";
+    return fFile;
+#else
+    return filesystem::current_path(); 
+#endif
+}
+
+bool FGlobal::IsThatIsTrue(wstring wsData)
+{
+    return IsThatIsTrue(ConwertToString(wsData));
+}
+
+bool FGlobal::IsThatIsTrue(string sData) const
+{
+    if (sData.find("+") != string::npos) return true;
+    if (sData.find("Да") != string::npos) return true;
+    if (sData.find("да") != string::npos) return true;
+    if (sData.find("Yes") != string::npos) return true;
+    if (sData.find("yes") != string::npos) return true;
+    return false;
+}
+
 void FGlobal::TakeData(bool& outBData, const OpenXLSX::XLRow& row) 
 {
     for (auto& it : row.cells(2, 2))    // Считываем только вторую ячейку

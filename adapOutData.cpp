@@ -6,10 +6,15 @@
 #include "metric.h"
 #include "solve.h"
 
-FAdapOutData::FAdapOutData(FGlobal* _ptrGlobal)
+int FAdapOutData::iSinglControll = 0;
+
+FAdapOutData::FAdapOutData(shared_ptr<FGlobal> _ptrGlobal)
     : ptrGlobal(_ptrGlobal)
 {
-
+    // Unit test против такого
+    // if (iSinglControll > 0) throw std::runtime_error("Re-creation
+    // Singleton");
+    ++iSinglControll;
 }
 
 bool FAdapOutData::Init() { return true; }

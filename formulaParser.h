@@ -22,6 +22,8 @@ private:
 
 struct FormulaParser
 {
+    FormulaParser() = default;
+
     explicit FormulaParser(string _sInput, double _dSumScore, int _iAmountDisc);    // Только постоянные значения
 
     double TakeResult(double _dLeft, double _dRight, int _iPowerComp);    // Только изменяемые значения

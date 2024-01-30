@@ -27,52 +27,15 @@
 using namespace std;
 // using namespace OpenXLSX;
 
-// ofstream logFile;// ("logFile.txt"); //Сообщаем об ошибках пользователя
-// ofstream debugFile("debugFile.txt"); //Для отладки
-
-/// <summary>
-/// Данная структура описывает учебный модуль
-/// (или дисциплину, если нет наследников)
-///
-/// В структуре перечислено:
-/// id модуля, как в УП
-/// название модуля
-/// Компетенции и индексы компетенций
-/// Входящие в модуль подмодули
-/// ЗЕ по каждому семестру в отдельности и суммарно
-/// </summary>
-struct Disc
-{
-    string sId;
-    string sName;
-
-    map<string, set<int>> mapCompet;
-    vector<Disc*>         arrChild;
-
-    int           iSumZU;
-    map<int, int> mapAllZU;
-
-    Disc(string _sNoIdentity)
-        : iSumZU(0), sName(_sNoIdentity), sId(_sNoIdentity)
-    {
-    }
-};
-
-FGlobal* ptrGlobal;    // Синглтон
+shared_ptr<FGlobal> ptrGlobal;
 bool     Create();
-
-void Delete()
-{
-    delete ptrGlobal;
-    ptrGlobal = nullptr;
-}
 
 bool Create()
 {
-    ptrGlobal = new FGlobal;
-    if (!ptrGlobal->Init())
+    ptrGlobal = make_shared<FGlobal>();
+    if (!ptrGlobal->Init(ptrGlobal))
     {
-        Delete();
+        ptrGlobal.reset();
         return false;
     }
     return true;
@@ -94,7 +57,7 @@ int main()
             ptrGlobal->ptrError
                 ->FatalErrorFewConfigPages();    // Не хватает данных для
                                                  // парсинга УП
-            Delete();
+            //Delete();
 #ifdef DEBUG
             return 3;    // Аварийное завершение
 #else
@@ -102,14 +65,16 @@ int main()
 #endif
         }
 
-        auto fFile = filesystem::current_path();    // Взятие пути директории
+        filesystem::path fFile =
+            filesystem::current_path();    // ptrGlobal->GetCurrentPath();
+                                                    // // Взятие пути директории
                                                     // расположения exe файла
 
         for (int category = 0;
              category < ptrGlobal->ptrConfig->GetArrNameFileIn().size();
              ++category)
         {
-            auto fInFile =
+            filesystem::path fInFile =
                 fFile / ptrGlobal->ptrConfig->GetArrNameFileIn()[category];
             if (!filesystem::exists(fInFile))
             {
@@ -148,7 +113,6 @@ int main()
                     if (ptrGlobal->ptrConfig->setIgnoreСurriculum.count(
                             it.path().filename().string()))
                         continue;
-                    auto sOutName = fOutFile / it.path().filename();
                     ptrGlobal->ptrSolve->Read(it.path().string(),
                                               it.path().filename().string());
                 }
@@ -180,11 +144,11 @@ int main()
 #endif
         }
 
-        Delete();
+        //Delete();
     }
     catch (...)
     {
-        Delete();
+        //Delete();
 #ifdef DEBUG
         return 2;    // Аварийное завершение
 #else
