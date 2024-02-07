@@ -43,7 +43,8 @@ void FGraph::Create()
 
         if (bArrIsSolveGraphMetric.size() > 0)
         {
-            if (bArrIsSolveGraphMetric[0]) CountAllMetric(FGraph::iCommon);
+            if (bArrIsSolveGraphMetric[0])
+                CountAllMetric(FGraph::iCommon);
             // Проверка будет выполнена только в том случае, если нет
             // принудительно исключённых дисциплин
             /*if (ptrTree->dAllSumScore !=
@@ -54,7 +55,8 @@ void FGraph::Create()
         }
 
         if (bArrIsSolveGraphMetric.size() > 1)
-            if (bArrIsSolveGraphMetric[1]) CountAllMetric(FGraph::iAlt);
+            if (bArrIsSolveGraphMetric[1])
+                CountAllMetric(FGraph::iAlt);
 
         if (bArrIsSolveGraphMetric.size() > 2)
             if (bArrIsSolveGraphMetric[2])
@@ -217,7 +219,8 @@ void FGraph::CalcMinMaxWeight(double&                           dResult,
         }
         else
         {
-            if (cmp(dCurScore, dResult)) dResult = dCurScore;
+            if (cmp(dCurScore, dResult))
+                dResult = dCurScore;
         }
     }
 }
@@ -263,7 +266,8 @@ void FGraph::GenerateReverseGraph()
     fGraph.fAdjList.resize(n);
 
     // Сопостовление в обратную сторону
-    for (const auto& [key, val] : fGraph.mapReversRel) fGraph.arrRel[val] = key;
+    for (const auto& [key, val] : fGraph.mapReversRel)
+        fGraph.arrRel[val] = key;
 
     map<wstring, set<wstring>>
         mapReverseCompDisc;    // Для кажлой компетенции указываются, какие
@@ -354,7 +358,8 @@ void FGraph::GenerateGraph()
                                        // графов, убрал из полей)
     fGraph.arrRel.resize(n);
     fGraph.fAdjList.resize(n);
-    for (auto& [key, val] : fGraph.mapReversRel) fGraph.arrRel[val] = key;
+    for (auto& [key, val] : fGraph.mapReversRel)
+        fGraph.arrRel[val] = key;
 
     // Сохраняем вес каждой вершины
     fGraph.arrNodeWeight.resize(n);
@@ -434,7 +439,8 @@ void FGraph::GenerateAltGraph()
     fGraph.arrRel.resize(n);
     fGraph.fAdjList.resize(n);
     // Сопостовление в обратную сторону
-    for (const auto& [key, val] : fGraph.mapReversRel) fGraph.arrRel[val] = key;
+    for (const auto& [key, val] : fGraph.mapReversRel)
+        fGraph.arrRel[val] = key;
 
     // Сохраняем вес каждой вершины
     fGraph.arrNodeWeight.resize(n);
@@ -470,7 +476,8 @@ void FGraph::GenerateAltGraph()
             const auto& R        = ptrTree->mapDisc[fGraph.arrRel[iR].first];
             const auto& iCourseR = fGraph.arrRel[iR].second;
 
-            if (iCourseL != iCourseR) continue;    // Только одинаковые курсы
+            if (iCourseL != iCourseR)
+                continue;    // Только одинаковые курсы
 
             int iPowerComp = 0;    // Сколько компетенций совпало
 
@@ -632,7 +639,7 @@ void FGraph::CalculateAllPairDistance(
         }
     }
 
-    int    iAmountNoLink = 0;
+    int iAmountNoLink = 0;
 
     // Усечение выборки разбития по квартилям
     vector<double> arrPathLen;
@@ -662,12 +669,13 @@ void FGraph::CalculateAllPairDistance(
     arrQuarAmount.resize(iAmountQuar);
     arrQuarAmount.push_back(iAmountNoLink);
 
-    if (iMinInd > iMaxInd) return;
+    if (iMinInd > iMaxInd)
+        return;
 
     double dMinVal = arrPathLen[iMinInd], dMaxVal = arrPathLen[iMaxInd];
     double dLenght = dMaxVal - dMinVal;
     // iAmountQuar
-    
+
     for (int i = iMinInd; i <= iMaxInd; ++i)
     {
         if (arrPathLen[i] == dMaxVal)
@@ -762,7 +770,8 @@ void FGraph::MaxDist(double& dMaxDist, int& iIdNode, vector<int>& arrColor,
         auto [dLen, id] = q.top();
         dLen            = -dLen;
         q.pop();
-        if (arrPass[id]) continue;
+        if (arrPass[id])
+            continue;
         arrPass[id] = 1;
 
         arrColor[id] = 1;

@@ -3,23 +3,23 @@
 #include "global.h"
 #include "solve.h"
 
-
 void FSolve::ThirdPageFindTypePlan(const OpenXLSX::XLWorksheet& fSheet,
                                    int                          iKeyPageNumber)
 {
-    //int h = ptrGlobal->HeightPage(fSheet);
+    // int h = ptrGlobal->HeightPage(fSheet);
 
     iCurrentRow = -1;
     for (auto row : fSheet.rows())
     {
         ++iCurrentRow;
 
-        //if (iCurrentRow == h) break;    // Далее только пустые строки
+        // if (iCurrentRow == h) break;    // Далее только пустые строки
 
         for (auto it : row.cells())
         {
             wstring wsData = ptrGlobal->GetValue(it);
-            if (wsData == L"") continue;
+            if (wsData == L"")
+                continue;
 
             if (arrDisc.back()->sTypePlan == "None")
             {
@@ -52,15 +52,14 @@ void FSolve::ThirdPageFindTypePlan(const OpenXLSX::XLWorksheet& fSheet,
 
             if (arrDisc.back()->iCodeUGSN == 0)
             {
-                bool bIsTrueMatchComp = false;
+                bool           bIsTrueMatchComp = false;
                 vector<smatch> matchesHeaderComp;
 
                 for (const auto& HeaderComp : arrRegexCodeUGSN)
                 {
                     vector<smatch> matchesBuf { sregex_iterator { ALL(sData),
                                                                   HeaderComp },
-                        sregex_iterator {}
-                    };
+                                                sregex_iterator {} };
                     if (matchesBuf.size() == 3)
                     {
                         matchesHeaderComp = matchesBuf;
@@ -77,10 +76,8 @@ void FSolve::ThirdPageFindTypePlan(const OpenXLSX::XLWorksheet& fSheet,
                     {
                         arrDisc.back()->iCodeUGSN = iBuf;
                     }
-                    
                 }
             }
-
         }
     }
 }

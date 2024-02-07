@@ -84,8 +84,9 @@ struct FGraph
 
     void CalculateAllPairDistance(
         vector<int>& arrQuarAmount,
-        const vector<vector<pair<int, double>>>& fCurrentAdj);    // Высчитываем минимальные пути алгоритмом Флойда -
-                      // Уоршелла (O(n^3))
+        const vector<vector<pair<int, double>>>&
+            fCurrentAdj);    // Высчитываем минимальные пути алгоритмом Флойда -
+                             // Уоршелла (O(n^3))
 
     void CalculateMST(
         double&                                  dResult,
@@ -119,7 +120,7 @@ private:
     void GenerateGraph();
     void GenerateAltGraph();
 
-    void GenerateReverseGraph(); // Граф, где вершины - это компетенции
+    void GenerateReverseGraph();    // Граф, где вершины - это компетенции
 
     void GenerateCourseGraph();    // Графы для каждого курса по отдельности
 

@@ -7,10 +7,11 @@ struct FConfig;
 // Тег дисциплины (гуманитарные, технические, естественнонаучные)
 enum ETagDisc : int
 {
-    ETagD_Human, // гуманитарные
-    ETagD_Tech, // технические
-    ETagD_Natur, // естественнонаучные
-    ETagD_Another, // те, что не были определены или сопоставленны чему-либо (ОШИБКА)
+    ETagD_Human,      // гуманитарные
+    ETagD_Tech,       // технические
+    ETagD_Natur,      // естественнонаучные
+    ETagD_Another,    // те, что не были определены или сопоставленны чему-либо
+                      // (ОШИБКА)
     ETagD_Size
 };
 
@@ -26,7 +27,10 @@ struct FTranslateData
 {
     friend struct FConfig;
 
-    wstring GetName() const { return wsName; }
+    wstring GetName() const
+    {
+        return wsName;
+    }
 
     bool GetTotal() const
     {
@@ -91,21 +95,54 @@ private:
     map<wstring, string*>
         mapStringParamsReadKey;    // Инициализируется в конструкторе
 public:
-    const string& GetSNameLabelHeader() const { return sNameLabelHeader; }
-    const string& GetSNameRibHeader() const { return sNameRibHeader; }
-    const string& GetSNameRibDir() const { return sNameRibDir; }
-    const string& GetSSeparator() const { return sSeparator; }
-    const string& GetSPrefFullNameCourse() const { return sPrefFullNameCourse; }
-    const string& GetSRegexComp() const { return sRegexComp; }
-    const string& GetSFormula() const { return sFormula; }
+    const string& GetSNameLabelHeader() const
+    {
+        return sNameLabelHeader;
+    }
+    const string& GetSNameRibHeader() const
+    {
+        return sNameRibHeader;
+    }
+    const string& GetSNameRibDir() const
+    {
+        return sNameRibDir;
+    }
+    const string& GetSSeparator() const
+    {
+        return sSeparator;
+    }
+    const string& GetSPrefFullNameCourse() const
+    {
+        return sPrefFullNameCourse;
+    }
+    const string& GetSRegexComp() const
+    {
+        return sRegexComp;
+    }
+    const string& GetSFormula() const
+    {
+        return sFormula;
+    }
     const string& GetSFormulaReverseGraph() const
     {
         return sFormulaReverseGraph;
     }
-    const string& GetSNoInitData() const { return sNoInitData; }
-    const string& GetSNameFileTotalData() const { return sNameFileTotalData; }
-    const string& GetSNameFileLocalData() const { return sNameFileLocalData; }
-    const string& GetSNameFileCompData() const { return sNameFileCompData; }
+    const string& GetSNoInitData() const
+    {
+        return sNoInitData;
+    }
+    const string& GetSNameFileTotalData() const
+    {
+        return sNameFileTotalData;
+    }
+    const string& GetSNameFileLocalData() const
+    {
+        return sNameFileLocalData;
+    }
+    const string& GetSNameFileCompData() const
+    {
+        return sNameFileCompData;
+    }
 
     // Int Params
 private:
@@ -124,14 +161,38 @@ private:
     map<wstring, int*>
         mapIntParamsReadKey;    // Инициализируется в конструкторе
 public:
-    const int& GetIMaxNameDiscLen() const { return iMaxNameDiscLen; }
-    const int& GetIWeigthRib() const { return iWeigthRib; }
-    const int& GetICourseLen() const { return iCourseLen; }
-    const int& GetIIgnoreEmptyLine() const { return iIgnoreEmptyLine; }
-    const int& GetISoMachComp() const { return iSoMachComp; }
-    const int& GetIAmountQuar() const { return iAmountQuar; }
-    const int& GetIPrecision() const { return iPrecision; }
-    const int& GetIIndicatorDeep() const { return iIndicatorDeep; }
+    const int& GetIMaxNameDiscLen() const
+    {
+        return iMaxNameDiscLen;
+    }
+    const int& GetIWeigthRib() const
+    {
+        return iWeigthRib;
+    }
+    const int& GetICourseLen() const
+    {
+        return iCourseLen;
+    }
+    const int& GetIIgnoreEmptyLine() const
+    {
+        return iIgnoreEmptyLine;
+    }
+    const int& GetISoMachComp() const
+    {
+        return iSoMachComp;
+    }
+    const int& GetIAmountQuar() const
+    {
+        return iAmountQuar;
+    }
+    const int& GetIPrecision() const
+    {
+        return iPrecision;
+    }
+    const int& GetIIndicatorDeep() const
+    {
+        return iIndicatorDeep;
+    }
 
     // Bool Params
 private:
@@ -159,18 +220,54 @@ private:
     map<wstring, bool*>
         mapBoolParamsReadKey;    // Инициализируется в конструкторе
 public:
-    const bool& GetBCreateFolder() const { return bCreateFolder; }
-    const bool& GetBCompactOutput() const { return bCompactOutput; }
-    const bool& GetBCourseOutput() const { return bCourseOutput; }
-    const bool& GetBReloadLogFile() const { return bReloadLogFile; }
-    const bool& GetBIsOutCSVDate() const { return bIsOutCSVDate; }
-    const bool& GetBMultiIndicator() const { return bMultiIndicator; }
-    const bool& GetBCompInterDelete() const { return bCompInterDelete; }
-    const bool& GetBIsPercentRegAll() const { return bIsPercentRegAll; }
-    const bool& GetBOutCompWithName() const { return bOutCompWithName; }
-    const bool& GetBOutShortNameCur() const { return bOutShortNameCur; }
-    const bool& GetBIsUnDirected() const { return bIsUnDirected; }
-    const bool& GetBDelSpecCharDiscName() const { return bDelSpecCharDiscName; }
+    const bool& GetBCreateFolder() const
+    {
+        return bCreateFolder;
+    }
+    const bool& GetBCompactOutput() const
+    {
+        return bCompactOutput;
+    }
+    const bool& GetBCourseOutput() const
+    {
+        return bCourseOutput;
+    }
+    const bool& GetBReloadLogFile() const
+    {
+        return bReloadLogFile;
+    }
+    const bool& GetBIsOutCSVDate() const
+    {
+        return bIsOutCSVDate;
+    }
+    const bool& GetBMultiIndicator() const
+    {
+        return bMultiIndicator;
+    }
+    const bool& GetBCompInterDelete() const
+    {
+        return bCompInterDelete;
+    }
+    const bool& GetBIsPercentRegAll() const
+    {
+        return bIsPercentRegAll;
+    }
+    const bool& GetBOutCompWithName() const
+    {
+        return bOutCompWithName;
+    }
+    const bool& GetBOutShortNameCur() const
+    {
+        return bOutShortNameCur;
+    }
+    const bool& GetBIsUnDirected() const
+    {
+        return bIsUnDirected;
+    }
+    const bool& GetBDelSpecCharDiscName() const
+    {
+        return bDelSpecCharDiscName;
+    }
     const bool& GetBIsNormalizeScoreComp() const
     {
         return bIsNormalizeScoreComp;
@@ -179,9 +276,18 @@ public:
     {
         return bOutAllInfoWithoutTag;
     }
-    const bool& GetBOutEmptyComp() const { return bOutEmptyComp; }
-    const bool& GetBOutTotalInfo() const { return bOutTotalInfo; }
-    const bool& GetBOutWithoutEmptyCell() const { return bOutWithoutEmptyCell; }
+    const bool& GetBOutEmptyComp() const
+    {
+        return bOutEmptyComp;
+    }
+    const bool& GetBOutTotalInfo() const
+    {
+        return bOutTotalInfo;
+    }
+    const bool& GetBOutWithoutEmptyCell() const
+    {
+        return bOutWithoutEmptyCell;
+    }
 
     // double Params
 private:
@@ -198,11 +304,26 @@ private:
         mapDoubleParamsReadKey;    // Инициализируется в конструкторе
                                    // (значение и размер (ограничение))
 public:
-    const double& GetDMinWeigthRib() const { return dMinWeigthRib; }
-    const double& GetDMinComp() const { return dMinComp; }
-    const double& GetDAnomalBigScore() const { return dAnomalBigScore; }
-    const double& GetDTruncAvg() const { return dTruncAvg; }
-    const double& GetDTruncQuarPathLen() const { return dTruncQuarPathLen; }
+    const double& GetDMinWeigthRib() const
+    {
+        return dMinWeigthRib;
+    }
+    const double& GetDMinComp() const
+    {
+        return dMinComp;
+    }
+    const double& GetDAnomalBigScore() const
+    {
+        return dAnomalBigScore;
+    }
+    const double& GetDTruncAvg() const
+    {
+        return dTruncAvg;
+    }
+    const double& GetDTruncQuarPathLen() const
+    {
+        return dTruncQuarPathLen;
+    }
 
     // wstring Params
 private:
@@ -217,8 +338,14 @@ private:
                                     // (значение и размер (ограничение))
 
 public:
-    const wstring& GetWSNameDebugFile() const { return wsNameDebugFile; }
-    const wstring& GetWSNameLogFile() const { return wsNameLogFile; }
+    const wstring& GetWSNameDebugFile() const
+    {
+        return wsNameDebugFile;
+    }
+    const wstring& GetWSNameLogFile() const
+    {
+        return wsNameLogFile;
+    }
 
     // vector<wstring> Params
 private:
@@ -237,14 +364,26 @@ private:
                                           // (значение и размер (ограничение))
 
 public:
-    const vector<wstring>& GetArrTypeDisc() const { return arrTypeDisc; }
+    const vector<wstring>& GetArrTypeDisc() const
+    {
+        return arrTypeDisc;
+    }
     const vector<wstring>& GetArrNameTypeDisc() const
     {
         return arrNameTypeDisc;
     }
-    const vector<wstring>& GetArrNameFileIn() const { return arrNameFileIn; }
-    const vector<wstring>& GetArrNameFileOut() const { return arrNameFileOut; }
-    const vector<wstring>& GetArrTagName() const { return arrTagName; }
+    const vector<wstring>& GetArrNameFileIn() const
+    {
+        return arrNameFileIn;
+    }
+    const vector<wstring>& GetArrNameFileOut() const
+    {
+        return arrNameFileOut;
+    }
+    const vector<wstring>& GetArrTagName() const
+    {
+        return arrTagName;
+    }
 
 public:
     map<wstring, FTranslateData> mapArrOutParams;
@@ -253,8 +392,9 @@ public:
 
     map<wstring, wstring> mapAliasRename;
 
-    map<wstring, set<ETagDisc>> mapTagDisc;    // Определяем, какая дисциплина
-                                          // (гуманитарна, естеств, общепроф)
+    map<wstring, set<ETagDisc>>
+        mapTagDisc;    // Определяем, какая дисциплина
+                       // (гуманитарна, естеств, общепроф)
 
     set<wstring> setIgnoreDisc;
     set<string> setIgnoreСurriculum;    // Какие УП игнорировать впринципе
@@ -279,6 +419,6 @@ private:
 
     wstring wsNamePage;    // Страница, откуда следует начать считывать
                            // параметры
-    wstring  wsNameConfig;    // "Параметры"
+    //wstring             wsFileConfig;    // Теперь хранится у Глобал
     shared_ptr<FGlobal> ptrGlobal;       // Синглтон
 };

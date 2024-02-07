@@ -4,12 +4,14 @@
 
 void FGlobal::DeleteSpechChars(string& sData) const
 {
-    if (ptrConfig == nullptr) return;
+    if (ptrConfig == nullptr)
+        return;
 
     string sNewData;
     for (const auto& it : sData)
     {
-        if (ptrConfig->setIgnoreCharCompHeader.count(it)) continue;
+        if (ptrConfig->setIgnoreCharCompHeader.count(it))
+            continue;
         sNewData.push_back(it);
     }
     sData = sNewData;
@@ -17,30 +19,31 @@ void FGlobal::DeleteSpechChars(string& sData) const
 }
 
 string FGlobal::DoubletWithPrecision(const double& dNum) const
-{ 
+{
     std::ostringstream fOut;
-    fOut << std::setprecision(ptrConfig->GetIPrecision())
-        << std::fixed << dNum;
+    fOut << std::setprecision(ptrConfig->GetIPrecision()) << std::fixed << dNum;
 
     string buf = fOut.str();
     if (buf.find('.') != string::npos)
     {
-        while (buf.back() == '0') buf.pop_back();
+        while (buf.back() == '0')
+            buf.pop_back();
     }
-    if (buf.back() == '.') buf.pop_back();
+    if (buf.back() == '.')
+        buf.pop_back();
 
     return buf;
 }
 
-
 filesystem::path FGlobal::GetCurrentPath() const
-{ 
+{
 #ifdef UNIT_TEST
-    filesystem::path fFile = filesystem::current_path().parent_path().parent_path(); 
+    filesystem::path fFile =
+        filesystem::current_path().parent_path().parent_path();
     fFile /= "UnitTest";
     return fFile;
 #else
-    return filesystem::current_path(); 
+    return filesystem::current_path();
 #endif
 }
 
@@ -51,15 +54,20 @@ bool FGlobal::IsThatIsTrue(wstring wsData)
 
 bool FGlobal::IsThatIsTrue(string sData) const
 {
-    if (sData.find("+") != string::npos) return true;
-    if (sData.find("Да") != string::npos) return true;
-    if (sData.find("да") != string::npos) return true;
-    if (sData.find("Yes") != string::npos) return true;
-    if (sData.find("yes") != string::npos) return true;
+    if (sData.find("+") != string::npos)
+        return true;
+    if (sData.find("Да") != string::npos)
+        return true;
+    if (sData.find("да") != string::npos)
+        return true;
+    if (sData.find("Yes") != string::npos)
+        return true;
+    if (sData.find("yes") != string::npos)
+        return true;
     return false;
 }
 
-void FGlobal::TakeData(bool& outBData, const OpenXLSX::XLRow& row) 
+void FGlobal::TakeData(bool& outBData, const OpenXLSX::XLRow& row)
 {
     for (auto& it : row.cells(2, 2))    // Считываем только вторую ячейку
     {
@@ -77,14 +85,15 @@ void FGlobal::TakeData(vector<wstring>&       outArrData,
     for (auto& it : row.cells())    // Считываем, начиная со 2 ячейки
     {
         i++;
-        if (i) outArrData.push_back(GetValue(it));
+        if (i)
+            outArrData.push_back(GetValue(it));
     }
     if (iSize)
         if (i != (iSize - 1))
             throw std::out_of_range("No equeal " + to_string(i));
 }
 
-void FGlobal::TakeData(vector<string>&       outArrData,
+void FGlobal::TakeData(vector<string>&        outArrData,
                        const OpenXLSX::XLRow& row,
                        int                    iSize)
 {
@@ -93,7 +102,8 @@ void FGlobal::TakeData(vector<string>&       outArrData,
     for (auto& it : row.cells())    // Считываем, начиная со 2 ячейки
     {
         i++;
-        if (i) outArrData.push_back(it.value().get<string>());
+        if (i)
+            outArrData.push_back(it.value().get<string>());
     }
     if (iSize)
         if (i != (iSize - 1))

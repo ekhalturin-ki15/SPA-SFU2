@@ -7,7 +7,7 @@
 
 int FSolve::iSinglControll = 0;
 
-FSolve::FSolve(shared_ptr < FGlobal > _ptrGlobal)
+FSolve::FSolve(shared_ptr<FGlobal> _ptrGlobal)
     : ptrGlobal(_ptrGlobal),
       bIsCorrectParsing(true),
       iCurrentPage(0),
@@ -15,7 +15,8 @@ FSolve::FSolve(shared_ptr < FGlobal > _ptrGlobal)
       iMaxCourse(0)
 {
     // Unit test против такого
-    //if (iSinglControll > 0) throw std::runtime_error("Re-creation Singleton");
+    // if (iSinglControll > 0) throw std::runtime_error("Re-creation
+    // Singleton");
     ++iSinglControll;
 
     ptrSolveSecondPage = make_unique<FSolveSecondPage>(_ptrGlobal);
@@ -36,19 +37,15 @@ bool FSolve::Init()
 
     try
     {
-        //fRegexHeaderComp = ptrGlobal->ptrConfig->sRegexHeaderComp;
+        // fRegexHeaderComp = ptrGlobal->ptrConfig->sRegexHeaderComp;
         arrRegexHeaderComp.resize(
             ptrGlobal->ptrConfig->arrRegexHeaderComp.size());
-        for (int i = 0;
-             i < ptrGlobal->ptrConfig->arrRegexHeaderComp.size();
+        for (int i = 0; i < ptrGlobal->ptrConfig->arrRegexHeaderComp.size();
              ++i)
-            arrRegexHeaderComp[i] =
-                ptrGlobal->ptrConfig->arrRegexHeaderComp[i];
-
+            arrRegexHeaderComp[i] = ptrGlobal->ptrConfig->arrRegexHeaderComp[i];
 
         arrRegexCodeUGSN.resize(ptrGlobal->ptrConfig->arrRegexCodeUGSN.size());
-        for (int i = 0; i < ptrGlobal->ptrConfig->arrRegexCodeUGSN.size();
-             ++i)
+        for (int i = 0; i < ptrGlobal->ptrConfig->arrRegexCodeUGSN.size(); ++i)
             arrRegexCodeUGSN[i] = ptrGlobal->ptrConfig->arrRegexCodeUGSN[i];
     }
     catch (...)
@@ -59,14 +56,11 @@ bool FSolve::Init()
 
     try
     {
-        //fRegexHeaderInd = ptrGlobal->ptrConfig->sRegexHeaderIndicator;
+        // fRegexHeaderInd = ptrGlobal->ptrConfig->sRegexHeaderIndicator;
         arrRegexHeaderInd.resize(
             ptrGlobal->ptrConfig->arrRegexHeaderInd.size());
-        for (int i = 0;
-             i < ptrGlobal->ptrConfig->arrRegexHeaderInd.size();
-             ++i)
-            arrRegexHeaderInd[i] =
-                ptrGlobal->ptrConfig->arrRegexHeaderInd[i];
+        for (int i = 0; i < ptrGlobal->ptrConfig->arrRegexHeaderInd.size(); ++i)
+            arrRegexHeaderInd[i] = ptrGlobal->ptrConfig->arrRegexHeaderInd[i];
     }
     catch (...)
     {
@@ -76,7 +70,10 @@ bool FSolve::Init()
     return true;
 }
 
-void FSolve::ClearTreeDisc() { arrDisc.clear(); }
+void FSolve::ClearTreeDisc()
+{
+    arrDisc.clear();
+}
 
 bool FSolve::Read(string _sInPath, string sNamePlan)
 {
@@ -91,7 +88,7 @@ bool FSolve::Read(string _sInPath, string sNamePlan)
 
     try
     {
-        shared_ptr<FTreeDisc> ptrTree = make_shared<FTreeDisc> (ptrGlobal);
+        shared_ptr<FTreeDisc> ptrTree = make_shared<FTreeDisc>(ptrGlobal);
         arrDisc.push_back(ptrTree);
         arrDisc.back()->sNamePlan = sNamePlan;
         arrDisc.back()->sShortNamePlan =
@@ -138,7 +135,6 @@ bool FSolve::Read(string _sInPath, string sNamePlan)
         arrDisc.back()->mapAllowDisc =
             arrDisc.back()->GewMapAllowDisc(true, true);
 
-        
         ++iCurrentPage;
     }
     catch (logic_error eError)
@@ -192,7 +188,7 @@ void FSolve::CreateAllGraph()
 {
     for (auto& it : arrDisc)
     {
-        it->ptrGraph = make_shared< FGraph>(it);
+        it->ptrGraph = make_shared<FGraph>(it);
         it->ptrGraph->Create();    // А теперь, построй граф на основе УП
     }
 }
@@ -201,15 +197,16 @@ void FSolve::CreateAllMetric()
 {
     for (auto& it : arrDisc)
     {
-        it->ptrMetric = make_shared< FMetric>(it);
-        it->ptrMetric->Init(); 
-        //it->ptrMetric->Create();    // А теперь, посчитай метрики УП
+        it->ptrMetric = make_shared<FMetric>(it);
+        it->ptrMetric->Init();
+        // it->ptrMetric->Create();    // А теперь, посчитай метрики УП
     }
 }
 
 FSolve::~FSolve()
 {
-    for (auto& it : arrDisc) it.reset();
+    for (auto& it : arrDisc)
+        it.reset();
 
     ptrSolveSecondPage.reset();
     --iSinglControll;

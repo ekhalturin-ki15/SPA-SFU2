@@ -8,15 +8,14 @@
 string       FMetric::sAllMetric      = "All";
 const string FMetric::sEmptyIndicator = "-";
 
-
-FTreeMetric::FTreeMetric(shared_ptr<FMetric> _ptrMetric)
-    : ptrMetric(_ptrMetric)
+FTreeMetric::FTreeMetric(shared_ptr<FMetric> _ptrMetric) : ptrMetric(_ptrMetric)
 {
 }
 
 void FTreeMetric::DeleteDFS(shared_ptr<FTreeMetric> th)
 {
-    for (auto& [key, val] : th->mapChild) DeleteDFS(val);
+    for (auto& [key, val] : th->mapChild)
+        DeleteDFS(val);
     th.reset();
 }
 
@@ -65,7 +64,10 @@ void FTreeMetric::InitChosenScoreDFS(shared_ptr<FTreeMetric> th,
     }
 }
 
-void FTreeMetric::Delete() { DeleteDFS(this->ptrMetric->ptrTreeMetric); }
+void FTreeMetric::Delete()
+{
+    DeleteDFS(this->ptrMetric->ptrTreeMetric);
+}
 
 void FTreeMetric::InitBalanceScore()
 {
@@ -84,12 +86,20 @@ void FTreeMetric::InitChosenScore(const bool& bIsPercentRegAll,
     }
 }
 
-FMetric::~FMetric() { ptrTreeMetric->Delete(); }
+FMetric::~FMetric()
+{
+    ptrTreeMetric->Delete();
+}
 
-void FMetric::InitBalanceScore() { ptrTreeMetric->InitBalanceScore(); }
+void FMetric::InitBalanceScore()
+{
+    ptrTreeMetric->InitBalanceScore();
+}
 
 // Инверсия зависимости
-FMetric::FMetric(shared_ptr<FTreeDisc> _ptrTree) : ptrTree(_ptrTree) {}
+FMetric::FMetric(shared_ptr<FTreeDisc> _ptrTree) : ptrTree(_ptrTree)
+{
+}
 
 void FMetric::Init()
 {
@@ -157,7 +167,6 @@ void FMetric::Init()
         ptrTreeMetric->mapChild[to_string(iCourse)]->sName = to_string(iCourse);
     }
 
-
     Create();
 }
 
@@ -210,9 +219,9 @@ void FMetric::AddScoreNoBalanceSum(shared_ptr<FTreeMetric> ptrNowTree,
 }
 
 void FMetric::UpdateCourseMetric(shared_ptr<FTreeMetric> ptrRootTree,
-                                 set<vector<string>>&  setIsTakenScore,
-                                 const vector<string>& arrRectUpdate,
-                                 const double&         dScore)
+                                 set<vector<string>>&    setIsTakenScore,
+                                 const vector<string>&   arrRectUpdate,
+                                 const double&           dScore)
 {
     auto ptrNowTree = ptrRootTree;
     for (const auto& sCurName : arrRectUpdate)
@@ -340,7 +349,7 @@ void FMetric::Create()
                         { sCompName, sCompNumber, sIndicatorNumber },
                         dNormalizeScore);
 
-                    // В холостую пройдёмся по дереву, чтобы сохдать недостающие
+                    // В холостую пройдёмся по дереву, чтобы создать недостающие
                     // нулевые узлы
                     if (ptrTree->ptrGlobal->ptrConfig->GetBOutEmptyComp())
                     {

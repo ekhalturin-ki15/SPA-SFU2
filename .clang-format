@@ -13,10 +13,10 @@ AllowAllParametersOfDeclarationOnNextLine: false
 AllowShortBlocksOnASingleLine: false
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortEnumsOnASingleLine: true
-AllowShortFunctionsOnASingleLine: All
-AllowShortIfStatementsOnASingleLine: WithoutElse
-AllowShortLambdasOnASingleLine: All
-AllowShortLoopsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLambdasOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
 
 
 AlwaysBreakAfterReturnType: None

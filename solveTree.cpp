@@ -7,7 +7,7 @@
 
 FTreeElement::FTreeElement()
     : dSumScore(0.),
-      //wsName(L""),
+      // wsName(L""),
       sName(""),
       wsIndexName(L""),
       ptrParent(nullptr),
@@ -17,13 +17,16 @@ FTreeElement::FTreeElement()
 }
 
 FTreeDisc::FTreeDisc(shared_ptr<FGlobal> _ptrGlobal)
-    : ptrGlobal(_ptrGlobal), iAmountCourse(0), dAllSumScore(0.), iAmountDisc(0),
+    : ptrGlobal(_ptrGlobal),
+      iAmountCourse(0),
+      dAllSumScore(0.),
+      iAmountDisc(0),
       iExtendedAmountDisc(0),
       iYearStart(0),
       iCodeUGSN(0),
       sTypePlan("None")
 {
-    ptrRoot = make_shared< FTreeElement> ();
+    ptrRoot = make_shared<FTreeElement>();
     ptrGraph = nullptr;    // Только после Read можно строить граф
     ptrMetric = nullptr;    // Только после Read высчитывать метрики
 }
@@ -41,7 +44,7 @@ FTreeDisc::~FTreeDisc()
     }
 }
 
-void FTreeDisc::DeleteDFS(shared_ptr < FTreeElement > ptrThis)
+void FTreeDisc::DeleteDFS(shared_ptr<FTreeElement> ptrThis)
 {
     for (auto it : ptrThis->arrChild)
     {
@@ -70,7 +73,8 @@ void FTreeDisc::CountDisc()
         {
             this->iExtendedAmountDisc++;
             mapAmountTypeDisc[it->eTypeDisc]++;
-            //Нераспознаный тег дисциплины (указания о тегах данной дисциплины нет в файле config)
+            // Нераспознаный тег дисциплины (указания о тегах данной дисциплины
+            // нет в файле config)
             if (it->setTagDisc.size() == 0)
             {
                 mapAmountTagDisc[ETagDisc::ETagD_Another]++;
@@ -84,26 +88,28 @@ void FTreeDisc::CountDisc()
     return;
 }
 
-map < wstring, shared_ptr<FTreeElement>>
+map<wstring, shared_ptr<FTreeElement>>
     FTreeDisc::GewMapAllowDisc(bool IsNecessaryAllow, bool IsNecessaryNotIgnore)
 {
-    map < wstring, shared_ptr<FTreeElement>> mapReturn;
+    map<wstring, shared_ptr<FTreeElement>> mapReturn;
     for (const auto& [key, it] : mapDisc)
     {
         // Нулевые дисциплины тоже нужно убрать
         if ((it->arrChild.size() == 0) && (it->dSumScore > 0))
         {
             if (IsNecessaryNotIgnore)
-                if (!it->bNotIgnore) continue;
+                if (!it->bNotIgnore)
+                    continue;
 
             if (IsNecessaryAllow)
-                if (!it->bAllow) continue;
+                if (!it->bAllow)
+                    continue;
 
             mapReturn[key] = it;
         }
         else
         {
-            //Удаляем заголовки модулей, так как им не нужны теги
+            // Удаляем заголовки модулей, так как им не нужны теги
             auto ptr = ptrGlobal->ptrError->mapIndexDiscWithoutTag.find(
                 { it->wsIndexName, this->sShortNamePlan });
 

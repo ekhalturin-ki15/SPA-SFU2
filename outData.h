@@ -32,7 +32,7 @@ private:
 
 struct FFileCache
 {
-    explicit FFileCache(shared_ptr < FOutData > _ptrPerent)
+    explicit FFileCache(shared_ptr<FOutData> _ptrPerent)
         : ptrPerent(_ptrPerent) {};
 
     // Проброска страницы Excel для вывода данных (например, при помощи
@@ -47,7 +47,7 @@ struct FFileCache
     vector<OpenXLSX::XLWorksheet> arrCourseOpenWKS;
 
 private:
-    shared_ptr < FOutData > ptrPerent;
+    shared_ptr<FOutData> ptrPerent;
 };
 
 struct FOutData
@@ -67,10 +67,10 @@ private:
 
     std::map<string, vector<vector<string>>> mapTotalDataOut;
 
-    shared_ptr <FFileCache> fFileCache;    // Класс хранения информации о файлах Excel
-                                   // для
-                               // FOutData (агрегация, а не композиция, чтобы
-                               // сделать методы Out константными)
+    shared_ptr<FFileCache> fFileCache;    // Класс хранения информации о файлах
+                                          // Excel для
+    // FOutData (агрегация, а не композиция, чтобы
+    // сделать методы Out константными)
 
     // Составляет таблицу для вывода информации общего вида (не имеющей
     // отношения к графам) всех УП FSolve
@@ -83,8 +83,7 @@ private:
                                 const int&              iGraphType);
 
     // Данные про дерево компетенций УП
-    void OutAddInfo(string sName, string sPath,
-                    shared_ptr < FTreeDisc > ptrTree);
+    void OutAddInfo(string sName, string sPath, shared_ptr<FTreeDisc> ptrTree);
 
     void CreateAndTake(
         string sName,
@@ -106,7 +105,7 @@ private:
         vector<bool>& arrIsAllowed,
         // const string&         sCurName, // Лучше передать FTreeDisc*
         const vector<double>& arrResult, FCorridorAdapter& fCorridorData,
-        shared_ptr < FTreeDisc > ptrTree, const vector<wstring>& arrOnlyAllow);
+        shared_ptr<FTreeDisc> ptrTree, const vector<wstring>& arrOnlyAllow);
 
     void AddTableCommonData(vector<vector<string>>& arrToAddedData,
                             FCorridorAdapter&       fCorridorData);
@@ -124,15 +123,18 @@ private:
                        const bool& bIsConsider, FCorridorAdapter& fSaveData);
 
     void CreateTotalInfo(vector<vector<string>>& arrReturnData,
-                         const shared_ptr < FGraphType > fGraph,
+                         const shared_ptr<FGraphType>
+                                         fGraph,
                          const EOutType& eOutType);
 
-    void CreateTotalInfo(vector<double>&   arrReturnDataMetrics,
-                         const shared_ptr < FGraphType > fGraph,
+    void CreateTotalInfo(vector<double>& arrReturnDataMetrics,
+                         const shared_ptr<FGraphType>
+                                         fGraph,
                          const EOutType& eOutType);
 
-    void CreateTotalInfo(vector<string>&   arrReturnDataHeader,
-                         const shared_ptr < FGraphType > fGraph,
+    void CreateTotalInfo(vector<string>& arrReturnDataHeader,
+                         const shared_ptr<FGraphType>
+                                         fGraph,
                          const EOutType& eOutType);
 
     // Лучше буду генерировать матрицу, и выводить её сразу же
@@ -168,7 +170,8 @@ private:
             fAdjList);    // Вывод данных о графе для Gephi в формате csv
 
     void CreateTableInfoInit(vector<vector<string>>& arrReturnData,
-                             shared_ptr < FTreeMetric > ptrMetric,
+                             shared_ptr<FTreeMetric>
+                                  ptrMetric,
                              bool bIsOutNameCur    // const double dAllSum,
                              // bool         bIsLocal = false
     );
@@ -181,14 +184,15 @@ private:
         int x,
         int& iSizeX,    // Если считаем вхолостую, когда bIsCounting == true, то
                         // записываем в iSizeX результат
-        int&         iCurrentY,    // Глобальная переменая
-        shared_ptr < FTreeMetric > ptrMetric, int iDeep
+        int& iCurrentY,    // Глобальная переменая
+        shared_ptr<FTreeMetric> ptrMetric, int iDeep
         // const bool& bIsLocal = false
     );    // Возвращает Актуальное значение y
 
     void CreateGraphE1TableInfoInit(
         map<string, map<string, string>>& fReturnData,
-        shared_ptr < FTreeMetric > ptrMetric);
+        shared_ptr<FTreeMetric>
+            ptrMetric);
 
     void CreateGraphE1TableRectInfo(
         const bool& bIsCounting,    // Если true - то проход в холостую для
@@ -198,27 +202,29 @@ private:
         int x,
         int& iSizeX,    // Если считаем вхолостую, когда bIsCounting == true, то
                         // записываем в iSizeX результат
-        int&         iCurrentY,    // Глобальная переменая
-        shared_ptr < FTreeMetric > ptrMetric,
+        int& iCurrentY,    // Глобальная переменая
+        shared_ptr<FTreeMetric>
+            ptrMetric,
         int iDeep);    // Возвращает Актуальное значение y
 
     vector<string> CreateCommonNameLabel(const int& iGraphType,
-                                         shared_ptr < FTreeDisc > fTree);
+                                         shared_ptr<FTreeDisc>
+                                             fTree);
 
     vector<string> CreateTag(const int& iGraphType,
-                             shared_ptr < FTreeDisc > fTree,
+                             shared_ptr<FTreeDisc>
+                                  fTree,
                              bool bCheckTag = true);
 
     void OutGephiData(
         string sName,
         string sPath,
-        shared_ptr <
-            FTreeDisc >
-                fTree);    // Вывод данных о графе для Gephi в формате csv
+        shared_ptr<FTreeDisc>
+            fTree);    // Вывод данных о графе для Gephi в формате csv
 
 private:
     static int iSinglControll;    // Проверка на синглтон
 
-    shared_ptr < FGlobal> ptrGlobal;    // Синглтон
-    string   AddCompString(const map<string, vector<string>>& mapComp);
+    shared_ptr<FGlobal> ptrGlobal;    // Синглтон
+    string AddCompString(const map<string, vector<string>>& mapComp);
 };

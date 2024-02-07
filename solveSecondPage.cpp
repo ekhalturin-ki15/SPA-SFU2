@@ -4,7 +4,8 @@
 #include "global.h"
 #include "solve.h"
 
-FSolveSecondPage::FSolveSecondPage(shared_ptr<FGlobal> _ptrGlobal) : ptrGlobal(_ptrGlobal)
+FSolveSecondPage::FSolveSecondPage(shared_ptr<FGlobal> _ptrGlobal)
+    : ptrGlobal(_ptrGlobal)
 {
 }
 
@@ -92,7 +93,7 @@ void FSolveSecondPage::AddDiscScore(const OpenXLSX::XLWorksheet& fSheet,
                 {
                     if (iIdIndex == -1)
                     {
-                        //Если нет индексов, то ориентируемся по названиям
+                        // Если нет индексов, то ориентируемся по названиям
                         wsData = ptrGlobal->ptrSolve->arrDisc.back()
                                      ->mapNameToIndexDisc[wsData];
                     }
@@ -123,9 +124,10 @@ void FSolveSecondPage::AddDiscScore(const OpenXLSX::XLWorksheet& fSheet,
                         double dScore;
                         iNumCource =
                             x - iIdLScore;    // Нуль нумерация семестров
-                        iNumCource /= ptrGlobal->ptrConfig
-                                          ->GetICourseLen();    // Определяем курс, а
-                                                           // не семестр
+                        iNumCource /=
+                            ptrGlobal->ptrConfig
+                                ->GetICourseLen();    // Определяем курс, а
+                                                      // не семестр
                         dScore =
                             atof(ptrGlobal->ConwertToString(wsData).c_str());
                         ptrThis->bAllow = bIsAllow;

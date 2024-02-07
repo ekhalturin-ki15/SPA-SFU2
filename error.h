@@ -83,8 +83,13 @@ struct FError
     void ErrorBadParserComp(wstring wsIndexName) const;
     void ErrorBadParserComp(string sIndexName) const;
 
-    void ErrorBadIndicatorBind(wstring wsIndexName, wstring wsIndicator) const;
-    void ErrorBadIndicatorBind(string sIndexName, string sIndicator) const;
+    void ErrorBadIndicatorBind(wstring wsId,
+                               wstring wsIndexName,
+                               wstring wsIndicator) const;
+
+    void ErrorBadIndicatorBind(string sId,
+                               string sIndexName,
+                               string sIndicator) const;
 
     void ErrorAnomalBigScore(double dAmount) const;
 

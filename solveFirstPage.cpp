@@ -24,8 +24,8 @@ void FSolve::FirstPageAddCompIndicator(const OpenXLSX::XLWorksheet& fSheet,
         }
     }
 
-    string        sLastComp      = "";
-    string        sLastIndicator = "";
+    string                   sLastComp      = "";
+    string                   sLastIndicator = "";
     shared_ptr<FTreeElement> ptrThis        = nullptr;
 
     iCurrentRow = -1;
@@ -33,10 +33,12 @@ void FSolve::FirstPageAddCompIndicator(const OpenXLSX::XLWorksheet& fSheet,
     {
         ++iCurrentRow;
 
-        if (iCurrentRow == h) break;    // Далее только пустые строки
+        if (iCurrentRow == h)
+            break;    // Далее только пустые строки
 
-        int  x          = -1;
-        bool bReadIndex = false;    // Удалось ли считать индекс дисциплины в строке
+        int  x = -1;
+        bool bReadIndex =
+            false;    // Удалось ли считать индекс дисциплины в строке
         // bool bReadСontent = false;
         bool bThisRowIsDisc = false;
 
@@ -49,11 +51,14 @@ void FSolve::FirstPageAddCompIndicator(const OpenXLSX::XLWorksheet& fSheet,
 
                 if (wsData != L"")
                 {
-                    string sData = ptrGlobal->ConwertToString(ptrGlobal->ConwertPathFormat(wsData));
+                    string sData = ptrGlobal->ConwertToString(
+                        ptrGlobal->ConwertPathFormat(wsData));
                     if ((iIdIndex <= x) && (!bReadIndex))
                     {
-                        bReadIndex = true;    // Чтобы повторно не находить индекс в строке
+                        bReadIndex = true;    // Чтобы повторно не находить
+                                              // индекс в строке
                         // Если указан среди перечня компетенций
+
                         if (arrDisc.back()->fAllComp.count(sData))
                         {
                             sLastComp = sData;
@@ -65,26 +70,43 @@ void FSolve::FirstPageAddCompIndicator(const OpenXLSX::XLWorksheet& fSheet,
                             bThisRowIsDisc = true;
                             ptrThis        = arrDisc.back()->mapDisc[wsData];
 
-                            // Значит, мы нашли дисциплину, у которой указать индикатор
-                            // соответсвующей компетенции
+                            // Значит, мы нашли дисциплину, у которой указан
+                            // индикатор соответсвующей компетенции
 
                             if (!ptrThis->mapComp.count(sLastComp))
                             {
-                                // Неправильно указаны компетенции у дисциплины
-                                // Не к чему соотнести индикатор
-                                ptrGlobal->ptrError->ErrorBadIndicatorBind(sLastComp, sLastIndicator);
+                                // Иногда ОПК-4.1 Это индикатор, а инога
+                                // компетенция с индикатором ОПК-4.1.1
 
-                                break;
+                                string sReserveData =
+                                    sLastComp.substr(0,sLastComp.find('.'));
+
+                                if (!ptrThis->mapComp.count(sReserveData))
+                                {
+                                    // Неправильно указаны компетенции у
+                                    // дисциплины Не к чему соотнести индикатор
+                                    ptrGlobal->ptrError->ErrorBadIndicatorBind(
+                                        ptrGlobal->ConwertToString(
+                                            ptrThis->wsIndexName),
+                                        sLastComp, sLastIndicator);
+
+                                    break;
+                                }
+                                else
+                                {
+                                    sLastIndicator = sLastComp;
+                                    sLastComp      = sReserveData;
+                                }
                             }
 
-                            ptrThis->mapComp[sLastComp].push_back(sLastIndicator);
-
-
+                            ptrThis->mapComp[sLastComp].push_back(
+                                sLastIndicator);
 
                             vector<smatch> matchesHeaderComp;
-                           /* { sregex_iterator { ALL(sLastComp),
-                                                fRegexHeaderComp },
-                                                           sregex_iterator {} };*/
+                            /* { sregex_iterator { ALL(sLastComp),
+                                                 fRegexHeaderComp },
+                                                            sregex_iterator {}
+                               };*/
 
                             bool bIsTrueMatchComp = false;
 
@@ -103,7 +125,6 @@ void FSolve::FirstPageAddCompIndicator(const OpenXLSX::XLWorksheet& fSheet,
                                 }
                             }
 
-                            
                             if (bIsTrueMatchComp)
                             {
                                 for (auto sData : matchesHeaderComp)
@@ -118,8 +139,9 @@ void FSolve::FirstPageAddCompIndicator(const OpenXLSX::XLWorksheet& fSheet,
 
                                 /*{ sregex_iterator { ALL(sLastIndicator),
                                                     fRegexHeaderInd },
-                                                               sregex_iterator {} };*/
-                                bool           bIsTrueMatchInd = false;
+                                                               sregex_iterator
+                                   {} };*/
+                                bool bIsTrueMatchInd = false;
                                 for (const auto& HeaderInd : arrRegexHeaderInd)
                                 {
                                     vector<smatch> matchesBuf {
@@ -130,11 +152,10 @@ void FSolve::FirstPageAddCompIndicator(const OpenXLSX::XLWorksheet& fSheet,
                                     if (matchesBuf.size() > 0)
                                     {
                                         matchesHeaderInd = matchesBuf;
-                                        bIsTrueMatchInd = true;
+                                        bIsTrueMatchInd  = true;
                                         break;
                                     }
                                 }
-
 
                                 for (auto sData : matchesHeaderInd)
                                 {
@@ -157,7 +178,8 @@ void FSolve::FirstPageAddCompIndicator(const OpenXLSX::XLWorksheet& fSheet,
             if (!bReadIndex)
             {
                 ptrGlobal->ptrError->ErrorEmptyLine();
-                // может присутствовать множество пустых строк в конце, сделал усечение и предварительный выход
+                // может присутствовать множество пустых строк в конце, сделал
+                // усечение и предварительный выход
                 continue;
             }
         }

@@ -7,9 +7,18 @@ using namespace std;
 
 struct Expression
 {
-    explicit Expression(string _sToken) : sToken(_sToken) {}
-    explicit Expression(string _sToken, Expression fArg) : sToken(_sToken), arrArgument { fArg } {}
-    explicit Expression(string _sToken, Expression fLeftArg, Expression fRightArg) : sToken(_sToken), arrArgument { fLeftArg, fRightArg } {}
+    explicit Expression(string _sToken) : sToken(_sToken)
+    {
+    }
+    explicit Expression(string _sToken, Expression fArg)
+        : sToken(_sToken), arrArgument { fArg }
+    {
+    }
+    explicit Expression(string _sToken, Expression fLeftArg,
+                        Expression fRightArg)
+        : sToken(_sToken), arrArgument { fLeftArg, fRightArg }
+    {
+    }
 
     explicit Expression() = default;
 
@@ -24,9 +33,11 @@ struct FormulaParser
 {
     FormulaParser() = default;
 
-    explicit FormulaParser(string _sInput, double _dSumScore, int _iAmountDisc);    // Только постоянные значения
+    explicit FormulaParser(string _sInput, double _dSumScore,
+                           int _iAmountDisc);    // Только постоянные значения
 
-    double TakeResult(double _dLeft, double _dRight, int _iPowerComp);    // Только изменяемые значения
+    double TakeResult(double _dLeft, double _dRight,
+                      int _iPowerComp);    // Только изменяемые значения
 
     string sInput = "";
 
@@ -47,5 +58,5 @@ private:
 
     int i = 0;    // Указатель на позицию строки
 
-    //Expression fFormula;
+    // Expression fFormula;
 };

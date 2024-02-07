@@ -11,31 +11,24 @@
 //  Префикс d - вещественное число (double)
 //  Префикс ptr - указатель
 
+#include "adapOutData.h"
 #include "config.h"
 #include "error.h"
 #include "global.h"
-#include "adapOutData.h"
 #include "outData.h"
 #include "solve.h"
-
-#ifdef DEBUG
-#    define _CRTDBG_MAP_ALLOC
-#    include <crtdbg.h>
-#    include <stdlib.h>
-#endif
 
 using namespace std;
 // using namespace OpenXLSX;
 
-shared_ptr<FGlobal> ptrGlobal;
-bool     Create();
 
-bool Create()
+bool Create(shared_ptr<FGlobal>& _ptrGlobal, wstring wsNameConfig);
+bool Create(shared_ptr<FGlobal>& _ptrGlobal, wstring wsNameConfig)
 {
-    ptrGlobal = make_shared<FGlobal>();
-    if (!ptrGlobal->Init(ptrGlobal))
+    _ptrGlobal = make_shared<FGlobal>(wsNameConfig);
+    if (!_ptrGlobal->Init(_ptrGlobal))
     {
-        ptrGlobal.reset();
+        _ptrGlobal.reset();
         return false;
     }
     return true;
@@ -45,7 +38,9 @@ int main()
 {
     try
     {
-        if (!Create())
+        shared_ptr<FGlobal> ptrGlobal;
+
+        if (!Create(ptrGlobal, L"config.xlsx"))
 #ifdef DEBUG
             return 4;    // Аварийное завершение
 #else
@@ -57,7 +52,7 @@ int main()
             ptrGlobal->ptrError
                 ->FatalErrorFewConfigPages();    // Не хватает данных для
                                                  // парсинга УП
-            //Delete();
+            // Delete();
 #ifdef DEBUG
             return 3;    // Аварийное завершение
 #else
@@ -67,8 +62,8 @@ int main()
 
         filesystem::path fFile =
             filesystem::current_path();    // ptrGlobal->GetCurrentPath();
-                                                    // // Взятие пути директории
-                                                    // расположения exe файла
+                                           // // Взятие пути директории
+                                           // расположения exe файла
 
         for (int category = 0;
              category < ptrGlobal->ptrConfig->GetArrNameFileIn().size();
@@ -144,20 +139,15 @@ int main()
 #endif
         }
 
-        //Delete();
+        // Delete();
     }
     catch (...)
     {
-        //Delete();
+        // Delete();
 #ifdef DEBUG
         return 2;    // Аварийное завершение
 #else
         return 0;            // Аварийное завершение
 #endif
     }
-
-#ifdef DEBUG
-    // Будет ругаться на Статические поля в error.h
-    _CrtDumpMemoryLeaks();
-#endif    // DEBUG
 }

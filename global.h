@@ -28,7 +28,7 @@ struct FOutData;
 // Паттерн фасад
 struct FGlobal
 {
-    explicit FGlobal();
+    explicit FGlobal(wstring wsNameConfig);
     ~FGlobal();
 
     bool ReCreate();
@@ -114,6 +114,11 @@ struct FGlobal
     shared_ptr<FAdapOutData> ptrAdapOutData;    // Синглтон
     // shared_ptr<FGraph> ptrGraph; //У каждого УП свой Граф
 
+    const string& GetSNameFileConfig() const
+    {
+        return sNameFileConfig;
+    }
+
 private:
     static int iSinglControll;
 
@@ -129,4 +134,6 @@ private:
     map<pair<char, char>, char> mapReversUnic;
 
     shared_ptr<FGlobal> ptrThis;
+
+    string sNameFileConfig;
 };

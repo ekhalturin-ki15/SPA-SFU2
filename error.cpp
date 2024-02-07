@@ -20,7 +20,8 @@ FError::FError(shared_ptr<FGlobal> _ptrGlobal)
     : ptrGlobal(_ptrGlobal), bIsPrint(false)
 {
     // Unit test против такого
-    //if (iSinglControll > 0) throw std::runtime_error("Re-creation Singleton");
+    // if (iSinglControll > 0) throw std::runtime_error("Re-creation
+    // Singleton");
     ++iSinglControll;
 }
 
@@ -152,8 +153,7 @@ void FError::ErrorGraphZeroValue(string sNamePlan, string sNameIndex) const
 
 void FError::ErrorGraphZeroComp(string sNamePlan, wstring wsNameIndex) const
 {
-    ErrorGraphZeroComp(sNamePlan,
-                               ptrGlobal->ConwertToString(wsNameIndex));
+    ErrorGraphZeroComp(sNamePlan, ptrGlobal->ConwertToString(wsNameIndex));
 }
 
 void FError::ErrorGraphZeroComp(string sNamePlan, string sNameIndex) const
@@ -178,7 +178,7 @@ void FError::ErrorOutFileNotFind(wstring wsPathName) const
     ErrorOutFileNotFind(ptrGlobal->ConwertToString(wsPathName));
 }
 
-void FError::ErrorParams(wstring wsPathName) const 
+void FError::ErrorParams(wstring wsPathName) const
 {
     ErrorParams(ptrGlobal->ConwertToString(wsPathName));
 }
@@ -190,7 +190,6 @@ void FError::ErrorParams(string sPathName) const
     out << END;
     out.close();
 }
-
 
 void FError::ErrorUncorrectExtension() const
 {
@@ -345,7 +344,6 @@ void FError::ErrorBadParserComp(string sIndexName) const
     out.close();
 }
 
-
 void FError::ErrorConfiqDublicateNameDisc(wstring wsNameDisc) const
 {
     ErrorConfiqDublicateNameDisc(ptrGlobal->ConwertToString(wsNameDisc));
@@ -361,19 +359,22 @@ void FError::ErrorConfiqDublicateNameDisc(string sNameDisc) const
     out.close();
 }
 
-void FError::ErrorBadIndicatorBind(wstring wsIndexName,
+void FError::ErrorBadIndicatorBind(wstring wsId, wstring wsIndexName,
                                    wstring wsIndicator) const
 {
-    ErrorBadIndicatorBind(ptrGlobal->ConwertToString(wsIndexName),
+    ErrorBadIndicatorBind(ptrGlobal->ConwertToString(wsId),
+                          ptrGlobal->ConwertToString(wsIndexName),
                           ptrGlobal->ConwertToString(wsIndicator));
 }
 
-void FError::ErrorBadIndicatorBind(string sIndexName, string sIndicator) const
+void FError::ErrorBadIndicatorBind(string sId, string sIndexName,
+                                   string sIndicator) const
 {
     ofstream&& out = OutHeader();
 
     out << "В учебном плане " + ptrGlobal->ptrSolve->sInPath +
-               " для дисциплины " + ptrGlobal->ReversUTF16RU(sIndexName) +
+               " у дисциплины " + ptrGlobal->ReversUTF16RU(sId) +
+               " для компетенции " + ptrGlobal->ReversUTF16RU(sIndexName) +
                " не получается связать с индикатором " +
                ptrGlobal->ReversUTF16RU(sIndicator);
     out << END;
@@ -416,8 +417,8 @@ void FError::OutDiscWithoutTag() const
             if (ptrGlobal->ptrConfig->GetBOutAllInfoWithoutTag())
             {
                 out << "\t\t";
-                out <<
-                ptrGlobal->ReversUTF16RU(ptrGlobal->ConwertToString(wsIndex));
+                out << ptrGlobal->ReversUTF16RU(
+                    ptrGlobal->ConwertToString(wsIndex));
                 out << " : ";
             }
             out << ptrGlobal->ReversUTF16RU(ptrGlobal->ConwertToString(wsName));
@@ -432,4 +433,7 @@ void FError::OutDiscWithoutTag() const
     }
 }
 
-FError::~FError() { --iSinglControll; }
+FError::~FError()
+{
+    --iSinglControll;
+}

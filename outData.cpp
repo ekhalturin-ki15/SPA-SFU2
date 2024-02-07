@@ -9,7 +9,7 @@
 #include <iomanip>
 #include <sstream>
 
-FCorridorAdapter::FCorridorAdapter(shared_ptr < FGlobal > _ptrGlobal)
+FCorridorAdapter::FCorridorAdapter(shared_ptr<FGlobal> _ptrGlobal)
     : ptrGlobal(_ptrGlobal)
 {
 }
@@ -127,7 +127,7 @@ void FCorridorAdapter::Add(int key, pair<double, string> fData)
 
 int FOutData::iSinglControll = 0;
 
-FOutData::FOutData(shared_ptr < FGlobal > _ptrGlobal)
+FOutData::FOutData(shared_ptr<FGlobal> _ptrGlobal)
     : ptrGlobal(_ptrGlobal), iSizeOnlyAllow(0)
 
 // arrCompetenceHead(
@@ -157,15 +157,17 @@ FOutData::FOutData(shared_ptr < FGlobal > _ptrGlobal)
 //       L"Количество факультативов" })
 {
     // Unit test против такого
-    //if (iSinglControll > 0) throw std::runtime_error("Re-creation Singleton");
+    // if (iSinglControll > 0) throw std::runtime_error("Re-creation
+    // Singleton");
     ++iSinglControll;
 
     fFileCache = make_shared<FFileCache>(ptrGlobal->ptrOutData);
 }
 
-void FOutData::CreateTotalInfo(vector<double>&   arrReturnDataMetrics,
-                               const shared_ptr < FGraphType > fGraph,
-                               const EOutType&   eOutType)
+void FOutData::CreateTotalInfo(vector<double>& arrReturnDataMetrics,
+                               const shared_ptr<FGraphType>
+                                               fGraph,
+                               const EOutType& eOutType)
 {
     const vector<wstring> arrMetricHead(
         { L"Всего ЗЕ в графе", L"Кол-во дисциплин в графе",
@@ -221,8 +223,15 @@ void FOutData::CreateTotalInfo(vector<double>&   arrReturnDataMetrics,
              iAmountComp <= this->ptrGlobal->ptrConfig->GetISoMachComp();
              ++iAmountComp)
         {
-            arrReturnDataMetrics.push_back(
-                fGraph->arrAmountCountCompDisc[iAmountComp]);
+            if (fGraph->arrAmountCountCompDisc.size() <= iAmountComp)
+            {
+                arrReturnDataMetrics.push_back(FGraphType::dNoInit);
+            }
+            else
+            {
+                arrReturnDataMetrics.push_back(
+                    fGraph->arrAmountCountCompDisc[iAmountComp]);
+            }
         }
     }
 
@@ -236,9 +245,10 @@ void FOutData::CreateTotalInfo(vector<double>&   arrReturnDataMetrics,
     }
 }
 
-void FOutData::CreateTotalInfo(vector<string>&   arrReturnDataHeader,
-                               const shared_ptr < FGraphType > fGraph,
-                               const EOutType&   eOutType)
+void FOutData::CreateTotalInfo(vector<string>& arrReturnDataHeader,
+                               const shared_ptr<FGraphType>
+                                               fGraph,
+                               const EOutType& eOutType)
 {
     const vector<wstring> arrMetricHead(
         { L"Всего ЗЕ в графе", L"Кол-во дисциплин в графе",
@@ -328,8 +338,9 @@ void FOutData::CreateTotalInfo(vector<string>&   arrReturnDataHeader,
 }
 
 void FOutData::CreateTotalInfo(vector<vector<string>>& arrReturnData,
-                               const shared_ptr < FGraphType > fGraph,
-                               const EOutType&         eOutType)
+                               const shared_ptr<FGraphType>
+                                               fGraph,
+                               const EOutType& eOutType)
 {
     arrReturnData.clear();
 
@@ -353,7 +364,10 @@ void FOutData::CreateTotalInfo(vector<vector<string>>& arrReturnData,
     }
 }
 
-bool FOutData::Init() { return true; }
+bool FOutData::Init()
+{
+    return true;
+}
 
 void FOutData::CreateOnlyAllowedHeaderRow(vector<string>&        arrReturn,
                                           vector<bool>&          arrIsAllowed,
@@ -453,9 +467,10 @@ void FOutData::CreateOnlyAllowedResultRow(vector<string>& arrReturn,
                                           const int&      iSizeHeader,
                                           vector<bool>&   arrIsAllowed,
                                           // const string&         sCurName,
-                                          const vector<double>&  arrResult,
-                                          FCorridorAdapter&      fCorridorData,
-                                          shared_ptr < FTreeDisc > ptrTree,
+                                          const vector<double>& arrResult,
+                                          FCorridorAdapter&     fCorridorData,
+                                          shared_ptr<FTreeDisc>
+                                                                 ptrTree,
                                           const vector<wstring>& arrOnlyAllow)
 {
     int i = 0;
@@ -628,9 +643,11 @@ void FOutData::CreateAllCurriculaTotalData(
 #pragma region FormationData
         vector<double> arrAllResult;
         // Общие для УП метрики (перечислены в arrPrefixHead)
-        //arrAllResult.push_back(atoi(
-        //    it->sShortNamePlan.substr(it->sShortNamePlan.size() - 2).c_str()));
-        //arrAllResult.push_back(atoi(it->sShortNamePlan.substr(0, 2).c_str()));
+        // arrAllResult.push_back(atoi(
+        //    it->sShortNamePlan.substr(it->sShortNamePlan.size() -
+        //    2).c_str()));
+        // arrAllResult.push_back(atoi(it->sShortNamePlan.substr(0,
+        // 2).c_str()));
         arrAllResult.push_back(it->iYearStart);
         arrAllResult.push_back(it->iCodeUGSN);
         arrAllResult.push_back(it->dAllSumScore);
@@ -764,7 +781,8 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
     for (const auto& it : ptrGlobal->ptrSolve->arrDisc)
     {
         // Нет нужного нам курса (например, если 3 курс, а план магистратуры)
-        if (it->iAmountCourse <= iGraphType) continue;
+        if (it->iAmountCourse <= iGraphType)
+            continue;
 
         // Выводить короткое, или помное имя
         /*sCurPlanName = (ptrGlobal->ptrConfig->bOutShortNameCur)
@@ -773,9 +791,10 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
 
         vector<double> arrAllResult;
 
-        CreateTotalInfo(arrAllResult,
+        CreateTotalInfo(
+            arrAllResult,
             make_shared<FGraphType>(it->ptrGraph->mapGraph[iGraphType]),
-                        EOutType::EOT_Head);
+            EOutType::EOT_Head);
 
         vector<string> arrCurData;
         CreateOnlyAllowedResultRow(arrCurData, arrHeader.size(), arrOutColm,
@@ -944,7 +963,7 @@ void FOutData::Out(string sOutPath)
 }
 
 void FOutData::OutAddInfo(string sName, string sPath,
-                          shared_ptr < FTreeDisc > ptrTree)
+                          shared_ptr<FTreeDisc> ptrTree)
 {
     auto& ptrCurrentTree =
         ptrTree->ptrMetric->ptrTreeMetric->mapChild[FMetric::sAllMetric];
@@ -1031,8 +1050,8 @@ void FOutData::OutAddInfo(string sName, string sPath,
             {
                 vector<vector<string>> arrTotalCourseGraphData;
                 CreateTotalInfo(arrTotalCourseGraphData,
-                                make_shared<FGraphType> (ptrTree->ptrGraph
-                                    ->mapGraph[sKey[0] - '1']),
+                                make_shared<FGraphType>(
+                                    ptrTree->ptrGraph->mapGraph[sKey[0] - '1']),
                                 EOutType::EOT_Added);
 
                 OutTableInfo(1,    // Так как 1-индексация
@@ -1055,7 +1074,8 @@ void FOutData::OutAddInfo(string sName, string sPath,
     {
         vector<vector<string>> arrTotalGraphData;
         CreateTotalInfo(arrTotalGraphData,
-                        make_shared<FGraphType> (ptrTree->ptrGraph->mapGraph[FGraph::iCommon]),
+                        make_shared<FGraphType>(
+                            ptrTree->ptrGraph->mapGraph[FGraph::iCommon]),
                         EOutType::EOT_Added);
         OutTableInfo(1, iYShift + 1,    // Так как 1-индексация
                      arrTotalGraphData, fFileCache->arrOpenWKS.back());
@@ -1067,19 +1087,33 @@ void FOutData::OutAddInfo(string sName, string sPath,
         for (auto& [sKey, ptrCurrentTree] :
              ptrTree->ptrMetric->ptrTreeMetric->mapChild)
         {
-            if (sKey == FMetric::sAllMetric) continue;
+            if (sKey == FMetric::sAllMetric)
+                continue;
             map<string, map<string, string>> fBuf;
             // Вывод конкретного курса
             CreateGraphE1TableInfoInit(fBuf, ptrCurrentTree);
             mapGraphE1[sKey] = fBuf;
         }
+        
+        //Нужно посмотреть по всем курсам и посмотреть общее пересечение
 
-        int iSize = 1;
-        for (const auto& [sComp, et] : mapGraphE1["1"])
+        map<pair<string,string>,int> mapAllComp;
+        for (const auto& [sCourse, it] : mapGraphE1)
         {
-            iSize += et.size();
+            for (const auto& [sComp, et] : it)
+            {
+                for (const auto& [sNum, sVal] : et)
+                {
+                    if (!mapAllComp.count({ sComp, sNum }))
+                        mapAllComp[{ sComp, sNum }] = 0;
+                }
+            }
         }
-        vector<vector<string>> arrData(iSize,
+        int x = 0;
+        for (auto& [key, val] : mapAllComp)
+            val = x++;
+
+        vector<vector<string>> arrData(mapAllComp.size(),
                                        vector<string>(mapGraphE1.size() + 2));
 
         {
@@ -1087,12 +1121,11 @@ void FOutData::OutAddInfo(string sName, string sPath,
             for (const auto& [sCourse, it] : mapGraphE1)
             {
                 ++y;
-                int x = -1;
                 for (const auto& [sComp, et] : it)
                 {
                     for (const auto& [sNum, sVal] : et)
                     {
-                        ++x;
+                        int x         = mapAllComp[{ sComp, sNum }];
                         arrData[x][y] = sVal;
                         arrData[x][0] = sComp;
                         arrData[x][1] = sNum;
@@ -1164,14 +1197,17 @@ void FOutData::OutTableInfoCSV(
 {
     string sAllPath = sPath;
 
-    if (sNameFile != "") sAllPath += "/" + sNameFile;
-    if (sName != "") sAllPath += "/" + sName;
+    if (sNameFile != "")
+        sAllPath += "/" + sNameFile;
+    if (sName != "")
+        sAllPath += "/" + sName;
     ofstream outLabel(sAllPath + ".csv");
     for (int y = iShiftDataY; y < arrData.size(); ++y)
     {
         for (int x = iShiftDataX; x < arrData[y].size(); ++x)
         {
-            if (x) outLabel << ";";
+            if (x)
+                outLabel << ";";
             outLabel << arrData[y][x];
         }
         outLabel << "\n";
@@ -1179,8 +1215,9 @@ void FOutData::OutTableInfoCSV(
 }
 
 void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
-                                   shared_ptr<FTreeMetric>  ptrMetric,
-                                   bool                    bIsOutNameCur
+                                   shared_ptr<FTreeMetric>
+                                        ptrMetric,
+                                   bool bIsOutNameCur
                                    // const double            dAllSum,
                                    // bool bIsLocal
 )
@@ -1228,7 +1265,8 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
         for (const auto& it : arrCompetenceHead)
         {
             ++x;
-            if (x >= iSizeX) break;
+            if (x >= iSizeX)
+                break;
             if (this->ptrGlobal->ptrConfig->mapAddOutParams.count(it))
             {
                 arrAllData[0][x] = this->ptrGlobal->ConwertToString(
@@ -1258,7 +1296,8 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
             {
                 ++x;
 
-                if (x >= iSizeX) break;
+                if (x >= iSizeX)
+                    break;
                 if (this->ptrGlobal->ptrConfig->mapAddOutParams.count(it))
                 {
                     if (ptrGlobal->ptrConfig->mapAddOutParams[it].GetTotal())
@@ -1280,7 +1319,8 @@ void FOutData::CreateTableInfoInit(vector<vector<string>>& arrReturnData,
                     }
                 }
             }
-            if (bIsTakeNoEmpty) arrReturnData.push_back(arrBuf);
+            if (bIsTakeNoEmpty)
+                arrReturnData.push_back(arrBuf);
         }
     }
 
@@ -1467,15 +1507,17 @@ string FOutData::AddCompString(const map<string, vector<string>>& mapComp)
     for (const auto& [sNameComp, arrIndicator] : mapComp)
     {
         ++j;
-        if (j) sReturn += ",";
+        if (j)
+            sReturn += ",";
         sReturn += sNameComp;
     }
     sReturn += ")";
     return sReturn;
 }
 
-vector<string> FOutData::CreateTag(const int&           iGraphType,
-                                   shared_ptr<FTreeDisc> fTree,
+vector<string> FOutData::CreateTag(const int& iGraphType,
+                                   shared_ptr<FTreeDisc>
+                                        fTree,
                                    bool bCheckTag)
 {
     vector<string> arrTag;
@@ -1495,7 +1537,8 @@ vector<string> FOutData::CreateTag(const int&           iGraphType,
 }
 
 vector<string> FOutData::CreateCommonNameLabel(const int& iGraphType,
-                                               shared_ptr < FTreeDisc > fTree)
+                                               shared_ptr<FTreeDisc>
+                                                   fTree)
 {
     vector<string> arrCommonNameLabel;
     for (auto& it : fTree->ptrGraph->mapGraph[iGraphType].arrRel)
@@ -1529,7 +1572,7 @@ vector<string> FOutData::CreateCommonNameLabel(const int& iGraphType,
 }
 
 void FOutData::OutGephiData(string sName, string sPath,
-                            shared_ptr < FTreeDisc > fTree)
+                            shared_ptr<FTreeDisc> fTree)
 {
     {
         const int& iTag = FGraph::iCommon;
@@ -1636,7 +1679,7 @@ void FOutData::OutGephiRib(const string& sName, const string& sNameFile,
                 outLabel << l << ";";
                 outLabel << r << ";";
                 outLabel << ptrGlobal->ptrConfig->GetSNameRibDir() << ";";
-                outLabel << dLen << "";
+                outLabel << dLen * ptrGlobal->ptrConfig->GetIWeigthRib() << "";
                 outLabel << "\n";
             }
         }
@@ -1669,7 +1712,8 @@ bool FOutData::TakePasteData(const int& x, vector<string>& arrCurRow,
 {
     if (bIsOutData)
     {
-        if (bIsConsider) RetakeCommon(fSaveData, x, dDate, sCurName);
+        if (bIsConsider)
+            RetakeCommon(fSaveData, x, dDate, sCurName);
 
         arrCurRow[x] = ptrGlobal->ConwertUTF16RU(sOutData);
         return true;
@@ -1679,7 +1723,8 @@ bool FOutData::TakePasteData(const int& x, vector<string>& arrCurRow,
 
 void FOutData::CreateGraphE1TableInfoInit(
     map<string, map<string, string>>& fReturnData,
-    shared_ptr < FTreeMetric > ptrMetric)
+    shared_ptr<FTreeMetric>
+        ptrMetric)
 {
     int                    iSizeX = 0, iSizeY = 0;
     vector<vector<string>> arrAllData;
@@ -1730,18 +1775,22 @@ void FOutData::CreateGraphE1TableInfoInit(
         for (const auto& it : arrCompetenceHead)
         {
             ++x;
-            if (x >= iSizeX) break;
+            if (x >= iSizeX)
+                break;
             if (it == L"Заголовок компетенции")
             {
-                if (arrAllData[y][x] != "") sHeadComp = arrAllData[y][x];
+                if (arrAllData[y][x] != "")
+                    sHeadComp = arrAllData[y][x];
             }
             if (it == L"Компетенция")
             {
-                if (arrAllData[y][x] != "") sComp = arrAllData[y][x];
+                if (arrAllData[y][x] != "")
+                    sComp = arrAllData[y][x];
             }
             if (it == L"ЗЕ Компетенций")
             {
-                if (arrAllData[y][x] != "") sScore = arrAllData[y][x];
+                if (arrAllData[y][x] != "")
+                    sScore = arrAllData[y][x];
             }
         }
         if (sScore == "0")
@@ -1754,7 +1803,7 @@ void FOutData::CreateGraphE1TableInfoInit(
 void FOutData::CreateGraphE1TableRectInfo(
     const bool& bIsCounting,
     vector<vector<string>>& arrReturnData,    // Возвращаемое значение с функции
-    int x, int& iSizeX, int& iCurrentY, shared_ptr < FTreeMetric > ptrMetric,
+    int x, int& iSizeX, int& iCurrentY, shared_ptr<FTreeMetric> ptrMetric,
     int iDeep
     // const bool& bIsLocal
 )

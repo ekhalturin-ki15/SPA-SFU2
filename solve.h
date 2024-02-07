@@ -93,7 +93,8 @@ struct FTreeDisc
     int iExtendedAmountDisc;    // Количество всех дисциплин (не модулей)
     map<ETypeDisc, int>
         mapAmountTypeDisc;    // Количество дисциплин по типу (основные, по
-                              // выбору, факультативы), Учитываются в том числе и те, что не считаются в Плане
+                              // выбору, факультативы), Учитываются в том числе
+                              // и те, что не считаются в Плане
 
     map<ETagDisc, int>
         mapAmountTagDisc;    // Количество дисциплин по теги (гуманитарные,
@@ -107,8 +108,8 @@ struct FTreeDisc
     // outIAmountDisc);    // Вывод через параметры void FindAllScore(double&
     // outDSum);
 
-    shared_ptr<FMetric> ptrMetric;    // У каждого УП свой объект класса FMetric
     shared_ptr<FGraph> ptrGraph;    // У каждого УП свой объект класса FGraph
+    shared_ptr<FMetric> ptrMetric;    // У каждого УП свой объект класса FMetric
 
     // Добавил, чтобы можно было обращаться к Config
     shared_ptr<FGlobal> ptrGlobal;    // Синглтон
@@ -119,8 +120,7 @@ private:
 
     // Получить только дисциплины (без модулей)
     map<wstring, shared_ptr<FTreeElement>>
-        GewMapAllowDisc(bool IsNecessaryAllow,
-                                                bool IsNecessaryNotIgnore);
+        GewMapAllowDisc(bool IsNecessaryAllow, bool IsNecessaryNotIgnore);
 };
 
 struct FSolve
@@ -183,7 +183,7 @@ private:
     // В solveSecondPage.h и solveSecondPage.cpp
     unique_ptr<FSolveSecondPage>
         ptrSolveSecondPage;    // Композиция (вынес в отдельный
-                                             // класс, так как много методов)
+                               // класс, так как много методов)
     shared_ptr<FGlobal> ptrGlobal;    // Синглтон
     regex               fRegexComp;
     vector<regex> arrRegexHeaderInd;    // Может быть несколько, поэтому вектор

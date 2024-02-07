@@ -1,33 +1,36 @@
 ﻿#include "formulaParser.h"
-#include  <utility>
-FormulaParser::FormulaParser(string _sInput, double _dSumScore, int _iAmountDisc)
-    : sInput(_sInput),
-      dSumScore(_dSumScore),
-      iAmountDisc(_iAmountDisc)
+#include <utility>
+FormulaParser::FormulaParser(string _sInput, double _dSumScore,
+                             int _iAmountDisc)
+    : sInput(_sInput), dSumScore(_dSumScore), iAmountDisc(_iAmountDisc)
 {
-    
 }
 
 std::string FormulaParser::ParserToken()
 {
     while (true)
     {
-        if (sInput.size() <= i) break;
-        if (!isspace(sInput[i])) break;
+        if (sInput.size() <= i)
+            break;
+        if (!isspace(sInput[i]))
+            break;
         ++i;
     }
 
     if (isdigit(sInput[i]))
     {
         string number;
-        while (isdigit(sInput[i]) || sInput[i] == '.')    // Вытаскиваем вещественное число
+        while (isdigit(sInput[i]) ||
+               sInput[i] == '.')    // Вытаскиваем вещественное число
         {
             number.push_back(sInput[i++]);
         }
         return number;
     }
 
-    vector<string> arrToken = { "+", "-", "^", "*", "/", "mod", "abs", "sin", "cos", "log", "(", ")", "L", "R", "A", "N", "K" };
+    vector<string> arrToken = { "+",   "-",   "^",   "*",   "/", "mod",
+                                "abs", "sin", "cos", "log", "(", ")",
+                                "L",   "R",   "A",   "N",   "K" };
 
     for (auto& s : arrToken)
     {
@@ -53,23 +56,27 @@ std::string FormulaParser::ParserToken()
 Expression FormulaParser::UnaryExp()
 {
     string token = ParserToken();
-    if (token.empty()) throw std::runtime_error("Invalid input");
+    if (token.empty())
+        throw std::runtime_error("Invalid input");
 
     if (token == "(")
     {
         auto result = Parse();
-        if (ParserToken() != ")") throw std::runtime_error("Expected ')'");
+        if (ParserToken() != ")")
+            throw std::runtime_error("Expected ')'");
         return result;
     }
 
-    if (std::isdigit(token[0])) return Expression(token);
+    if (std::isdigit(token[0]))
+        return Expression(token);
 
     vector<string> arrToken = { "L", "R", "A", "N", "K" };
 
     int i = 0;
     for (; i < arrToken.size(); ++i)
     {
-        if (arrToken[i] == token) break;
+        if (arrToken[i] == token)
+            break;
     }
 
     switch (i)
@@ -96,12 +103,18 @@ Expression FormulaParser::UnaryExp()
 
 int FormulaParser::iGetPriority(const string& sOperation)
 {
-    if (sOperation == "+") return 1;
-    if (sOperation == "-") return 1;
-    if (sOperation == "*") return 2;
-    if (sOperation == "/") return 2;
-    if (sOperation == "mod") return 2;
-    if (sOperation == "^") return 3;
+    if (sOperation == "+")
+        return 1;
+    if (sOperation == "-")
+        return 1;
+    if (sOperation == "*")
+        return 2;
+    if (sOperation == "/")
+        return 2;
+    if (sOperation == "mod")
+        return 2;
+    if (sOperation == "^")
+        return 3;
     return 0;
 }
 
@@ -124,7 +137,10 @@ Expression FormulaParser::BinaryExp(int iMinPriority)
     }
 }
 
-Expression FormulaParser::Parse() { return BinaryExp(0); }
+Expression FormulaParser::Parse()
+{
+    return BinaryExp(0);
+}
 
 double Expression::Calculate(const Expression& fExp)
 {
@@ -137,24 +153,36 @@ double Expression::Calculate(const Expression& fExp)
         case 1:
         {
             dLeft = Calculate(fExp.arrArgument[0]);
-            if (fExp.sToken == "+") return +dLeft;
-            if (fExp.sToken == "-") return -dLeft;
-            if (fExp.sToken == "abs") return abs(dLeft);
-            if (fExp.sToken == "sin") return sin(dLeft);
-            if (fExp.sToken == "log") return log(dLeft);
-            if (fExp.sToken == "cos") return cos(dLeft);
+            if (fExp.sToken == "+")
+                return +dLeft;
+            if (fExp.sToken == "-")
+                return -dLeft;
+            if (fExp.sToken == "abs")
+                return abs(dLeft);
+            if (fExp.sToken == "sin")
+                return sin(dLeft);
+            if (fExp.sToken == "log")
+                return log(dLeft);
+            if (fExp.sToken == "cos")
+                return cos(dLeft);
             throw std::runtime_error("Unknown unary operator");
         }
         case 2:
         {
             dLeft  = Calculate(fExp.arrArgument[0]);
             dRight = Calculate(fExp.arrArgument[1]);
-            if (fExp.sToken == "+") return dLeft + dRight;
-            if (fExp.sToken == "-") return dLeft - dRight;
-            if (fExp.sToken == "*") return dLeft * dRight;
-            if (fExp.sToken == "/") return dLeft / dRight;
-            if (fExp.sToken == "^") return pow(dLeft, dRight);
-            if (fExp.sToken == "mod") return (long long)(dLeft) % (long long)(dRight);
+            if (fExp.sToken == "+")
+                return dLeft + dRight;
+            if (fExp.sToken == "-")
+                return dLeft - dRight;
+            if (fExp.sToken == "*")
+                return dLeft * dRight;
+            if (fExp.sToken == "/")
+                return dLeft / dRight;
+            if (fExp.sToken == "^")
+                return pow(dLeft, dRight);
+            if (fExp.sToken == "mod")
+                return (long long)(dLeft) % (long long)(dRight);
             throw std::runtime_error("Unknown binary operator");
         }
 
@@ -172,7 +200,7 @@ double FormulaParser::TakeResult(double _dLeft, double _dRight, int _iPowerComp)
     dRight = _dRight;
     // dSumScore = _dSumScore;
     // iAmountDisc = _iAmountDisc;
-    iPowerComp = _iPowerComp;
+    iPowerComp          = _iPowerComp;
     Expression fFormula = Parse();
     return fFormula.Calculate(fFormula);
 }

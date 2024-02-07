@@ -9,10 +9,14 @@
 
 int FGlobal::iSinglControll = 0;
 
-FGlobal::FGlobal()
+FGlobal::FGlobal(wstring wsNameConfig)
 {
+    sNameFileConfig = ConwertToString(GetCurrentPath() / wsNameConfig);
+
+
     // Unit test против такого
-    //if (iSinglControll > 0) throw std::runtime_error("Re-creation Singleton");
+    // if (iSinglControll > 0) throw std::runtime_error("Re-creation
+    // Singleton");
     ++iSinglControll;
 
     mapTranslit = {
@@ -144,11 +148,16 @@ bool FGlobal::Init(shared_ptr<FGlobal> _ptrThis)
     ptrAdapOutData = make_shared<FAdapOutData>(ptrThis);
     ptrOutData     = make_shared<FOutData>(ptrThis);
 
-    if (!ptrConfig->Init()) return false;
-    if (!ptrError->Init()) return false;
-    if (!ptrSolve->Init()) return false;
-    if (!ptrAdapOutData->Init()) return false;
-    if (!ptrOutData->Init()) return false;
+    if (!ptrConfig->Init())
+        return false;
+    if (!ptrError->Init())
+        return false;
+    if (!ptrSolve->Init())
+        return false;
+    if (!ptrAdapOutData->Init())
+        return false;
+    if (!ptrOutData->Init())
+        return false;
 
     return true;
 }
@@ -248,8 +257,10 @@ string FGlobal::ConwertPathFormat(string sFileName, bool bRename) const
 
     for (auto& it : sNewName)
     {
-        if (it == '\\') it = '/';
-        if (mapTranslit.count(it)) it = mapTranslit.find(it)->second;
+        if (it == '\\')
+            it = '/';
+        if (mapTranslit.count(it))
+            it = mapTranslit.find(it)->second;
     }
 
     if (bRename)
@@ -273,8 +284,10 @@ wstring FGlobal::ConwertPathFormat(wstring wsFileName, bool bRename) const
 
     for (auto& it : wsNewName)
     {
-        if (it == '\\') it = '/';
-        if (mapWTranslit.count(it)) it = mapWTranslit.find(it)->second;
+        if (it == '\\')
+            it = '/';
+        if (mapWTranslit.count(it))
+            it = mapWTranslit.find(it)->second;
     }
 
     if (bRename)
@@ -313,9 +326,12 @@ bool FGlobal::ReCreate()
     ptrAdapOutData = make_shared<FAdapOutData>(ptrThis);
     ptrOutData     = make_shared<FOutData>(ptrThis);
 
-    if (!ptrSolve->Init()) return false;
-    if (!ptrAdapOutData->Init()) return false;
-    if (!ptrOutData->Init()) return false;
+    if (!ptrSolve->Init())
+        return false;
+    if (!ptrAdapOutData->Init())
+        return false;
+    if (!ptrOutData->Init())
+        return false;
 
     return true;
 }

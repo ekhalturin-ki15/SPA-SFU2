@@ -54,19 +54,19 @@ struct FMetric
 
     // Инверсия зависимости
     explicit FMetric(shared_ptr<FTreeDisc> _ptrTree);
-    void Init(); // Для позднего связывания, чтобы у родителя уже был создан shared_ptr
+    void Init();    // Для позднего связывания, чтобы у родителя уже был создан
+                    // shared_ptr
 
     ~FMetric();
-   
+
     void InitBalanceScore();
 
     // У всего графа целиком тег sAllMetric, у остальных по курсам
     shared_ptr<FTreeMetric> ptrTreeMetric;
 
 private:
-
-    // Использовать только после вызова Read у ptrSolve, то есть, когда ptrTree заполнен
-    // Вызывается в конце Init
+    // Использовать только после вызова Read у ptrSolve, то есть, когда ptrTree
+    // заполнен Вызывается в конце Init
     void Create();
 
     void UpdateCourseMetric(shared_ptr<FTreeMetric> ptrRootTree,

@@ -42,16 +42,16 @@ FConfig::FConfig(shared_ptr<FGlobal> _ptrGlobal)
       wsNameDebugFile(L"debugFile.txt"),
       wsNameLogFile(L"logFile.txt"),
       sPrefFullNameCourse("_"),
-      sRegexComp("{0, 1}(.{0, } ? ); "),
+      sRegexComp("{0, 1}(.{0, } ? );"),
       sFormula("((L + R) / 2) * K"),
       sFormulaReverseGraph("((L + R) / 2) * K")
 {
-    //Unit test против такого
-    //if (iSinglControll > 0) throw std::runtime_error("Re-creation Singleton");
+    // Unit test против такого
+    // if (iSinglControll > 0) throw std::runtime_error("Re-creation
+    // Singleton");
 
     ++iSinglControll;
 
-    wsNameConfig = L"/config.xlsx";
     wsNamePage   = L"Параметры";
 
     InitStringMap();
@@ -131,8 +131,7 @@ void FConfig::InitBoolMap()
     mapBoolParamsReadKey[L"Отображать компетенции в названии"] =
         &bOutCompWithName;
     mapBoolParamsReadKey[L"Выводить короткое имя для УП"] = &bOutShortNameCur;
-    mapBoolParamsReadKey[L"Удалить спецсимволы из названия дисциплин (не "
-                         L"влияет на игнорируемые)"] = &bDelSpecCharDiscName;
+    mapBoolParamsReadKey[L"Удалить спецсимволы из названия дисциплин"] = &bDelSpecCharDiscName;
     mapBoolParamsReadKey
         [L"Делить ЗЕ у компетениции на кол-во компетенций в дисциплине"] =
             &bIsNormalizeScoreComp;
@@ -185,13 +184,9 @@ bool FConfig::Init()
     OpenXLSX::XLDocument fDoc;
     OpenXLSX::XLWorkbook fBook;
 
-    filesystem::path wsFile = ptrGlobal->GetCurrentPath();
-    wsFile         = ptrGlobal->ConwertPathFormat(wsFile, false);
-    wsFile += wsNameConfig;
-
     try
     {
-        fDoc.open(ptrGlobal->ConwertToString(wsFile));
+        fDoc.open(ptrGlobal->GetSNameFileConfig());
     }
     catch (...)
     {
@@ -223,12 +218,16 @@ bool FConfig::Init()
 
 const FPageInfo& FConfig::GetKeyPage(int iIndex) const
 {
-    if (iIndex < arrKeyPage.size()) return arrKeyPage[iIndex];
+    if (iIndex < arrKeyPage.size())
+        return arrKeyPage[iIndex];
     throw(std::out_of_range("Bad data access index (arrKeyPage): " +
                             to_string(iIndex)));
 }
 
-int FConfig::GetSizeKeyPage() const { return arrKeyPage.size(); }
+int FConfig::GetSizeKeyPage() const
+{
+    return arrKeyPage.size();
+}
 //
 // const string& FConfig::GetStringParams(string sKey) const
 //{
@@ -243,7 +242,8 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
     wstring wsPatern;
     try
     {
-        if (wsKey == L"") return true;
+        if (wsKey == L"")
+            return true;
 
         // Считать переменную из config.xlsx с типом данных string
         if (mapStringParamsReadKey.count(wsKey))
@@ -345,7 +345,8 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
         if (wsKey == wsPatern)
         {
             int iSize = 0;
-            if (arrTypeDisc.size() != 0) iSize = arrTypeDisc.size() + 1;
+            if (arrTypeDisc.size() != 0)
+                iSize = arrTypeDisc.size() + 1;
             ptrGlobal->TakeData(arrNameTypeDisc, row, iSize);
             return true;
         }
@@ -355,7 +356,8 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
         if (wsKey == wsPatern)
         {
             int iSize = 0;
-            if (arrNameFileIn.size() != 0) iSize = arrNameFileIn.size() + 1;
+            if (arrNameFileIn.size() != 0)
+                iSize = arrNameFileIn.size() + 1;
             ptrGlobal->TakeData(arrNameFileOut, row, iSize);
             return true;
         }
@@ -385,7 +387,8 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
         {
             string sData;
             ptrGlobal->TakeData(sData, row);
-            for (auto& it : sData) setIgnoreCharCompHeader.insert(it);
+            for (auto& it : sData)
+                setIgnoreCharCompHeader.insert(it);
             return true;
         }
 
@@ -647,4 +650,7 @@ vector<set<wstring>> FConfig::SetParsingParams(OpenXLSX::XLWorksheet& fPage)
     return arrResult;
 }
 
-FConfig::~FConfig() { --iSinglControll; }
+FConfig::~FConfig()
+{
+    --iSinglControll;
+}
