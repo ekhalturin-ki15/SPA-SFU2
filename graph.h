@@ -5,7 +5,7 @@
 #include <queue>
 
 using namespace std;
-struct FTreeDisc;
+struct FCurricula;
 
 // Конкретный граф (с расчитаными метриками для него, лежащими внутри)
 struct FGraphType
@@ -59,7 +59,7 @@ struct FGraph
     static const double dAllScoreNotEqualError;
 
     // Инверсия зависимости
-    explicit FGraph(shared_ptr<FTreeDisc> _ptrTree);
+    explicit FGraph(shared_ptr<FCurricula> _ptrTree);
 
     // Использовать только после вызова Read у ptrSolve, то есть, когда ptrTree
     // заполнен
@@ -98,7 +98,7 @@ struct FGraph
                      // iAlt - альтернативный
 
 private:
-    shared_ptr<FTreeDisc> ptrTree;
+    shared_ptr<FCurricula> ptrTree;
 
     // mapAllowDisc теперь в FSolve вместе с УП
     // map<wstring, FTreeElement*>

@@ -184,7 +184,7 @@
     <ClCompile Include="solveFirstPage.cpp" />
     <ClCompile Include="solveSecondPage.cpp" />
     <ClCompile Include="solveThirdPage.cpp" />
-    <ClCompile Include="solveTree.cpp" />
+    <ClCompile Include="сurricula.cpp" />
     <ClCompile Include="solveZeroPage.cpp" />
   </ItemGroup>
   <ItemGroup>

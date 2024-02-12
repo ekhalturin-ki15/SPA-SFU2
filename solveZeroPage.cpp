@@ -46,7 +46,7 @@ void FSolve::ZeroPageCreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
     // }
 
 #ifdef DEBUG
-    ofstream out(ptrGlobal->ptrConfig->GetWSNameDebugFile());
+    ofstream out(ptrGlobal->ptrConfig->GetSNameDebugFile() + ".txt");
 #endif    // DEBUG
 
     int iPreX = -1;    // Root вне учебного плана (в нём все модули) у него
@@ -201,12 +201,25 @@ void FSolve::ZeroPageCreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
                             ptrGlobal->ConwertToString(
                                 ptrGlobal->ConwertPathFormat(wsData));
 
-                        vector<smatch> matches {
-                            sregex_iterator { ALL(sParsingData), fRegexComp },
-                            sregex_iterator {}
-                        };
+                        bool           bIsTrueMatchComp = false;
+                        vector<smatch> matchesComp;
 
-                        for (const auto& sData : matches)
+                        for (const auto& fRegexComp : arrRegexComp)
+                        {
+                            vector<smatch> matchesBuf {
+                                sregex_iterator { ALL(sParsingData), fRegexComp },
+                                sregex_iterator {}
+                            };
+                            if (matchesBuf.size() > 0)
+                            {
+                                matchesComp      = matchesBuf;
+                                bIsTrueMatchComp = true;
+                                break;
+                            }
+                        }
+
+
+                        for (const auto& sData : matchesComp)
                         {
                             string sCompName = sData[1].str();
                             // Есть ошибка оператора: иногда вместо компетенции
@@ -219,16 +232,6 @@ void FSolve::ZeroPageCreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
 
                             ptrNewNode->mapComp[sCompName] = {};
                             arrDisc.back()->fAllComp.insert(sCompName);
-
-                            // vector<smatch> matchesHeader{
-                            //	sregex_iterator{ALL(sCompName),
-                            // fRegexHeaderComp}, 		sregex_iterator{}};
-
-                            // for (auto sData : matchesHeader)
-                            //{
-                            //	string sCompHeaderName = sData[1].str();
-                            //	setHeaderComp.insert(sCompHeaderName);
-                            // }
                         }
                         break;
                     }

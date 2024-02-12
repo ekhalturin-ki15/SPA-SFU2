@@ -5,6 +5,7 @@
 #include "../global.h"
 #include "../outData.h"
 #include "../solve.h"
+#include "../graph.h"
 #include "CppUnitTest.h"
 
 #include "../formulaParser.h"
@@ -87,13 +88,13 @@ namespace TestFSolve
     //! Не забудьте закрыть файл config.xlsx и файл учебного плана
     //! Не забудьте закрыть файл config.xlsx и файл учебного плана
     //! Не забудьте закрыть файл config.xlsx и файл учебного плана
-    TEST_CLASS(TestFTreeDisc)
+    TEST_CLASS(TestFCurricula)
     {
         shared_ptr<FGlobal>   ptrGlobal;
-        shared_ptr<FTreeDisc> ptrFirst;
+        shared_ptr<FCurricula> ptrFirst;
 
     public:
-        TestFTreeDisc()
+        TestFCurricula()
         {
             if (!Create(ptrGlobal))
             {
@@ -134,8 +135,7 @@ namespace TestFSolve
         {
             try
             {
-                // Должен получиться один учебный план
-                Assert::AreEqual(1ull, ptrGlobal->ptrSolve->arrDisc.size());
+                Assert::AreEqual(2ull, ptrGlobal->ptrSolve->arrDisc.size());
             }
             catch (const std::exception& ex)
             {
@@ -214,7 +214,9 @@ namespace TestFSolve
     TEST_CLASS(TestFGraph)
     {
         shared_ptr<FGlobal>   ptrGlobal;
-        shared_ptr<FTreeDisc> ptrFirst;
+        shared_ptr<FCurricula> ptrFirst;
+        shared_ptr<FCurricula> ptrSecond;
+        int                   iCommon;
 
     public:
         TestFGraph()
@@ -249,12 +251,25 @@ namespace TestFSolve
             }
             ptrGlobal->ptrSolve->CreateAllGraph();
             ptrFirst = ptrGlobal->ptrSolve->arrDisc.front();
+            ptrSecond = ptrGlobal->ptrSolve->arrDisc.at(1);
+            iCommon  = ptrFirst->ptrGraph->iCommon;
         }
 
         TEST_METHOD(InitGraph)
         {
-            // 6 Штук = УК ПУ ОПК ДПК ДОПК СПК
             Assert::IsTrue(ptrFirst->ptrGraph != nullptr);
+        }
+
+        TEST_METHOD(InitAllTypeGraph)
+        {
+            Assert::AreEqual(4ull+3ull, ptrFirst->ptrGraph->mapGraph.size());
+        }
+
+        TEST_METHOD(AllDense)
+        {
+            //Полносвязный граф
+            Assert::AreEqual(1.,
+                             ptrSecond->ptrGraph->mapGraph[iCommon].dDense);
         }
     };
 
@@ -333,13 +348,13 @@ namespace AnomalTestFSolve
     //! Не забудьте закрыть файл config.xlsx и файл учебного плана
     //! Не забудьте закрыть файл config.xlsx и файл учебного плана
     //! Не забудьте закрыть файл config.xlsx и файл учебного плана
-    TEST_CLASS(TestFTreeDisc)
+    TEST_CLASS(TestFCurricula)
     {
         shared_ptr<FGlobal>   ptrGlobal;
-        shared_ptr<FTreeDisc> ptrFirst;
+        shared_ptr<FCurricula> ptrFirst;
 
     public:
-        TestFTreeDisc()
+        TestFCurricula()
         {
             if (!Create(ptrGlobal))
             {
@@ -458,7 +473,7 @@ namespace AnomalTestFSolve
     TEST_CLASS(TestFGraph)
     {
         shared_ptr<FGlobal>   ptrGlobal;
-        shared_ptr<FTreeDisc> ptrFirst;
+        shared_ptr<FCurricula> ptrFirst;
 
     public:
         TestFGraph()

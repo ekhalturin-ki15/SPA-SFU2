@@ -26,7 +26,11 @@ bool FSolve::Init()
 {
     try
     {
-        fRegexComp = ptrGlobal->ptrConfig->GetSRegexComp();
+        //fRegexComp = ptrGlobal->ptrConfig->GetSRegexComp();
+        arrRegexComp.resize(ptrGlobal->ptrConfig->arrRegexComp.size());
+        for (int i = 0; i < ptrGlobal->ptrConfig->arrRegexComp.size();
+             ++i)
+            arrRegexComp[i] = ptrGlobal->ptrConfig->arrRegexComp[i];
     }
     catch (...)
     {
@@ -37,16 +41,24 @@ bool FSolve::Init()
 
     try
     {
+        arrRegexCodeUGSN.resize(ptrGlobal->ptrConfig->arrRegexCodeUGSN.size());
+        for (int i = 0; i < ptrGlobal->ptrConfig->arrRegexCodeUGSN.size(); ++i)
+            arrRegexCodeUGSN[i] = ptrGlobal->ptrConfig->arrRegexCodeUGSN[i];
+    }
+    catch (...)
+    {
+        ptrGlobal->ptrError->ErrorBadRegex(
+            "Регулярное выражение разбивки кода направления подготовки");
+    }
+
+    try
+    {
         // fRegexHeaderComp = ptrGlobal->ptrConfig->sRegexHeaderComp;
         arrRegexHeaderComp.resize(
             ptrGlobal->ptrConfig->arrRegexHeaderComp.size());
         for (int i = 0; i < ptrGlobal->ptrConfig->arrRegexHeaderComp.size();
              ++i)
             arrRegexHeaderComp[i] = ptrGlobal->ptrConfig->arrRegexHeaderComp[i];
-
-        arrRegexCodeUGSN.resize(ptrGlobal->ptrConfig->arrRegexCodeUGSN.size());
-        for (int i = 0; i < ptrGlobal->ptrConfig->arrRegexCodeUGSN.size(); ++i)
-            arrRegexCodeUGSN[i] = ptrGlobal->ptrConfig->arrRegexCodeUGSN[i];
     }
     catch (...)
     {
@@ -70,14 +82,14 @@ bool FSolve::Init()
     return true;
 }
 
-void FSolve::ClearTreeDisc()
+void FSolve::ClearCurricula()
 {
     arrDisc.clear();
 }
 
 bool FSolve::Read(string _sInPath, string sNamePlan)
 {
-    // ClearTreeDisc();
+    // ClearCurricula();
 
     sInPath = ptrGlobal->ConwertPathFormat(_sInPath, true);
 
@@ -88,8 +100,9 @@ bool FSolve::Read(string _sInPath, string sNamePlan)
 
     try
     {
-        shared_ptr<FTreeDisc> ptrTree = make_shared<FTreeDisc>(ptrGlobal);
-        arrDisc.push_back(ptrTree);
+        shared_ptr<FCurricula> ptrCurricula =
+            make_shared<FCurricula>(ptrGlobal);
+        arrDisc.push_back(ptrCurricula);
         arrDisc.back()->sNamePlan = sNamePlan;
         arrDisc.back()->sShortNamePlan =
             sNamePlan.substr(0, sNamePlan.find('.'));

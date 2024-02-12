@@ -76,7 +76,7 @@
     <ClCompile Include="solveThirdPage.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="solveTree.cpp">
+    <ClCompile Include="сurricula.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="solveZeroPage.cpp">

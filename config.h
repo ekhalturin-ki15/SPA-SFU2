@@ -81,13 +81,16 @@ private:
     string sNameRibDir;
     string sSeparator;
     string sPrefFullNameCourse;
-    string sRegexComp;
+    //string sRegexComp;
     string sFormula;
     string sFormulaReverseGraph;
     string sNoInitData;
     string sNameFileTotalData;
     string sNameFileLocalData;
     string sNameFileCompData;
+
+    string sNameDebugFile;
+    string sNameLogFile;
 
     // String Params adapter
 private:
@@ -115,10 +118,10 @@ public:
     {
         return sPrefFullNameCourse;
     }
-    const string& GetSRegexComp() const
+    /*const string& GetSRegexComp() const
     {
         return sRegexComp;
-    }
+    }*/
     const string& GetSFormula() const
     {
         return sFormula;
@@ -144,6 +147,15 @@ public:
         return sNameFileCompData;
     }
 
+    const string& GetSNameDebugFile() const
+    {
+        return sNameDebugFile;
+    }
+    const string& GetSNameLogFile() const
+    {
+        return sNameLogFile;
+    }
+
     // Int Params
 private:
     int iMaxNameDiscLen;
@@ -153,7 +165,7 @@ private:
     int iSoMachComp;
     int iAmountQuar;
     int iPrecision;
-    int iIndicatorDeep;
+    //int iIndicatorDeep;
 
     // Int Params adapter
 private:
@@ -189,10 +201,10 @@ public:
     {
         return iPrecision;
     }
-    const int& GetIIndicatorDeep() const
-    {
-        return iIndicatorDeep;
-    }
+    //const int& GetIIndicatorDeep() const
+    //{
+    //    return iIndicatorDeep;
+    //}
 
     // Bool Params
 private:
@@ -325,28 +337,6 @@ public:
         return dTruncQuarPathLen;
     }
 
-    // wstring Params
-private:
-    wstring wsNameDebugFile;
-    wstring wsNameLogFile;
-
-    // wstring Params adapter
-private:
-    void InitWStringMap();
-    map<wstring, wstring*>
-        mapWStringParamsReadKey;    // Инициализируется в конструкторе
-                                    // (значение и размер (ограничение))
-
-public:
-    const wstring& GetWSNameDebugFile() const
-    {
-        return wsNameDebugFile;
-    }
-    const wstring& GetWSNameLogFile() const
-    {
-        return wsNameLogFile;
-    }
-
     // vector<wstring> Params
 private:
     vector<wstring>
@@ -401,7 +391,9 @@ public:
 
     set<char> setIgnoreCharCompHeader;
 
+    vector<string> arrRegexComp;
     vector<string> arrRegexHeaderInd;
+    vector<vector<int>> arrRegexIndexGroup; // Нумерование групп
     vector<string> arrRegexHeaderComp;
     vector<string> arrRegexCodeUGSN;
 

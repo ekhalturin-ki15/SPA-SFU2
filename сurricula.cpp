@@ -16,7 +16,7 @@ FTreeElement::FTreeElement()
 {
 }
 
-FTreeDisc::FTreeDisc(shared_ptr<FGlobal> _ptrGlobal)
+FCurricula::FCurricula(shared_ptr<FGlobal> _ptrGlobal)
     : ptrGlobal(_ptrGlobal),
       iAmountCourse(0),
       dAllSumScore(0.),
@@ -31,7 +31,7 @@ FTreeDisc::FTreeDisc(shared_ptr<FGlobal> _ptrGlobal)
     ptrMetric = nullptr;    // Только после Read высчитывать метрики
 }
 
-FTreeDisc::~FTreeDisc()
+FCurricula::~FCurricula()
 {
     DeleteDFS(ptrRoot);
     if (ptrGraph)
@@ -44,7 +44,7 @@ FTreeDisc::~FTreeDisc()
     }
 }
 
-void FTreeDisc::DeleteDFS(shared_ptr<FTreeElement> ptrThis)
+void FCurricula::DeleteDFS(shared_ptr<FTreeElement> ptrThis)
 {
     for (auto it : ptrThis->arrChild)
     {
@@ -53,7 +53,7 @@ void FTreeDisc::DeleteDFS(shared_ptr<FTreeElement> ptrThis)
     ptrThis.reset();
 }
 
-void FTreeDisc::CountDisc()
+void FCurricula::CountDisc()
 {
     this->iAmountDisc = 0;
     for (const auto& [key, it] : mapDisc)
@@ -89,7 +89,8 @@ void FTreeDisc::CountDisc()
 }
 
 map<wstring, shared_ptr<FTreeElement>>
-    FTreeDisc::GewMapAllowDisc(bool IsNecessaryAllow, bool IsNecessaryNotIgnore)
+    FCurricula::GewMapAllowDisc(bool IsNecessaryAllow,
+                                bool IsNecessaryNotIgnore)
 {
     map<wstring, shared_ptr<FTreeElement>> mapReturn;
     for (const auto& [key, it] : mapDisc)

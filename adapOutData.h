@@ -2,7 +2,7 @@
 #include "global.h"
 
 struct FGlobal;
-struct FTreeDisc;
+struct FCurricula;
 struct FTreeMetric;
 struct FGraphType;
 
@@ -95,9 +95,9 @@ private:
     //                         map<int, FСorridor>&    mapCorridorData);
 
     // vector<string> CreateCommonNameLabel(const int& iGraphType,
-    //                                      FTreeDisc* fTree);
+    //                                      FCurricula* fTree);
 
-    // vector<string> CreateTag(const int& iGraphType, FTreeDisc* fTree);
+    // vector<string> CreateTag(const int& iGraphType, FCurricula* fTree);
     //
     //// map<int, FСorridor> mapSaveData;
     // void RetakeMinMax(FСorridor& fSaveData, const double& dNewData,

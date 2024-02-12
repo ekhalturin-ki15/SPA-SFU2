@@ -469,8 +469,8 @@ void FOutData::CreateOnlyAllowedResultRow(vector<string>& arrReturn,
                                           // const string&         sCurName,
                                           const vector<double>& arrResult,
                                           FCorridorAdapter&     fCorridorData,
-                                          shared_ptr<FTreeDisc>
-                                                                 ptrTree,
+                                          shared_ptr<FCurricula>
+                                                                 ptrCurricula,
                                           const vector<wstring>& arrOnlyAllow)
 {
     int i = 0;
@@ -481,15 +481,15 @@ void FOutData::CreateOnlyAllowedResultRow(vector<string>& arrReturn,
     arrReturn.resize(iSizeHeader);
 
     vector<string> arrAllowData = {
-        ptrTree->sCurName,
-        // ptrTree->sShortNamePlan.substr(ptrTree->sShortNamePlan.size() - 2),
-        ptrTree->sTypePlan,
+        ptrCurricula->sCurName,
+        // ptrCurricula->sShortNamePlan.substr(ptrCurricula->sShortNamePlan.size() - 2),
+        ptrCurricula->sTypePlan,
     };
 
     for (const auto& sData : arrAllowData)
     {
         if (TakePasteData(x, arrReturn, arrIsAllowed[i++], sData.size(), sData,
-                          ptrTree->sCurName, true, fCorridorData))
+                          ptrCurricula->sCurName, true, fCorridorData))
         {
             x++;
         }
@@ -505,7 +505,7 @@ void FOutData::CreateOnlyAllowedResultRow(vector<string>& arrReturn,
 
             if (TakePasteData(x, arrReturn, arrIsAllowed[i++], it,
                               ptrGlobal->DoubletWithPrecision(it),
-                              ptrTree->sCurName, true, fCorridorData))
+                              ptrCurricula->sCurName, true, fCorridorData))
             {
                 x++;
             }
@@ -514,7 +514,7 @@ void FOutData::CreateOnlyAllowedResultRow(vector<string>& arrReturn,
         {
             if (TakePasteData(x, arrReturn, arrIsAllowed[i++], it,
                               ptrGlobal->ptrConfig->GetSNoInitData(),
-                              ptrTree->sCurName, false, fCorridorData))
+                              ptrCurricula->sCurName, false, fCorridorData))
             {
                 x++;
             }
@@ -811,9 +811,9 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
 void FOutData::Out(string sOutPath)
 {
     OpenXLSX::XLDocument fOutFile;
-    const string         sPageName = "TotalData";
+    const string sPageName = ptrGlobal->ptrConfig->GetSNameFileTotalData();
     const string         sCreatePath =
-        sOutPath + "/" + ptrGlobal->ptrConfig->GetSNameFileTotalData();
+        sOutPath + "/" + ptrGlobal->ptrConfig->GetSNameFileTotalData() + ".xlsx";
 
     fOutFile.create(sCreatePath);
     fOutFile.workbook().addWorksheet(sPageName);
@@ -963,7 +963,7 @@ void FOutData::Out(string sOutPath)
 }
 
 void FOutData::OutAddInfo(string sName, string sPath,
-                          shared_ptr<FTreeDisc> ptrTree)
+                          shared_ptr<FCurricula> ptrTree)
 {
     auto& ptrCurrentTree =
         ptrTree->ptrMetric->ptrTreeMetric->mapChild[FMetric::sAllMetric];
@@ -1023,10 +1023,11 @@ void FOutData::OutAddInfo(string sName, string sPath,
             fFileCache->arrCourseOpenFile.resize(1);
             fFileCache->arrCourseOpenWKS.clear();
             fFileCache->arrCourseOpenWKS.resize(1);
-            fFileCache->arrCourseOpenFile[0].create(
+            string sFullPathName =
                 sPath + "/" + sName + "/" +
                 ptrGlobal->ptrConfig->GetSNameFileCompData() +
-                ptrGlobal->ptrConfig->GetSSeparator() + sKey + ".xlsx");
+                ptrGlobal->ptrConfig->GetSSeparator() + sKey + ".xlsx";
+            fFileCache->arrCourseOpenFile[0].create(sFullPathName);
             fFileCache->arrCourseOpenFile[0].workbook().addWorksheet(sName);
             fFileCache->arrCourseOpenFile[0].workbook().deleteSheet(
                 "Sheet1");    // Стартовая страница не нужна
@@ -1477,7 +1478,7 @@ void FOutData::CreateAndTake(string sName, string sPath)
     if (ptrGlobal->ptrConfig->GetBCompactOutput())
     {
         fFileCache->arrOpenFile[0].open(
-            sPath + "/" + ptrGlobal->ptrConfig->GetSNameFileTotalData());
+            sPath + "/" + ptrGlobal->ptrConfig->GetSNameFileTotalData() + ".xlsx");
         if (fFileCache->arrOpenFile[0].workbook().worksheetExists(sName))
             fFileCache->arrOpenFile[0].workbook().deleteSheet(sName);
 
@@ -1516,7 +1517,7 @@ string FOutData::AddCompString(const map<string, vector<string>>& mapComp)
 }
 
 vector<string> FOutData::CreateTag(const int& iGraphType,
-                                   shared_ptr<FTreeDisc>
+                                   shared_ptr<FCurricula>
                                         fTree,
                                    bool bCheckTag)
 {
@@ -1537,7 +1538,7 @@ vector<string> FOutData::CreateTag(const int& iGraphType,
 }
 
 vector<string> FOutData::CreateCommonNameLabel(const int& iGraphType,
-                                               shared_ptr<FTreeDisc>
+                                               shared_ptr<FCurricula>
                                                    fTree)
 {
     vector<string> arrCommonNameLabel;
@@ -1572,7 +1573,7 @@ vector<string> FOutData::CreateCommonNameLabel(const int& iGraphType,
 }
 
 void FOutData::OutGephiData(string sName, string sPath,
-                            shared_ptr<FTreeDisc> fTree)
+                            shared_ptr<FCurricula> fTree)
 {
     {
         const int& iTag = FGraph::iCommon;

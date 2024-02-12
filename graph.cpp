@@ -14,7 +14,7 @@ const double FGraph::dAllScoreNotEqualError = -10;
 const double FGraphType::dNoInit = -2e4;
 
 // Инверсия зависимости
-FGraph::FGraph(shared_ptr<FTreeDisc> _ptrTree) : ptrTree(_ptrTree)
+FGraph::FGraph(shared_ptr<FCurricula> _ptrTree) : ptrTree(_ptrTree)
 {
     // Теперь mapAllowDisc хранится в _ptrTree
     // mapAllowDisc = _ptrTree->GewMapAllowDisc(true, true);
@@ -173,11 +173,7 @@ void FGraph::CalcAllScoreAndAmount(FGraphType& fGraph)
     }
 
     double N    = fGraph.fAdjList.size();
-    double dMul = 1;
-    if (this->ptrTree->ptrGlobal->ptrConfig->GetBIsUnDirected())
-        dMul =
-            2;    // Умножаю на 2, так как неориетированный, и рёбра дублируются
-    fGraph.dDense = dAmountRib / (dMul * N * (N - 1));
+    fGraph.dDense = dAmountRib / (N * (N - 1));
 }
 
 void FGraph::CalcMinMaxWeight(double&                           dResult,

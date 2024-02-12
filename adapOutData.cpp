@@ -755,7 +755,7 @@ void FAdapOutData::Create(string sOutPath)
 //     return sReturn;
 // }
 //
-// vector<string> FAdapOutData::CreateTag(const int& iGraphType, FTreeDisc*
+// vector<string> FAdapOutData::CreateTag(const int& iGraphType, FCurricula*
 // fTree)
 //{
 //     vector<string> arrTag;
@@ -773,7 +773,7 @@ void FAdapOutData::Create(string sOutPath)
 //
 //
 // vector<string> FAdapOutData::CreateCommonNameLabel(const int& iGraphType,
-//                                                FTreeDisc* fTree)
+//                                                FCurricula* fTree)
 //{
 //     vector<string> arrCommonNameLabel;
 //     for (auto& it : fTree->ptrGraph->mapGraph[iGraphType].arrRel)

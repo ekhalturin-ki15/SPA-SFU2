@@ -3,7 +3,7 @@
 #include <map>
 
 using namespace std;
-struct FTreeDisc;
+struct FCurricula;
 
 // Использую структуру данных Бор, так как есть Компетенция, её индекс, её
 // индикатор и так далее (сейчас вложеность 3, но нет смысла ограничивать)
@@ -53,7 +53,7 @@ struct FMetric
     static const string sEmptyIndicator;
 
     // Инверсия зависимости
-    explicit FMetric(shared_ptr<FTreeDisc> _ptrTree);
+    explicit FMetric(shared_ptr<FCurricula> _ptrCurricula);
     void Init();    // Для позднего связывания, чтобы у родителя уже был создан
                     // shared_ptr
 
@@ -86,7 +86,7 @@ private:
                               const vector<string>&   sCurrent,
                               const double&           dScore);
 
-    shared_ptr<FTreeDisc> ptrTree;
+    shared_ptr<FCurricula> ptrCurricula;
     vector<regex> arrRegexHeaderInd;    // Может быть несколько, поэтому вектор
     vector<regex> arrRegexHeaderComp;    // Может быть несколько, поэтому вектор
 

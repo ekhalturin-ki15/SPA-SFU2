@@ -97,7 +97,8 @@ void FMetric::InitBalanceScore()
 }
 
 // Инверсия зависимости
-FMetric::FMetric(shared_ptr<FTreeDisc> _ptrTree) : ptrTree(_ptrTree)
+FMetric::FMetric(shared_ptr<FCurricula> _ptrCurricula)
+    : ptrCurricula(_ptrCurricula)
 {
 }
 
@@ -106,8 +107,8 @@ void FMetric::Init()
     // sAllMetric = _ptrTree->ptrGlobal->ConwertToString(
     //     _ptrTree->ptrGlobal->ptrConfig->wsOutPrefAllCourse);
 
-    sAllMetric = ptrTree->ptrGlobal->ConwertToString(
-        ptrTree->ptrGlobal->ptrConfig
+    sAllMetric = ptrCurricula->ptrGlobal->ConwertToString(
+        ptrCurricula->ptrGlobal->ptrConfig
             ->mapArrOutParams
                 [L"Предлог перед выводом статистики по всем курсам"]
             .GetName());
@@ -116,16 +117,16 @@ void FMetric::Init()
     {
         // fRegexHeaderComp = _ptrTree->ptrGlobal->ptrConfig->sRegexHeaderComp;
         arrRegexHeaderComp.resize(
-            ptrTree->ptrGlobal->ptrConfig->arrRegexHeaderComp.size());
+            ptrCurricula->ptrGlobal->ptrConfig->arrRegexHeaderComp.size());
         for (int i = 0;
-             i < ptrTree->ptrGlobal->ptrConfig->arrRegexHeaderComp.size();
+             i < ptrCurricula->ptrGlobal->ptrConfig->arrRegexHeaderComp.size();
              ++i)
             arrRegexHeaderComp[i] =
-                ptrTree->ptrGlobal->ptrConfig->arrRegexHeaderComp[i];
+                ptrCurricula->ptrGlobal->ptrConfig->arrRegexHeaderComp[i];
     }
     catch (...)
     {
-        ptrTree->ptrGlobal->ptrError->ErrorBadRegex(
+        ptrCurricula->ptrGlobal->ptrError->ErrorBadRegex(
             "Регулярное выражение поиска заголовка компетенции");
     }
 
@@ -134,35 +135,35 @@ void FMetric::Init()
         // fRegexHeaderInd =
         // _ptrTree->ptrGlobal->ptrConfig->sRegexHeaderIndicator;
         arrRegexHeaderInd.resize(
-            ptrTree->ptrGlobal->ptrConfig->arrRegexHeaderInd.size());
+            ptrCurricula->ptrGlobal->ptrConfig->arrRegexHeaderInd.size());
         for (int i = 0;
-             i < ptrTree->ptrGlobal->ptrConfig->arrRegexHeaderInd.size();
+             i < ptrCurricula->ptrGlobal->ptrConfig->arrRegexHeaderInd.size();
              ++i)
             arrRegexHeaderInd[i] =
-                ptrTree->ptrGlobal->ptrConfig->arrRegexHeaderInd[i];
+                ptrCurricula->ptrGlobal->ptrConfig->arrRegexHeaderInd[i];
     }
     catch (...)
     {
-        ptrTree->ptrGlobal->ptrError->ErrorBadRegex(
+        ptrCurricula->ptrGlobal->ptrError->ErrorBadRegex(
             "Регулярное выражение поиска заголовка индикатора");
     }
     // mapAllowDisc = _ptrTree->GewMapAllowDisc(true, true);
 
-    ptrTreeMetric            = make_shared<FTreeMetric>(ptrTree->ptrMetric);
+    ptrTreeMetric = make_shared<FTreeMetric>(ptrCurricula->ptrMetric);
     ptrTreeMetric->ptrParent = nullptr;
     ptrTreeMetric->sName     = "Root";
 
     ptrTreeMetric->mapChild[sAllMetric] =
-        make_shared<FTreeMetric>(ptrTree->ptrMetric);
+        make_shared<FTreeMetric>(ptrCurricula->ptrMetric);
 
     ptrTreeMetric->mapChild[sAllMetric]->ptrParent = ptrTreeMetric;
     ptrTreeMetric->mapChild[sAllMetric]->sName     = sAllMetric;
 
-    for (int iCourse = 1; iCourse <= ptrTree->iAmountCourse;
+    for (int iCourse = 1; iCourse <= ptrCurricula->iAmountCourse;
          ++iCourse)    // Делаем 1 нумерацию
     {
         ptrTreeMetric->mapChild[to_string(iCourse)] =
-            make_shared<FTreeMetric>(ptrTree->ptrMetric);
+            make_shared<FTreeMetric>(ptrCurricula->ptrMetric);
         ptrTreeMetric->mapChild[to_string(iCourse)]->ptrParent = ptrTreeMetric;
         ptrTreeMetric->mapChild[to_string(iCourse)]->sName = to_string(iCourse);
     }
@@ -178,7 +179,7 @@ void FMetric::UpdateMetricBranch(shared_ptr<FTreeMetric> ptrNowTree,
     if (!ptrNowTree->mapChild.count(sName))
     {
         ptrNowTree->mapChild[sName] =
-            make_shared<FTreeMetric>(ptrTree->ptrMetric);
+            make_shared<FTreeMetric>(ptrCurricula->ptrMetric);
         ptrNowTree->mapChild[sName]->ptrParent = ptrNowTree;
         ptrNowTree->mapChild[sName]->sName     = sName;
     }
@@ -243,7 +244,7 @@ void FMetric::Create()
 {
     // Сначало для общего, потом для курсов по отдельности
     int iL = -1;
-    for (auto& [key, it] : ptrTree->mapAllowDisc)
+    for (auto& [key, it] : ptrCurricula->mapAllowDisc)
     {
         set<vector<string>>
             setIsTakenScore;    // Достаточно set, так как идёт разветвление
@@ -288,18 +289,13 @@ void FMetric::Create()
                 {
                     for (const auto& sData : matchesInd)
                     {
-                        if (iTrueMatchInd == 1)
-                        {
-                            sCompName        = sData[1].str();
-                            sCompNumber      = sData[2].str();
-                            sIndicatorNumber = sData[3].str();
-                        }
-                        else if (iTrueMatchInd == 2)
-                        {
-                            sCompName        = sData[2].str();
-                            sCompNumber      = sData[3].str();
-                            sIndicatorNumber = sData[1].str();
-                        }
+                        const auto& arrIndexGroup =
+                            ptrCurricula->ptrGlobal->ptrConfig
+                                ->arrRegexIndexGroup[iTrueMatchInd - 1];
+
+                        sCompName        = sData[arrIndexGroup[0]].str();
+                        sCompNumber      = sData[arrIndexGroup[1]].str();
+                        sIndicatorNumber = sData[arrIndexGroup[2]].str();
                     }
                 }
                 else
@@ -320,10 +316,6 @@ void FMetric::Create()
                         }
                     }
 
-                    // vector<smatch> matchesComp {
-                    //     sregex_iterator { ALL(comp), fRegexHeaderComp },
-                    //     sregex_iterator {}
-                    // };
                     for (const auto& sData : matchesComp)
                     {
                         sCompName        = sData[1].str();
@@ -334,7 +326,7 @@ void FMetric::Create()
 
                 {
                     double dNormalizeScore = it->dSumScore;
-                    if (ptrTree->ptrGlobal->ptrConfig
+                    if (ptrCurricula->ptrGlobal->ptrConfig
                             ->GetBIsNormalizeScoreComp())
                     {
                         // Делим всё на кол-во индикаторов, так как считаем, что
@@ -351,9 +343,10 @@ void FMetric::Create()
 
                     // В холостую пройдёмся по дереву, чтобы создать недостающие
                     // нулевые узлы
-                    if (ptrTree->ptrGlobal->ptrConfig->GetBOutEmptyComp())
+                    if (ptrCurricula->ptrGlobal->ptrConfig->GetBOutEmptyComp())
                     {
-                        for (int iCourse = 1; iCourse <= ptrTree->iAmountCourse;
+                        for (int iCourse = 1;
+                             iCourse <= ptrCurricula->iAmountCourse;
                              ++iCourse)    // Делаем 1 нумерацию
                         {
                             auto ptrNowTree =
@@ -365,7 +358,7 @@ void FMetric::Create()
                                 {
                                     ptrNowTree->mapChild[sCurName] =
                                         make_shared<FTreeMetric>(
-                                            ptrTree->ptrMetric);
+                                            ptrCurricula->ptrMetric);
                                     ptrNowTree->mapChild[sCurName]->ptrParent =
                                         ptrNowTree;
                                     ptrNowTree->mapChild[sCurName]->sName =
@@ -381,7 +374,7 @@ void FMetric::Create()
                 for (const auto& [iCourse, dScore] : it->mapCourseScore)
                 {
                     double dNormalizeScore = dScore;
-                    if (ptrTree->ptrGlobal->ptrConfig
+                    if (ptrCurricula->ptrGlobal->ptrConfig
                             ->GetBIsNormalizeScoreComp())
                     {
                         dNormalizeScore /= dAmountInd;
@@ -403,6 +396,6 @@ void FMetric::Create()
     }
 
     ptrTreeMetric->InitChosenScore(
-        ptrTree->ptrGlobal->ptrConfig->GetBIsPercentRegAll(),
-        ptrTree->ptrGlobal->ptrConfig->GetBCompInterDelete());
+        ptrCurricula->ptrGlobal->ptrConfig->GetBIsPercentRegAll(),
+        ptrCurricula->ptrGlobal->ptrConfig->GetBCompInterDelete());
 }

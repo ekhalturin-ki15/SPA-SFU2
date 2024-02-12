@@ -169,7 +169,7 @@ wstring FGlobal::ConwertToWstring(string sData)
 
 string FGlobal::ConwertToString(wstring wsData)
 {
-    return fConverterToString2.to_bytes(wsData);
+    return (fConverterToString2.to_bytes(wsData));
 }
 
 string FGlobal::ConwertUTF16RU(string sData)

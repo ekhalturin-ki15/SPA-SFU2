@@ -29,13 +29,14 @@ bool FError::Init()
 {
     if (ptrGlobal->ptrConfig->GetBReloadLogFile())
     {
-        ofstream out(ptrGlobal->ptrConfig->GetWSNameLogFile());
+        ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt");
         out << "";
         out.close();
     }
     else
     {
-        ofstream out(ptrGlobal->ptrConfig->GetWSNameLogFile(), std::ios::app);
+        ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt",
+                     std::ios::app);
         out << "--------------------------------";
         out << END;
         out.close();
@@ -45,7 +46,8 @@ bool FError::Init()
 
 ofstream FError::OutHeader() const
 {
-    ofstream out(ptrGlobal->ptrConfig->GetWSNameLogFile(), std::ios::app);
+    ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt",
+                 std::ios::app);
     int&     iCurrentPage                  = ptrGlobal->ptrSolve->iCurrentPage;
     int&     iCurrentRow                   = ptrGlobal->ptrSolve->iCurrentRow;
     ptrGlobal->ptrSolve->bIsCorrectParsing = false;
@@ -61,7 +63,8 @@ ofstream FError::OutHeader() const
 
 void FError::FatalErrorFewConfigPages() const
 {
-    ofstream out(ptrGlobal->ptrConfig->GetWSNameLogFile(), std::ios::app);
+    ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt",
+                 std::ios::app);
     out << "!! Не хватает указаний страниц для парсинга УП (их 3, обычно их "
            "названия: Компетенции(2), Компетенции, ПланСвод";
     out << END;
@@ -69,7 +72,8 @@ void FError::FatalErrorFewConfigPages() const
 }
 void FError::ErrorInFileNotFind(string sPathName) const
 {
-    ofstream out(ptrGlobal->ptrConfig->GetWSNameLogFile(), std::ios::app);
+    ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt",
+                 std::ios::app);
     out << "! Не обнаружен каталог с входными данным " + sPathName;
     out << END;
     out.close();
@@ -82,7 +86,7 @@ void FError::ErrorInFileNotFind(wstring wsPathName) const
 
 void FError::ErrorOutFileCreate(string sPathName) const
 {
-    ofstream out(ptrGlobal->ptrConfig->GetWSNameLogFile(), std::ios::app);
+    ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt", std::ios::app);
     out << "! Не удаётся создать каталог " + sPathName;
     out << END;
     out.close();
@@ -90,7 +94,7 @@ void FError::ErrorOutFileCreate(string sPathName) const
 
 void FError::ErrorBadConfigSizeParams(string sNameParams, string sInfo) const
 {
-    ofstream out(ptrGlobal->ptrConfig->GetWSNameLogFile(), std::ios::app);
+    ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt", std::ios::app);
     out << "!!! Ошибка при считывании параметра config.xlsx " +
                ptrGlobal->ReversUTF16RU(sNameParams) + "  " + sInfo;
     out << END;
@@ -99,7 +103,7 @@ void FError::ErrorBadConfigSizeParams(string sNameParams, string sInfo) const
 
 void FError::ErrorNotFoundConfig() const
 {
-    ofstream out(ptrGlobal->ptrConfig->GetWSNameLogFile(), std::ios::app);
+    ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt", std::ios::app);
     out << "!!! не найден файл config.xlsx";
     out << END;
     out.close();
@@ -120,7 +124,7 @@ void FError::ErrorGraphNoInitWeightDisc(string  sNamePlan,
 void FError::ErrorGraphNoInitWeightDisc(string sNamePlan,
                                         string sNameIndex) const
 {
-    ofstream out(ptrGlobal->ptrConfig->GetWSNameLogFile(), std::ios::app);
+    ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt", std::ios::app);
     out << "В графе УП " + sNamePlan + " ";
     out << "У дисциплины " + sNameIndex + " неправильно расчитан вес";
     out << END;
@@ -134,7 +138,7 @@ void FError::ErrorGraphZeroValue(string sNamePlan, wstring wsNameIndex) const
 // void FError::ErrorGraphBadAllScore(string sNamePlan, int iTypeGraph,
 //                                    int iTypeError)
 //{
-//     ofstream out(ptrGlobal->ptrConfig->GetWSNameLogFile(), std::ios::app);
+//     ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt", std::ios::app);
 //     out << "В графе УП " + sNamePlan + " ";
 //     out << "неправильный суммарный вес у графа с кодом " << iTypeGraph
 //         << " и типом ошибки " << iTypeError;
@@ -144,7 +148,7 @@ void FError::ErrorGraphZeroValue(string sNamePlan, wstring wsNameIndex) const
 
 void FError::ErrorGraphZeroValue(string sNamePlan, string sNameIndex) const
 {
-    ofstream out(ptrGlobal->ptrConfig->GetWSNameLogFile(), std::ios::app);
+    ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt", std::ios::app);
     out << "В графе УП " + sNamePlan + " ";
     out << "нулевое кол-во ЗЕ у дисциплины " << sNameIndex;
     out << END;
@@ -158,7 +162,7 @@ void FError::ErrorGraphZeroComp(string sNamePlan, wstring wsNameIndex) const
 
 void FError::ErrorGraphZeroComp(string sNamePlan, string sNameIndex) const
 {
-    ofstream out(ptrGlobal->ptrConfig->GetWSNameLogFile(), std::ios::app);
+    ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt", std::ios::app);
     out << "В графе УП " + sNamePlan + " ";
     out << "У дисциплины " + sNameIndex + " не указаны компетенции";
     out << END;
@@ -167,7 +171,7 @@ void FError::ErrorGraphZeroComp(string sNamePlan, string sNameIndex) const
 
 void FError::ErrorOutFileNotFind(string sPathName) const
 {
-    ofstream out(ptrGlobal->ptrConfig->GetWSNameLogFile(), std::ios::app);
+    ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt", std::ios::app);
     out << "Не обнаружен каталог для вывода данных " + sPathName;
     out << END;
     out.close();
@@ -185,7 +189,7 @@ void FError::ErrorParams(wstring wsPathName) const
 
 void FError::ErrorParams(string sPathName) const
 {
-    ofstream out(ptrGlobal->ptrConfig->GetWSNameLogFile(), std::ios::app);
+    ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt", std::ios::app);
     out << "Неправильно указан параметр " + sPathName;
     out << END;
     out.close();
@@ -193,7 +197,7 @@ void FError::ErrorParams(string sPathName) const
 
 void FError::ErrorUncorrectExtension() const
 {
-    ofstream out(ptrGlobal->ptrConfig->GetWSNameLogFile(), std::ios::app);
+    ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt", std::ios::app);
     out << "! Программа работает только с расширение XLSX, другое у файла " +
                ptrGlobal->ptrSolve->sInPath;
     out << END;
@@ -266,7 +270,7 @@ void FError::ErrorBadRegex(string sName)
     if (!setBadRegexName.count(sName))
     {
         setBadRegexName.insert(sName);
-        ofstream out(ptrGlobal->ptrConfig->GetWSNameLogFile(), std::ios::app);
+        ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt", std::ios::app);
         out << "!! Неправильная регулярное выражение в файле config.xlsx ";
         out << sName;
         out << END;
@@ -279,7 +283,7 @@ void FError::ErrorBadFormula()
     if (!bIsPrint)
     {
         bIsPrint = true;
-        ofstream out(ptrGlobal->ptrConfig->GetWSNameLogFile(), std::ios::app);
+        ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt", std::ios::app);
         out << "!! Неправильная формула для расчёта весов рёбер в файле "
                "config.xlsx";
         out << END;
@@ -351,7 +355,7 @@ void FError::ErrorConfiqDublicateNameDisc(wstring wsNameDisc) const
 
 void FError::ErrorConfiqDublicateNameDisc(string sNameDisc) const
 {
-    ofstream out(ptrGlobal->ptrConfig->GetWSNameLogFile(), std::ios::app);
+    ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt", std::ios::app);
 
     out << "!!!В тегах дублируется дисциплина " +
                ptrGlobal->ReversUTF16RU(sNameDisc);
@@ -383,7 +387,7 @@ void FError::ErrorBadIndicatorBind(string sId, string sIndexName,
 
 void FError::OKParsing() const
 {
-    ofstream out(ptrGlobal->ptrConfig->GetWSNameLogFile(), std::ios::app);
+    ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt", std::ios::app);
 
     out << "+ Учебный план " + ptrGlobal->ptrSolve->sInPath +
                " успешно обработан";
@@ -394,7 +398,7 @@ void FError::OKParsing() const
 
 void FError::WAParsing() const
 {
-    ofstream out(ptrGlobal->ptrConfig->GetWSNameLogFile(), std::ios::app);
+    ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt", std::ios::app);
 
     out << "- Учебный план " + ptrGlobal->ptrSolve->sInPath +
                " обработан с недочётами";
@@ -408,7 +412,7 @@ void FError::OutDiscWithoutTag() const
     if (mapIndexDiscWithoutTag.size())    // Если есть дисциплины без тегов, то
                                           // только тогда выводим как ошибку
     {
-        ofstream out(ptrGlobal->ptrConfig->GetWSNameLogFile(), std::ios::app);
+        ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt", std::ios::app);
         out << "Не определены теги у следующих дисциплин:";
         out << END;
         for (auto& [fData, wsName] : mapIndexDiscWithoutTag)

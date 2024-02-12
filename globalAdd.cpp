@@ -54,16 +54,21 @@ bool FGlobal::IsThatIsTrue(wstring wsData)
 
 bool FGlobal::IsThatIsTrue(string sData) const
 {
-    if (sData.find("+") != string::npos)
-        return true;
-    if (sData.find("Да") != string::npos)
-        return true;
-    if (sData.find("да") != string::npos)
-        return true;
-    if (sData.find("Yes") != string::npos)
-        return true;
-    if (sData.find("yes") != string::npos)
-        return true;
+    string sRet = ReversUTF16RU(sData); //На случай, если криво сопоставлено
+
+    for (auto& it : { sData, sRet })
+    {
+        if (it.find("+") != string::npos)
+            return true;
+        if (it.find("Да") != string::npos)
+            return true;
+        if (it.find("да") != string::npos)
+            return true;
+        if (it.find("Yes") != string::npos)
+            return true;
+        if (it.find("yes") != string::npos)
+            return true;
+    }
     return false;
 }
 

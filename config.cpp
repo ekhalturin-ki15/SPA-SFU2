@@ -11,7 +11,7 @@ FConfig::FConfig(shared_ptr<FGlobal> _ptrGlobal)
       iWeigthRib(10),
       iSoMachComp(6),
       iPrecision(5),
-      iIndicatorDeep(3),
+      // iIndicatorDeep(3),
       dMinWeigthRib(0.01),
       dMinComp(0.01),
       dAnomalBigScore(40.0),
@@ -39,10 +39,12 @@ FConfig::FConfig(shared_ptr<FGlobal> _ptrGlobal)
       sNameRibDir("Undirected"),
       arrNameFileIn({ L"plans\grad", L"plans\spec" }),
       arrNameFileOut({ L"result\grad", L"result\spec" }),
-      wsNameDebugFile(L"debugFile.txt"),
-      wsNameLogFile(L"logFile.txt"),
-      sPrefFullNameCourse("_"),
-      sRegexComp("{0, 1}(.{0, } ? );"),
+      sNameDebugFile("debugFile.txt"),
+      sNameLogFile("logFile.txt"),
+      sNameFileCompData("CompData"),
+      sSeparator("_"),
+      sPrefFullNameCourse("."),
+      //sRegexComp("{0, 1}(.{0, } ? );"),
       sFormula("((L + R) / 2) * K"),
       sFormulaReverseGraph("((L + R) / 2) * K")
 {
@@ -52,13 +54,13 @@ FConfig::FConfig(shared_ptr<FGlobal> _ptrGlobal)
 
     ++iSinglControll;
 
-    wsNamePage   = L"Параметры";
+    wsNamePage = L"Параметры";
 
     InitStringMap();
     InitIntMap();
     InitBoolMap();
     InitDoubleMap();
-    InitWStringMap();
+    // InitWStringMap();
     InitVectorWStringMap();
 }
 
@@ -71,9 +73,9 @@ void FConfig::InitStringMap()
 
     mapStringParamsReadKey[L"Тип рёбер"] = &sNameRibDir;
 
-    mapStringParamsReadKey[L"Регулярное выражение разбивки строки "
-                           L"([Компетенции(2)] Формируемые компетенции)"] =
-        &sRegexComp;
+    /*  mapStringParamsReadKey[L"Регулярное выражение разбивки строки "
+                             L"([Компетенции(2)] Формируемые компетенции)"] =
+          &sRegexComp;*/
 
     mapStringParamsReadKey
         [L"Формула расчёта весов рёбер графа, где вершины - это дисциплина"] =
@@ -101,6 +103,10 @@ void FConfig::InitStringMap()
     mapStringParamsReadKey
         [L"Разделитель для вывода полного названия компетенций и индикаторов"] =
             &sPrefFullNameCourse;
+
+    mapStringParamsReadKey[L"Название файла отладки"] = &sNameDebugFile;
+    mapStringParamsReadKey[L"Название лог файла (для пользователя)"] =
+        &sNameLogFile;
 }
 
 void FConfig::InitIntMap()
@@ -112,10 +118,11 @@ void FConfig::InitIntMap()
         [L"Игнорировать пустые строки в конце странице, если их не менее X ="] =
             &iIgnoreEmptyLine;
     mapIntParamsReadKey[L"Считать, что у дисциплины компетенций много, если их "
-                        L"число больше X ="]                  = &iSoMachComp;
-    mapIntParamsReadKey[L"Количество квартилей"]              = &iAmountQuar;
-    mapIntParamsReadKey[L"Макс кол-во знаков после запятой"]  = &iPrecision;
-    mapIntParamsReadKey[L"Индикатор находится на глубине X="] = &iIndicatorDeep;
+                        L"число больше X ="]                 = &iSoMachComp;
+    mapIntParamsReadKey[L"Количество квартилей"]             = &iAmountQuar;
+    mapIntParamsReadKey[L"Макс кол-во знаков после запятой"] = &iPrecision;
+    // mapIntParamsReadKey[L"Индикатор находится на глубине X="] =
+    // &iIndicatorDeep;
 }
 
 void FConfig::InitBoolMap()
@@ -131,7 +138,8 @@ void FConfig::InitBoolMap()
     mapBoolParamsReadKey[L"Отображать компетенции в названии"] =
         &bOutCompWithName;
     mapBoolParamsReadKey[L"Выводить короткое имя для УП"] = &bOutShortNameCur;
-    mapBoolParamsReadKey[L"Удалить спецсимволы из названия дисциплин"] = &bDelSpecCharDiscName;
+    mapBoolParamsReadKey[L"Удалить спецсимволы из названия дисциплин"] =
+        &bDelSpecCharDiscName;
     mapBoolParamsReadKey
         [L"Делить ЗЕ у компетениции на кол-во компетенций в дисциплине"] =
             &bIsNormalizeScoreComp;
@@ -160,13 +168,6 @@ void FConfig::InitDoubleMap()
     mapDoubleParamsReadKey
         [L"Считать кол-во ЗЕ аномально большим, если его значение больше X="] =
             &dAnomalBigScore;
-}
-
-void FConfig::InitWStringMap()
-{
-    mapWStringParamsReadKey[L"Название файла отладки"] = &wsNameDebugFile;
-    mapWStringParamsReadKey[L"Название лог файла (для пользователя)"] =
-        &wsNameLogFile;
 }
 
 void FConfig::InitVectorWStringMap()
@@ -274,9 +275,9 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
         }
 
         // Считать переменную из config.xlsx с типом данных wstring
-        if (mapWStringParamsReadKey.count(wsKey))
+        if (mapStringParamsReadKey.count(wsKey))
         {
-            ptrGlobal->TakeData(*mapWStringParamsReadKey[wsKey], row);
+            ptrGlobal->TakeData(*mapStringParamsReadKey[wsKey], row);
             return true;
         }
 
@@ -392,10 +393,54 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
+        wsPatern = L"Регулярное выражение разбивки строки ([Компетенции(2)] "
+                   L"Формируемые компетенции)";
+        if (wsKey == wsPatern)
+        {
+            ptrGlobal->TakeData(arrRegexComp, row, 0);
+            return true;
+        }
+
         wsPatern = L"Регулярное выражение разбивки индикатора";
         if (wsKey == wsPatern)
         {
             ptrGlobal->TakeData(arrRegexHeaderInd, row, 0);
+            return true;
+        }
+
+        wsPatern = L"Индексы групп регулярного выражения";
+        if (wsKey == wsPatern)
+        {
+            vector<string> bufRegexIndexGroup;
+            ptrGlobal->TakeData(bufRegexIndexGroup, row,
+                                arrRegexHeaderInd.size() + 1);
+
+            // Конвертация из строки массива чисел в массив чисел
+            //  "1 2 3" -> {1,2,3}
+
+            for (const auto& str : bufRegexIndexGroup)
+            {
+                int         num = 0;
+                vector<int> bufInt;
+                for (const auto& it : str)
+                    if (it >= '0' && it < '9')
+                    {
+                        num *= 10;
+                        num += it - '0';
+                    }
+                    else
+                    {
+                        bufInt.push_back(num);
+                        num = 0;
+                    }
+                if (num)
+                    bufInt.push_back(num);
+                if (arrRegexIndexGroup.size())
+                    if (arrRegexIndexGroup[0].size() != bufInt.size())
+                        return false;    // Определили другое количество групп
+                arrRegexIndexGroup.push_back(bufInt);
+            }
+
             return true;
         }
 

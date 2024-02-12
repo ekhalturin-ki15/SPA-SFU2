@@ -18,6 +18,9 @@
 #include "outData.h"
 #include "solve.h"
 
+#pragma warning(disable : C4267) // size_t лучше не использовать, 
+//так как обратный цикл (с шагом -1) может стать бесконечным
+
 using namespace std;
 // using namespace OpenXLSX;
 

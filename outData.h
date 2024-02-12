@@ -3,7 +3,7 @@
 #include <map>
 
 struct FGlobal;
-struct FTreeDisc;
+struct FCurricula;
 struct FTreeMetric;
 struct FGraphType;
 struct FOutData;
@@ -83,7 +83,7 @@ private:
                                 const int&              iGraphType);
 
     // Данные про дерево компетенций УП
-    void OutAddInfo(string sName, string sPath, shared_ptr<FTreeDisc> ptrTree);
+    void OutAddInfo(string sName, string sPath, shared_ptr<FCurricula> ptrTree);
 
     void CreateAndTake(
         string sName,
@@ -103,9 +103,10 @@ private:
     void CreateOnlyAllowedResultRow(
         vector<string>& arrReturn, const int& iSizeHeader,
         vector<bool>& arrIsAllowed,
-        // const string&         sCurName, // Лучше передать FTreeDisc*
+        // const string&         sCurName, // Лучше передать FCurricula*
         const vector<double>& arrResult, FCorridorAdapter& fCorridorData,
-        shared_ptr<FTreeDisc> ptrTree, const vector<wstring>& arrOnlyAllow);
+        shared_ptr<FCurricula> ptrCurricula,
+        const vector<wstring>& arrOnlyAllow);
 
     void AddTableCommonData(vector<vector<string>>& arrToAddedData,
                             FCorridorAdapter&       fCorridorData);
@@ -208,18 +209,18 @@ private:
         int iDeep);    // Возвращает Актуальное значение y
 
     vector<string> CreateCommonNameLabel(const int& iGraphType,
-                                         shared_ptr<FTreeDisc>
+                                         shared_ptr<FCurricula>
                                              fTree);
 
     vector<string> CreateTag(const int& iGraphType,
-                             shared_ptr<FTreeDisc>
+                             shared_ptr<FCurricula>
                                   fTree,
                              bool bCheckTag = true);
 
     void OutGephiData(
         string sName,
         string sPath,
-        shared_ptr<FTreeDisc>
+        shared_ptr<FCurricula>
             fTree);    // Вывод данных о графе для Gephi в формате csv
 
 private:

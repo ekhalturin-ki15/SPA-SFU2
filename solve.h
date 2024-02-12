@@ -58,12 +58,12 @@ struct FTreeElement
 };
 
 // Один конкретный УП
-struct FTreeDisc
+struct FCurricula
 {
     friend struct FSolve;
 
-    explicit FTreeDisc(shared_ptr<FGlobal> _ptrGlobal);
-    ~FTreeDisc();
+    explicit FCurricula(shared_ptr<FGlobal> _ptrGlobal);
+    ~FCurricula();
 
     void CountDisc();
 
@@ -142,7 +142,7 @@ struct FSolve
     void CreateAllMetric();
 
 public:
-    vector<shared_ptr<FTreeDisc>>
+    vector<shared_ptr<FCurricula>>
         arrDisc;    // Указатели на все УП, которые считали (все
                     // они одновременно хранятся в памяти)
 
@@ -164,7 +164,7 @@ public:
 private:
     static int iSinglControll;    // Проверка на синглтон
 
-    void ClearTreeDisc();
+    void ClearCurricula();
 
     // По идеи, там передаётся всегда this->iKeyPageNumber
 
@@ -185,7 +185,7 @@ private:
         ptrSolveSecondPage;    // Композиция (вынес в отдельный
                                // класс, так как много методов)
     shared_ptr<FGlobal> ptrGlobal;    // Синглтон
-    regex               fRegexComp;
+    vector<regex> arrRegexComp;
     vector<regex> arrRegexHeaderInd;    // Может быть несколько, поэтому вектор
     vector<regex> arrRegexHeaderComp;    // Может быть несколько, поэтому вектор
     vector<regex> arrRegexCodeUGSN;    // Может быть несколько, поэтому вектор
