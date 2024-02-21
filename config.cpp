@@ -1,6 +1,8 @@
 ﻿#include "config.h"
 #include "error.h"
 
+#pragma warning(disable : 4267)    // size_t лучше не использовать, 
+
 int FConfig::iSinglControll = 0;
 
 FConfig::FConfig(shared_ptr<FGlobal> _ptrGlobal)
@@ -46,11 +48,13 @@ FConfig::FConfig(shared_ptr<FGlobal> _ptrGlobal)
       sPrefFullNameCourse("."),
       //sRegexComp("{0, 1}(.{0, } ? );"),
       sFormula("((L + R) / 2) * K"),
-      sFormulaReverseGraph("((L + R) / 2) * K")
+      sFormulaReverseGraph("((L + R) / 2) * D")
 {
     // Unit test против такого
-    // if (iSinglControll > 0) throw std::runtime_error("Re-creation
-    // Singleton");
+#ifndef UNIT_TEST
+    if (iSinglControll > 0)
+        throw std::runtime_error("Re-creation Singleton");
+#endif
 
     ++iSinglControll;
 
@@ -140,9 +144,14 @@ void FConfig::InitBoolMap()
     mapBoolParamsReadKey[L"Выводить короткое имя для УП"] = &bOutShortNameCur;
     mapBoolParamsReadKey[L"Удалить спецсимволы из названия дисциплин"] =
         &bDelSpecCharDiscName;
+
     mapBoolParamsReadKey
-        [L"Делить ЗЕ у компетениции на кол-во компетенций в дисциплине"] =
+        [L"Делить ЗЕ у компетенции на кол-во компетенций в дисциплине"] =
             &bIsNormalizeScoreComp;
+    mapBoolParamsReadKey
+        [L"Делить ЗЕ у компетенции на кол-во дисциплин в компетенции"] =
+            &bIsNormalizeScoreDisc;
+
     mapBoolParamsReadKey[L"Граф неориентированный"]  = &bIsUnDirected;
     mapBoolParamsReadKey[L"Перезаписывать лог файл"] = &bReloadLogFile;
     mapBoolParamsReadKey[L"Вывод доп файлов csv"]    = &bIsOutCSVDate;
@@ -163,7 +172,7 @@ void FConfig::InitDoubleMap()
     mapDoubleParamsReadKey[L"Создавать ребро, если его вес больше X="] =
         &dMinWeigthRib;
     mapDoubleParamsReadKey
-        [L"Считать компетенцию отсутсвующей, если значение меньше X="] =
+        [L"Считать компетенцию отсутствующей, если значение меньше X="] =
             &dMinComp;
     mapDoubleParamsReadKey
         [L"Считать кол-во ЗЕ аномально большим, если его значение больше X="] =

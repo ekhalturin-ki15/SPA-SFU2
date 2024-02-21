@@ -172,8 +172,16 @@ void FGraph::CalcAllScoreAndAmount(FGraphType& fGraph)
         dAmountRib += it.size();
     }
 
-    double N    = fGraph.fAdjList.size();
-    fGraph.dDense = dAmountRib / (N * (N - 1));
+    double N      = fGraph.fAdjList.size();
+
+    if (N <= 1)
+    {
+        fGraph.dDense = FGraphType::dNoInit;
+    }
+    else
+    {
+        fGraph.dDense = dAmountRib / (N * (N - 1));
+    }
 }
 
 void FGraph::CalcMinMaxWeight(double&                           dResult,
@@ -278,10 +286,12 @@ void FGraph::GenerateReverseGraph()
             double& dWeight = fGraph.arrNodeWeight[fGraph.mapReversRel[{
                 wsComp, FGraph::iReverse }]];
 
-            dWeight +=
-                it->dSumScore /
-                it->mapComp.size();    // Нормализируем, так как одна дисциплина
-                                       // может отвечать за несколько дисциплин
+
+            double dAddScore = it->dSumScore;
+            if (ptrTree->ptrGlobal->ptrConfig->GetBIsNormalizeScoreDisc())
+                dAddScore /= it->mapComp.size();// Нормализируем, так как одна дисциплина
+                                       // может отвечать за несколько компетенций
+            dWeight += dAddScore;    
             mapReverseCompDisc[wsComp].insert(key);
         }
     }
@@ -297,20 +307,19 @@ void FGraph::GenerateReverseGraph()
         {
             const auto& R = fGraph.arrRel[iR].first;
 
-            int iPowerComp = 0;    // Сколько дисциплин совпало
+            int iPowerDisc = 0;    // Сколько дисциплин совпало
 
             for (auto& wsNameDisc : mapReverseCompDisc[L])
             {
                 if (mapReverseCompDisc[R].count(wsNameDisc))
-                    ++iPowerComp;    // Совпала дисциплина
+                    ++iPowerDisc;    // Совпала дисциплина
             }
 
             try
             {
-                double dRibWeight =
-                    fFormulaParser.TakeResult(fGraph.arrNodeWeight[iL],
-                                              fGraph.arrNodeWeight[iR],
-                                              iPowerComp);
+                double dRibWeight = fFormulaParser.TakeResult(
+                    fGraph.arrNodeWeight[iL], fGraph.arrNodeWeight[iR], 0,
+                    iPowerDisc);
 
                 if (dRibWeight >
                     ptrTree->ptrGlobal->ptrConfig->GetDMinWeigthRib())
@@ -393,7 +402,7 @@ void FGraph::GenerateGraph()
             {
                 double dRibWeight = fFormulaParser.TakeResult(L->dSumScore,
                                                               R->dSumScore,
-                                                              iPowerComp);
+                                                              iPowerComp, 0);
 
                 if (dRibWeight >
                     ptrTree->ptrGlobal->ptrConfig->GetDMinWeigthRib())
@@ -488,7 +497,7 @@ void FGraph::GenerateAltGraph()
                 double dRibWeight =
                     fFormulaParser.TakeResult(L->mapCourseScore[iCourseL],
                                               R->mapCourseScore[iCourseR],
-                                              iPowerComp);
+                                              iPowerComp, 0);
 
                 if (dRibWeight >
                     ptrTree->ptrGlobal->ptrConfig->GetDMinWeigthRib())
@@ -524,7 +533,7 @@ void FGraph::GenerateAltGraph()
                 double dRibWeight =
                     fFormulaParser.TakeResult(L->mapCourseScore[iCourseL],
                                               R->mapCourseScore[iCourseR],
-                                              iPowerComp);
+                                              iPowerComp, 0);
 
                 if (dRibWeight >
                     ptrTree->ptrGlobal->ptrConfig->GetDMinWeigthRib())

@@ -95,11 +95,12 @@ map<int, vector<pair<double, string>>> FCorridorAdapter::Take(const int& iSize)
                     int    iAmountCut =
                         fData.size() * ptrGlobal->ptrConfig->GetDTruncAvg();
 
-                    int iSizeSampling = fData.size() - 2 * iAmountCut;
+                    int iSizeSampling = int(fData.size()) - 2 * iAmountCut;
 
                     if (iSizeSampling > 0)
                     {
-                        for (int i = iAmountCut; i < fData.size() - iAmountCut;
+                        for (int i = iAmountCut;
+                             i < int(fData.size()) - iAmountCut;
                              ++i)
                         {
                             dSum += fData[i].first;
@@ -129,36 +130,12 @@ int FOutData::iSinglControll = 0;
 
 FOutData::FOutData(shared_ptr<FGlobal> _ptrGlobal)
     : ptrGlobal(_ptrGlobal), iSizeOnlyAllow(0)
-
-// arrCompetenceHead(
-//     {
-//        L"Название УП", L"За какой курс",
-//      L"Заголовок компетенции", L"ЗЕ Заголовка компетенции",
-//      L"Кол-во дисциплин заголовка компетенции",
-//      L"Процент распределения Заголовка компетенции",
-//      L"Компетенция", L"ЗЕ Компетенций", L"Кол-во дисциплин компетенции",
-//      L"Процент распределения Компетенции",
-//      L"Индикатор", L"ЗЕ индикаторов", L"Кол-во дисциплин индикатора",
-//      L"Процент распределения Индикатора" }),
-// arrMetricHead(
-//     { // L"Название учебного плана",
-//       L"Всего ЗЕ в графе", L"Кол-во дисциплин в графе",
-//       // L"(Расш.) Общее кол-во ЗЕ в УП",
-//       // L"(Расш.) Кол-во дисциплин в УП",    // Включает те,
-//       // что указаны в
-//       //  УП, как неучитываемые
-//       L"Максимальное ЗЕ у дисциплины", L"Минимальное ЗЕ у дисциплины",
-//       L"Максимальный вес ребра", L"Минимальный вес ребра",
-//       L"Диаметр графа по расстоянию",
-//       L"Диаметр графа по количеству рёбер",
-//       L"Количество компонент связности", L"Максимальное оставное дерево",
-//       L"Минимальное оставное дерево", L"Плотность графа",
-//       L"Количество основных дисциплин", L"Количество дисциплин по выбору",
-//       L"Количество факультативов" })
 {
     // Unit test против такого
-    // if (iSinglControll > 0) throw std::runtime_error("Re-creation
-    // Singleton");
+#ifndef UNIT_TEST
+    if (iSinglControll > 0)
+        throw std::runtime_error("Re-creation Singleton");
+#endif
     ++iSinglControll;
 
     fFileCache = make_shared<FFileCache>(ptrGlobal->ptrOutData);
@@ -1518,18 +1495,19 @@ string FOutData::AddCompString(const map<string, vector<string>>& mapComp)
 
 vector<string> FOutData::CreateTag(const int& iGraphType,
                                    shared_ptr<FCurricula>
-                                        fTree,
+                                        fCurricula,
                                    bool bCheckTag)
 {
     vector<string> arrTag;
-    for (auto& [key, val] : fTree->ptrGraph->mapGraph[iGraphType].mapReversRel)
+    for (auto& [key, val] :
+         fCurricula->ptrGraph->mapGraph[iGraphType].mapReversRel)
     {
         string sTag = ptrGlobal->ptrConfig->GetSNoInitData();
         if (bCheckTag)
         {
-            if (fTree->mapDisc[key.first]->setTagDisc.size() > 0)
-                sTag =
-                    to_string(*fTree->mapDisc[key.first]->setTagDisc.begin());
+            if (fCurricula->mapDisc[key.first]->setTagDisc.size() > 0)
+                sTag = to_string(
+                    *fCurricula->mapDisc[key.first]->setTagDisc.begin());
         }
         arrTag.push_back(sTag);
     }
@@ -1539,10 +1517,10 @@ vector<string> FOutData::CreateTag(const int& iGraphType,
 
 vector<string> FOutData::CreateCommonNameLabel(const int& iGraphType,
                                                shared_ptr<FCurricula>
-                                                   fTree)
+                                                   fCurricula)
 {
     vector<string> arrCommonNameLabel;
-    for (auto& it : fTree->ptrGraph->mapGraph[iGraphType].arrRel)
+    for (auto& it : fCurricula->ptrGraph->mapGraph[iGraphType].arrRel)
     {
         if (iGraphType == FGraph::iReverse)
         {
@@ -1550,7 +1528,7 @@ vector<string> FOutData::CreateCommonNameLabel(const int& iGraphType,
             continue;
         }
 
-        shared_ptr<FTreeElement> fThis = fTree->mapDisc[it.first];
+        shared_ptr<FTreeElement> fThis = fCurricula->mapDisc[it.first];
         // wstring       wsNameRaw = fThis->wsName;
         string sName = fThis->sName;
 
@@ -1573,15 +1551,16 @@ vector<string> FOutData::CreateCommonNameLabel(const int& iGraphType,
 }
 
 void FOutData::OutGephiData(string sName, string sPath,
-                            shared_ptr<FCurricula> fTree)
+                            shared_ptr<FCurricula> fCurricula)
 {
     {
         const int& iTag = FGraph::iCommon;
-        OutGephiLabel(sPath, sName, sName, CreateCommonNameLabel(iTag, fTree),
-                      fTree->ptrGraph->mapGraph[iTag].arrNodeWeight,
-                      CreateTag(iTag, fTree));
-        OutGephiRib(sName, sName, sPath,
-                    fTree->ptrGraph->mapGraph[iTag].fAdjList);
+        OutGephiLabel(sPath, sName, sName,
+                      CreateCommonNameLabel(iTag, fCurricula),
+                      fCurricula->ptrGraph->mapGraph[iTag].arrNodeWeight,
+                      CreateTag(iTag, fCurricula));
+        OutGephiRib(sPath, sName, sName, 
+                    fCurricula->ptrGraph->mapGraph[iTag].fAdjList);
     }
 
     // Вывод графа, где вершины - это компетенции
@@ -1595,11 +1574,11 @@ void FOutData::OutGephiData(string sName, string sPath,
                             .GetName());
 
         OutGephiLabel(sPath, sFileName, sName,
-                      CreateCommonNameLabel(iTag, fTree),
-                      fTree->ptrGraph->mapGraph[iTag].arrNodeWeight,
-                      CreateTag(iTag, fTree, false));
-        OutGephiRib(sName, sFileName, sPath,
-                    fTree->ptrGraph->mapGraph[iTag].fAdjList);
+                      CreateCommonNameLabel(iTag, fCurricula),
+                      fCurricula->ptrGraph->mapGraph[iTag].arrNodeWeight,
+                      CreateTag(iTag, fCurricula, false));
+        OutGephiRib(sPath, sFileName, sName,
+                    fCurricula->ptrGraph->mapGraph[iTag].fAdjList);
     }
 
     {
@@ -1613,28 +1592,28 @@ void FOutData::OutGephiData(string sName, string sPath,
                     .GetName());
 
         OutGephiLabel(sPath, sFileName, sName,
-                      CreateCommonNameLabel(iTag, fTree),
-                      fTree->ptrGraph->mapGraph[iTag].arrNodeWeight,
-                      CreateTag(iTag, fTree));
+                      CreateCommonNameLabel(iTag, fCurricula),
+                      fCurricula->ptrGraph->mapGraph[iTag].arrNodeWeight,
+                      CreateTag(iTag, fCurricula));
 
-        OutGephiRib(sName, sFileName, sPath,
-                    fTree->ptrGraph->mapGraph[iTag].fAdjList);
+        OutGephiRib(sPath, sFileName, sName,
+                    fCurricula->ptrGraph->mapGraph[iTag].fAdjList);
     }
 
-    if (fTree->ptrGlobal->ptrConfig->GetBCourseOutput())
+    if (fCurricula->ptrGlobal->ptrConfig->GetBCourseOutput())
     {
-        for (int iCourse = 0; iCourse < fTree->iAmountCourse; ++iCourse)
+        for (int iCourse = 0; iCourse < fCurricula->iAmountCourse; ++iCourse)
         {
             OutGephiLabel(sPath,
                           sName + "(" + to_string(iCourse + 1) + ")",
                           sName,
-                          CreateCommonNameLabel(iCourse, fTree),
-                          fTree->ptrGraph->mapGraph[iCourse].arrNodeWeight,
-                          CreateTag(iCourse, fTree));
+                          CreateCommonNameLabel(iCourse, fCurricula),
+                          fCurricula->ptrGraph->mapGraph[iCourse].arrNodeWeight,
+                          CreateTag(iCourse, fCurricula));
             OutGephiRib(sPath,
                         sName + "(" + to_string(iCourse + 1) + ")",
                         sName,
-                        fTree->ptrGraph->mapGraph[iCourse].fAdjList);
+                        fCurricula->ptrGraph->mapGraph[iCourse].fAdjList);
         }
     }
 }
@@ -1661,8 +1640,8 @@ void FOutData::OutGephiLabel(const string& sPath, const string& sNameFile,
     }
 }
 
-void FOutData::OutGephiRib(const string& sName, const string& sNameFile,
-                           const string&                            sPath,
+void FOutData::OutGephiRib(const string& sPath, const string& sNameFile,
+                           const string&                            sName,
                            const vector<vector<pair<int, double>>>& fAdjList)
 {
     ofstream outLabel(sPath + "/" + sName + "/" + sNameFile + "Rib.csv");

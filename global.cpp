@@ -13,10 +13,11 @@ FGlobal::FGlobal(wstring wsNameConfig)
 {
     sNameFileConfig = ConwertToString(GetCurrentPath() / wsNameConfig);
 
-
     // Unit test против такого
-    // if (iSinglControll > 0) throw std::runtime_error("Re-creation
-    // Singleton");
+#ifndef UNIT_TEST
+    if (iSinglControll > 0)
+        throw std::runtime_error("Re-creation Singleton");
+#endif
     ++iSinglControll;
 
     mapTranslit = {

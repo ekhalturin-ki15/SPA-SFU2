@@ -156,7 +156,7 @@ void FSolve::ZeroPageCreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
                             {
                                 ptrNewNode->sName =
                                     std::regex_replace(ptrNewNode->sName,
-                                                       std::regex("[(),.]"),
+                                                       std::regex("[(),.;]"),
                                                        "");
                                 ptrNewNode->sName =
                                     std::regex_replace(ptrNewNode->sName,
@@ -224,7 +224,7 @@ void FSolve::ZeroPageCreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
                             string sCompName = sData[1].str();
                             // Есть ошибка оператора: иногда вместо компетенции
                             // указан индикатор
-                            if (ptrGlobal->ptrConfig->GetBMultiIndicator())
+                            if (!ptrGlobal->ptrConfig->GetBMultiIndicator())
                                 sCompName =
                                     sCompName.substr(0, sCompName.find('.'));
 

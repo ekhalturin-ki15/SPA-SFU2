@@ -221,6 +221,7 @@ private:
     bool bIsUnDirected;
     bool bDelSpecCharDiscName;
     bool bIsNormalizeScoreComp;
+    bool bIsNormalizeScoreDisc;
     bool bOutAllInfoWithoutTag;
     bool bOutEmptyComp;
     bool bOutTotalInfo;
@@ -283,6 +284,10 @@ public:
     const bool& GetBIsNormalizeScoreComp() const
     {
         return bIsNormalizeScoreComp;
+    }
+    const bool& GetBIsNormalizeScoreDisc() const
+    {
+        return bIsNormalizeScoreDisc;
     }
     const bool& GetBOutAllInfoWithoutTag() const
     {

@@ -30,7 +30,7 @@ std::string FormulaParser::ParserToken()
 
     vector<string> arrToken = { "+",   "-",   "^",   "*",   "/", "mod",
                                 "abs", "sin", "cos", "log", "(", ")",
-                                "L",   "R",   "A",   "N",   "K" };
+                                "L",   "R",   "A",   "N",   "K", "D" };
 
     for (auto& s : arrToken)
     {
@@ -70,7 +70,7 @@ Expression FormulaParser::UnaryExp()
     if (std::isdigit(token[0]))
         return Expression(token);
 
-    vector<string> arrToken = { "L", "R", "A", "N", "K" };
+    vector<string> arrToken = { "L", "R", "A", "N", "K", "D" };
 
     int i = 0;
     for (; i < arrToken.size(); ++i)
@@ -95,6 +95,9 @@ Expression FormulaParser::UnaryExp()
             break;
         case 4:
             return Expression(to_string(iPowerComp));
+            break;
+        case 5:
+            return Expression(to_string(iPowerDisc));
             break;
     }
 
@@ -192,7 +195,8 @@ double Expression::Calculate(const Expression& fExp)
     return 0.;
 }
 
-double FormulaParser::TakeResult(double _dLeft, double _dRight, int _iPowerComp)
+double FormulaParser::TakeResult(double _dLeft, double _dRight, int _iPowerComp,
+                                 int _iPowerDisc)
 {
     // sInput = _sInput;
     i      = 0;
@@ -201,6 +205,7 @@ double FormulaParser::TakeResult(double _dLeft, double _dRight, int _iPowerComp)
     // dSumScore = _dSumScore;
     // iAmountDisc = _iAmountDisc;
     iPowerComp          = _iPowerComp;
+    iPowerDisc          = _iPowerDisc;
     Expression fFormula = Parse();
     return fFormula.Calculate(fFormula);
 }

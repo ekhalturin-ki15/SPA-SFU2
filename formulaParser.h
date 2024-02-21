@@ -36,8 +36,8 @@ struct FormulaParser
     explicit FormulaParser(string _sInput, double _dSumScore,
                            int _iAmountDisc);    // Только постоянные значения
 
-    double TakeResult(double _dLeft, double _dRight,
-                      int _iPowerComp);    // Только изменяемые значения
+    double TakeResult(double _dLeft, double _dRight, int _iPowerComp,
+                      int _iPowerDisc);    // Только изменяемые значения
 
     string sInput = "";
 
@@ -46,6 +46,7 @@ struct FormulaParser
     double dSumScore   = 0;    // A
     int    iAmountDisc = 0;    // N
     int    iPowerComp  = 0;    // K
+    int    iPowerDisc  = 0;    // D
 
 private:
     Expression Parse();

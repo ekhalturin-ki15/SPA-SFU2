@@ -210,18 +210,18 @@ private:
 
     vector<string> CreateCommonNameLabel(const int& iGraphType,
                                          shared_ptr<FCurricula>
-                                             fTree);
+                                             fCurricula);
 
     vector<string> CreateTag(const int& iGraphType,
                              shared_ptr<FCurricula>
-                                  fTree,
+                                  fCurricula,
                              bool bCheckTag = true);
 
     void OutGephiData(
         string sName,
         string sPath,
         shared_ptr<FCurricula>
-            fTree);    // Вывод данных о графе для Gephi в формате csv
+            fCurricula);    // Вывод данных о графе для Gephi в формате csv
 
 private:
     static int iSinglControll;    // Проверка на синглтон

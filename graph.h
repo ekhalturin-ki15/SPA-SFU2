@@ -42,13 +42,13 @@ struct FGraphType
     vector<int> arrAllPairDistanceQuartile;
 
     double dGraphAllScore   = FGraphType::dNoInit;
-    int    iGraphAmountDisc = FGraphType::dNoInit;
+    int    iGraphAmountDisc = int(FGraphType::dNoInit);
     double dDense           = FGraphType::dNoInit;
 
     map<ETypeDisc, int> mapGraphAmountTypeDisc;
     vector<int>         arrAmountCountCompDisc;
 
-    int iComponent = FGraphType::dNoInit;
+    int iComponent = int(FGraphType::dNoInit);
 };
 
 struct FGraph
@@ -95,7 +95,7 @@ struct FGraph
 
     map<int, FGraphType>
         mapGraph;    // Тип зависит от версии графа, сейчас iCommon - обычный,
-                     // iAlt - альтернативный
+                     // iAlt - альтернативный, iReverse - Обратный
 
 private:
     shared_ptr<FCurricula> ptrTree;
