@@ -27,7 +27,6 @@ bool Create(shared_ptr<FGlobal>& _ptrGlobal, const wstring& _wsNameConfig)
     return true;
 }
 
-
 bool isSameExcel();
 
 namespace TestFSolve
@@ -256,84 +255,129 @@ namespace TestFSolve
             ptrGlobal->ptrSolve->CreateAllGraph();
             ptrFirst  = ptrGlobal->ptrSolve->arrDisc.front();
             ptrSecond = ptrGlobal->ptrSolve->arrDisc.at(1);
-            ptrThird = ptrGlobal->ptrSolve->arrDisc.at(2);
+            ptrThird  = ptrGlobal->ptrSolve->arrDisc.at(2);
             iCommon   = ptrFirst->ptrGraph->iCommon;
         }
 
         TEST_METHOD(InitGraph)
         {
-            Assert::IsTrue(ptrFirst->ptrGraph != nullptr);
+            auto& ptrThis = ptrFirst;
+            Assert::IsTrue(ptrThis->ptrGraph != nullptr);
         }
 
         TEST_METHOD(InitAllTypeGraph)
         {
-            Assert::AreEqual(4ull + 3ull, ptrFirst->ptrGraph->mapGraph.size());
+            auto& ptrThis = ptrFirst;
+            Assert::AreEqual(4ull + 3ull, ptrThis->ptrGraph->mapGraph.size());
         }
 
-         TEST_METHOD(FirstAmountDisc1Course)
+        TEST_METHOD(FirstAmountDiscCourse)
         {
             // Не учитывается дисциплина "Технологическая
             // (проектно-технологическая) практика" Так как она в исключениях
             // файла config.xlsx "Игнорируемые предметы"
-            Assert::AreEqual(
-                2, ptrThird->ptrGraph->mapGraph[0].iGraphAmountDisc);
+
+            auto&  ptrThis = ptrFirst;
+            string sActual;
+            for (int i = 0; i < ptrThis->iAmountCourse; ++i)
+            {
+                if (i)
+                    sActual += " ";
+                sActual +=
+                    to_string(ptrThis->ptrGraph->mapGraph[i].iGraphAmountDisc);
+            }
+            Assert::AreEqual("2 2 3 0", sActual.c_str());
+        }
+
+        TEST_METHOD(SecondAmountDiscCourse)
+        {
+            auto&  ptrThis = ptrSecond;
+            string sActual;
+            for (int i = 0; i < ptrThis->iAmountCourse; ++i)
+            {
+                if (i)
+                    sActual += " ";
+                sActual +=
+                    to_string(ptrThis->ptrGraph->mapGraph[i].iGraphAmountDisc);
+            }
+            Assert::AreEqual("2 2 2 2", sActual.c_str());
+        }
+
+        TEST_METHOD(ThirdAmountDiscCourse)
+        {
+            auto&  ptrThis = ptrThird;
+            string sActual;
+            for (int i = 0; i < ptrThis->iAmountCourse; ++i)
+            {
+                if (i)
+                    sActual += " ";
+                sActual +=
+                    to_string(ptrThis->ptrGraph->mapGraph[i].iGraphAmountDisc);
+            }
+            Assert::AreEqual("2 3 4 0", sActual.c_str());
         }
 
         TEST_METHOD(ThirdAmountDiscCommon)
         {
-            // Не учитывается дисциплина "Технологическая (проектно-технологическая) практика"
-            // Так как она в исключениях файла config.xlsx "Игнорируемые предметы"
+            // Не учитывается дисциплина "Технологическая
+            // (проектно-технологическая) практика" Так как она в исключениях
+            // файла config.xlsx "Игнорируемые предметы"
+            auto& ptrThis = ptrThird;
             Assert::AreEqual(
-                9, ptrThird->ptrGraph->mapGraph[iCommon].iGraphAmountDisc);
+                9, ptrThis->ptrGraph->mapGraph[iCommon].iGraphAmountDisc);
         }
 
         TEST_METHOD(FirstDenseCommon)
         {
+            auto& ptrThis = ptrFirst;
             // Проверено в Gephi
-            Assert::AreEqual(0.238,
-                             ptrFirst->ptrGraph->mapGraph[iCommon].dDense, 0.01);
+            Assert::AreEqual(0.238, ptrThis->ptrGraph->mapGraph[iCommon].dDense,
+                             0.01);
         }
 
         TEST_METHOD(SecondDenseCommon)
         {
+            auto& ptrThis = ptrSecond;
             // Полносвязный граф
-            Assert::AreEqual(1., ptrSecond->ptrGraph->mapGraph[iCommon].dDense);
+            Assert::AreEqual(1., ptrThis->ptrGraph->mapGraph[iCommon].dDense);
         }
 
         TEST_METHOD(ThirdDenseCommon)
         {
+            auto& ptrThis = ptrThird;
             // Проверено в Gephi
-            Assert::AreEqual(
-                0.222, ptrThird->ptrGraph->mapGraph[iCommon].dDense, 0.01);
+            Assert::AreEqual(0.222, ptrThis->ptrGraph->mapGraph[iCommon].dDense,
+                             0.01);
         }
-
-       
-
 
         TEST_METHOD(FirstDiametrStepCommon)
         {
+            auto& ptrThis = ptrFirst;
             // 3 компонентный граф
-            Assert::AreEqual(
-                2., ptrFirst->ptrGraph->mapGraph[iCommon].dDiametrStep);
+            Assert::AreEqual(2.,
+                             ptrThis->ptrGraph->mapGraph[iCommon].dDiametrStep);
         }
 
         TEST_METHOD(ThirdDiametrStepCommon)
         {
+            auto& ptrThis = ptrThird;
             // Полносвязный граф
-            Assert::AreEqual(
-                2., ptrThird->ptrGraph->mapGraph[iCommon].dDiametrStep);
+            Assert::AreEqual(2.,
+                             ptrThis->ptrGraph->mapGraph[iCommon].dDiametrStep);
         }
 
         TEST_METHOD(FirstComponentCommon)
         {
+            auto& ptrThis = ptrFirst;
             Assert::AreEqual(3,
-                             ptrFirst->ptrGraph->mapGraph[iCommon].iComponent);
+                             ptrThis->ptrGraph->mapGraph[iCommon].iComponent);
         }
 
         TEST_METHOD(ThirdComponentCommon)
         {
-            Assert::AreEqual(
-                4, ptrThird->ptrGraph->mapGraph[iCommon].iComponent);
+            auto& ptrThis = ptrThird;
+            Assert::AreEqual(4,
+                             ptrThis->ptrGraph->mapGraph[iCommon].iComponent);
         }
     };
 
@@ -507,9 +551,10 @@ namespace AnomalTestFSolve
 
         TEST_METHOD(AllCompIsFind)
         {
-            // 12 Штук = УК-1 УК-2 УК-3 
-            // Компетенции УК-3.1 УК-3.2 проигнорируются и будут считаться как УК-3
-            // Это неплохой компромис, так как в некоторых УП на странице Компетенции(2) указываются индикаторы
+            // 12 Штук = УК-1 УК-2 УК-3
+            // Компетенции УК-3.1 УК-3.2 проигнорируются и будут считаться как
+            // УК-3 Это неплохой компромис, так как в некоторых УП на странице
+            // Компетенции(2) указываются индикаторы
             Assert::AreEqual(3ull, ptrFirst->fAllComp.size());
         }
 

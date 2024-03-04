@@ -1,44 +1,30 @@
-+ РЈС‡РµР±РЅС‹Р№ РїР»Р°РЅ R:/acmp/excelbibltest/ExcelBiblT/plans/test/1test.xlsx СѓСЃРїРµС€РЅРѕ РѕР±СЂР°Р±РѕС‚Р°РЅ
++ Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/0103040030_op-21.plm.plx.xlsx успешно обработан
 
-+ РЈС‡РµР±РЅС‹Р№ РїР»Р°РЅ R:/acmp/excelbibltest/ExcelBiblT/plans/test/2all_link.xlsx СѓСЃРїРµС€РЅРѕ РѕР±СЂР°Р±РѕС‚Р°РЅ
++ Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/0903010030_op-21.plm.plx.xlsx успешно обработан
 
-+ РЈС‡РµР±РЅС‹Р№ РїР»Р°РЅ R:/acmp/excelbibltest/ExcelBiblT/plans/test/3test.xlsx СѓСЃРїРµС€РЅРѕ РѕР±СЂР°Р±РѕС‚Р°РЅ
+Компетенции [строка 245] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/0903020030_op-21.plm.plx.xlsx присутствует пустая строка
+- Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/0903020030_op-21.plm.plx.xlsx обработан с недочётами
 
-+ РЈС‡РµР±РЅС‹Р№ РїР»Р°РЅ R:/acmp/excelbibltest/ExcelBiblT/plans/test/anomal_test_0.xlsx СѓСЃРїРµС€РЅРѕ РѕР±СЂР°Р±РѕС‚Р°РЅ
++ Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/0903030031_OP-21.plm.plx.xlsx успешно обработан
 
-+ РЈС‡РµР±РЅС‹Р№ РїР»Р°РЅ R:/acmp/excelbibltest/ExcelBiblT/plans/test/anomal_test_1.xlsx СѓСЃРїРµС€РЅРѕ РѕР±СЂР°Р±РѕС‚Р°РЅ
++ Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/0903030032_OP-20.plm.plx.xlsx успешно обработан
 
-+ РЈС‡РµР±РЅС‹Р№ РїР»Р°РЅ R:/acmp/excelbibltest/ExcelBiblT/plans/test/anomal_test_12.xlsx СѓСЃРїРµС€РЅРѕ РѕР±СЂР°Р±РѕС‚Р°РЅ
++ Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/0903030033_OP-21.plm.plx.xlsx успешно обработан
 
-РќРµ РѕРїСЂРµРґРµР»РµРЅС‹ С‚РµРіРё Сѓ СЃР»РµРґСѓСЋС‰РёС… РґРёСЃС†РёРїР»РёРЅ:
-Проверка; на усечение и точку-с-запятой (ещё текст, ещё текст, ещё текст)
-Проверка; на усечение и точку-с-запятой (ещё текст, ещё текст, ещё текст)
-Два пробела
-Два пробела
-Обязательный предмет
-Обязательный предмет длинное название
-Обязательный предмет
-Обязательный предмет
-Обязательный предмет
-Обязательный предмет
-Обязательный предмет длинное название 2
-Не обяз. часть 3 1
-Обяз. часть 3 2
-Не обяз. часть 3 1
-Не обяз. часть 3 1
-Не обяз. часть 3 1
-Обяз. часть 3 2
-Обяз. часть 3 2
-Обяз. часть 3 2
-Обяз. часть 3 2
-Обяз. часть 3 2
-Обяз. Часть 3 3
-Обяз. Часть 3 3
-Обяз. Часть 3 3
-Обяз. Часть 3 3
-Обяз. Часть 3 3
-Не обяз. Технологическая (проектно-технологическая) практика
-Не обяз. Первый факультатив
-Не обяз. Первый факультатив
-Второй факультатив
-Второй факультатив
++ Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/0903030035_OP-21.plm.plx.xlsx успешно обработан
+
+Компетенции(2) [строка 5] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/0903040030_op-21.plm.plx.xlsx не указаны компетенции у дисциплины с индексом Б1.О.02
+Компетенции(2) [строка 72] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/0903040030_op-21.plm.plx.xlsx не указаны компетенции у дисциплины с индексом Б2.В
+Компетенции(2) [строка 78] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/0903040030_op-21.plm.plx.xlsx не указаны компетенции у дисциплины с индексом К.М
+Компетенции(2) [строка 79] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/0903040030_op-21.plm.plx.xlsx не указаны компетенции у дисциплины с индексом К.М.01
+- Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/0903040030_op-21.plm.plx.xlsx обработан с недочётами
+
++ Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/1003010031_op-21.plm.plx.xlsx успешно обработан
+
+Компетенции(2) [строка 63] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/2703030030_op-21.plm.plx.xlsx не указаны компетенции у дисциплины с индексом Б2.В
+Компетенции [строка 396] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/2703030030_op-21.plm.plx.xlsx присутствует пустая строка
+- Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/2703030030_op-21.plm.plx.xlsx обработан с недочётами
+
+Компетенции(2) [строка 61] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/2703040030_op-21.plm.plx.xlsx не указаны компетенции у дисциплины с индексом Б2.В
+- Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/2703040030_op-21.plm.plx.xlsx обработан с недочётами
+
