@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "global.h"
 
+#define XLSX ".xlsx"
+
 struct FGlobal;
 struct FConfig;
 
@@ -134,13 +136,19 @@ public:
     {
         return sNoInitData;
     }
-    const string& GetSNameFileTotalData() const
+    const string GetSNameFileTotalData(bool bIsExtension = true) const
     {
-        return sNameFileTotalData;
+        if (bIsExtension)
+            return sNameFileTotalData + XLSX;
+        else
+            return sNameFileTotalData;
     }
-    const string& GetSNameFileLocalData() const
+    const string GetSNameFileLocalData(bool bIsExtension = true) const
     {
-        return sNameFileLocalData;
+        if (bIsExtension)
+            return sNameFileLocalData + XLSX;
+        else
+            return sNameFileLocalData;
     }
     const string& GetSNameFileCompData() const
     {
@@ -159,7 +167,6 @@ public:
     // Int Params
 private:
     int iMaxNameDiscLen;
-    int iWeigthRib;
     int iCourseLen;
     int iIgnoreEmptyLine;
     int iSoMachComp;
@@ -176,10 +183,6 @@ public:
     const int& GetIMaxNameDiscLen() const
     {
         return iMaxNameDiscLen;
-    }
-    const int& GetIWeigthRib() const
-    {
-        return iWeigthRib;
     }
     const int& GetICourseLen() const
     {

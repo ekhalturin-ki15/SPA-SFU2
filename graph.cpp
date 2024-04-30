@@ -670,7 +670,6 @@ void FGraph::CalculateAllPairDistance(
 
     int iAmountQuar = ptrTree->ptrGlobal->ptrConfig->GetIAmountQuar();
     arrQuarAmount.resize(iAmountQuar);
-    arrQuarAmount.push_back(iAmountNoLink);
 
     if (iMinInd > iMaxInd)
         return;
@@ -679,17 +678,21 @@ void FGraph::CalculateAllPairDistance(
     double dLenght = dMaxVal - dMinVal;
     // iAmountQuar
 
+    arrQuarAmount.front() += iMinInd;
+    arrQuarAmount.back()  += iMinInd;
     for (int i = iMinInd; i <= iMaxInd; ++i)
     {
         if (arrPathLen[i] == dMaxVal)
         {
-            ++arrQuarAmount[iAmountQuar - 1];
+            ++arrQuarAmount.back();
             continue;
         }
 
         double index = (arrPathLen[i] - dMinVal) / dLenght;
         ++arrQuarAmount[int(index * iAmountQuar)];
     }
+
+    arrQuarAmount.push_back(iAmountNoLink);
 }
 
 void FGraph::CalculateMST(double&                                  dResult,

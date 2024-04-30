@@ -1,4 +1,4 @@
-// #include "pch.h"
+п»ї// #include "pch.h"
 #include "../adapOutData.h"
 #include "../config.h"
 #include "../error.h"
@@ -42,7 +42,7 @@ namespace TestFSolve
         {
             if (!Create(ptrGlobal, wsNameConfig))
             {
-                Assert::Fail(L"Не удалось инициплизировать объект Глобал");
+                Assert::Fail(L"РќРµ СѓРґР°Р»РѕСЃСЊ РёРЅРёС†РёРїР»РёР·РёСЂРѕРІР°С‚СЊ РѕР±СЉРµРєС‚ Р“Р»РѕР±Р°Р»");
                 return;
             }
 
@@ -58,7 +58,7 @@ namespace TestFSolve
                 {
                     if (!it.is_directory())
                     {
-                        if (ptrGlobal->ptrConfig->setIgnoreСurriculum.count(
+                        if (ptrGlobal->ptrConfig->setIgnoreРЎurriculum.count(
                                 it.path().filename().string()))
                             continue;
 
@@ -77,7 +77,7 @@ namespace TestFSolve
 
         TEST_METHOD(AllFindComp)
         {
-            // 6 Штук = УК ПУ ОПК ДПК ДОПК СПК
+            // 6 РЁС‚СѓРє = РЈРљ РџРЈ РћРџРљ Р”РџРљ Р”РћРџРљ РЎРџРљ
             Assert::AreEqual(6ull, ptrGlobal->ptrSolve->setHeaderComp.size());
         }
 
@@ -87,9 +87,9 @@ namespace TestFSolve
         }
     };
 
-    //! Не забудьте закрыть файл config.xlsx и файл учебного плана
-    //! Не забудьте закрыть файл config.xlsx и файл учебного плана
-    //! Не забудьте закрыть файл config.xlsx и файл учебного плана
+    //! РќРµ Р·Р°Р±СѓРґСЊС‚Рµ Р·Р°РєСЂС‹С‚СЊ С„Р°Р№Р» config.xlsx Рё С„Р°Р№Р» СѓС‡РµР±РЅРѕРіРѕ РїР»Р°РЅР°
+    //! РќРµ Р·Р°Р±СѓРґСЊС‚Рµ Р·Р°РєСЂС‹С‚СЊ С„Р°Р№Р» config.xlsx Рё С„Р°Р№Р» СѓС‡РµР±РЅРѕРіРѕ РїР»Р°РЅР°
+    //! РќРµ Р·Р°Р±СѓРґСЊС‚Рµ Р·Р°РєСЂС‹С‚СЊ С„Р°Р№Р» config.xlsx Рё С„Р°Р№Р» СѓС‡РµР±РЅРѕРіРѕ РїР»Р°РЅР°
     TEST_CLASS(TestFCurricula)
     {
         shared_ptr<FGlobal>    ptrGlobal;
@@ -100,7 +100,7 @@ namespace TestFSolve
         {
             if (!Create(ptrGlobal, wsNameConfig))
             {
-                Assert::Fail(L"Не удалось инициплизировать объект Глобал");
+                Assert::Fail(L"РќРµ СѓРґР°Р»РѕСЃСЊ РёРЅРёС†РёРїР»РёР·РёСЂРѕРІР°С‚СЊ РѕР±СЉРµРєС‚ Р“Р»РѕР±Р°Р»");
                 return;
             }
 
@@ -116,7 +116,7 @@ namespace TestFSolve
                 {
                     if (!it.is_directory())
                     {
-                        if (ptrGlobal->ptrConfig->setIgnoreСurriculum.count(
+                        if (ptrGlobal->ptrConfig->setIgnoreРЎurriculum.count(
                                 it.path().filename().string()))
                             continue;
 
@@ -128,7 +128,7 @@ namespace TestFSolve
             }
             // ptrGlobal->ptrSolve->CreateAllGraph();
             // ptrGlobal->ptrSolve
-            //     ->CreateAllMetric();    // Метрики не связаны с графом
+            //     ->CreateAllMetric();    // РњРµС‚СЂРёРєРё РЅРµ СЃРІСЏР·Р°РЅС‹ СЃ РіСЂР°С„РѕРј
 
             ptrFirst = ptrGlobal->ptrSolve->arrDisc.front();
         }
@@ -197,8 +197,8 @@ namespace TestFSolve
 
         TEST_METHOD(AllCompIsFind)
         {
-            // 12 Штук = УК-1 УК-2 УК-3 ПК-1 ПК-2 ОПК-1 ОПК-2 ОПК-3 ОПК-4 ДПК-1
-            // ДОПК-1 СПК-1
+            // 12 РЁС‚СѓРє = РЈРљ-1 РЈРљ-2 РЈРљ-3 РџРљ-1 РџРљ-2 РћРџРљ-1 РћРџРљ-2 РћРџРљ-3 РћРџРљ-4 Р”РџРљ-1
+            // Р”РћРџРљ-1 РЎРџРљ-1
             Assert::AreEqual(12ull, ptrFirst->fAllComp.size());
         }
 
@@ -226,7 +226,7 @@ namespace TestFSolve
         {
             if (!Create(ptrGlobal, wsNameConfig))
             {
-                Assert::Fail(L"Не удалось инициплизировать объект Глобал");
+                Assert::Fail(L"РќРµ СѓРґР°Р»РѕСЃСЊ РёРЅРёС†РёРїР»РёР·РёСЂРѕРІР°С‚СЊ РѕР±СЉРµРєС‚ Р“Р»РѕР±Р°Р»");
                 return;
             }
 
@@ -242,7 +242,7 @@ namespace TestFSolve
                 {
                     if (!it.is_directory())
                     {
-                        if (ptrGlobal->ptrConfig->setIgnoreСurriculum.count(
+                        if (ptrGlobal->ptrConfig->setIgnoreРЎurriculum.count(
                                 it.path().filename().string()))
                             continue;
 
@@ -273,9 +273,9 @@ namespace TestFSolve
 
         TEST_METHOD(FirstAmountDiscCourse)
         {
-            // Не учитывается дисциплина "Технологическая
-            // (проектно-технологическая) практика" Так как она в исключениях
-            // файла config.xlsx "Игнорируемые предметы"
+            // РќРµ СѓС‡РёС‚С‹РІР°РµС‚СЃСЏ РґРёСЃС†РёРїР»РёРЅР° "РўРµС…РЅРѕР»РѕРіРёС‡РµСЃРєР°СЏ
+            // (РїСЂРѕРµРєС‚РЅРѕ-С‚РµС…РЅРѕР»РѕРіРёС‡РµСЃРєР°СЏ) РїСЂР°РєС‚РёРєР°" РўР°Рє РєР°Рє РѕРЅР° РІ РёСЃРєР»СЋС‡РµРЅРёСЏС…
+            // С„Р°Р№Р»Р° config.xlsx "РРіРЅРѕСЂРёСЂСѓРµРјС‹Рµ РїСЂРµРґРјРµС‚С‹"
 
             auto&  ptrThis = ptrFirst;
             string sActual;
@@ -319,9 +319,9 @@ namespace TestFSolve
 
         TEST_METHOD(ThirdAmountDiscCommon)
         {
-            // Не учитывается дисциплина "Технологическая
-            // (проектно-технологическая) практика" Так как она в исключениях
-            // файла config.xlsx "Игнорируемые предметы"
+            // РќРµ СѓС‡РёС‚С‹РІР°РµС‚СЃСЏ РґРёСЃС†РёРїР»РёРЅР° "РўРµС…РЅРѕР»РѕРіРёС‡РµСЃРєР°СЏ
+            // (РїСЂРѕРµРєС‚РЅРѕ-С‚РµС…РЅРѕР»РѕРіРёС‡РµСЃРєР°СЏ) РїСЂР°РєС‚РёРєР°" РўР°Рє РєР°Рє РѕРЅР° РІ РёСЃРєР»СЋС‡РµРЅРёСЏС…
+            // С„Р°Р№Р»Р° config.xlsx "РРіРЅРѕСЂРёСЂСѓРµРјС‹Рµ РїСЂРµРґРјРµС‚С‹"
             auto& ptrThis = ptrThird;
             Assert::AreEqual(
                 9, ptrThis->ptrGraph->mapGraph[iCommon].iGraphAmountDisc);
@@ -330,7 +330,7 @@ namespace TestFSolve
         TEST_METHOD(FirstDenseCommon)
         {
             auto& ptrThis = ptrFirst;
-            // Проверено в Gephi
+            // РџСЂРѕРІРµСЂРµРЅРѕ РІ Gephi
             Assert::AreEqual(0.238, ptrThis->ptrGraph->mapGraph[iCommon].dDense,
                              0.01);
         }
@@ -338,14 +338,14 @@ namespace TestFSolve
         TEST_METHOD(SecondDenseCommon)
         {
             auto& ptrThis = ptrSecond;
-            // Полносвязный граф
+            // РџРѕР»РЅРѕСЃРІСЏР·РЅС‹Р№ РіСЂР°С„
             Assert::AreEqual(1., ptrThis->ptrGraph->mapGraph[iCommon].dDense);
         }
 
         TEST_METHOD(ThirdDenseCommon)
         {
             auto& ptrThis = ptrThird;
-            // Проверено в Gephi
+            // РџСЂРѕРІРµСЂРµРЅРѕ РІ Gephi
             Assert::AreEqual(0.222, ptrThis->ptrGraph->mapGraph[iCommon].dDense,
                              0.01);
         }
@@ -353,7 +353,7 @@ namespace TestFSolve
         TEST_METHOD(FirstDiametrStepCommon)
         {
             auto& ptrThis = ptrFirst;
-            // 3 компонентный граф
+            // 3 РєРѕРјРїРѕРЅРµРЅС‚РЅС‹Р№ РіСЂР°С„
             Assert::AreEqual(2.,
                              ptrThis->ptrGraph->mapGraph[iCommon].dDiametrStep);
         }
@@ -361,7 +361,7 @@ namespace TestFSolve
         TEST_METHOD(ThirdDiametrStepCommon)
         {
             auto& ptrThis = ptrThird;
-            // Полносвязный граф
+            // РџРѕР»РЅРѕСЃРІСЏР·РЅС‹Р№ РіСЂР°С„
             Assert::AreEqual(2.,
                              ptrThis->ptrGraph->mapGraph[iCommon].dDiametrStep);
         }
@@ -396,7 +396,7 @@ namespace AnomalTestFSolve
         {
             if (!Create(ptrGlobal, wsNameConfigAnomal))
             {
-                Assert::Fail(L"Не удалось инициплизировать объект Глобал");
+                Assert::Fail(L"РќРµ СѓРґР°Р»РѕСЃСЊ РёРЅРёС†РёРїР»РёР·РёСЂРѕРІР°С‚СЊ РѕР±СЉРµРєС‚ Р“Р»РѕР±Р°Р»");
                 return;
             }
 
@@ -412,7 +412,7 @@ namespace AnomalTestFSolve
                 {
                     if (!it.is_directory())
                     {
-                        if (ptrGlobal->ptrConfig->setIgnoreСurriculum.count(
+                        if (ptrGlobal->ptrConfig->setIgnoreРЎurriculum.count(
                                 it.path().filename().string()))
                             continue;
 
@@ -431,7 +431,7 @@ namespace AnomalTestFSolve
 
         TEST_METHOD(AllFindComp)
         {
-            // 2 Штук = УК ПК
+            // 2 РЁС‚СѓРє = РЈРљ РџРљ
             Assert::AreEqual(2ull, ptrGlobal->ptrSolve->setHeaderComp.size());
         }
 
@@ -441,9 +441,9 @@ namespace AnomalTestFSolve
         }
     };
 
-    //! Не забудьте закрыть файл config.xlsx и файл учебного плана
-    //! Не забудьте закрыть файл config.xlsx и файл учебного плана
-    //! Не забудьте закрыть файл config.xlsx и файл учебного плана
+    //! РќРµ Р·Р°Р±СѓРґСЊС‚Рµ Р·Р°РєСЂС‹С‚СЊ С„Р°Р№Р» config.xlsx Рё С„Р°Р№Р» СѓС‡РµР±РЅРѕРіРѕ РїР»Р°РЅР°
+    //! РќРµ Р·Р°Р±СѓРґСЊС‚Рµ Р·Р°РєСЂС‹С‚СЊ С„Р°Р№Р» config.xlsx Рё С„Р°Р№Р» СѓС‡РµР±РЅРѕРіРѕ РїР»Р°РЅР°
+    //! РќРµ Р·Р°Р±СѓРґСЊС‚Рµ Р·Р°РєСЂС‹С‚СЊ С„Р°Р№Р» config.xlsx Рё С„Р°Р№Р» СѓС‡РµР±РЅРѕРіРѕ РїР»Р°РЅР°
     TEST_CLASS(TestFCurricula)
     {
         shared_ptr<FGlobal>    ptrGlobal;
@@ -454,7 +454,7 @@ namespace AnomalTestFSolve
         {
             if (!Create(ptrGlobal, wsNameConfigAnomal))
             {
-                Assert::Fail(L"Не удалось инициплизировать объект Глобал");
+                Assert::Fail(L"РќРµ СѓРґР°Р»РѕСЃСЊ РёРЅРёС†РёРїР»РёР·РёСЂРѕРІР°С‚СЊ РѕР±СЉРµРєС‚ Р“Р»РѕР±Р°Р»");
                 return;
             }
 
@@ -470,7 +470,7 @@ namespace AnomalTestFSolve
                 {
                     if (!it.is_directory())
                     {
-                        if (ptrGlobal->ptrConfig->setIgnoreСurriculum.count(
+                        if (ptrGlobal->ptrConfig->setIgnoreРЎurriculum.count(
                                 it.path().filename().string()))
                             continue;
 
@@ -482,7 +482,7 @@ namespace AnomalTestFSolve
             }
             // ptrGlobal->ptrSolve->CreateAllGraph();
             // ptrGlobal->ptrSolve
-            //     ->CreateAllMetric();    // Метрики не связаны с графом
+            //     ->CreateAllMetric();    // РњРµС‚СЂРёРєРё РЅРµ СЃРІСЏР·Р°РЅС‹ СЃ РіСЂР°С„РѕРј
 
             ptrFirst = ptrGlobal->ptrSolve->arrDisc.front();
         }
@@ -551,10 +551,10 @@ namespace AnomalTestFSolve
 
         TEST_METHOD(AllCompIsFind)
         {
-            // 12 Штук = УК-1 УК-2 УК-3
-            // Компетенции УК-3.1 УК-3.2 проигнорируются и будут считаться как
-            // УК-3 Это неплохой компромис, так как в некоторых УП на странице
-            // Компетенции(2) указываются индикаторы
+            // 12 РЁС‚СѓРє = РЈРљ-1 РЈРљ-2 РЈРљ-3
+            // РљРѕРјРїРµС‚РµРЅС†РёРё РЈРљ-3.1 РЈРљ-3.2 РїСЂРѕРёРіРЅРѕСЂРёСЂСѓСЋС‚СЃСЏ Рё Р±СѓРґСѓС‚ СЃС‡РёС‚Р°С‚СЊСЃСЏ РєР°Рє
+            // РЈРљ-3 Р­С‚Рѕ РЅРµРїР»РѕС…РѕР№ РєРѕРјРїСЂРѕРјРёСЃ, С‚Р°Рє РєР°Рє РІ РЅРµРєРѕС‚РѕСЂС‹С… РЈРџ РЅР° СЃС‚СЂР°РЅРёС†Рµ
+            // РљРѕРјРїРµС‚РµРЅС†РёРё(2) СѓРєР°Р·С‹РІР°СЋС‚СЃСЏ РёРЅРґРёРєР°С‚РѕСЂС‹
             Assert::AreEqual(3ull, ptrFirst->fAllComp.size());
         }
 
@@ -579,7 +579,7 @@ namespace AnomalTestFSolve
         {
             if (!Create(ptrGlobal, wsNameConfigAnomal))
             {
-                Assert::Fail(L"Не удалось инициплизировать объект Глобал");
+                Assert::Fail(L"РќРµ СѓРґР°Р»РѕСЃСЊ РёРЅРёС†РёРїР»РёР·РёСЂРѕРІР°С‚СЊ РѕР±СЉРµРєС‚ Р“Р»РѕР±Р°Р»");
                 return;
             }
 
@@ -595,7 +595,7 @@ namespace AnomalTestFSolve
                 {
                     if (!it.is_directory())
                     {
-                        if (ptrGlobal->ptrConfig->setIgnoreСurriculum.count(
+                        if (ptrGlobal->ptrConfig->setIgnoreРЎurriculum.count(
                                 it.path().filename().string()))
                             continue;
 
@@ -624,11 +624,11 @@ namespace TestFormulaParser
     public:
         TestFormulaParser() : res1(0.), res2(0.)
         {
-            // Формула, потом
-            // A - суммарное кол-во ЗЕ, потом
-            // N - суммарное кол-во дисциплин
-            // K - мощность пересечения по компетенциям
-            // D - мощность пересечения по дисциплинам
+            // Р¤РѕСЂРјСѓР»Р°, РїРѕС‚РѕРј
+            // A - СЃСѓРјРјР°СЂРЅРѕРµ РєРѕР»-РІРѕ Р—Р•, РїРѕС‚РѕРј
+            // N - СЃСѓРјРјР°СЂРЅРѕРµ РєРѕР»-РІРѕ РґРёСЃС†РёРїР»РёРЅ
+            // K - РјРѕС‰РЅРѕСЃС‚СЊ РїРµСЂРµСЃРµС‡РµРЅРёСЏ РїРѕ РєРѕРјРїРµС‚РµРЅС†РёСЏРј
+            // D - РјРѕС‰РЅРѕСЃС‚СЊ РїРµСЂРµСЃРµС‡РµРЅРёСЏ РїРѕ РґРёСЃС†РёРїР»РёРЅР°Рј
 
             fTestFormula.push_back(FormulaParser("((L + R) / 2) * K", 244.,
                                                  17));    // A = 244 N = 17
@@ -659,8 +659,8 @@ namespace TestFormulaParser
 
         TEST_METHOD(Test1)
         {
-            // Первый тест
-            // TakeResult принимает L R K и D
+            // РџРµСЂРІС‹Р№ С‚РµСЃС‚
+            // TakeResult РїСЂРёРЅРёРјР°РµС‚ L R K Рё D
             //  ((L + R) / 2) * K
             //  L = 5
             //  R = 11
@@ -671,7 +671,7 @@ namespace TestFormulaParser
 
         TEST_METHOD(Test2)
         {
-            // Второй тест
+            // Р’С‚РѕСЂРѕР№ С‚РµСЃС‚
             // (L / 2 + R / 2) * K
             //  L = 6
             //  R = 12.5
@@ -682,7 +682,7 @@ namespace TestFormulaParser
 
         TEST_METHOD(Test2Add)
         {
-            // Второй тест +
+            // Р’С‚РѕСЂРѕР№ С‚РµСЃС‚ +
             res1 = fTestFormula[0].TakeResult(6., 12.5, 11, 0);
             res2 = fTestFormula[1].TakeResult(6., 12.5, 11, 0);
             Assert::AreEqual(res1, res2);
@@ -690,7 +690,7 @@ namespace TestFormulaParser
 
         TEST_METHOD(Test3)
         {
-            // Третий тест
+            // РўСЂРµС‚РёР№ С‚РµСЃС‚
             res1 = fTestFormula[2].TakeResult(6., 7., 2, 0);
             Assert::AreEqual(1.3, res1);
         }
@@ -718,13 +718,13 @@ namespace TestFormulaParser
             res1 = fTestFormula[6].TakeResult(-5., 50., 6, 0);
             Assert::AreNotEqual(
                 0.,
-                res1);    // Проверка на то, что всё удачно выполнилось
+                res1);    // РџСЂРѕРІРµСЂРєР° РЅР° С‚Рѕ, С‡С‚Рѕ РІСЃС‘ СѓРґР°С‡РЅРѕ РІС‹РїРѕР»РЅРёР»РѕСЃСЊ
         }
 
         TEST_METHOD(Test8)
         {
-            // Первый тест
-            // TakeResult принимает L R K и D
+            // РџРµСЂРІС‹Р№ С‚РµСЃС‚
+            // TakeResult РїСЂРёРЅРёРјР°РµС‚ L R K Рё D
             //  ((L + R) / 2) * D
             //  L = 5
             //  R = 11

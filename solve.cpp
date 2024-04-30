@@ -180,7 +180,7 @@ bool FSolve::Read(string _sInPath, string sNamePlan)
     }
     catch (...)
     {
-        if (sInPath.find(".xlsx") == string::npos)
+        if (sInPath.find(XLSX) == string::npos)
         {
             ptrGlobal->ptrError->ErrorUncorrectExtension();
         }

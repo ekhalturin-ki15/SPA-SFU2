@@ -788,10 +788,9 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
 void FOutData::Out(string sOutPath)
 {
     OpenXLSX::XLDocument fOutFile;
-    const string sPageName = ptrGlobal->ptrConfig->GetSNameFileTotalData();
+    const string sPageName = ptrGlobal->ptrConfig->GetSNameFileTotalData(false);
     const string         sCreatePath =
-        sOutPath + "/" + ptrGlobal->ptrConfig->GetSNameFileTotalData() + ".xlsx";
-
+        sOutPath + "/" + ptrGlobal->ptrConfig->GetSNameFileTotalData();
     fOutFile.create(sCreatePath);
     fOutFile.workbook().addWorksheet(sPageName);
     fOutFile.workbook().deleteSheet("Sheet1");    // Стартовая страница не нужна
@@ -1003,7 +1002,7 @@ void FOutData::OutAddInfo(string sName, string sPath,
             string sFullPathName =
                 sPath + "/" + sName + "/" +
                 ptrGlobal->ptrConfig->GetSNameFileCompData() +
-                ptrGlobal->ptrConfig->GetSSeparator() + sKey + ".xlsx";
+                ptrGlobal->ptrConfig->GetSSeparator() + sKey + XLSX;
             fFileCache->arrCourseOpenFile[0].create(sFullPathName);
             fFileCache->arrCourseOpenFile[0].workbook().addWorksheet(sName);
             fFileCache->arrCourseOpenFile[0].workbook().deleteSheet(
@@ -1455,7 +1454,7 @@ void FOutData::CreateAndTake(string sName, string sPath)
     if (ptrGlobal->ptrConfig->GetBCompactOutput())
     {
         fFileCache->arrOpenFile[0].open(
-            sPath + "/" + ptrGlobal->ptrConfig->GetSNameFileTotalData() + ".xlsx");
+            sPath + "/" + ptrGlobal->ptrConfig->GetSNameFileTotalData());
         if (fFileCache->arrOpenFile[0].workbook().worksheetExists(sName))
             fFileCache->arrOpenFile[0].workbook().deleteSheet(sName);
 
@@ -1659,7 +1658,8 @@ void FOutData::OutGephiRib(const string& sPath, const string& sNameFile,
                 outLabel << l << ";";
                 outLabel << r << ";";
                 outLabel << ptrGlobal->ptrConfig->GetSNameRibDir() << ";";
-                outLabel << dLen * ptrGlobal->ptrConfig->GetIWeigthRib() << "";
+                outLabel << dLen << ";"; //Вывод веса ребра в качестве метки 
+                outLabel << dLen << "";
                 outLabel << "\n";
             }
         }

@@ -10,7 +10,6 @@ FConfig::FConfig(shared_ptr<FGlobal> _ptrGlobal)
       iCourseLen(2),
       iMaxNameDiscLen(15),
       iIgnoreEmptyLine(5),
-      iWeigthRib(10),
       iSoMachComp(6),
       iPrecision(5),
       // iIndicatorDeep(3),
@@ -117,7 +116,6 @@ void FConfig::InitIntMap()
 {
     mapIntParamsReadKey[L"Макс длина названия дисциплин"]   = &iMaxNameDiscLen;
     mapIntParamsReadKey[L"Сколько семестров в одном курсе"] = &iCourseLen;
-    mapIntParamsReadKey[L"Размер рёбер"]                    = &iWeigthRib;
     mapIntParamsReadKey
         [L"Игнорировать пустые строки в конце странице, если их не менее X ="] =
             &iIgnoreEmptyLine;
