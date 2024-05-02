@@ -90,7 +90,7 @@ void FSolve::ClearCurricula()
     arrDisc.clear();
 }
 
-bool FSolve::Read(string _sInPath, string sNamePlan)
+bool FSolve::Create(string _sInPath, string sNamePlan)
 {
     // ClearCurricula();
 

@@ -111,7 +111,7 @@ int main()
                     if (ptrGlobal->ptrConfig->setIgnoreСurriculum.count(
                             it.path().filename().string()))
                         continue;
-                    ptrGlobal->ptrSolve->Read(it.path().string(),
+                    ptrGlobal->ptrSolve->Create(it.path().string(),
                                               it.path().filename().string());
                 }
             }
@@ -131,7 +131,7 @@ int main()
                     ->GetArrNameFileOut()[category];    // / "TotalData.xlsx";
 
             ptrGlobal->ptrAdapOutData->Create(sTotalOutName.string());
-            ptrGlobal->ptrOutData->Out(sTotalOutName.string());
+            ptrGlobal->ptrOutData->Create(sTotalOutName.string());
 
             // Пересоздание
             if (!ptrGlobal->ReCreate())

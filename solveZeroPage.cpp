@@ -174,8 +174,23 @@ void FSolve::ZeroPageCreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
                             }
                         }
 
-                        ptrNewNode->bNotIgnore = !(
-                            ptrGlobal->ptrConfig->setIgnoreDisc.count(wsData));
+                        // Вместо точного совподения лучше совподение по
+                        // подстроке
+                        ptrNewNode->bNotIgnore = true;
+
+                        for (const auto& it :
+                             ptrGlobal->ptrConfig->setIgnoreDisc)
+                        {
+                            if (wsData.find(it) != wstring::npos)
+                            {
+                                ptrNewNode->bNotIgnore = false;
+                                break;
+                            }
+                        }
+
+                        // Вместо точного совподения лучше совподение по
+                        // подстроке ptrNewNode->bNotIgnore = !(
+                        //     ptrGlobal->ptrConfig->setIgnoreDisc.count(wsData));
 
                         // Смотрим, какие теги есть у дисциплины
                         // Гуманитарные, естеств, общепроф. и т.д.
@@ -196,20 +211,19 @@ void FSolve::ZeroPageCreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
                     }
                     else if ((iIdComp <= x) && (!bReadComp))
                     {
-                        bReadComp = true;
-                        string sParsingData =
-                            ptrGlobal->ConwertToString(
-                                ptrGlobal->ConwertPathFormat(wsData));
+                        bReadComp           = true;
+                        string sParsingData = ptrGlobal->ConwertToString(
+                            ptrGlobal->ConwertPathFormat(wsData));
 
                         bool           bIsTrueMatchComp = false;
                         vector<smatch> matchesComp;
 
                         for (const auto& fRegexComp : arrRegexComp)
                         {
-                            vector<smatch> matchesBuf {
-                                sregex_iterator { ALL(sParsingData), fRegexComp },
-                                sregex_iterator {}
-                            };
+                            vector<smatch> matchesBuf { sregex_iterator {
+                                                            ALL(sParsingData),
+                                                            fRegexComp },
+                                                        sregex_iterator {} };
                             if (matchesBuf.size() > 0)
                             {
                                 matchesComp      = matchesBuf;
@@ -217,7 +231,6 @@ void FSolve::ZeroPageCreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
                                 break;
                             }
                         }
-
 
                         for (const auto& sData : matchesComp)
                         {

@@ -153,8 +153,8 @@ void FOutData::CreateTotalInfo(vector<double>& arrReturnDataMetrics,
           L"Диаметр графа по расстоянию", L"Диаметр графа по количеству рёбер",
           L"Количество компонент связности", L"Максимальное оставное дерево",
           L"Минимальное оставное дерево", L"Плотность графа",
-          L"Количество основных дисциплин", L"Количество дисциплин по выбору",
-          L"Количество факультативов" });
+          L"Количество факультативов", L"Количество основных дисциплин",
+          L"Количество дисциплин по выбору" });
 
     arrReturnDataMetrics.clear();
     vector<double> arrResult;    // Соответствует arrHead который
@@ -227,15 +227,23 @@ void FOutData::CreateTotalInfo(vector<string>& arrReturnDataHeader,
                                                fGraph,
                                const EOutType& eOutType)
 {
-    const vector<wstring> arrMetricHead(
-        { L"Всего ЗЕ в графе", L"Кол-во дисциплин в графе",
-          L"Максимальное ЗЕ у дисциплины", L"Минимальное ЗЕ у дисциплины",
-          L"Максимальный вес ребра", L"Минимальный вес ребра",
-          L"Диаметр графа по расстоянию", L"Диаметр графа по количеству рёбер",
-          L"Количество компонент связности", L"Максимальное оставное дерево",
-          L"Минимальное оставное дерево", L"Плотность графа",
-          L"Количество основных дисциплин", L"Количество дисциплин по выбору",
-          L"Количество факультативов" });
+    const vector<wstring> arrMetricHead({
+        L"Всего ЗЕ в графе",
+        L"Кол-во дисциплин в графе",
+        L"Максимальное ЗЕ у дисциплины",
+        L"Минимальное ЗЕ у дисциплины",
+        L"Максимальный вес ребра",
+        L"Минимальный вес ребра",
+        L"Диаметр графа по расстоянию",
+        L"Диаметр графа по количеству рёбер",
+        L"Количество компонент связности",
+        L"Максимальное оставное дерево",
+        L"Минимальное оставное дерево",
+        L"Плотность графа",
+        L"Количество факультативов",
+        L"Количество основных дисциплин",
+        L"Количество дисциплин по выбору",
+    });
 
     arrReturnDataHeader.clear();
 
@@ -459,7 +467,8 @@ void FOutData::CreateOnlyAllowedResultRow(vector<string>& arrReturn,
 
     vector<string> arrAllowData = {
         ptrCurricula->sCurName,
-        // ptrCurricula->sShortNamePlan.substr(ptrCurricula->sShortNamePlan.size() - 2),
+        // ptrCurricula->sShortNamePlan.substr(ptrCurricula->sShortNamePlan.size()
+        // - 2),
         ptrCurricula->sTypePlan,
     };
 
@@ -630,7 +639,7 @@ void FOutData::CreateAllCurriculaTotalData(
         arrAllResult.push_back(it->dAllSumScore);
         arrAllResult.push_back(it->iExtendedAmountDisc);
 
-        // Дисциплин основных, по выбору, факультативов и т.д во всём УП
+        // Дисциплин факультативов, основных, по выбору  и т.д во всём УП
         {
             int iNumberType = -1;
             for (auto& wsNameType : ptrGlobal->ptrConfig->GetArrNameTypeDisc())
@@ -705,8 +714,8 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
           L"Диаметр графа по расстоянию", L"Диаметр графа по количеству рёбер",
           L"Количество компонент связности", L"Максимальное оставное дерево",
           L"Минимальное оставное дерево", L"Плотность графа",
-          L"Количество основных дисциплин", L"Количество дисциплин по выбору",
-          L"Количество факультативов" });
+          L"Количество факультативов", L"Количество основных дисциплин",
+          L"Количество дисциплин по выбору" });
 
     arrReturnData.clear();
     int i = 0;    // Задаём порядок вывода
@@ -785,11 +794,11 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
     AddTableCommonData(arrReturnData, fСorridorData);
 }
 
-void FOutData::Out(string sOutPath)
+void FOutData::Create(string sOutPath)
 {
     OpenXLSX::XLDocument fOutFile;
     const string sPageName = ptrGlobal->ptrConfig->GetSNameFileTotalData(false);
-    const string         sCreatePath =
+    const string sCreatePath =
         sOutPath + "/" + ptrGlobal->ptrConfig->GetSNameFileTotalData();
     fOutFile.create(sCreatePath);
     fOutFile.workbook().addWorksheet(sPageName);
@@ -804,6 +813,13 @@ void FOutData::Out(string sOutPath)
         OutTableInfoCSV(arrAllCurriculaTotalData, sOutPath, "", sPageName);
 
     iShiftX += arrAllCurriculaTotalData.front().size() - iSizeOnlyAllow;
+
+    string sNamePageAllData = this->ptrGlobal->ConwertToString(
+        ptrGlobal->ptrConfig
+            ->mapArrOutParams
+                [L"Предлог перед выводом статистики по всем курсам"]
+            .GetName());
+
     if (ptrGlobal->ptrConfig->bArrIsconcatGraphData.at(0))
     {
         vector<vector<string>> arrAllCoursesGraphData;
@@ -811,28 +827,34 @@ void FOutData::Out(string sOutPath)
         OutTableInfo(iShiftX, 1, arrAllCoursesGraphData, wks,
                      iSizeOnlyAllow);    // iShiftDataX = 1, так как заголовки
                                          // УП
+
+        if (ptrGlobal->ptrConfig->GetBIsOutCSVDate())
+            OutTableInfoCSV(arrAllCoursesGraphData, sOutPath, "",
+                            sNamePageAllData);
+
         // выводить не надо
         iShiftX += arrAllCoursesGraphData.front().size() -
                    iSizeOnlyAllow;    // -iEscape так как без заголовка УП
     }
     else
     {
-        string sNamePage = this->ptrGlobal->ConwertToString(
+        /*string sNamePage = this->ptrGlobal->ConwertToString(
             ptrGlobal->ptrConfig
                 ->mapArrOutParams
                     [L"Предлог перед выводом статистики по всем курсам"]
-                .GetName());
+                .GetName());*/
 
         /*string sNamePage = this->ptrGlobal->ConwertToString(
             ptrGlobal->ptrConfig->wsOutPrefAllCourse);*/
 
-        fOutFile.workbook().addWorksheet(sNamePage);
-        wks = fOutFile.workbook().worksheet(sNamePage);
+        fOutFile.workbook().addWorksheet(sNamePageAllData);
+        wks = fOutFile.workbook().worksheet(sNamePageAllData);
         vector<vector<string>> arrAllCoursesGraphData;
         CreateSummaryTotalData(arrAllCoursesGraphData, FGraph::iCommon);
         OutTableInfo(1, 1, arrAllCoursesGraphData, wks);
         if (ptrGlobal->ptrConfig->GetBIsOutCSVDate())
-            OutTableInfoCSV(arrAllCoursesGraphData, sOutPath, "", sNamePage);
+            OutTableInfoCSV(arrAllCoursesGraphData, sOutPath, "",
+                            sNamePageAllData);
     }
 
     for (int iCourse = 0; iCourse < this->ptrGlobal->ptrSolve->iMaxCourse;
@@ -858,7 +880,7 @@ void FOutData::Out(string sOutPath)
                          L"определённого номера"]
                     .GetName());
 
-            sNamePage = sNamePage + " " + to_string(iCourse + 1);
+            sNamePage = sNamePage + "_" + to_string(iCourse + 1);
             fOutFile.workbook().addWorksheet(sNamePage);
             wks = fOutFile.workbook().worksheet(sNamePage);
             vector<vector<string>> arrCourseGraphData;
@@ -946,24 +968,29 @@ void FOutData::OutAddInfo(string sName, string sPath,
 
     vector<vector<string>> arrDataAll;
 
-    int iXShift = 1;
+   
 
-    CreateTableInfoInit(arrDataAll, ptrCurrentTree,
-                        true);    //, ptrCurrentTree->dChosenSum);
+    //CreateTableInfoInit(arrDataAll, ptrCurrentTree,
+    //                   true);    //, ptrCurrentTree->dChosenSum);
 
+    //Не вижу смысла делать исключение
     // Вывод данных в TotalData файле
-    OutTableInfo(iXShift, 1, arrDataAll, fFileCache->arrOpenWKS.back());
-    if (ptrGlobal->ptrConfig->GetBIsOutCSVDate())
-        OutTableInfoCSV(arrDataAll, sPath, sName, FMetric::sAllMetric);
+    //OutTableInfo(1, 1, arrDataAll, fFileCache->arrOpenWKS.back());
+    //if (ptrGlobal->ptrConfig->GetBIsOutCSVDate())
+    //    OutTableInfoCSV(arrDataAll, sPath, sName, FMetric::sAllMetric);
 
-    iXShift +=
-        arrDataAll.front().size();    // Сдвигаемся на ширину выведеной таблицы
-    int iYShift = arrDataAll.size();
+    // Плохое решение было выводить всё в строчку
+    // iXShift +=
+    //     arrDataAll.front().size();    // Сдвигаемся на ширину выведеной
+    //     таблицы
+
+    int iXShift = 1;
+    int iYShift = 1;
     for (auto& [sKey, ptrCurrentTree] :
          ptrTree->ptrMetric->ptrTreeMetric->mapChild)
     {
-        if (sKey == FMetric::sAllMetric)
-            continue;    // Мы его уже ранее проверили
+        //if (sKey == FMetric::sAllMetric)
+        //   continue;    // Мы его уже ранее проверили
 
         vector<vector<string>> arrDataAllCourse;
         // Вывод конкретного курса
@@ -984,16 +1011,27 @@ void FOutData::OutAddInfo(string sName, string sPath,
             }
         }
 
-        OutTableInfo(iXShift, 1, arrDataAllCourse,
-                     fFileCache->arrOpenWKS.back());
+        // Выводим в cтолбец (Если iYShift > 1 , то без заголовка)
+        OutTableInfo(1, iYShift, arrDataAllCourse,
+                     fFileCache->arrOpenWKS.back(), 0, min(iYShift-1,1));
+
+        // Выводим в ширину (глупое решение)
+        // OutTableInfo(iXShift, 1, arrDataAllCourse,
+        //             fFileCache->arrOpenWKS.back());
+
         if (ptrGlobal->ptrConfig->GetBIsOutCSVDate())
             OutTableInfoCSV(arrDataAllCourse, sPath, sName,
                             ptrGlobal->ptrConfig->GetSNameFileCompData() +
                                 ptrGlobal->ptrConfig->GetSSeparator() + sKey);
 
-        iXShift += arrDataAllCourse.front()
-                       .size();    // Сдвигаемся на ширину выведеной таблицы
-        iYShift = max(iYShift + 0ull, arrDataAllCourse.size() + 0ull);
+        // iXShift += arrDataAllCourse.front()
+        //                .size();    // Сдвигаемся на ширину выведеной таблицы
+        // iYShift = max(iYShift + 0ull, arrDataAllCourse.size() + 0ull);
+
+        iYShift +=
+            arrDataAllCourse.size() - 1;    // Сдвигаемся на высоту выведеной
+                                            // таблицы (минус строка заголовка)
+
         {
             fFileCache->arrCourseOpenFile.clear();
             fFileCache->arrCourseOpenFile.resize(1);
@@ -1071,10 +1109,10 @@ void FOutData::OutAddInfo(string sName, string sPath,
             CreateGraphE1TableInfoInit(fBuf, ptrCurrentTree);
             mapGraphE1[sKey] = fBuf;
         }
-        
-        //Нужно посмотреть по всем курсам и посмотреть общее пересечение
 
-        map<pair<string,string>,int> mapAllComp;
+        // Нужно посмотреть по всем курсам и посмотреть общее пересечение
+
+        map<pair<string, string>, int> mapAllComp;
         for (const auto& [sCourse, it] : mapGraphE1)
         {
             for (const auto& [sComp, et] : it)
@@ -1558,7 +1596,7 @@ void FOutData::OutGephiData(string sName, string sPath,
                       CreateCommonNameLabel(iTag, fCurricula),
                       fCurricula->ptrGraph->mapGraph[iTag].arrNodeWeight,
                       CreateTag(iTag, fCurricula));
-        OutGephiRib(sPath, sName, sName, 
+        OutGephiRib(sPath, sName, sName,
                     fCurricula->ptrGraph->mapGraph[iTag].fAdjList);
     }
 
@@ -1658,7 +1696,7 @@ void FOutData::OutGephiRib(const string& sPath, const string& sNameFile,
                 outLabel << l << ";";
                 outLabel << r << ";";
                 outLabel << ptrGlobal->ptrConfig->GetSNameRibDir() << ";";
-                outLabel << dLen << ";"; //Вывод веса ребра в качестве метки 
+                outLabel << dLen << ";";    // Вывод веса ребра в качестве метки
                 outLabel << dLen << "";
                 outLabel << "\n";
             }

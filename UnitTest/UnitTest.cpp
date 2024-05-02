@@ -27,7 +27,7 @@ bool Create(shared_ptr<FGlobal>& _ptrGlobal, const wstring& _wsNameConfig)
     return true;
 }
 
-bool isSameExcel();
+//bool isSameExcel();
 
 namespace TestFSolve
 {
@@ -62,7 +62,7 @@ namespace TestFSolve
                                 it.path().filename().string()))
                             continue;
 
-                        ptrGlobal->ptrSolve->Read(
+                        ptrGlobal->ptrSolve->Create(
                             it.path().string(),
                             it.path().filename().string());
                     }
@@ -120,7 +120,7 @@ namespace TestFSolve
                                 it.path().filename().string()))
                             continue;
 
-                        ptrGlobal->ptrSolve->Read(
+                        ptrGlobal->ptrSolve->Create(
                             it.path().string(),
                             it.path().filename().string());
                     }
@@ -160,7 +160,8 @@ namespace TestFSolve
                 sActual += to_string(val);
             }
 
-            Assert::AreEqual(string("0=6 1=2 2=2"), sActual);
+            //Факультативы Основные По выбору
+            Assert::AreEqual(string("0=2 1=6 2=2"), sActual);
         }
 
         TEST_METHOD(CheckTagDisc)
@@ -246,7 +247,7 @@ namespace TestFSolve
                                 it.path().filename().string()))
                             continue;
 
-                        ptrGlobal->ptrSolve->Read(
+                        ptrGlobal->ptrSolve->Create(
                             it.path().string(),
                             it.path().filename().string());
                     }
@@ -416,7 +417,7 @@ namespace AnomalTestFSolve
                                 it.path().filename().string()))
                             continue;
 
-                        ptrGlobal->ptrSolve->Read(
+                        ptrGlobal->ptrSolve->Create(
                             it.path().string(),
                             it.path().filename().string());
                     }
@@ -474,7 +475,7 @@ namespace AnomalTestFSolve
                                 it.path().filename().string()))
                             continue;
 
-                        ptrGlobal->ptrSolve->Read(
+                        ptrGlobal->ptrSolve->Create(
                             it.path().string(),
                             it.path().filename().string());
                     }
@@ -514,7 +515,8 @@ namespace AnomalTestFSolve
                 sActual += to_string(val);
             }
 
-            Assert::AreEqual(string("0=4"), sActual);
+            //Все только основные
+            Assert::AreEqual(string("1=4"), sActual);
         }
 
         TEST_METHOD(CheckTagDisc)
@@ -599,7 +601,7 @@ namespace AnomalTestFSolve
                                 it.path().filename().string()))
                             continue;
 
-                        ptrGlobal->ptrSolve->Read(
+                        ptrGlobal->ptrSolve->Create(
                             it.path().string(),
                             it.path().filename().string());
                     }

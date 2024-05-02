@@ -20,9 +20,9 @@ enum ETagDisc;
 
 enum ETypeDisc : int
 {
+    ETD_Elective,
     ETD_Common,
     ETD_Chosen,
-    ETD_Elective,
     ETD_Size
 };
 
@@ -131,7 +131,7 @@ struct FSolve
     bool Init();
 
     // Основная функция
-    bool Read(string sInPath, string sNamePlan);
+    bool Create(string sInPath, string sNamePlan);
 
     // Использовать только после полного считывания, строит Графы всем УП из
     // arrDisc

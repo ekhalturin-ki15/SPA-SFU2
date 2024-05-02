@@ -58,7 +58,7 @@ struct FOutData
     bool Init();
 
     // Начальная точка входа
-    void Out(string sOutPath);    // sOutPath - Каталог, где будут файлы
+    void Create(string sOutPath);    // sOutPath - Каталог, где будут файлы
 
 private:
     string sCurPlanName;
