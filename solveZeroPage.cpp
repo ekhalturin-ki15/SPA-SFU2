@@ -114,7 +114,7 @@ void FSolve::ZeroPageCreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
                         }
                         //
 
-                        arrDisc.back()->mapDisc[wsData] = ptrNewNode;
+                        arrDisc.back()->mapAllDisc[wsData] = ptrNewNode;
                         continue;
                     }
                     else if ((iIdName <= x) && (x < iIdComp) && (!bReadName))
@@ -176,14 +176,14 @@ void FSolve::ZeroPageCreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
 
                         // Вместо точного совподения лучше совподение по
                         // подстроке
-                        ptrNewNode->bNotIgnore = true;
+                        ptrNewNode->bNoIgnore = true;
 
                         for (const auto& it :
                              ptrGlobal->ptrConfig->setIgnoreDisc)
                         {
                             if (wsData.find(it) != wstring::npos)
                             {
-                                ptrNewNode->bNotIgnore = false;
+                                ptrNewNode->bNoIgnore = false;
                                 break;
                             }
                         }

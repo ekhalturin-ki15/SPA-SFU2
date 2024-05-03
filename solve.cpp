@@ -143,13 +143,13 @@ bool FSolve::Create(string _sInPath, string sNamePlan)
         arrDisc.back()->CountDisc();
 
         if (ptrSolveSecondPage->DFSCountingScore(arrDisc.back()->ptrRoot) !=
-            arrDisc.back()->dAllSumScore)
+            arrDisc.back()->arrETMAllSumScore[ETM_NoIgnore])
         {
             throw std::logic_error(FError::sNotEqualSum);
         }
 
-        arrDisc.back()->mapAllowDisc =
-            arrDisc.back()->GewMapAllowDisc(true, true);
+        arrDisc.back()->mapNoIgnoreDisc =
+            arrDisc.back()->GetMapNoIgnoreDisc(true, true);
 
         ++iCurrentPage;
     }

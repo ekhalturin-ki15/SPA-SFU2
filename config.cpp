@@ -355,7 +355,17 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             int iSize = 0;
             if (arrTypeDisc.size() != 0)
                 iSize = arrTypeDisc.size() + 1;
-            ptrGlobal->TakeData(arrNameTypeDisc, row, iSize);
+            ptrGlobal->TakeData(arrTypeDiscAmount, row, iSize);
+            return true;
+        }
+
+        wsPatern = L"Названия видов дисциплин при выводе ЗЕ";
+        if (wsKey == wsPatern)
+        {
+            int iSize = 0;
+            if (arrTypeDisc.size() != 0)
+                iSize = arrTypeDisc.size() + 1;
+            ptrGlobal->TakeData(arrTypeDiscCredits, row, iSize);
             return true;
         }
 

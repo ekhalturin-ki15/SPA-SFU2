@@ -126,7 +126,7 @@ void FGraph::CalcAllScoreAndAmount(FGraphType& fGraph)
 
     for (const auto& [l, r] : fGraph.arrRel)
     {
-        const auto& fDisc     = ptrTree->mapDisc[l];
+        const auto& fDisc     = ptrTree->mapNoIgnoreDisc[l];
         double      dCurScore = FGraphType::dNoInit;
 
         if (r == FGraph::iCommon)    // Значит считаем все дисциплины полностью,
@@ -192,7 +192,7 @@ void FGraph::CalcMinMaxWeight(double&                           dResult,
     dResult = FGraphType::dNoInit;
     for (const auto& [l, r] : fCurrentNode)
     {
-        const auto& fDisc     = ptrTree->mapDisc[l];
+        const auto& fDisc     = ptrTree->mapNoIgnoreDisc[l];
         double      dCurScore = FGraphType::dNoInit;
 
         if (r == FGraph::iCommon)    // Значит считаем все дисциплины полностью,
@@ -278,7 +278,7 @@ void FGraph::GenerateReverseGraph()
                                // дисциплины её формируют
 
     fGraph.arrNodeWeight.resize(n);
-    for (const auto& [key, it] : ptrTree->mapAllowDisc)
+    for (const auto& [key, it] : ptrTree->mapNoIgnoreDisc)
     {
         for (const auto& [sComp, arrInd] : it->mapComp)
         {
@@ -299,8 +299,8 @@ void FGraph::GenerateReverseGraph()
 
     FormulaParser fFormulaParser(
         ptrTree->ptrGlobal->ptrConfig->GetSFormulaReverseGraph(),
-        ptrTree->dAllSumScore,
-        ptrTree->iAmountDisc);
+        ptrTree->arrETMAllSumScore[ETM_NoIgnore],
+        ptrTree->arrETMAmountDisc[ETM_NoIgnore]);
     for (int iL = 0; iL < n - 1; ++iL)
     {
         const auto& L = fGraph.arrRel[iL].first;
@@ -349,7 +349,7 @@ void FGraph::GenerateGraph()
     int i;
 
     i = -1;
-    for (const auto& [key, it] : ptrTree->mapAllowDisc)
+    for (const auto& [key, it] : ptrTree->mapNoIgnoreDisc)
     {
         ++i;
         // arrRel[i] = key;
@@ -371,17 +371,17 @@ void FGraph::GenerateGraph()
     fGraph.arrNodeWeight.resize(n);
     for (int i = 0; i < n; ++i)
     {
-        const auto& Disc        = ptrTree->mapDisc[fGraph.arrRel[i].first];
+        const auto& Disc = ptrTree->mapNoIgnoreDisc[fGraph.arrRel[i].first];
         fGraph.arrNodeWeight[i] = Disc->dSumScore;
     }
 
     FormulaParser fFormulaParser(ptrTree->ptrGlobal->ptrConfig->GetSFormula(),
-                                 ptrTree->dAllSumScore,
-                                 ptrTree->iAmountDisc);
+                                 ptrTree->arrETMAllSumScore[ETM_NoIgnore],
+                                 ptrTree->arrETMAmountDisc[ETM_NoIgnore]);
 
     for (int iL = 0; iL < n - 1; ++iL)
     {
-        const auto& L = ptrTree->mapDisc[fGraph.arrRel[iL].first];
+        const auto& L = ptrTree->mapNoIgnoreDisc[fGraph.arrRel[iL].first];
 
         // Теперь считается в CountAllMetric
         // if (fGraph.dMaxDiscScore < L->dSumScore)
@@ -389,7 +389,7 @@ void FGraph::GenerateGraph()
 
         for (int iR = iL + 1; iR < n; ++iR)
         {
-            const auto& R = ptrTree->mapDisc[fGraph.arrRel[iR].first];
+            const auto& R = ptrTree->mapNoIgnoreDisc[fGraph.arrRel[iR].first];
 
             int iPowerComp = 0;    // Сколько компетенций совпало
 
@@ -430,7 +430,7 @@ void FGraph::GenerateAltGraph()
 
     int i;
     i = -1;
-    for (const auto& [key, it] : ptrTree->mapAllowDisc)
+    for (const auto& [key, it] : ptrTree->mapNoIgnoreDisc)
     {
         for (const auto& [iCourse, val] : it->mapCourseScore)
         {
@@ -451,7 +451,7 @@ void FGraph::GenerateAltGraph()
     fGraph.arrNodeWeight.resize(n);
     for (int i = 0; i < n; ++i)
     {
-        const auto& Disc    = ptrTree->mapDisc[fGraph.arrRel[i].first];
+        const auto& Disc    = ptrTree->mapNoIgnoreDisc[fGraph.arrRel[i].first];
         const auto& iCourse = fGraph.arrRel[i].second;
         if (Disc->mapCourseScore.count(iCourse))
         {
@@ -465,12 +465,12 @@ void FGraph::GenerateAltGraph()
     }
 
     FormulaParser fFormulaParser(ptrTree->ptrGlobal->ptrConfig->GetSFormula(),
-                                 ptrTree->dAllSumScore,
-                                 ptrTree->iAmountDisc);
+                                 ptrTree->arrETMAllSumScore[ETM_NoIgnore],
+                                 ptrTree->arrETMAmountDisc[ETM_NoIgnore]);
 
     for (int iL = 0; iL < n - 1; ++iL)
     {
-        const auto& L        = ptrTree->mapDisc[fGraph.arrRel[iL].first];
+        const auto& L = ptrTree->mapNoIgnoreDisc[fGraph.arrRel[iL].first];
         const auto& iCourseL = fGraph.arrRel[iL].second;
         // Теперь считается в CountAllMetric
         // if (fGraph.dMaxDiscScore < L->mapCourseScore[iCourseL])
@@ -478,7 +478,7 @@ void FGraph::GenerateAltGraph()
 
         for (int iR = iL + 1; iR < n; ++iR)
         {
-            const auto& R        = ptrTree->mapDisc[fGraph.arrRel[iR].first];
+            const auto& R = ptrTree->mapNoIgnoreDisc[fGraph.arrRel[iR].first];
             const auto& iCourseR = fGraph.arrRel[iR].second;
 
             if (iCourseL != iCourseR)
@@ -522,7 +522,7 @@ void FGraph::GenerateAltGraph()
         {
             int iR =
                 fGraph.mapReversRel[{ fGraph.arrRel[iL].first, iCourseL - 1 }];
-            const auto& R        = ptrTree->mapDisc[fGraph.arrRel[iR].first];
+            const auto& R = ptrTree->mapNoIgnoreDisc[fGraph.arrRel[iR].first];
             const auto& iCourseR = fGraph.arrRel[iR].second;
 
             int iPowerComp = L->mapComp.size();    // С сами собой все совпали

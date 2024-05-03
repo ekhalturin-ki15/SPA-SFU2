@@ -101,11 +101,11 @@ void FSolveSecondPage::AddDiscScore(const OpenXLSX::XLWorksheet& fSheet,
                     bReadIndex     = true;
                     wsCurrentIndex = wsData;
                     // Если указан среди перечня кодов дисциплин
-                    if (ptrGlobal->ptrSolve->arrDisc.back()->mapDisc.count(
+                    if (ptrGlobal->ptrSolve->arrDisc.back()->mapAllDisc.count(
                             wsCurrentIndex))
                     {
                         auto& ptrThis = ptrGlobal->ptrSolve->arrDisc.back()
-                                            ->mapDisc[wsCurrentIndex];
+                                            ->mapAllDisc[wsCurrentIndex];
                         ptrThis->bAllow = bIsAllow;
                     }
                 }
@@ -115,11 +115,11 @@ void FSolveSecondPage::AddDiscScore(const OpenXLSX::XLWorksheet& fSheet,
                 {
                     // bReadScore = true;
                     // Если указан среди перечня кодов дисциплин
-                    if (ptrGlobal->ptrSolve->arrDisc.back()->mapDisc.count(
+                    if (ptrGlobal->ptrSolve->arrDisc.back()->mapAllDisc.count(
                             wsCurrentIndex))
                     {
                         auto& ptrThis = ptrGlobal->ptrSolve->arrDisc.back()
-                                            ->mapDisc[wsCurrentIndex];
+                                            ->mapAllDisc[wsCurrentIndex];
                         int    iNumCource;
                         double dScore;
                         iNumCource =
@@ -134,9 +134,12 @@ void FSolveSecondPage::AddDiscScore(const OpenXLSX::XLWorksheet& fSheet,
                         ptrThis->dSumScore += dScore;
                         ptrThis->mapCourseScore[iNumCource] += dScore;
 
-                        if ((bIsAllow) && (ptrThis->arrChild.size() ==
-                                           0))    // Т.е разрешён и является
-                                                  // дисциплиной (не модулем)
+                        // if ((bIsAllow) && (ptrThis->arrChild.size() ==
+                        //                    0))    // Т.е разрешён и является
+                        //  дисциплиной (не модулем)
+
+                        // Является дисциплиной (не модулем)
+                        if (ptrThis->arrChild.size() == 0)
                         {
                             if (dScore >
                                 ptrGlobal->ptrConfig->GetDAnomalBigScore())
@@ -144,8 +147,9 @@ void FSolveSecondPage::AddDiscScore(const OpenXLSX::XLWorksheet& fSheet,
                                 ptrGlobal->ptrError->ErrorAnomalBigScore(
                                     dScore);
                             }
-                            ptrGlobal->ptrSolve->arrDisc.back()->dAllSumScore +=
-                                dScore;
+                            // ptrGlobal->ptrSolve->arrDisc.back()->dAllSumScore
+                            // +=
+                            //    dScore;
                         }
                     }
                 }
@@ -173,7 +177,8 @@ double FSolveSecondPage::DFSCountingScore(shared_ptr<FTreeElement> ptrThis)
 {
     if (ptrThis->arrChild.size() == 0)
     {
-        if (ptrThis->bAllow)
+        if ((ptrThis->bAllow)
+            &&(ptrThis->bNoIgnore))
         {
             return ptrThis->dSumScore;
         }

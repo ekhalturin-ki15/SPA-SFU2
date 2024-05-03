@@ -65,10 +65,10 @@ void FSolve::FirstPageAddCompIndicator(const OpenXLSX::XLWorksheet& fSheet,
                             continue;
                         }
                         // Если указан среди перечня кодов дисциплин
-                        if (arrDisc.back()->mapDisc.count(wsData))
+                        if (arrDisc.back()->mapAllDisc.count(wsData))
                         {
                             bThisRowIsDisc = true;
-                            ptrThis        = arrDisc.back()->mapDisc[wsData];
+                            ptrThis        = arrDisc.back()->mapAllDisc[wsData];
 
                             // Значит, мы нашли дисциплину, у которой указан
                             // индикатор соответсвующей компетенции

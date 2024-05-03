@@ -244,7 +244,7 @@ void FMetric::Create()
 {
     // Сначало для общего, потом для курсов по отдельности
     int iL = -1;
-    for (auto& [key, it] : ptrCurricula->mapAllowDisc)
+    for (auto& [key, it] : ptrCurricula->mapNoIgnoreDisc)
     {
         set<vector<string>>
             setIsTakenScore;    // Достаточно set, так как идёт разветвление

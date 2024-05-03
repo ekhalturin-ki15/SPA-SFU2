@@ -31,7 +31,7 @@ struct FTreeElement
     explicit FTreeElement();
 
     bool bAllow;    // Учитывать ли при подсчёте зачётных единиц (ЗЕ)
-    bool bNotIgnore;    // Если предмет входит в перечень игнорируемых
+    bool bNoIgnore;    // Если предмет входит в перечень игнорируемых
 
     double dSumScore;    // Количество зачётных единиц (ЗЕ)
     map<int, double>
@@ -57,6 +57,22 @@ struct FTreeElement
     // компетенцию)
 };
 
+enum ETypeMetric : int
+{
+    ETM_NoExtended,
+    ETM_Extended,    // Самый мягкий режим, больше всего дисциплин (в том числе
+                     // и те, что не учитываются в УП)
+    ETM_NoIgnore,    // Самый строгий режим, меньше всего дисциплин (применён
+                     // список, кого исключить)
+    ETM_Size
+};
+
+struct FDiscParams
+{
+    int    iAmount;
+    double dCredits;
+};
+
 // Один конкретный УП
 struct FCurricula
 {
@@ -69,11 +85,12 @@ struct FCurricula
 
     shared_ptr<FTreeElement> ptrRoot;
     map<wstring, shared_ptr<FTreeElement>>
-        mapDisc;    // Поиск указателя на дисциплину по её индексу
+        mapAllDisc;    // Поиск указателя на дисциплину по её индексу
 
+    //Сквозная индексация (совпадает с mapAllDisc)
     map<wstring, shared_ptr<FTreeElement>>
-        mapAllowDisc;    // Оставляем только разрешённые дисциплины (без
-                         // модулей) для анализа (и без тех, у кого ЗЕ = 0)
+        mapNoIgnoreDisc;    // Оставляем только разрешённые дисциплины (без
+                            // модулей) для анализа (и без тех, у кого ЗЕ = 0)
 
     map<wstring, wstring> mapNameToIndexDisc;
 
@@ -87,18 +104,24 @@ struct FCurricula
     int iCodeUGSN;     // Год начала обучения
 
     int iAmountCourse;    // Количество курсов (именно курсов, не семестров)
-    double dAllSumScore;    // Общее кол-во ЗЕ курса (только дисциплин, и только
-                            // тех, что учитываются)
-    int iAmountDisc;    // Количество учитываемых дисциплин (не по выбору)
-    int iExtendedAmountDisc;    // Количество всех дисциплин (не модулей)
-    map<ETypeDisc, int>
-        mapAmountTypeDisc;    // Количество дисциплин по типу (основные, по
-                              // выбору, факультативы), Учитываются в том числе
-                              // и те, что не считаются в Плане
 
-    map<ETagDisc, int>
-        mapAmountTagDisc;    // Количество дисциплин по теги (гуманитарные,
-                             // технические, естествонаучные)
+    // double dAllSumScore;    // Общее кол-во ЗЕ курса (только дисциплин, и
+    // только
+    //  тех, что учитываются)
+    // int iAmountDisc;    // Количество учитываемых дисциплин (без игнорируемых
+    // в списке) int iExtendedAmountDisc;    // Количество всех дисциплин (не
+    // модулей)
+
+    vector<double> arrETMAllSumScore;
+    vector<int>    arrETMAmountDisc;
+    vector<map<ETypeDisc, FDiscParams>>
+        mapETMTypeDisc;    // Количество и ЗЕ дисциплин по типу (основные, по
+                           // выбору, факультативы), Учитываются в том числе
+                           // и те, что не считаются в Плане
+    vector<map<ETagDisc, FDiscParams>>
+        mapETMTagDisc;    // Количество дисциплин по теги
+                          // (гуманитарные,
+    // технические, естествонаучные)
 
     set<string> fAllComp;    // Множество всех компетенций, присутствующих в
                              // учебном плане (УП)
@@ -120,7 +143,7 @@ private:
 
     // Получить только дисциплины (без модулей)
     map<wstring, shared_ptr<FTreeElement>>
-        GewMapAllowDisc(bool IsNecessaryAllow, bool IsNecessaryNotIgnore);
+        GetMapNoIgnoreDisc(bool IsNecessaryAllow, bool IsNecessaryNotIgnore);
 };
 
 struct FSolve
@@ -185,7 +208,7 @@ private:
         ptrSolveSecondPage;    // Композиция (вынес в отдельный
                                // класс, так как много методов)
     shared_ptr<FGlobal> ptrGlobal;    // Синглтон
-    vector<regex> arrRegexComp;
+    vector<regex>       arrRegexComp;
     vector<regex> arrRegexHeaderInd;    // Может быть несколько, поэтому вектор
     vector<regex> arrRegexHeaderComp;    // Может быть несколько, поэтому вектор
     vector<regex> arrRegexCodeUGSN;    // Может быть несколько, поэтому вектор

@@ -592,7 +592,11 @@ void FOutData::CreateAllCurriculaTotalData(
     vector<wstring> arrBuf = arrOnlyAllowHead;
     arrBuf.insert(arrBuf.end(), arrAddHead.begin(), arrAddHead.end());
 
-    for (auto& wsNameType : ptrGlobal->ptrConfig->GetArrNameTypeDisc())
+    for (auto& wsNameType : ptrGlobal->ptrConfig->GetArrTypeDiscCredits())
+    {
+        arrBuf.push_back(L"!" + wsNameType);
+    }
+    for (auto& wsNameType : ptrGlobal->ptrConfig->GetArrTypeDiscAmount())
     {
         arrBuf.push_back(L"!" + wsNameType);
     }
@@ -636,17 +640,35 @@ void FOutData::CreateAllCurriculaTotalData(
         // 2).c_str()));
         arrAllResult.push_back(it->iYearStart);
         arrAllResult.push_back(it->iCodeUGSN);
-        arrAllResult.push_back(it->dAllSumScore);
-        arrAllResult.push_back(it->iExtendedAmountDisc);
 
-        // Дисциплин факультативов, основных, по выбору  и т.д во всём УП
+        //Extended
+        //arrAllResult.push_back(it->dAllSumScore);
+        arrAllResult.push_back(it->arrETMAllSumScore[ETM_Extended]);
+        //arrAllResult.push_back(it->iExtendedAmountDisc);
+        arrAllResult.push_back(it->arrETMAmountDisc[ETM_Extended]);
+
+        // Дисциплин факультативов, основных, по выбору  и т.д во всём УП ЗЕ
         {
             int iNumberType = -1;
-            for (auto& wsNameType : ptrGlobal->ptrConfig->GetArrNameTypeDisc())
+            for (auto& wsNameType : ptrGlobal->ptrConfig->GetArrTypeDiscCredits())
+            {
+                //redimer
+                ++iNumberType;
+                arrAllResult.push_back(
+                    it->mapETMTypeDisc[ETM_Extended][ETypeDisc(iNumberType)]
+                        .dCredits);
+            }
+        }
+
+        // Дисциплин факультативов, основных, по выбору  и т.д во всём УП количество
+        {
+            int iNumberType = -1;
+            for (auto& wsNameType : ptrGlobal->ptrConfig->GetArrTypeDiscAmount())
             {
                 ++iNumberType;
                 arrAllResult.push_back(
-                    it->mapAmountTypeDisc[ETypeDisc(iNumberType)]);
+                    it->mapETMTypeDisc[ETM_Extended][ETypeDisc(iNumberType)]
+                        .iAmount);
             }
         }
 
@@ -1542,9 +1564,9 @@ vector<string> FOutData::CreateTag(const int& iGraphType,
         string sTag = ptrGlobal->ptrConfig->GetSNoInitData();
         if (bCheckTag)
         {
-            if (fCurricula->mapDisc[key.first]->setTagDisc.size() > 0)
+            if (fCurricula->mapAllDisc[key.first]->setTagDisc.size() > 0)
                 sTag = to_string(
-                    *fCurricula->mapDisc[key.first]->setTagDisc.begin());
+                    *fCurricula->mapAllDisc[key.first]->setTagDisc.begin());
         }
         arrTag.push_back(sTag);
     }
@@ -1565,7 +1587,7 @@ vector<string> FOutData::CreateCommonNameLabel(const int& iGraphType,
             continue;
         }
 
-        shared_ptr<FTreeElement> fThis = fCurricula->mapDisc[it.first];
+        shared_ptr<FTreeElement> fThis = fCurricula->mapAllDisc[it.first];
         // wstring       wsNameRaw = fThis->wsName;
         string sName = fThis->sName;
 

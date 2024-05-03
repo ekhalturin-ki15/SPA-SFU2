@@ -150,14 +150,15 @@ namespace TestFSolve
         {
             string sActual;
             int    i = -1;
-            for (const auto& [key, val] : ptrFirst->mapAmountTypeDisc)
+            for (const auto& [key, val] :
+                 ptrFirst->mapETMTypeDisc[ETM_Extended])
             {
                 ++i;
                 if (i)
                     sActual += ' ';
                 sActual += to_string(key);
                 sActual += '=';
-                sActual += to_string(val);
+                sActual += to_string(val.iAmount);
             }
 
             //Факультативы Основные По выбору
@@ -168,14 +169,14 @@ namespace TestFSolve
         {
             string sActual;
             int    i = -1;
-            for (const auto& [key, val] : ptrFirst->mapAmountTagDisc)
+            for (const auto& [key, val] : ptrFirst->mapETMTagDisc[ETM_Extended])
             {
                 ++i;
                 if (i)
                     sActual += ' ';
                 sActual += to_string(key);
                 sActual += '=';
-                sActual += to_string(val);
+                sActual += to_string(val.iAmount);
             }
 
             Assert::AreEqual(string("0=4 1=5 2=4 3=1"), sActual);
@@ -183,17 +184,17 @@ namespace TestFSolve
 
         TEST_METHOD(AllSumCredits)
         {
-            Assert::AreEqual(25., ptrFirst->dAllSumScore);
+            Assert::AreEqual(25., ptrFirst->arrETMAllSumScore[ETM_NoExtended]);
         }
 
         TEST_METHOD(CountAllowDisc)
         {
-            Assert::AreEqual(7, ptrFirst->iAmountDisc);
+            Assert::AreEqual(7, ptrFirst->arrETMAmountDisc[ETM_NoExtended]);
         }
 
         TEST_METHOD(CountDiscWhithNotAllow)
         {
-            Assert::AreEqual(10, ptrFirst->iExtendedAmountDisc);
+            Assert::AreEqual(10, ptrFirst->arrETMAmountDisc[ETM_Extended]);
         }
 
         TEST_METHOD(AllCompIsFind)
@@ -505,14 +506,15 @@ namespace AnomalTestFSolve
         {
             string sActual;
             int    i = -1;
-            for (const auto& [key, val] : ptrFirst->mapAmountTypeDisc)
+            for (const auto& [key, val] :
+                 ptrFirst->mapETMTypeDisc[ETM_Extended])
             {
                 ++i;
                 if (i)
                     sActual += ' ';
                 sActual += to_string(key);
                 sActual += '=';
-                sActual += to_string(val);
+                sActual += to_string(val.iAmount);
             }
 
             //Все только основные
@@ -523,14 +525,14 @@ namespace AnomalTestFSolve
         {
             string sActual;
             int    i = -1;
-            for (const auto& [key, val] : ptrFirst->mapAmountTagDisc)
+            for (const auto& [key, val] : ptrFirst->mapETMTagDisc[ETM_Extended])
             {
                 ++i;
                 if (i)
                     sActual += ' ';
                 sActual += to_string(key);
                 sActual += '=';
-                sActual += to_string(val);
+                sActual += to_string(val.iAmount);
             }
 
             Assert::AreEqual(string("1=1 2=1 3=2"), sActual);
@@ -538,17 +540,17 @@ namespace AnomalTestFSolve
 
         TEST_METHOD(AllSumCredits)
         {
-            Assert::AreEqual(10., ptrFirst->dAllSumScore);
+            Assert::AreEqual(10., ptrFirst->arrETMAllSumScore[ETM_NoExtended]);
         }
 
         TEST_METHOD(CountAllowDisc)
         {
-            Assert::AreEqual(3, ptrFirst->iAmountDisc);
+            Assert::AreEqual(3, ptrFirst->arrETMAmountDisc[ETM_NoExtended]);
         }
 
         TEST_METHOD(CountDiscWhithNotAllow)
         {
-            Assert::AreEqual(4, ptrFirst->iExtendedAmountDisc);
+            Assert::AreEqual(4, ptrFirst->arrETMAmountDisc[ETM_Extended]);
         }
 
         TEST_METHOD(AllCompIsFind)

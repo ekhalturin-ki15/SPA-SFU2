@@ -349,7 +349,8 @@ public:
 private:
     vector<wstring>
         arrTypeDisc;    // Определяем вид дисциплины (основ, факульт, по выбору)
-    vector<wstring> arrNameTypeDisc;
+    vector<wstring> arrTypeDiscAmount;
+    vector<wstring> arrTypeDiscCredits;
     vector<wstring> arrNameFileIn;
     vector<wstring> arrNameFileOut;
     vector<wstring> arrTagName;
@@ -366,9 +367,13 @@ public:
     {
         return arrTypeDisc;
     }
-    const vector<wstring>& GetArrNameTypeDisc() const
+    const vector<wstring>& GetArrTypeDiscAmount() const
     {
-        return arrNameTypeDisc;
+        return arrTypeDiscAmount;
+    }
+    const vector<wstring>& GetArrTypeDiscCredits() const
+    {
+        return arrTypeDiscCredits;
     }
     const vector<wstring>& GetArrNameFileIn() const
     {

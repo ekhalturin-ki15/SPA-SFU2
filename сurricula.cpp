@@ -12,16 +12,16 @@ FTreeElement::FTreeElement()
       wsIndexName(L""),
       ptrParent(nullptr),
       bAllow(true),
-      bNotIgnore(true)
+      bNoIgnore(true)
 {
 }
 
 FCurricula::FCurricula(shared_ptr<FGlobal> _ptrGlobal)
     : ptrGlobal(_ptrGlobal),
       iAmountCourse(0),
-      dAllSumScore(0.),
-      iAmountDisc(0),
-      iExtendedAmountDisc(0),
+      //dAllSumScore(0.),
+      //iAmountDisc(0),
+      //iExtendedAmountDisc(0),
       iYearStart(0),
       iCodeUGSN(0),
       sTypePlan("None")
@@ -29,6 +29,12 @@ FCurricula::FCurricula(shared_ptr<FGlobal> _ptrGlobal)
     ptrRoot = make_shared<FTreeElement>();
     ptrGraph = nullptr;    // Только после Read можно строить граф
     ptrMetric = nullptr;    // Только после Read высчитывать метрики
+
+    // Теперь есть разделение на расширенный и только для учтённых
+    mapETMTypeDisc.resize(ETM_Size);
+    mapETMTagDisc.resize(ETM_Size);
+    arrETMAllSumScore.resize(ETM_Size);
+    arrETMAmountDisc.resize(ETM_Size);
 }
 
 FCurricula::~FCurricula()
@@ -55,51 +61,70 @@ void FCurricula::DeleteDFS(shared_ptr<FTreeElement> ptrThis)
 
 void FCurricula::CountDisc()
 {
-    this->iAmountDisc = 0;
-    for (const auto& [key, it] : mapDisc)
+    for (int iTypeMetric = 0; iTypeMetric < ETM_Size; iTypeMetric++)
     {
-        if (it->dSumScore <= 0)
+        for (const auto& [key, it] : mapAllDisc)
         {
-            continue;    // Баг в УП (ложные дисциплины из страницы
-                         // Компетенции(2))
-        }
-
-        if ((it->arrChild.size() == 0) && (it->bAllow))
-        {
-            this->iAmountDisc++;
-        }
-
-        if (it->arrChild.size() == 0)
-        {
-            this->iExtendedAmountDisc++;
-            mapAmountTypeDisc[it->eTypeDisc]++;
-            // Нераспознаный тег дисциплины (указания о тегах данной дисциплины
-            // нет в файле config)
-            if (it->setTagDisc.size() == 0)
+            if (it->dSumScore <= 0)
             {
-                mapAmountTagDisc[ETagDisc::ETagD_Another]++;
+                continue;    // Баг в УП (ложные дисциплины из страницы
+                             // Компетенции(2))
             }
-            for (const auto& et : it->setTagDisc)
+
+            if
+                //
+                (
+                    // No Extended
+                    ((it->arrChild.size() == 0) && (it->bAllow) &&
+                     (iTypeMetric == 0)) ||
+                    // Extended
+                    ((it->arrChild.size() == 0) && (iTypeMetric == 1)) ||//
+                    // No Ignore
+                    ((it->arrChild.size() == 0) && (it->bAllow) &&
+                     (it->bNoIgnore) &&
+                     (iTypeMetric == 2))
+
+                //
+                )
             {
-                mapAmountTagDisc[et]++;
+                arrETMAmountDisc[iTypeMetric]++;
+                arrETMAllSumScore[iTypeMetric] += it->dSumScore;
+                mapETMTypeDisc[iTypeMetric][it->eTypeDisc].iAmount++;
+                mapETMTypeDisc[iTypeMetric][it->eTypeDisc].dCredits +=
+                    it->dSumScore;
+                if (it->setTagDisc.size() == 0)
+                {
+                    mapETMTagDisc[iTypeMetric][ETagDisc::ETagD_Another].iAmount++;
+                    mapETMTagDisc[iTypeMetric][ETagDisc::ETagD_Another]
+                        .dCredits += it->dSumScore;
+
+                }
+                for (const auto& et : it->setTagDisc)
+                {
+                    mapETMTagDisc[iTypeMetric][et]
+                        .iAmount++;
+                    mapETMTagDisc[iTypeMetric][et]
+                        .dCredits += it->dSumScore;
+                }
             }
+
         }
     }
     return;
 }
 
 map<wstring, shared_ptr<FTreeElement>>
-    FCurricula::GewMapAllowDisc(bool IsNecessaryAllow,
+    FCurricula::GetMapNoIgnoreDisc(bool IsNecessaryAllow,
                                 bool IsNecessaryNotIgnore)
 {
     map<wstring, shared_ptr<FTreeElement>> mapReturn;
-    for (const auto& [key, it] : mapDisc)
+    for (const auto& [key, it] : mapAllDisc)
     {
         // Нулевые дисциплины тоже нужно убрать
         if ((it->arrChild.size() == 0) && (it->dSumScore > 0))
         {
             if (IsNecessaryNotIgnore)
-                if (!it->bNotIgnore)
+                if (!it->bNoIgnore)
                     continue;
 
             if (IsNecessaryAllow)
