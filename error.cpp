@@ -236,6 +236,15 @@ void FError::ErrorNotEqualSum() const
     out.close();
 }
 
+void FError::ErrorBadShiftTable() const
+{
+    ofstream out = OutHeader();
+
+    out << "При выводе таблицы возникло отрицательное смещение ";
+    out << END;
+    out.close();
+}
+
 void FError::ErrorToMuchColums() const
 {
     ofstream out = OutHeader();

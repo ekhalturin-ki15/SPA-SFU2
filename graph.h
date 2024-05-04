@@ -46,6 +46,7 @@ struct FGraphType
     double dDense           = FGraphType::dNoInit;
 
     map<ETypeDisc, int> mapGraphAmountTypeDisc;
+    map<ETypeDisc, double> mapGraphCreditsTypeDisc;
     vector<int>         arrAmountCountCompDisc;
 
     int iComponent = int(FGraphType::dNoInit);

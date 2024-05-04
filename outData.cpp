@@ -129,7 +129,19 @@ void FCorridorAdapter::Add(int key, pair<double, string> fData)
 int FOutData::iSinglControll = 0;
 
 FOutData::FOutData(shared_ptr<FGlobal> _ptrGlobal)
-    : ptrGlobal(_ptrGlobal), iSizeOnlyAllow(0)
+    : ptrGlobal(_ptrGlobal), iSizeOnlyAllow(0), 
+    arrMetricHead({ L"Всего ЗЕ в графе", L"Кол-во дисциплин в графе",
+                      L"Максимальное ЗЕ у дисциплины",
+                      L"Минимальное ЗЕ у дисциплины", L"Максимальный вес ребра",
+                      L"Минимальный вес ребра", L"Диаметр графа по расстоянию",
+                      L"Диаметр графа по количеству рёбер",
+                      L"Количество компонент связности",
+                      L"Максимальное оставное дерево",
+                      L"Минимальное оставное дерево", L"Плотность графа",
+                      L"ЗЕ факультативов", L"ЗЕ основных дисциплин",
+                      L"ЗЕ дисциплин по выбору", L"Количество факультативов",
+                      L"Количество основных дисциплин",
+                      L"Количество дисциплин по выбору" })
 {
     // Unit test против такого
 #ifndef UNIT_TEST
@@ -146,16 +158,6 @@ void FOutData::CreateTotalInfo(vector<double>& arrReturnDataMetrics,
                                                fGraph,
                                const EOutType& eOutType)
 {
-    const vector<wstring> arrMetricHead(
-        { L"Всего ЗЕ в графе", L"Кол-во дисциплин в графе",
-          L"Максимальное ЗЕ у дисциплины", L"Минимальное ЗЕ у дисциплины",
-          L"Максимальный вес ребра", L"Минимальный вес ребра",
-          L"Диаметр графа по расстоянию", L"Диаметр графа по количеству рёбер",
-          L"Количество компонент связности", L"Максимальное оставное дерево",
-          L"Минимальное оставное дерево", L"Плотность графа",
-          L"Количество факультативов", L"Количество основных дисциплин",
-          L"Количество дисциплин по выбору" });
-
     arrReturnDataMetrics.clear();
     vector<double> arrResult;    // Соответствует arrHead который
                                  // проинициализирован в конструкторе
@@ -166,6 +168,17 @@ void FOutData::CreateTotalInfo(vector<double>& arrReturnDataMetrics,
                   fGraph->dMinRib, fGraph->dDiametrLen, fGraph->dDiametrStep,
                   double(fGraph->iComponent), fGraph->dMaxSpanTree,
                   fGraph->dMinSpanTree, fGraph->dDense };
+
+    for (int iType = 0; iType < ETypeDisc::ETD_Size; ++iType)
+    {
+        if (fGraph->mapGraphCreditsTypeDisc.count(ETypeDisc(iType)))
+            arrResult.push_back(double(fGraph->mapGraphCreditsTypeDisc.find(ETypeDisc(iType))
+                           ->second));
+        else
+        {
+            arrResult.push_back(0);    // Нет такого вида дисциплин
+        }
+    }
 
     for (int iType = 0; iType < ETypeDisc::ETD_Size; ++iType)
     {
@@ -227,24 +240,6 @@ void FOutData::CreateTotalInfo(vector<string>& arrReturnDataHeader,
                                                fGraph,
                                const EOutType& eOutType)
 {
-    const vector<wstring> arrMetricHead({
-        L"Всего ЗЕ в графе",
-        L"Кол-во дисциплин в графе",
-        L"Максимальное ЗЕ у дисциплины",
-        L"Минимальное ЗЕ у дисциплины",
-        L"Максимальный вес ребра",
-        L"Минимальный вес ребра",
-        L"Диаметр графа по расстоянию",
-        L"Диаметр графа по количеству рёбер",
-        L"Количество компонент связности",
-        L"Максимальное оставное дерево",
-        L"Минимальное оставное дерево",
-        L"Плотность графа",
-        L"Количество факультативов",
-        L"Количество основных дисциплин",
-        L"Количество дисциплин по выбору",
-    });
-
     arrReturnDataHeader.clear();
 
     for (int y = 0; y < arrMetricHead.size(); ++y)
@@ -643,9 +638,9 @@ void FOutData::CreateAllCurriculaTotalData(
 
         //Extended
         //arrAllResult.push_back(it->dAllSumScore);
-        arrAllResult.push_back(it->arrETMAllSumScore[ETM_Extended]);
+        arrAllResult.push_back(it->arrETMAllSumScore[ETM_NoExtended]);
         //arrAllResult.push_back(it->iExtendedAmountDisc);
-        arrAllResult.push_back(it->arrETMAmountDisc[ETM_Extended]);
+        arrAllResult.push_back(it->arrETMAmountDisc[ETM_NoExtended]);
 
         // Дисциплин факультативов, основных, по выбору  и т.д во всём УП ЗЕ
         {
@@ -655,7 +650,7 @@ void FOutData::CreateAllCurriculaTotalData(
                 //redimer
                 ++iNumberType;
                 arrAllResult.push_back(
-                    it->mapETMTypeDisc[ETM_Extended][ETypeDisc(iNumberType)]
+                    it->mapETMTypeDisc[ETM_NoExtended][ETypeDisc(iNumberType)]
                         .dCredits);
             }
         }
@@ -667,7 +662,7 @@ void FOutData::CreateAllCurriculaTotalData(
             {
                 ++iNumberType;
                 arrAllResult.push_back(
-                    it->mapETMTypeDisc[ETM_Extended][ETypeDisc(iNumberType)]
+                    it->mapETMTypeDisc[ETM_NoExtended][ETypeDisc(iNumberType)]
                         .iAmount);
             }
         }
@@ -729,7 +724,7 @@ void FOutData::CreateAllCurriculaTotalData(
 void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
                                       const int&              iGraphType)
 {
-    const vector<wstring> arrMetricHead(
+   /* const vector<wstring> arrMetricHead(
         { L"Всего ЗЕ в графе", L"Кол-во дисциплин в графе",
           L"Максимальное ЗЕ у дисциплины", L"Минимальное ЗЕ у дисциплины",
           L"Максимальный вес ребра", L"Минимальный вес ребра",
@@ -737,7 +732,7 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
           L"Количество компонент связности", L"Максимальное оставное дерево",
           L"Минимальное оставное дерево", L"Плотность графа",
           L"Количество факультативов", L"Количество основных дисциплин",
-          L"Количество дисциплин по выбору" });
+          L"Количество дисциплин по выбору" });*/
 
     arrReturnData.clear();
     int i = 0;    // Задаём порядок вывода
@@ -1217,6 +1212,14 @@ void FOutData::OutTableInfo(const int& iShiftX, const int& iShiftY,
                             OpenXLSX::XLWorksheet& WKS, int iShiftDataX,
                             int iShiftDataY)
 {
+    if ((iShiftX < 0) || (iShiftY < 0) || (iShiftDataX < 0) ||
+        (iShiftDataY < 0))
+    {
+        this->ptrGlobal->ptrError->ErrorBadShiftTable();
+        return;
+    }
+
+
     for (int y = iShiftDataY; y < arrData.size(); ++y)
     {
         for (int x = iShiftDataX; x < arrData[y].size(); ++x)

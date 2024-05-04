@@ -3,6 +3,16 @@
 
 struct FGlobal;
 
+//Используется, когда OpenXLSX выдаёт ложные ошибки
+struct No_Error_Dont_Worry
+{
+    string msg = "No error, don't worry";
+
+    No_Error_Dont_Worry(const string& msg) : msg(msg)
+    {
+    }
+};
+
 struct FError
 {
     static const string sBadTree;
@@ -51,6 +61,8 @@ struct FError
     void ErrorBadParser() const;
 
     void ErrorBadFormula();
+
+    void ErrorBadShiftTable() const;
 
     void ErrorGraphNoInitWeightDisc(string  sNamePlan,
                                     wstring wsNameIndex) const;

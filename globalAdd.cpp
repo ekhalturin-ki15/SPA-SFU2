@@ -2,6 +2,9 @@
 #include "error.h"
 #include "global.h"
 
+
+
+
 void FGlobal::DeleteSpechChars(string& sData) const
 {
     if (ptrConfig == nullptr)
@@ -152,6 +155,13 @@ void FGlobal::TakeData(double& outIData, const OpenXLSX::XLRow& row)
         }
         catch (...)
         {
+            try
+            {
+                throw No_Error_Dont_Worry("No error, don't worry");
+            }
+            catch (...)
+            {
+            }
             outIData = it.value().get<int>();
         }
     }

@@ -148,6 +148,7 @@ void FGraph::CalcAllScoreAndAmount(FGraphType& fGraph)
         fGraph.dGraphAllScore += dCurScore;
         fGraph.iGraphAmountDisc++;
         fGraph.mapGraphAmountTypeDisc[fDisc->eTypeDisc]++;
+        fGraph.mapGraphCreditsTypeDisc[fDisc->eTypeDisc] += dCurScore;
 
         // Определяем, сколько компетенций формируется
         if (fDisc->mapComp.size() == 0)

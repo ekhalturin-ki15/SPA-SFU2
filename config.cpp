@@ -641,7 +641,9 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
                                  ptrGlobal->ConwertToString(wsNamePage)),
                              1))
                     {
-                        setIgnoreDisc.insert(key);
+                        //Иногда Excel воспринимает последнюю строку, как пустую
+                        if (key != L"")
+                            setIgnoreDisc.insert(key);
                     }
                 }
             }

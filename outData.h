@@ -228,4 +228,6 @@ private:
 
     shared_ptr<FGlobal> ptrGlobal;    // Синглтон
     string AddCompString(const map<string, vector<string>>& mapComp);
+
+    const vector<wstring> arrMetricHead;
 };
