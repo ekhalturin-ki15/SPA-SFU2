@@ -225,10 +225,11 @@ void FOutData::CreateTotalInfo(vector<double>& arrReturnDataMetrics,
         }
     }
 
-    wstring wsRibQuartile = L"Количество рёбер указанного квартиля";
-    if (ptrGlobal->ptrConfig->mapArrOutParams[wsRibQuartile].GetType(eOutType))
+    wstring wsRibLocalQuar = L"Локальное количество рёбер указанного квартиля";
+    if (ptrGlobal->ptrConfig->mapArrOutParams[wsRibLocalQuar].GetType(
+            eOutType))
     {
-        for (auto& it : fGraph->arrAllPairDistanceQuartile)
+        for (auto& it : fGraph->arrLocalQuarAllPairDistance)
         {
             arrReturnDataMetrics.push_back(it);
         }
@@ -291,7 +292,7 @@ void FOutData::CreateTotalInfo(vector<string>& arrReturnDataHeader,
     if (ptrGlobal->ptrConfig->mapArrOutParams[wsRibQuartile].GetType(eOutType))
     {
         int iAmountQuartile = -1;
-        for (auto& it : fGraph->arrAllPairDistanceQuartile)
+        for (auto& it : fGraph->arrLocalQuarAllPairDistance)
         {
             ++iAmountQuartile;
             string sAddedHead = ptrGlobal->ConwertToString(

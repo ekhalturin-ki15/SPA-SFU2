@@ -6,6 +6,7 @@
 struct FGlobal;
 struct FGraph;
 struct FMetric;
+struct FGraphAllData;
 
 struct FSolve;
 // struct FSemesterScore
@@ -73,6 +74,8 @@ struct FDiscParams
     double dCredits;
 };
 
+
+
 // Один конкретный УП
 struct FCurricula
 {
@@ -87,7 +90,7 @@ struct FCurricula
     map<wstring, shared_ptr<FTreeElement>>
         mapAllDisc;    // Поиск указателя на дисциплину по её индексу
 
-    //Сквозная индексация (совпадает с mapAllDisc)
+    // Сквозная индексация (совпадает с mapAllDisc)
     map<wstring, shared_ptr<FTreeElement>>
         mapNoIgnoreDisc;    // Оставляем только разрешённые дисциплины (без
                             // модулей) для анализа (и без тех, у кого ЗЕ = 0)
@@ -165,6 +168,11 @@ struct FSolve
     void CreateAllMetric();
 
 public:
+    unique_ptr<FGraphAllData>
+        ptrGraphAllData;    // Объект для хранения общих данных
+                                           // всех объектов класса FGraph
+
+
     vector<shared_ptr<FCurricula>>
         arrDisc;    // Указатели на все УП, которые считали (все
                     // они одновременно хранятся в памяти)

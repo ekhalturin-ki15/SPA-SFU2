@@ -7,10 +7,27 @@
 using namespace std;
 struct FCurricula;
 
+// Общие данные для графов (например, веса всех ребёр всей выборки и пр.)
+struct FGraphAllData
+{
+    explicit FGraphAllData(shared_ptr<FGlobal> _ptrGlobal);
+
+    map<int, vector<double>>
+        mapGraphQuarAllWeigth;    // Индекс обозначает тип графа (обратный, за
+                                  // опр. курс и т. д.)
+
+private:
+    // FSolve* ptrSolve; //Позднее связывание, но не требуется, так как могу
+    // обратиться через Global
+
+    shared_ptr<FGlobal> ptrGlobal;    // Синглтон
+};
+
 // Конкретный граф (с расчитаными метриками для него, лежащими внутри)
 struct FGraphType
 {
     static const double dNoInit;
+    static const double dINF;
 
     // Сопоставление id его названия и номера курса (инициализируются при
     // создании)
@@ -39,15 +56,18 @@ struct FGraphType
     double dMinSpanTree = FGraphType::dNoInit;
     double dMaxSpanTree = FGraphType::dNoInit;
 
-    vector<int> arrAllPairDistanceQuartile;
+    vector<int>
+        arrLocalQuarAllPairDistance;    // Локальное квартильное распределение
 
     double dGraphAllScore   = FGraphType::dNoInit;
     int    iGraphAmountDisc = int(FGraphType::dNoInit);
     double dDense           = FGraphType::dNoInit;
 
-    map<ETypeDisc, int> mapGraphAmountTypeDisc;
+    map<ETypeDisc, int>    mapGraphAmountTypeDisc;
     map<ETypeDisc, double> mapGraphCreditsTypeDisc;
-    vector<int>         arrAmountCountCompDisc;
+    vector<int>            arrAmountCountCompDisc;
+
+    vector<vector<double>> arrAllDistance;
 
     int iComponent = int(FGraphType::dNoInit);
 };
@@ -83,8 +103,13 @@ struct FGraph
         bool IsConsLen);    // Высчитываем диаметр и кол-во компонент
                             // связности за O(n log(n))
 
+    void CalculateLocalQuarAllPairDistance(
+        vector<int>& arrLocalQuarAmount,
+        const vector<vector<double>>&
+            arrAllDistance);    // Считаем квартильное распределение в частности
+
     void CalculateAllPairDistance(
-        vector<int>& arrQuarAmount,
+        vector<vector<double>>& arrAllDistance,
         const vector<vector<pair<int, double>>>&
             fCurrentAdj);    // Высчитываем минимальные пути алгоритмом Флойда -
                              // Уоршелла (O(n^3))

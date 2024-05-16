@@ -12,12 +12,18 @@ const int    FGraph::iReverse               = -3;
 const double FGraph::dAllScoreNotEqualError = -10;
 
 const double FGraphType::dNoInit = -2e4;
+const double FGraphType::dINF    = 1e8;
 
 // Инверсия зависимости
 FGraph::FGraph(shared_ptr<FCurricula> _ptrTree) : ptrTree(_ptrTree)
 {
     // Теперь mapAllowDisc хранится в _ptrTree
     // mapAllowDisc = _ptrTree->GewMapAllowDisc(true, true);
+}
+
+FGraphAllData::FGraphAllData(shared_ptr<FGlobal> _ptrGlobal)
+    : ptrGlobal(_ptrGlobal)
+{
 }
 
 void FGraph::Create()
@@ -111,8 +117,12 @@ void FGraph::CountAllMetric(int iTypeGraph)
                  std::greater<pair<double, pair<int, int>>>());
 #pragma endregion
 
-    CalculateAllPairDistance(mapGraph[iTypeGraph].arrAllPairDistanceQuartile,
+    CalculateAllPairDistance(mapGraph[iTypeGraph].arrAllDistance,
                              mapGraph[iTypeGraph].fAdjList);
+
+    CalculateLocalQuarAllPairDistance(
+        mapGraph[iTypeGraph].arrLocalQuarAllPairDistance,
+        mapGraph[iTypeGraph].arrAllDistance);
 }
 
 void FGraph::CalcAllScoreAndAmount(FGraphType& fGraph)
@@ -608,15 +618,78 @@ void FGraph::GenerateCourseGraph()
     }
 }
 
+// Версия для одного конкретного УП (в частности)
+// Имеется версия для всей совокупности УП (в общем)
+// FGraph::CalculateTotalQuarAllPairDistance
+// которая Инициализируемая в CreateAfter
+void FGraph::CalculateLocalQuarAllPairDistance(
+    vector<int>& arrLocalQuarAmount,
+    const vector<vector<double>>&
+        arrAllDistance)    // Считаем квартильное распределение в частности
+{
+    arrLocalQuarAmount.clear();
+
+    const int N = arrAllDistance.size();
+
+    int iAmountNoLink = 0;
+
+    // Усечение выборки разбития по квартилям
+    vector<double> arrPathLen;
+
+    for (int i = 0; i < N; ++i)
+    {
+        for (int j = i + 1; j < N; ++j)
+        {
+            if (arrAllDistance[i][j] == FGraphType::dINF)
+            {
+                ++iAmountNoLink;
+                continue;
+            }
+            arrPathLen.push_back(arrAllDistance[i][j]);
+        }
+    }
+
+    sort(arrPathLen.begin(), arrPathLen.end());
+
+    const double& dTranc =
+        ptrTree->ptrGlobal->ptrConfig->GetDTruncQuarPathLen();
+
+    int iMinInd = arrPathLen.size() * dTranc;
+    int iMaxInd = arrPathLen.size() - iMinInd - 1;
+
+    int iAmountQuar = ptrTree->ptrGlobal->ptrConfig->GetIAmountQuar();
+    arrLocalQuarAmount.resize(iAmountQuar);
+
+    if (iMinInd > iMaxInd)
+        return;
+
+    double dMinVal = arrPathLen[iMinInd], dMaxVal = arrPathLen[iMaxInd];
+    double dLenght = dMaxVal - dMinVal;
+    // iAmountQuar
+
+    arrLocalQuarAmount.front() += iMinInd;
+    arrLocalQuarAmount.back() += iMinInd;
+    for (int i = iMinInd; i <= iMaxInd; ++i)
+    {
+        if (arrPathLen[i] == dMaxVal)
+        {
+            ++arrLocalQuarAmount.back();
+            continue;
+        }
+
+        double index = (arrPathLen[i] - dMinVal) / dLenght;
+        ++arrLocalQuarAmount[int(index * iAmountQuar)];
+    }
+
+    arrLocalQuarAmount.push_back(iAmountNoLink);
+}
+
 void FGraph::CalculateAllPairDistance(
-    vector<int>&                             arrQuarAmount,
+    vector<vector<double>>&                  arrAllDistance,
     const vector<vector<pair<int, double>>>& fCurrentAdj)
 {
-    arrQuarAmount.clear();
-
-    const int              N   = fCurrentAdj.size();
-    const double           INF = 1e8;
-    vector<vector<double>> arrAllDistance(N, vector<double>(N, INF));
+    const int N = fCurrentAdj.size();
+    arrAllDistance.assign(N, vector<double>(N, FGraphType::dINF));
 
     for (int L = 0; L < N; ++L)
     {
@@ -642,58 +715,6 @@ void FGraph::CalculateAllPairDistance(
             }
         }
     }
-
-    int iAmountNoLink = 0;
-
-    // Усечение выборки разбития по квартилям
-    vector<double> arrPathLen;
-
-    for (int i = 0; i < N; ++i)
-    {
-        for (int j = i + 1; j < N; ++j)
-        {
-            if (arrAllDistance[i][j] == INF)
-            {
-                ++iAmountNoLink;
-                continue;
-            }
-            arrPathLen.push_back(arrAllDistance[i][j]);
-        }
-    }
-
-    sort(arrPathLen.begin(), arrPathLen.end());
-
-    const double& dTranc =
-        ptrTree->ptrGlobal->ptrConfig->GetDTruncQuarPathLen();
-
-    int iMinInd = arrPathLen.size() * dTranc;
-    int iMaxInd = arrPathLen.size() - iMinInd - 1;
-
-    int iAmountQuar = ptrTree->ptrGlobal->ptrConfig->GetIAmountQuar();
-    arrQuarAmount.resize(iAmountQuar);
-
-    if (iMinInd > iMaxInd)
-        return;
-
-    double dMinVal = arrPathLen[iMinInd], dMaxVal = arrPathLen[iMaxInd];
-    double dLenght = dMaxVal - dMinVal;
-    // iAmountQuar
-
-    arrQuarAmount.front() += iMinInd;
-    arrQuarAmount.back()  += iMinInd;
-    for (int i = iMinInd; i <= iMaxInd; ++i)
-    {
-        if (arrPathLen[i] == dMaxVal)
-        {
-            ++arrQuarAmount.back();
-            continue;
-        }
-
-        double index = (arrPathLen[i] - dMinVal) / dLenght;
-        ++arrQuarAmount[int(index * iAmountQuar)];
-    }
-
-    arrQuarAmount.push_back(iAmountNoLink);
 }
 
 void FGraph::CalculateMST(double&                                  dResult,

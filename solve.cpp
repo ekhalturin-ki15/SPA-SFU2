@@ -14,7 +14,6 @@ FSolve::FSolve(shared_ptr<FGlobal> _ptrGlobal)
       iCurrentRow(0),
       iMaxCourse(0)
 {
-
     // Unit test против такого
 #ifndef UNIT_TEST
     if (iSinglControll > 0)
@@ -23,16 +22,17 @@ FSolve::FSolve(shared_ptr<FGlobal> _ptrGlobal)
     ++iSinglControll;
 
     ptrSolveSecondPage = make_unique<FSolveSecondPage>(_ptrGlobal);
+
+    ptrGraphAllData = make_unique<FGraphAllData>(_ptrGlobal);
 }
 
 bool FSolve::Init()
 {
     try
     {
-        //fRegexComp = ptrGlobal->ptrConfig->GetSRegexComp();
+        // fRegexComp = ptrGlobal->ptrConfig->GetSRegexComp();
         arrRegexComp.resize(ptrGlobal->ptrConfig->arrRegexComp.size());
-        for (int i = 0; i < ptrGlobal->ptrConfig->arrRegexComp.size();
-             ++i)
+        for (int i = 0; i < ptrGlobal->ptrConfig->arrRegexComp.size(); ++i)
             arrRegexComp[i] = ptrGlobal->ptrConfig->arrRegexComp[i];
     }
     catch (...)
@@ -206,6 +206,13 @@ void FSolve::CreateAllGraph()
     {
         it->ptrGraph = make_shared<FGraph>(it);
         it->ptrGraph->Create();    // А теперь, построй граф на основе УП
+    }
+    //Добавились данные о всех Графах (генеральной совокупности)
+    for (auto& it : arrDisc)
+    {
+        //it->ptrGraph->CreateAfter();    // После подсчитанных общих метрик,
+                                       // определить ещё дополнительные (на
+                                       // основе генеральной совокупности)
     }
 }
 
