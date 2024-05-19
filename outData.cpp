@@ -25,7 +25,7 @@ map<int, vector<pair<double, string>>> FCorridorAdapter::Take(const int& iSize)
 
         mapReturn[key].resize(
             iSize,
-            { FGraphType::dNoInit, ptrGlobal->ptrConfig->GetSNoInitData() });
+            { FTypeGraph::dNoInit, ptrGlobal->ptrConfig->GetSNoInitData() });
 
         try
         {
@@ -154,7 +154,7 @@ FOutData::FOutData(shared_ptr<FGlobal> _ptrGlobal)
 }
 
 void FOutData::CreateTotalInfo(vector<double>& arrReturnDataMetrics,
-                               const shared_ptr<FGraphType>
+                               const shared_ptr<FTypeGraph>
                                                fGraph,
                                const EOutType& eOutType)
 {
@@ -215,7 +215,7 @@ void FOutData::CreateTotalInfo(vector<double>& arrReturnDataMetrics,
         {
             if (fGraph->arrAmountCountCompDisc.size() <= iAmountComp)
             {
-                arrReturnDataMetrics.push_back(FGraphType::dNoInit);
+                arrReturnDataMetrics.push_back(FTypeGraph::dNoInit);
             }
             else
             {
@@ -237,7 +237,7 @@ void FOutData::CreateTotalInfo(vector<double>& arrReturnDataMetrics,
 }
 
 void FOutData::CreateTotalInfo(vector<string>& arrReturnDataHeader,
-                               const shared_ptr<FGraphType>
+                               const shared_ptr<FTypeGraph>
                                                fGraph,
                                const EOutType& eOutType)
 {
@@ -319,7 +319,7 @@ void FOutData::CreateTotalInfo(vector<string>& arrReturnDataHeader,
 }
 
 void FOutData::CreateTotalInfo(vector<vector<string>>& arrReturnData,
-                               const shared_ptr<FGraphType>
+                               const shared_ptr<FTypeGraph>
                                                fGraph,
                                const EOutType& eOutType)
 {
@@ -479,7 +479,7 @@ void FOutData::CreateOnlyAllowedResultRow(vector<string>& arrReturn,
 
     for (const auto& it : arrResult)
     {
-        if (it != FGraphType::dNoInit)
+        if (it != FTypeGraph::dNoInit)
         {
             /*std::ostringstream fOut;
             fOut << std::setprecision(ptrGlobal->ptrConfig->iPrecision)
@@ -540,7 +540,7 @@ void FOutData::AddTableCommonData(vector<vector<string>>& arrToAddedData,
                     }
                     else
                     {
-                        if (dVal != FGraphType::dNoInit)
+                        if (dVal != FTypeGraph::dNoInit)
                         {
                             sResult = ptrGlobal->DoubletWithPrecision(dVal);
                             if (sName != ptrGlobal->ptrConfig->GetSNoInitData())
@@ -695,7 +695,7 @@ void FOutData::CreateAllCurriculaTotalData(
                 }
                 else
                 {
-                    arrAllResult.push_back(FGraphType::dNoInit);
+                    arrAllResult.push_back(FTypeGraph::dNoInit);
                 }
 
                 if (dRes > ptrGlobal->ptrConfig->GetDMinComp())
@@ -704,7 +704,7 @@ void FOutData::CreateAllCurriculaTotalData(
                 }
                 else
                 {
-                    arrAllResult.push_back(FGraphType::dNoInit);
+                    arrAllResult.push_back(FTypeGraph::dNoInit);
                 }
             }
         }
@@ -723,7 +723,7 @@ void FOutData::CreateAllCurriculaTotalData(
 }
 
 void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
-                                      const int&              iGraphType)
+                                      const ETypeGraph&              eTypeGraph)
 {
    /* const vector<wstring> arrMetricHead(
         { L"Всего ЗЕ в графе", L"Кол-во дисциплин в графе",
@@ -785,7 +785,7 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
     for (const auto& it : ptrGlobal->ptrSolve->arrDisc)
     {
         // Нет нужного нам курса (например, если 3 курс, а план магистратуры)
-        if (it->iAmountCourse <= iGraphType)
+        if (it->iAmountCourse <= int(eTypeGraph))
             continue;
 
         // Выводить короткое, или помное имя
@@ -797,7 +797,7 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
 
         CreateTotalInfo(
             arrAllResult,
-            make_shared<FGraphType>(it->ptrGraph->mapGraph[iGraphType]),
+            make_shared<FTypeGraph>(it->ptrGraph->mapGraph[eTypeGraph]),
             EOutType::EOT_Head);
 
         vector<string> arrCurData;
@@ -841,7 +841,7 @@ void FOutData::Create(string sOutPath)
     if (ptrGlobal->ptrConfig->bArrIsconcatGraphData.at(0))
     {
         vector<vector<string>> arrAllCoursesGraphData;
-        CreateSummaryTotalData(arrAllCoursesGraphData, FGraph::iCommon);
+        CreateSummaryTotalData(arrAllCoursesGraphData, ETypeGraph::ETG_Common);
         OutTableInfo(iShiftX, 1, arrAllCoursesGraphData, wks,
                      iSizeOnlyAllow);    // iShiftDataX = 1, так как заголовки
                                          // УП
@@ -868,7 +868,7 @@ void FOutData::Create(string sOutPath)
         fOutFile.workbook().addWorksheet(sNamePageAllData);
         wks = fOutFile.workbook().worksheet(sNamePageAllData);
         vector<vector<string>> arrAllCoursesGraphData;
-        CreateSummaryTotalData(arrAllCoursesGraphData, FGraph::iCommon);
+        CreateSummaryTotalData(arrAllCoursesGraphData, ETypeGraph::ETG_Common);
         OutTableInfo(1, 1, arrAllCoursesGraphData, wks);
         if (ptrGlobal->ptrConfig->GetBIsOutCSVDate())
             OutTableInfoCSV(arrAllCoursesGraphData, sOutPath, "",
@@ -881,7 +881,7 @@ void FOutData::Create(string sOutPath)
         if (ptrGlobal->ptrConfig->bArrIsconcatGraphData.at(1))
         {
             vector<vector<string>> arrCourseGraphData;
-            CreateSummaryTotalData(arrCourseGraphData, iCourse);
+            CreateSummaryTotalData(arrCourseGraphData, ETypeGraph(iCourse));
             OutTableInfo(iShiftX, 1, arrCourseGraphData, wks,
                          iSizeOnlyAllow);    // iShiftDataX = iEscape, так как
                                              // заголовки УП выводить не надо
@@ -902,7 +902,7 @@ void FOutData::Create(string sOutPath)
             fOutFile.workbook().addWorksheet(sNamePage);
             wks = fOutFile.workbook().worksheet(sNamePage);
             vector<vector<string>> arrCourseGraphData;
-            CreateSummaryTotalData(arrCourseGraphData, iCourse);
+            CreateSummaryTotalData(arrCourseGraphData, ETypeGraph(iCourse));
             OutTableInfo(1, 1, arrCourseGraphData, wks);
 
             string sNameCSV = ptrGlobal->ReversUTF16RU(sNamePage);
@@ -1083,8 +1083,8 @@ void FOutData::OutAddInfo(string sName, string sPath,
             {
                 vector<vector<string>> arrTotalCourseGraphData;
                 CreateTotalInfo(arrTotalCourseGraphData,
-                                make_shared<FGraphType>(
-                                    ptrTree->ptrGraph->mapGraph[sKey[0] - '1']),
+                                make_shared<FTypeGraph>(
+                                    ptrTree->ptrGraph->mapGraph[ETypeGraph(int(sKey[0] - '1'))]),
                                 EOutType::EOT_Added);
 
                 OutTableInfo(1,    // Так как 1-индексация
@@ -1107,8 +1107,8 @@ void FOutData::OutAddInfo(string sName, string sPath,
     {
         vector<vector<string>> arrTotalGraphData;
         CreateTotalInfo(arrTotalGraphData,
-                        make_shared<FGraphType>(
-                            ptrTree->ptrGraph->mapGraph[FGraph::iCommon]),
+                        make_shared<FTypeGraph>(
+                            ptrTree->ptrGraph->mapGraph[ETypeGraph::ETG_Common]),
                         EOutType::EOT_Added);
         OutTableInfo(1, iYShift + 1,    // Так как 1-индексация
                      arrTotalGraphData, fFileCache->arrOpenWKS.back());
@@ -1556,14 +1556,14 @@ string FOutData::AddCompString(const map<string, vector<string>>& mapComp)
     return sReturn;
 }
 
-vector<string> FOutData::CreateTag(const int& iGraphType,
+vector<string> FOutData::CreateTag(const ETypeGraph& eGraphType,
                                    shared_ptr<FCurricula>
                                         fCurricula,
                                    bool bCheckTag)
 {
     vector<string> arrTag;
     for (auto& [key, val] :
-         fCurricula->ptrGraph->mapGraph[iGraphType].mapReversRel)
+         fCurricula->ptrGraph->mapGraph[eGraphType].mapReversRel)
     {
         string sTag = ptrGlobal->ptrConfig->GetSNoInitData();
         if (bCheckTag)
@@ -1578,14 +1578,14 @@ vector<string> FOutData::CreateTag(const int& iGraphType,
     return arrTag;
 }
 
-vector<string> FOutData::CreateCommonNameLabel(const int& iGraphType,
+vector<string> FOutData::CreateCommonNameLabel(const ETypeGraph& eTypeGraph,
                                                shared_ptr<FCurricula>
                                                    fCurricula)
 {
     vector<string> arrCommonNameLabel;
-    for (auto& it : fCurricula->ptrGraph->mapGraph[iGraphType].arrRel)
+    for (auto& it : fCurricula->ptrGraph->mapGraph[eTypeGraph].arrRel)
     {
-        if (iGraphType == FGraph::iReverse)
+        if (eTypeGraph == ETypeGraph::ETG_Reverse)
         {
             arrCommonNameLabel.push_back(ptrGlobal->ConwertToString(it.first));
             continue;
@@ -1596,7 +1596,7 @@ vector<string> FOutData::CreateCommonNameLabel(const int& iGraphType,
         string sName = fThis->sName;
 
         // Не забываем про нуль нумерацию курсов
-        if (iGraphType == FGraph::iAlt)
+        if (eTypeGraph == ETypeGraph::ETG_Alt)
         {
             sName += ptrGlobal->ptrConfig->GetSSeparator() +
                      to_string(it.second + 1);
@@ -1617,18 +1617,18 @@ void FOutData::OutGephiData(string sName, string sPath,
                             shared_ptr<FCurricula> fCurricula)
 {
     {
-        const int& iTag = FGraph::iCommon;
+        const ETypeGraph& eTypeGraph = ETypeGraph::ETG_Common;
         OutGephiLabel(sPath, sName, sName,
-                      CreateCommonNameLabel(iTag, fCurricula),
-                      fCurricula->ptrGraph->mapGraph[iTag].arrNodeWeight,
-                      CreateTag(iTag, fCurricula));
+                      CreateCommonNameLabel(eTypeGraph, fCurricula),
+                      fCurricula->ptrGraph->mapGraph[eTypeGraph].arrNodeWeight,
+                      CreateTag(eTypeGraph, fCurricula));
         OutGephiRib(sPath, sName, sName,
-                    fCurricula->ptrGraph->mapGraph[iTag].fAdjList);
+                    fCurricula->ptrGraph->mapGraph[eTypeGraph].fAdjList);
     }
 
     // Вывод графа, где вершины - это компетенции
     {
-        const int& iTag = FGraph::iReverse;
+        const ETypeGraph& eTypeGraph = ETypeGraph::ETG_Reverse;
         string     sFileName =
             sName + ptrGlobal->ConwertToString(
                         ptrGlobal->ptrConfig
@@ -1637,15 +1637,15 @@ void FOutData::OutGephiData(string sName, string sPath,
                             .GetName());
 
         OutGephiLabel(sPath, sFileName, sName,
-                      CreateCommonNameLabel(iTag, fCurricula),
-                      fCurricula->ptrGraph->mapGraph[iTag].arrNodeWeight,
-                      CreateTag(iTag, fCurricula, false));
+                      CreateCommonNameLabel(eTypeGraph, fCurricula),
+                      fCurricula->ptrGraph->mapGraph[eTypeGraph].arrNodeWeight,
+                      CreateTag(eTypeGraph, fCurricula, false));
         OutGephiRib(sPath, sFileName, sName,
-                    fCurricula->ptrGraph->mapGraph[iTag].fAdjList);
+                    fCurricula->ptrGraph->mapGraph[eTypeGraph].fAdjList);
     }
 
     {
-        const int& iTag = FGraph::iAlt;
+        const ETypeGraph& eTypeGraph = ETypeGraph::ETG_Alt;
         string     sFileName =
             sName +
             ptrGlobal->ConwertToString(
@@ -1655,12 +1655,12 @@ void FOutData::OutGephiData(string sName, string sPath,
                     .GetName());
 
         OutGephiLabel(sPath, sFileName, sName,
-                      CreateCommonNameLabel(iTag, fCurricula),
-                      fCurricula->ptrGraph->mapGraph[iTag].arrNodeWeight,
-                      CreateTag(iTag, fCurricula));
+                      CreateCommonNameLabel(eTypeGraph, fCurricula),
+                      fCurricula->ptrGraph->mapGraph[eTypeGraph].arrNodeWeight,
+                      CreateTag(eTypeGraph, fCurricula));
 
         OutGephiRib(sPath, sFileName, sName,
-                    fCurricula->ptrGraph->mapGraph[iTag].fAdjList);
+                    fCurricula->ptrGraph->mapGraph[eTypeGraph].fAdjList);
     }
 
     if (fCurricula->ptrGlobal->ptrConfig->GetBCourseOutput())
@@ -1670,13 +1670,14 @@ void FOutData::OutGephiData(string sName, string sPath,
             OutGephiLabel(sPath,
                           sName + "(" + to_string(iCourse + 1) + ")",
                           sName,
-                          CreateCommonNameLabel(iCourse, fCurricula),
-                          fCurricula->ptrGraph->mapGraph[iCourse].arrNodeWeight,
-                          CreateTag(iCourse, fCurricula));
+                          CreateCommonNameLabel(ETypeGraph(iCourse), fCurricula),
+                fCurricula->ptrGraph->mapGraph[ETypeGraph(iCourse)]
+                    .arrNodeWeight,
+                CreateTag(ETypeGraph(iCourse), fCurricula));
             OutGephiRib(sPath,
                         sName + "(" + to_string(iCourse + 1) + ")",
                         sName,
-                        fCurricula->ptrGraph->mapGraph[iCourse].fAdjList);
+                fCurricula->ptrGraph->mapGraph[ETypeGraph(iCourse)].fAdjList);
         }
     }
 }

@@ -7,12 +7,34 @@
 using namespace std;
 struct FCurricula;
 
+// Тип зависит от версии графа, сейчас ETG_Common - обычный,
+// ETG_Alt - альтернативный, ETG_Reverse - Обратный
+enum ETypeGraph : int
+{
+    ETG_Common  = -1,
+    ETG_Alt     = -2,
+    ETG_Reverse = -3,
+    ETG_0Course = 0, //Нумерация с нуля
+    ETG_1Course = 1, //Нумерация с нуля
+    ETG_2Course = 2, //Нумерация с нуля
+    ETG_3Course = 3, //Нумерация с нуля
+    ETG_4Course = 4, //Нумерация с нуля
+    ETG_5Course = 5, //Нумерация с нуля
+    ETG_6Course = 6, //Нумерация с нуля
+    ETG_7Course = 7, //Нумерация с нуля
+    ETG_8Course = 8, //Нумерация с нуля
+    ETG_9Course = 9, //Нумерация с нуля
+    ETG_10Course = 10, //Нумерация с нуля
+    ETG_11Course = 11, //Нумерация с нуля
+    ETG_Size = 12
+};
+
 // Общие данные для графов (например, веса всех ребёр всей выборки и пр.)
 struct FGraphAllData
 {
     explicit FGraphAllData(shared_ptr<FGlobal> _ptrGlobal);
 
-    map<int, vector<double>>
+    map<ETypeGraph, vector<double>>
         mapGraphQuarAllWeigth;    // Индекс обозначает тип графа (обратный, за
                                   // опр. курс и т. д.)
 
@@ -24,7 +46,7 @@ private:
 };
 
 // Конкретный граф (с расчитаными метриками для него, лежащими внутри)
-struct FGraphType
+struct FTypeGraph
 {
     static const double dNoInit;
     static const double dINF;
@@ -44,24 +66,24 @@ struct FGraphType
     // В паре first куда, second вес
     vector<vector<pair<int, double>>> fAdjList;
 
-    double dMinDiscScore = FGraphType::dNoInit;
-    double dMaxDiscScore = FGraphType::dNoInit;
+    double dMinDiscScore = FTypeGraph::dNoInit;
+    double dMaxDiscScore = FTypeGraph::dNoInit;
 
-    double dMinRib = FGraphType::dNoInit;
-    double dMaxRib = FGraphType::dNoInit;
+    double dMinRib = FTypeGraph::dNoInit;
+    double dMaxRib = FTypeGraph::dNoInit;
 
-    double dDiametrLen  = FGraphType::dNoInit;
-    double dDiametrStep = FGraphType::dNoInit;
+    double dDiametrLen  = FTypeGraph::dNoInit;
+    double dDiametrStep = FTypeGraph::dNoInit;
 
-    double dMinSpanTree = FGraphType::dNoInit;
-    double dMaxSpanTree = FGraphType::dNoInit;
+    double dMinSpanTree = FTypeGraph::dNoInit;
+    double dMaxSpanTree = FTypeGraph::dNoInit;
 
     vector<int>
         arrLocalQuarAllPairDistance;    // Локальное квартильное распределение
 
-    double dGraphAllScore   = FGraphType::dNoInit;
-    int    iGraphAmountDisc = int(FGraphType::dNoInit);
-    double dDense           = FGraphType::dNoInit;
+    double dGraphAllScore   = FTypeGraph::dNoInit;
+    int    iGraphAmountDisc = int(FTypeGraph::dNoInit);
+    double dDense           = FTypeGraph::dNoInit;
 
     map<ETypeDisc, int>    mapGraphAmountTypeDisc;
     map<ETypeDisc, double> mapGraphCreditsTypeDisc;
@@ -69,15 +91,15 @@ struct FGraphType
 
     vector<vector<double>> arrAllDistance;
 
-    int iComponent = int(FGraphType::dNoInit);
+    int iComponent = int(FTypeGraph::dNoInit);
 };
 
 struct FGraph
 {
-    static const int    iCommon;
-    static const int    iAlt;
-    static const int    iReverse;
-    static const double dAllScoreNotEqualError;
+    //static const int    iCommon;
+    //static const int    iAlt;
+    //static const int    iReverse;
+    //static const double dAllScoreNotEqualError;
 
     // Инверсия зависимости
     explicit FGraph(shared_ptr<FCurricula> _ptrTree);
@@ -86,7 +108,7 @@ struct FGraph
     // заполнен
     void Create();
 
-    void CalcAllScoreAndAmount(FGraphType& fGraph);
+    void CalcAllScoreAndAmount(FTypeGraph& fGraph);
 
     void CalcMinMaxWeight(double&                           dResult,
                           const vector<pair<wstring, int>>& fCurrentNode,
@@ -119,7 +141,7 @@ struct FGraph
         const vector<vector<pair<int, double>>>& fCurrentAdj,
         auto cmp);    // Высчитываем минимальное остовное дерево за O(m log(n))
 
-    map<int, FGraphType>
+    map<ETypeGraph, FTypeGraph>
         mapGraph;    // Тип зависит от версии графа, сейчас iCommon - обычный,
                      // iAlt - альтернативный, iReverse - Обратный
 
@@ -150,5 +172,5 @@ private:
 
     void GenerateCourseGraph();    // Графы для каждого курса по отдельности
 
-    void CountAllMetric(int iTypeGraph);
+    void CountAllMetric(ETypeGraph eTypeGraph);
 };

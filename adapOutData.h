@@ -4,7 +4,7 @@
 struct FGlobal;
 struct FCurricula;
 struct FTreeMetric;
-struct FGraphType;
+struct FTypeGraph;
 
 // Куда производится вывод (на главную горизонтально, или в побочные файлы
 // вертикально)

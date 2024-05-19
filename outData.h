@@ -5,7 +5,8 @@
 struct FGlobal;
 struct FCurricula;
 struct FTreeMetric;
-struct FGraphType;
+struct FTypeGraph;
+enum ETypeGraph;
 struct FOutData;
 
 // Куда производится вывод (на главную горизонтально, или в побочные файлы
@@ -80,7 +81,7 @@ private:
     // всех УП FSolve
     // Метрики графового представления УП
     void CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
-                                const int&              iGraphType);
+                                const ETypeGraph&       eGraphType);
 
     // Данные про дерево компетенций УП
     void OutAddInfo(string sName, string sPath, shared_ptr<FCurricula> ptrTree);
@@ -124,17 +125,17 @@ private:
                        const bool& bIsConsider, FCorridorAdapter& fSaveData);
 
     void CreateTotalInfo(vector<vector<string>>& arrReturnData,
-                         const shared_ptr<FGraphType>
+                         const shared_ptr<FTypeGraph>
                                          fGraph,
                          const EOutType& eOutType);
 
     void CreateTotalInfo(vector<double>& arrReturnDataMetrics,
-                         const shared_ptr<FGraphType>
+                         const shared_ptr<FTypeGraph>
                                          fGraph,
                          const EOutType& eOutType);
 
     void CreateTotalInfo(vector<string>& arrReturnDataHeader,
-                         const shared_ptr<FGraphType>
+                         const shared_ptr<FTypeGraph>
                                          fGraph,
                          const EOutType& eOutType);
 
@@ -208,11 +209,11 @@ private:
             ptrMetric,
         int iDeep);    // Возвращает Актуальное значение y
 
-    vector<string> CreateCommonNameLabel(const int& iGraphType,
+    vector<string> CreateCommonNameLabel(const ETypeGraph& eGraphType,
                                          shared_ptr<FCurricula>
                                              fCurricula);
 
-    vector<string> CreateTag(const int& iGraphType,
+    vector<string> CreateTag(const ETypeGraph& eGraphType,
                              shared_ptr<FCurricula>
                                   fCurricula,
                              bool bCheckTag = true);

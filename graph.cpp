@@ -5,14 +5,15 @@
 
 #include "formulaParser.h"
 
-const int FGraph::iCommon =
-    -1;    // Так как 0 - ... зарезервированы для графов по курсам
-const int    FGraph::iAlt                   = -2;
-const int    FGraph::iReverse               = -3;
-const double FGraph::dAllScoreNotEqualError = -10;
+//Теперь в Enum
+//const int FGraph::iCommon =
+//    -1;    // Так как 0 - ... зарезервированы для графов по курсам
+//const int    FGraph::iAlt                   = -2;
+//const int    FGraph::iReverse               = -3;
+//const double FGraph::dAllScoreNotEqualError = -10;
 
-const double FGraphType::dNoInit = -2e4;
-const double FGraphType::dINF    = 1e8;
+const double FTypeGraph::dNoInit = -2e4;
+const double FTypeGraph::dINF    = 1e8;
 
 // Инверсия зависимости
 FGraph::FGraph(shared_ptr<FCurricula> _ptrTree) : ptrTree(_ptrTree)
@@ -37,7 +38,7 @@ void FGraph::Create()
     // Создание обрартного графа, в котором компетенции - это вершины
     GenerateReverseGraph();
 
-    if (mapGraph[FGraph::iAlt].fAdjList.size() != 0)    // Т.е альт граф создан
+    if (mapGraph[ETypeGraph::ETG_Alt].fAdjList.size() != 0)    // Т.е альт граф создан
     {
         GenerateCourseGraph();
     }
@@ -50,7 +51,7 @@ void FGraph::Create()
         if (bArrIsSolveGraphMetric.size() > 0)
         {
             if (bArrIsSolveGraphMetric[0])
-                CountAllMetric(FGraph::iCommon);
+                CountAllMetric(ETypeGraph::ETG_Common);
             // Проверка будет выполнена только в том случае, если нет
             // принудительно исключённых дисциплин
             /*if (ptrTree->dAllSumScore !=
@@ -62,14 +63,14 @@ void FGraph::Create()
 
         if (bArrIsSolveGraphMetric.size() > 1)
             if (bArrIsSolveGraphMetric[1])
-                CountAllMetric(FGraph::iAlt);
+                CountAllMetric(ETypeGraph::ETG_Alt);
 
         if (bArrIsSolveGraphMetric.size() > 2)
             if (bArrIsSolveGraphMetric[2])
             {
                 for (int iCourse = 0; iCourse < this->ptrTree->iAmountCourse;
                      ++iCourse)
-                    CountAllMetric(iCourse);
+                    CountAllMetric(ETypeGraph(iCourse));
             }
     }
     catch (...)
@@ -78,54 +79,54 @@ void FGraph::Create()
     }
 }
 
-void FGraph::CountAllMetric(int iTypeGraph)
+void FGraph::CountAllMetric(ETypeGraph eTypeGraph)
 {
-    CalcAllScoreAndAmount(mapGraph[iTypeGraph]);
+    CalcAllScoreAndAmount(mapGraph[eTypeGraph]);
 
 #pragma region Weight
-    CalcMinMaxWeight(mapGraph[iTypeGraph].dMinDiscScore,
-                     mapGraph[iTypeGraph].arrRel,
+    CalcMinMaxWeight(mapGraph[eTypeGraph].dMinDiscScore,
+                     mapGraph[eTypeGraph].arrRel,
                      std::less<double>());
-    CalcMinMaxWeight(mapGraph[iTypeGraph].dMaxDiscScore,
-                     mapGraph[iTypeGraph].arrRel,
+    CalcMinMaxWeight(mapGraph[eTypeGraph].dMaxDiscScore,
+                     mapGraph[eTypeGraph].arrRel,
                      std::greater<double>());
 #pragma endregion
 #pragma region Edge
-    CalcMinMaxEdge(mapGraph[iTypeGraph].dMinRib,
-                   mapGraph[iTypeGraph].fAdjList,
+    CalcMinMaxEdge(mapGraph[eTypeGraph].dMinRib,
+                   mapGraph[eTypeGraph].fAdjList,
                    std::less<double>());
-    CalcMinMaxEdge(mapGraph[iTypeGraph].dMaxRib,
-                   mapGraph[iTypeGraph].fAdjList,
+    CalcMinMaxEdge(mapGraph[eTypeGraph].dMaxRib,
+                   mapGraph[eTypeGraph].fAdjList,
                    std::greater<double>());
 #pragma endregion
 #pragma region DiametrAndComp
-    CalcDiametrAndComp(mapGraph[iTypeGraph].dDiametrLen,
-                       mapGraph[iTypeGraph].iComponent,
-                       mapGraph[iTypeGraph].fAdjList,
+    CalcDiametrAndComp(mapGraph[eTypeGraph].dDiametrLen,
+                       mapGraph[eTypeGraph].iComponent,
+                       mapGraph[eTypeGraph].fAdjList,
                        true);
-    CalcDiametrAndComp(mapGraph[iTypeGraph].dDiametrStep,
-                       mapGraph[iTypeGraph].iComponent,
-                       mapGraph[iTypeGraph].fAdjList,
+    CalcDiametrAndComp(mapGraph[eTypeGraph].dDiametrStep,
+                       mapGraph[eTypeGraph].iComponent,
+                       mapGraph[eTypeGraph].fAdjList,
                        false);
 #pragma endregion
 #pragma region MST
-    CalculateMST(mapGraph[iTypeGraph].dMinSpanTree,
-                 mapGraph[iTypeGraph].fAdjList,
+    CalculateMST(mapGraph[eTypeGraph].dMinSpanTree,
+                 mapGraph[eTypeGraph].fAdjList,
                  std::less<pair<double, pair<int, int>>>());
-    CalculateMST(mapGraph[iTypeGraph].dMaxSpanTree,
-                 mapGraph[iTypeGraph].fAdjList,
+    CalculateMST(mapGraph[eTypeGraph].dMaxSpanTree,
+                 mapGraph[eTypeGraph].fAdjList,
                  std::greater<pair<double, pair<int, int>>>());
 #pragma endregion
 
-    CalculateAllPairDistance(mapGraph[iTypeGraph].arrAllDistance,
-                             mapGraph[iTypeGraph].fAdjList);
+    CalculateAllPairDistance(mapGraph[eTypeGraph].arrAllDistance,
+                             mapGraph[eTypeGraph].fAdjList);
 
     CalculateLocalQuarAllPairDistance(
-        mapGraph[iTypeGraph].arrLocalQuarAllPairDistance,
-        mapGraph[iTypeGraph].arrAllDistance);
+        mapGraph[eTypeGraph].arrLocalQuarAllPairDistance,
+        mapGraph[eTypeGraph].arrAllDistance);
 }
 
-void FGraph::CalcAllScoreAndAmount(FGraphType& fGraph)
+void FGraph::CalcAllScoreAndAmount(FTypeGraph& fGraph)
 {
     const int& iSoManyComp =
         this->ptrTree->ptrGlobal->ptrConfig->GetISoMachComp();
@@ -134,25 +135,28 @@ void FGraph::CalcAllScoreAndAmount(FGraphType& fGraph)
     fGraph.iGraphAmountDisc = 0;    // Отчёт от нуля
     fGraph.dGraphAllScore   = 0;    // Отчёт от нуля
 
-    for (const auto& [l, r] : fGraph.arrRel)
+    for (const auto& [id, iCourse] : fGraph.arrRel)
     {
-        const auto& fDisc     = ptrTree->mapNoIgnoreDisc[l];
-        double      dCurScore = FGraphType::dNoInit;
+        const auto& fDisc     = ptrTree->mapNoIgnoreDisc[id];
+        double      dCurScore = FTypeGraph::dNoInit;
 
-        if (r == FGraph::iCommon)    // Значит считаем все дисциплины полностью,
+        if (ETypeGraph(iCourse) == ETypeGraph::ETG_Common)    // Значит считаем
+                                                            // все
+                                                  // дисциплины
+                                            // полностью,
                                      // а не по курсам
         {
             dCurScore = fDisc->dSumScore;
         }
         else
         {
-            if (fDisc->mapCourseScore.count(r))
-                dCurScore = fDisc->mapCourseScore[r];
+            if (fDisc->mapCourseScore.count(iCourse))
+                dCurScore = fDisc->mapCourseScore[iCourse];
         }
-        if (dCurScore == FGraphType::dNoInit)
+        if (dCurScore == FTypeGraph::dNoInit)
         {
             ptrTree->ptrGlobal->ptrError->ErrorGraphNoInitWeightDisc(
-                this->ptrTree->sNamePlan, l);
+                this->ptrTree->sNamePlan, id);
             continue;
         }
         fGraph.dGraphAllScore += dCurScore;
@@ -164,7 +168,7 @@ void FGraph::CalcAllScoreAndAmount(FGraphType& fGraph)
         if (fDisc->mapComp.size() == 0)
         {
             ptrTree->ptrGlobal->ptrError->ErrorGraphZeroComp(
-                this->ptrTree->sNamePlan, l);
+                this->ptrTree->sNamePlan, id);
             continue;
         }
         else if (fDisc->mapComp.size() >= iSoManyComp)
@@ -187,7 +191,7 @@ void FGraph::CalcAllScoreAndAmount(FGraphType& fGraph)
 
     if (N <= 1)
     {
-        fGraph.dDense = FGraphType::dNoInit;
+        fGraph.dDense = FTypeGraph::dNoInit;
     }
     else
     {
@@ -200,13 +204,13 @@ void FGraph::CalcMinMaxWeight(double&                           dResult,
                               auto                              cmp)
 {
     // Подсчёт мин макс веса вершины (Min-Max DiscScore)
-    dResult = FGraphType::dNoInit;
+    dResult = FTypeGraph::dNoInit;
     for (const auto& [l, r] : fCurrentNode)
     {
         const auto& fDisc     = ptrTree->mapNoIgnoreDisc[l];
-        double      dCurScore = FGraphType::dNoInit;
+        double      dCurScore = FTypeGraph::dNoInit;
 
-        if (r == FGraph::iCommon)    // Значит считаем все дисциплины полностью,
+        if (r == ETypeGraph::ETG_Common)    // Значит считаем все дисциплины полностью,
                                      // а не по курсам
         {
             dCurScore = fDisc->dSumScore;
@@ -217,7 +221,7 @@ void FGraph::CalcMinMaxWeight(double&                           dResult,
                 dCurScore = fDisc->mapCourseScore[r];
         }
 
-        if (dCurScore == FGraphType::dNoInit)
+        if (dCurScore == FTypeGraph::dNoInit)
         {
             ptrTree->ptrGlobal->ptrError->ErrorGraphNoInitWeightDisc(
                 this->ptrTree->sNamePlan, l);
@@ -228,7 +232,7 @@ void FGraph::CalcMinMaxWeight(double&                           dResult,
             ptrTree->ptrGlobal->ptrError->ErrorGraphZeroValue(
                 this->ptrTree->sNamePlan, l);
 
-        if (dResult == FGraphType::dNoInit)
+        if (dResult == FTypeGraph::dNoInit)
         {
             dResult = dCurScore;
         }
@@ -245,13 +249,13 @@ void FGraph::CalcMinMaxEdge(
     const vector<vector<pair<int, double>>>& fCurrentAdj,
     auto                                     cmp)
 {
-    dResult = FGraphType::dNoInit;
+    dResult = FTypeGraph::dNoInit;
 
     for (const auto& it : fCurrentAdj)
     {
         for (const auto& [iDest, dIdge] : it)
         {
-            if (dResult == FGraphType::dNoInit)
+            if (dResult == FTypeGraph::dNoInit)
             {
                 dResult = dIdge;
             }
@@ -265,14 +269,14 @@ void FGraph::CalcMinMaxEdge(
 
 void FGraph::GenerateReverseGraph()
 {
-    FGraphType& fGraph = mapGraph[iReverse];
+    FTypeGraph& fGraph = mapGraph[ETypeGraph::ETG_Reverse];
 
     int i = -1;
     for (const auto& sKeyIt : ptrTree->fAllComp)
     {
         ++i;
         wstring wsKeyIt = ptrTree->ptrGlobal->ConwertToWstring(sKeyIt);
-        fGraph.mapReversRel[{ wsKeyIt, FGraph::iReverse }] = i;
+        fGraph.mapReversRel[{ wsKeyIt, ETypeGraph::ETG_Reverse }] = i;
     }
 
     int n;
@@ -295,7 +299,7 @@ void FGraph::GenerateReverseGraph()
         {
             wstring wsComp  = ptrTree->ptrGlobal->ConwertToWstring(sComp);
             double& dWeight = fGraph.arrNodeWeight[fGraph.mapReversRel[{
-                wsComp, FGraph::iReverse }]];
+                wsComp, ETypeGraph::ETG_Reverse }]];
 
             double dAddScore = it->dSumScore;
             if (ptrTree->ptrGlobal->ptrConfig->GetBIsNormalizeScoreDisc())
@@ -355,7 +359,7 @@ void FGraph::GenerateReverseGraph()
 
 void FGraph::GenerateGraph()
 {
-    FGraphType& fGraph = mapGraph[iCommon];
+    FTypeGraph& fGraph = mapGraph[ETypeGraph::ETG_Common];
 
     int i;
 
@@ -364,7 +368,7 @@ void FGraph::GenerateGraph()
     {
         ++i;
         // arrRel[i] = key;
-        fGraph.mapReversRel[{ key, FGraph::iCommon }] =
+        fGraph.mapReversRel[{ key, ETypeGraph::ETG_Common }] =
             i;    // FGraph::iCommon - это заглушка (или некий коментарий к
                   // дисциплине) В данной заглушке предполагалось записывать
                   // номер курса
@@ -437,7 +441,7 @@ void FGraph::GenerateGraph()
 
 void FGraph::GenerateAltGraph()
 {
-    FGraphType& fGraph = mapGraph[iAlt];
+    FTypeGraph& fGraph = mapGraph[ETypeGraph::ETG_Alt];
 
     int i;
     i = -1;
@@ -575,12 +579,12 @@ void FGraph::GenerateCourseGraph()
                                              // (локальная для данного курса)
         int iSize       = 0;
         int iRealNumber = -1;
-        for (auto& it : mapGraph[FGraph::iAlt].arrRel)
+        for (auto& it : mapGraph[ETypeGraph::ETG_Alt].arrRel)
         {
             ++iRealNumber;
             if (it.second == iCourse)
             {
-                mapGraph[iCourse].mapReversRel[it] = iSize;
+                mapGraph[ETypeGraph(iCourse)].mapReversRel[it] = iSize;
                 mapLabelAccordance[iRealNumber]    = iSize;
                 ++iSize;
             }
@@ -589,28 +593,29 @@ void FGraph::GenerateCourseGraph()
         // Сохраняем вес каждой вершины
         {
             int i = -1;
-            mapGraph[iCourse].arrNodeWeight.resize(iSize);
+            mapGraph[ETypeGraph(iCourse)].arrNodeWeight.resize(iSize);
             for (auto& it : mapLabelAccordance)
             {
                 ++i;
-                mapGraph[iCourse].arrNodeWeight[i] =
-                    mapGraph[FGraph::iAlt].arrNodeWeight[it.first];
+                mapGraph[ETypeGraph(iCourse)].arrNodeWeight[i] =
+                    mapGraph[ETypeGraph::ETG_Alt].arrNodeWeight[it.first];
             }
         }
 
-        mapGraph[iCourse].fAdjList.resize(iSize);
-        mapGraph[iCourse].arrRel.resize(iSize);
+        mapGraph[ETypeGraph(iCourse)].fAdjList.resize(iSize);
+        mapGraph[ETypeGraph(iCourse)].arrRel.resize(iSize);
         // Сопостовление в обратную сторону
-        for (const auto& [key, val] : mapGraph[iCourse].mapReversRel)
-            mapGraph[iCourse].arrRel[val] = key;
+        for (const auto& [key, val] :
+             mapGraph[ETypeGraph(iCourse)].mapReversRel)
+            mapGraph[ETypeGraph(iCourse)].arrRel[val] = key;
 
         for (auto& it : mapLabelAccordance)
         {
-            for (auto& et : mapGraph[FGraph::iAlt].fAdjList[it.first])
+            for (auto& et : mapGraph[ETypeGraph::ETG_Alt].fAdjList[it.first])
             {
                 if (mapLabelAccordance.count(et.first))
                 {
-                    mapGraph[iCourse].fAdjList[it.second].push_back(
+                    mapGraph[ETypeGraph(iCourse)].fAdjList[it.second].push_back(
                         { mapLabelAccordance[et.first], et.second });
                 }
             }
@@ -640,12 +645,14 @@ void FGraph::CalculateLocalQuarAllPairDistance(
     {
         for (int j = i + 1; j < N; ++j)
         {
-            if (arrAllDistance[i][j] == FGraphType::dINF)
+            if (arrAllDistance[i][j] == FTypeGraph::dINF)
             {
                 ++iAmountNoLink;
                 continue;
             }
             arrPathLen.push_back(arrAllDistance[i][j]);
+
+
         }
     }
 
@@ -689,7 +696,7 @@ void FGraph::CalculateAllPairDistance(
     const vector<vector<pair<int, double>>>& fCurrentAdj)
 {
     const int N = fCurrentAdj.size();
-    arrAllDistance.assign(N, vector<double>(N, FGraphType::dINF));
+    arrAllDistance.assign(N, vector<double>(N, FTypeGraph::dINF));
 
     for (int L = 0; L < N; ++L)
     {

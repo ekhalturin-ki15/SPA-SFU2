@@ -221,7 +221,7 @@ namespace TestFSolve
         shared_ptr<FCurricula> ptrFirst;
         shared_ptr<FCurricula> ptrSecond;
         shared_ptr<FCurricula> ptrThird;
-        int                    iCommon;
+        ETypeGraph             eCommon;
 
     public:
         TestFGraph()
@@ -258,7 +258,7 @@ namespace TestFSolve
             ptrFirst  = ptrGlobal->ptrSolve->arrDisc.front();
             ptrSecond = ptrGlobal->ptrSolve->arrDisc.at(1);
             ptrThird  = ptrGlobal->ptrSolve->arrDisc.at(2);
-            iCommon   = ptrFirst->ptrGraph->iCommon;
+            eCommon   = ETypeGraph::ETG_Common;
         }
 
         TEST_METHOD(InitGraph)
@@ -285,8 +285,8 @@ namespace TestFSolve
             {
                 if (i)
                     sActual += " ";
-                sActual +=
-                    to_string(ptrThis->ptrGraph->mapGraph[i].iGraphAmountDisc);
+                sActual += to_string(
+                    ptrThis->ptrGraph->mapGraph[ETypeGraph(i)].iGraphAmountDisc);
             }
             Assert::AreEqual("2 2 3 0", sActual.c_str());
         }
@@ -299,8 +299,8 @@ namespace TestFSolve
             {
                 if (i)
                     sActual += " ";
-                sActual +=
-                    to_string(ptrThis->ptrGraph->mapGraph[i].iGraphAmountDisc);
+                sActual += to_string(ptrThis->ptrGraph->mapGraph[ETypeGraph(i)]
+                                         .iGraphAmountDisc);
             }
             Assert::AreEqual("2 2 2 2", sActual.c_str());
         }
@@ -313,8 +313,8 @@ namespace TestFSolve
             {
                 if (i)
                     sActual += " ";
-                sActual +=
-                    to_string(ptrThis->ptrGraph->mapGraph[i].iGraphAmountDisc);
+                sActual += to_string(ptrThis->ptrGraph->mapGraph[ETypeGraph(i)]
+                                         .iGraphAmountDisc);
             }
             Assert::AreEqual("2 3 4 0", sActual.c_str());
         }
@@ -326,14 +326,14 @@ namespace TestFSolve
             // файла config.xlsx "Игнорируемые предметы"
             auto& ptrThis = ptrThird;
             Assert::AreEqual(
-                9, ptrThis->ptrGraph->mapGraph[iCommon].iGraphAmountDisc);
+                9, ptrThis->ptrGraph->mapGraph[eCommon].iGraphAmountDisc);
         }
 
         TEST_METHOD(FirstDenseCommon)
         {
             auto& ptrThis = ptrFirst;
             // Проверено в Gephi
-            Assert::AreEqual(0.238, ptrThis->ptrGraph->mapGraph[iCommon].dDense,
+            Assert::AreEqual(0.238, ptrThis->ptrGraph->mapGraph[eCommon].dDense,
                              0.01);
         }
 
@@ -341,14 +341,14 @@ namespace TestFSolve
         {
             auto& ptrThis = ptrSecond;
             // Полносвязный граф
-            Assert::AreEqual(1., ptrThis->ptrGraph->mapGraph[iCommon].dDense);
+            Assert::AreEqual(1., ptrThis->ptrGraph->mapGraph[eCommon].dDense);
         }
 
         TEST_METHOD(ThirdDenseCommon)
         {
             auto& ptrThis = ptrThird;
             // Проверено в Gephi
-            Assert::AreEqual(0.222, ptrThis->ptrGraph->mapGraph[iCommon].dDense,
+            Assert::AreEqual(0.222, ptrThis->ptrGraph->mapGraph[eCommon].dDense,
                              0.01);
         }
 
@@ -357,7 +357,7 @@ namespace TestFSolve
             auto& ptrThis = ptrFirst;
             // 3 компонентный граф
             Assert::AreEqual(2.,
-                             ptrThis->ptrGraph->mapGraph[iCommon].dDiametrStep);
+                             ptrThis->ptrGraph->mapGraph[eCommon].dDiametrStep);
         }
 
         TEST_METHOD(ThirdDiametrStepCommon)
@@ -365,21 +365,21 @@ namespace TestFSolve
             auto& ptrThis = ptrThird;
             // Полносвязный граф
             Assert::AreEqual(2.,
-                             ptrThis->ptrGraph->mapGraph[iCommon].dDiametrStep);
+                             ptrThis->ptrGraph->mapGraph[eCommon].dDiametrStep);
         }
 
         TEST_METHOD(FirstComponentCommon)
         {
             auto& ptrThis = ptrFirst;
             Assert::AreEqual(3,
-                             ptrThis->ptrGraph->mapGraph[iCommon].iComponent);
+                             ptrThis->ptrGraph->mapGraph[eCommon].iComponent);
         }
 
         TEST_METHOD(ThirdComponentCommon)
         {
             auto& ptrThis = ptrThird;
             Assert::AreEqual(4,
-                             ptrThis->ptrGraph->mapGraph[iCommon].iComponent);
+                             ptrThis->ptrGraph->mapGraph[eCommon].iComponent);
         }
     };
 
