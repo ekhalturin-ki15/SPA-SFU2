@@ -6,7 +6,7 @@ struct FGlobal;
 struct FCurricula;
 struct FTreeMetric;
 struct FTypeGraph;
-enum ETypeGraph;
+struct ETypeGraph;
 struct FOutData;
 
 // Куда производится вывод (на главную горизонтально, или в побочные файлы

@@ -9,24 +9,37 @@ struct FCurricula;
 
 // Тип зависит от версии графа, сейчас ETG_Common - обычный,
 // ETG_Alt - альтернативный, ETG_Reverse - Обратный
-enum ETypeGraph : int
+struct ETypeGraph
 {
-    ETG_Common  = -1,
-    ETG_Alt     = -2,
-    ETG_Reverse = -3,
-    ETG_0Course = 0, //Нумерация с нуля
-    ETG_1Course = 1, //Нумерация с нуля
-    ETG_2Course = 2, //Нумерация с нуля
-    ETG_3Course = 3, //Нумерация с нуля
-    ETG_4Course = 4, //Нумерация с нуля
-    ETG_5Course = 5, //Нумерация с нуля
-    ETG_6Course = 6, //Нумерация с нуля
-    ETG_7Course = 7, //Нумерация с нуля
-    ETG_8Course = 8, //Нумерация с нуля
-    ETG_9Course = 9, //Нумерация с нуля
-    ETG_10Course = 10, //Нумерация с нуля
-    ETG_11Course = 11, //Нумерация с нуля
-    ETG_Size = 12
+    int iType;
+
+    ETypeGraph() : iType(0) {};
+
+    ETypeGraph(int iDefaultType) : iType(iDefaultType)
+    {
+    }
+
+    int Get() const
+    {
+        return iType;
+    }
+
+    static const ETypeGraph ETG_Common;
+    static const ETypeGraph ETG_Alt;
+    static const ETypeGraph ETG_Reverse;
+
+    bool operator<(const ETypeGraph& eRightType) const
+    {
+        return this->iType < eRightType.iType;
+    }
+    bool operator==(const ETypeGraph& eRightType) const
+    {
+        return this->iType == eRightType.iType;
+    }
+    void operator=(const ETypeGraph& eRightType)
+    {
+        this->iType = eRightType.iType;
+    }
 };
 
 // Общие данные для графов (например, веса всех ребёр всей выборки и пр.)
@@ -37,7 +50,6 @@ struct FGraphAllData
     map<ETypeGraph, vector<double>>
         mapGraphQuarAllWeigth;    // Индекс обозначает тип графа (обратный, за
                                   // опр. курс и т. д.)
-
 private:
     // FSolve* ptrSolve; //Позднее связывание, но не требуется, так как могу
     // обратиться через Global
@@ -78,8 +90,15 @@ struct FTypeGraph
     double dMinSpanTree = FTypeGraph::dNoInit;
     double dMaxSpanTree = FTypeGraph::dNoInit;
 
+    //Квартильное разбиение
+    // Выборка разбития по квартилям
+    vector<double> arrQuarMinPathLen;
     vector<int>
         arrLocalQuarAllPairDistance;    // Локальное квартильное распределение
+
+    vector<int>
+        arrGlobalQuarAllPairDistance;    // Локальное квартильное распределение
+    
 
     double dGraphAllScore   = FTypeGraph::dNoInit;
     int    iGraphAmountDisc = int(FTypeGraph::dNoInit);
@@ -108,6 +127,9 @@ struct FGraph
     // заполнен
     void Create();
 
+     // Использовать только после вызова Create у ptrTree
+    void CreateAfter();
+
     void CalcAllScoreAndAmount(FTypeGraph& fGraph);
 
     void CalcMinMaxWeight(double&                           dResult,
@@ -126,9 +148,19 @@ struct FGraph
                             // связности за O(n log(n))
 
     void CalculateLocalQuarAllPairDistance(
+        vector<double>& arrTotalQuarAllWeigth,
+        vector<double>&
+            arrLocalQuarMinPathLen,
         vector<int>& arrLocalQuarAmount,
         const vector<vector<double>>&
             arrAllDistance);    // Считаем квартильное распределение в частности
+
+    void CalculateTotalQuarAllPairDistance(
+        vector<int>&          arrTotalQuarAmount,
+        const vector<double>& arrTotalQuarAllWeigth,
+        const vector<double>&
+            arrLocalQuarMinPathLen);    // Считаем квартильное распределение в
+                                        // Общем
 
     void CalculateAllPairDistance(
         vector<vector<double>>& arrAllDistance,
@@ -173,4 +205,7 @@ private:
     void GenerateCourseGraph();    // Графы для каждого курса по отдельности
 
     void CountAllMetric(ETypeGraph eTypeGraph);
+
+    //После вызова Create для всех ptrTree
+    void CountAfterAllMetric(ETypeGraph eTypeGraph);
 };

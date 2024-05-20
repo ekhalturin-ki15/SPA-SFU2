@@ -5,12 +5,14 @@
 
 #include "formulaParser.h"
 
-//Теперь в Enum
-//const int FGraph::iCommon =
-//    -1;    // Так как 0 - ... зарезервированы для графов по курсам
-//const int    FGraph::iAlt                   = -2;
-//const int    FGraph::iReverse               = -3;
-//const double FGraph::dAllScoreNotEqualError = -10;
+// Теперь в Enum
+// const int FGraph::iCommon =
+//     -1;    // Так как 0 - ... зарезервированы для графов по курсам
+// const int    FGraph::iAlt                   = -2;
+// const int    FGraph::iReverse               = -3;
+const ETypeGraph ETypeGraph::ETG_Common(-1);
+const ETypeGraph ETypeGraph::ETG_Alt(-2);
+const ETypeGraph ETypeGraph::ETG_Reverse(-3);
 
 const double FTypeGraph::dNoInit = -2e4;
 const double FTypeGraph::dINF    = 1e8;
@@ -38,7 +40,8 @@ void FGraph::Create()
     // Создание обрартного графа, в котором компетенции - это вершины
     GenerateReverseGraph();
 
-    if (mapGraph[ETypeGraph::ETG_Alt].fAdjList.size() != 0)    // Т.е альт граф создан
+    if (mapGraph[ETypeGraph::ETG_Alt].fAdjList.size() !=
+        0)    // Т.е альт граф создан
     {
         GenerateCourseGraph();
     }
@@ -52,13 +55,6 @@ void FGraph::Create()
         {
             if (bArrIsSolveGraphMetric[0])
                 CountAllMetric(ETypeGraph::ETG_Common);
-            // Проверка будет выполнена только в том случае, если нет
-            // принудительно исключённых дисциплин
-            /*if (ptrTree->dAllSumScore !=
-                mapGraph[FGraph::iCommon].dGraphAllScore)
-                this->ptrTree->ptrGlobal->ptrError->ErrorBadAllScore(
-                    FGraph::iCommon,
-                    FGraph::dAllScoreNotEqualError);*/
         }
 
         if (bArrIsSolveGraphMetric.size() > 1)
@@ -77,6 +73,49 @@ void FGraph::Create()
     {
         // Игнорируем ошибки, работаем как ни в чём не бывало
     }
+}
+
+void FGraph::CreateAfter()
+{
+    try
+    {
+        const auto& bArrIsSolveGraphMetric =
+            ptrTree->ptrGlobal->ptrConfig->bArrIsSolveGraphMetric;
+
+        if (bArrIsSolveGraphMetric.size() > 0)
+        {
+            if (bArrIsSolveGraphMetric[0])
+                CountAfterAllMetric(ETypeGraph::ETG_Common);
+        }
+
+        if (bArrIsSolveGraphMetric.size() > 1)
+            if (bArrIsSolveGraphMetric[1])
+                CountAfterAllMetric(ETypeGraph::ETG_Alt);
+
+        if (bArrIsSolveGraphMetric.size() > 2)
+            if (bArrIsSolveGraphMetric[2])
+            {
+                for (int iCourse = 0; iCourse < this->ptrTree->iAmountCourse;
+                     ++iCourse)
+                    CountAfterAllMetric(ETypeGraph(iCourse));
+            }
+    }
+    catch (...)
+    {
+        // Игнорируем ошибки, работаем как ни в чём не бывало
+    }
+}
+
+void FGraph::CountAfterAllMetric(ETypeGraph eTypeGraph)
+{
+    auto& arrTotal = ptrTree->ptrGlobal->ptrSolve->ptrGraphAllData
+                         ->mapGraphQuarAllWeigth[eTypeGraph];
+    sort(ALL(arrTotal));
+
+    CalculateTotalQuarAllPairDistance(
+        mapGraph[eTypeGraph].arrGlobalQuarAllPairDistance,
+        arrTotal,
+        mapGraph[eTypeGraph].arrQuarMinPathLen);
 }
 
 void FGraph::CountAllMetric(ETypeGraph eTypeGraph)
@@ -122,6 +161,9 @@ void FGraph::CountAllMetric(ETypeGraph eTypeGraph)
                              mapGraph[eTypeGraph].fAdjList);
 
     CalculateLocalQuarAllPairDistance(
+        ptrTree->ptrGlobal->ptrSolve->ptrGraphAllData
+            ->mapGraphQuarAllWeigth[eTypeGraph],
+        mapGraph[eTypeGraph].arrQuarMinPathLen,
         mapGraph[eTypeGraph].arrLocalQuarAllPairDistance,
         mapGraph[eTypeGraph].arrAllDistance);
 }
@@ -141,10 +183,10 @@ void FGraph::CalcAllScoreAndAmount(FTypeGraph& fGraph)
         double      dCurScore = FTypeGraph::dNoInit;
 
         if (ETypeGraph(iCourse) == ETypeGraph::ETG_Common)    // Значит считаем
-                                                            // все
-                                                  // дисциплины
-                                            // полностью,
-                                     // а не по курсам
+                                                              // все
+        // дисциплины
+        // полностью,
+        // а не по курсам
         {
             dCurScore = fDisc->dSumScore;
         }
@@ -210,8 +252,8 @@ void FGraph::CalcMinMaxWeight(double&                           dResult,
         const auto& fDisc     = ptrTree->mapNoIgnoreDisc[l];
         double      dCurScore = FTypeGraph::dNoInit;
 
-        if (r == ETypeGraph::ETG_Common)    // Значит считаем все дисциплины полностью,
-                                     // а не по курсам
+        if (r == ETypeGraph::ETG_Common)    // Значит считаем все дисциплины
+                                            // полностью, а не по курсам
         {
             dCurScore = fDisc->dSumScore;
         }
@@ -276,7 +318,7 @@ void FGraph::GenerateReverseGraph()
     {
         ++i;
         wstring wsKeyIt = ptrTree->ptrGlobal->ConwertToWstring(sKeyIt);
-        fGraph.mapReversRel[{ wsKeyIt, ETypeGraph::ETG_Reverse }] = i;
+        fGraph.mapReversRel[{ wsKeyIt, ETypeGraph::ETG_Reverse.Get() }] = i;
     }
 
     int n;
@@ -299,7 +341,7 @@ void FGraph::GenerateReverseGraph()
         {
             wstring wsComp  = ptrTree->ptrGlobal->ConwertToWstring(sComp);
             double& dWeight = fGraph.arrNodeWeight[fGraph.mapReversRel[{
-                wsComp, ETypeGraph::ETG_Reverse }]];
+                wsComp, ETypeGraph::ETG_Reverse.Get() }]];
 
             double dAddScore = it->dSumScore;
             if (ptrTree->ptrGlobal->ptrConfig->GetBIsNormalizeScoreDisc())
@@ -368,7 +410,7 @@ void FGraph::GenerateGraph()
     {
         ++i;
         // arrRel[i] = key;
-        fGraph.mapReversRel[{ key, ETypeGraph::ETG_Common }] =
+        fGraph.mapReversRel[{ key, ETypeGraph::ETG_Common.Get() }] =
             i;    // FGraph::iCommon - это заглушка (или некий коментарий к
                   // дисциплине) В данной заглушке предполагалось записывать
                   // номер курса
@@ -585,7 +627,7 @@ void FGraph::GenerateCourseGraph()
             if (it.second == iCourse)
             {
                 mapGraph[ETypeGraph(iCourse)].mapReversRel[it] = iSize;
-                mapLabelAccordance[iRealNumber]    = iSize;
+                mapLabelAccordance[iRealNumber]                = iSize;
                 ++iSize;
             }
         }
@@ -623,12 +665,56 @@ void FGraph::GenerateCourseGraph()
     }
 }
 
+// Версия для всей совокупности УП (в общем)
+void FGraph::CalculateTotalQuarAllPairDistance(
+    vector<int>&          arrTotalQuarAmount,
+    const vector<double>& arrTotalQuarAllWeigth,
+    const vector<double>&
+        arrLocalQuarMinPathLen)    // Считаем квартильное распределение в Общем
+{
+    int           iAmountQuar = ptrTree->ptrGlobal->ptrConfig->GetIAmountQuar();
+    const double& dTranc =
+        ptrTree->ptrGlobal->ptrConfig->GetDTruncQuarPathLen();
+
+    arrTotalQuarAmount.clear();
+    arrTotalQuarAmount.resize(iAmountQuar);
+
+    int iMinInd = arrTotalQuarAllWeigth.size() * dTranc;
+    int iMaxInd = arrTotalQuarAllWeigth.size() - iMinInd;
+    int N       = iMaxInd - iMinInd - 1;
+    int iQuarSize = N / iAmountQuar;
+
+    // Аномалии выносим в крайние квартили
+    arrTotalQuarAmount.front() += iMinInd;
+    arrTotalQuarAmount.back() += iMinInd;
+
+    int iNumQuar = 1;
+    for (int i = 0; i < arrLocalQuarMinPathLen.size(); ++i)
+    {
+        //Можно было и Бин. Поиск, но квартилей мало
+        //А лучше тегировать в общем массиве то, из какого УП вес и из какого типа графа
+        for (iNumQuar = 1; iNumQuar < iAmountQuar; ++iNumQuar)
+        {
+            if (arrLocalQuarMinPathLen[i] <=
+                arrTotalQuarAllWeigth[iQuarSize * iNumQuar])
+            {
+                ++arrTotalQuarAmount[iNumQuar - 1];
+                break;
+            }
+        }
+        if (iNumQuar == iAmountQuar)
+            ++arrTotalQuarAmount.back();
+    }
+}
+
 // Версия для одного конкретного УП (в частности)
 // Имеется версия для всей совокупности УП (в общем)
 // FGraph::CalculateTotalQuarAllPairDistance
 // которая Инициализируемая в CreateAfter
 void FGraph::CalculateLocalQuarAllPairDistance(
-    vector<int>& arrLocalQuarAmount,
+    vector<double>& arrTotalQuarAllWeigth,
+    vector<double>& arrLocalQuarMinPathLen,
+    vector<int>&    arrLocalQuarAmount,
     const vector<vector<double>>&
         arrAllDistance)    // Считаем квартильное распределение в частности
 {
@@ -637,9 +723,6 @@ void FGraph::CalculateLocalQuarAllPairDistance(
     const int N = arrAllDistance.size();
 
     int iAmountNoLink = 0;
-
-    // Усечение выборки разбития по квартилям
-    vector<double> arrPathLen;
 
     for (int i = 0; i < N; ++i)
     {
@@ -650,19 +733,20 @@ void FGraph::CalculateLocalQuarAllPairDistance(
                 ++iAmountNoLink;
                 continue;
             }
-            arrPathLen.push_back(arrAllDistance[i][j]);
+            arrLocalQuarMinPathLen.push_back(arrAllDistance[i][j]);
 
-
+            // Добавляем в общий пул для подсчёта квартилей по всей выборки
+            arrTotalQuarAllWeigth.push_back(arrAllDistance[i][j]);
         }
     }
 
-    sort(arrPathLen.begin(), arrPathLen.end());
+    sort(ALL(arrLocalQuarMinPathLen));
 
     const double& dTranc =
         ptrTree->ptrGlobal->ptrConfig->GetDTruncQuarPathLen();
 
-    int iMinInd = arrPathLen.size() * dTranc;
-    int iMaxInd = arrPathLen.size() - iMinInd - 1;
+    int iMinInd = arrLocalQuarMinPathLen.size() * dTranc;
+    int iMaxInd = arrLocalQuarMinPathLen.size() - iMinInd - 1;
 
     int iAmountQuar = ptrTree->ptrGlobal->ptrConfig->GetIAmountQuar();
     arrLocalQuarAmount.resize(iAmountQuar);
@@ -670,7 +754,8 @@ void FGraph::CalculateLocalQuarAllPairDistance(
     if (iMinInd > iMaxInd)
         return;
 
-    double dMinVal = arrPathLen[iMinInd], dMaxVal = arrPathLen[iMaxInd];
+    double dMinVal = arrLocalQuarMinPathLen[iMinInd],
+           dMaxVal = arrLocalQuarMinPathLen[iMaxInd];
     double dLenght = dMaxVal - dMinVal;
     // iAmountQuar
 
@@ -678,13 +763,13 @@ void FGraph::CalculateLocalQuarAllPairDistance(
     arrLocalQuarAmount.back() += iMinInd;
     for (int i = iMinInd; i <= iMaxInd; ++i)
     {
-        if (arrPathLen[i] == dMaxVal)
+        if (arrLocalQuarMinPathLen[i] == dMaxVal)
         {
             ++arrLocalQuarAmount.back();
             continue;
         }
 
-        double index = (arrPathLen[i] - dMinVal) / dLenght;
+        double index = (arrLocalQuarMinPathLen[i] - dMinVal) / dLenght;
         ++arrLocalQuarAmount[int(index * iAmountQuar)];
     }
 

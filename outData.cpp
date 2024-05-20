@@ -21,7 +21,7 @@ map<int, vector<pair<double, string>>> FCorridorAdapter::Take(const int& iSize)
     for (auto& [key, fData] : mapCorridorData)
     {
         auto& arrData = fData;
-        sort(arrData.begin(), arrData.end());
+        sort(ALL(arrData));
 
         mapReturn[key].resize(
             iSize,
@@ -129,8 +129,9 @@ void FCorridorAdapter::Add(int key, pair<double, string> fData)
 int FOutData::iSinglControll = 0;
 
 FOutData::FOutData(shared_ptr<FGlobal> _ptrGlobal)
-    : ptrGlobal(_ptrGlobal), iSizeOnlyAllow(0), 
-    arrMetricHead({ L"Всего ЗЕ в графе", L"Кол-во дисциплин в графе",
+    : ptrGlobal(_ptrGlobal),
+      iSizeOnlyAllow(0),
+      arrMetricHead({ L"Всего ЗЕ в графе", L"Кол-во дисциплин в графе",
                       L"Максимальное ЗЕ у дисциплины",
                       L"Минимальное ЗЕ у дисциплины", L"Максимальный вес ребра",
                       L"Минимальный вес ребра", L"Диаметр графа по расстоянию",
@@ -172,7 +173,8 @@ void FOutData::CreateTotalInfo(vector<double>& arrReturnDataMetrics,
     for (int iType = 0; iType < ETypeDisc::ETD_Size; ++iType)
     {
         if (fGraph->mapGraphCreditsTypeDisc.count(ETypeDisc(iType)))
-            arrResult.push_back(double(fGraph->mapGraphCreditsTypeDisc.find(ETypeDisc(iType))
+            arrResult.push_back(
+                double(fGraph->mapGraphCreditsTypeDisc.find(ETypeDisc(iType))
                            ->second));
         else
         {
@@ -225,9 +227,18 @@ void FOutData::CreateTotalInfo(vector<double>& arrReturnDataMetrics,
         }
     }
 
-    wstring wsRibLocalQuar = L"Локальное количество рёбер указанного квартиля";
-    if (ptrGlobal->ptrConfig->mapArrOutParams[wsRibLocalQuar].GetType(
+    wstring wsRibGlobalQuar = L"Количество рёбер указанного квартиля для всей выборки";
+    if (ptrGlobal->ptrConfig->mapArrOutParams[wsRibGlobalQuar].GetType(
             eOutType))
+    {
+        for (auto& it : fGraph->arrGlobalQuarAllPairDistance)
+        {
+            arrReturnDataMetrics.push_back(it);
+        }
+    }
+
+    wstring wsRibLocalQuar = L"Локальное количество рёбер указанного квартиля";
+    if (ptrGlobal->ptrConfig->mapArrOutParams[wsRibLocalQuar].GetType(eOutType))
     {
         for (auto& it : fGraph->arrLocalQuarAllPairDistance)
         {
@@ -288,17 +299,54 @@ void FOutData::CreateTotalInfo(vector<string>& arrReturnDataHeader,
         }
     }
 
-    wstring wsRibQuartile = L"Количество рёбер указанного квартиля";
-    if (ptrGlobal->ptrConfig->mapArrOutParams[wsRibQuartile].GetType(eOutType))
+    wstring wsRibGlobalQuartile = L"Количество рёбер указанного квартиля для всей выборки";
+    if (ptrGlobal->ptrConfig->mapArrOutParams[wsRibGlobalQuartile].GetType(
+            eOutType))
     {
+        // Вывод общих квартилей
+        int iAmountQuartile = -1;
+        for (auto& it : fGraph->arrGlobalQuarAllPairDistance)
+        {
+            ++iAmountQuartile;
+            string sAddedHead = ptrGlobal->ConwertToString(
+                ptrGlobal->ptrConfig->mapArrOutParams[wsRibGlobalQuartile]
+                    .GetName());
+
+            sAddedHead += ptrGlobal->ptrConfig->GetSSeparator();
+
+            sAddedHead += to_string(iAmountQuartile) +
+                          ptrGlobal->ptrConfig->GetSSeparator();
+            sAddedHead += ptrGlobal->ConwertToString(
+                ptrGlobal->ptrConfig
+                    ->mapArrOutParams
+                        [L"Суффикс после вывода квартиля общего для "
+                         L"выборки распределения весов рёбер"]
+                    .GetName());
+            // sAddedHead += ptrGlobal->ConwertToString(
+            //     ptrGlobal->ptrConfig->wsOutSufAmountComp);
+
+            arrReturnDataHeader.push_back(sAddedHead);
+        }
+    }
+
+
+    wstring wsRibLocalQuartile = L"Локальное количество рёбер указанного квартиля";
+    if (ptrGlobal->ptrConfig->mapArrOutParams[wsRibLocalQuartile].GetType(
+            eOutType))
+    {
+        
+
+         // Вывод локальных квартилей
         int iAmountQuartile = -1;
         for (auto& it : fGraph->arrLocalQuarAllPairDistance)
         {
             ++iAmountQuartile;
             string sAddedHead = ptrGlobal->ConwertToString(
-                ptrGlobal->ptrConfig->mapArrOutParams[wsRibQuartile].GetName());
+                ptrGlobal->ptrConfig->mapArrOutParams[wsRibLocalQuartile]
+                    .GetName());
 
             sAddedHead += ptrGlobal->ptrConfig->GetSSeparator();
+            //Последний квартиль отвечает за вывод отсутствующих путей
             if (iAmountQuartile == ptrGlobal->ptrConfig->GetIAmountQuar())
                 sAddedHead +=
                     "No" + ptrGlobal->ptrConfig->GetSSeparator() + "Path";
@@ -307,8 +355,7 @@ void FOutData::CreateTotalInfo(vector<string>& arrReturnDataHeader,
                           ptrGlobal->ptrConfig->GetSSeparator();
             sAddedHead += ptrGlobal->ConwertToString(
                 ptrGlobal->ptrConfig
-                    ->mapArrOutParams[L"Суффикс после вывода квартиля "
-                                      L"распределения весов рёбер"]
+                    ->mapArrOutParams[L"Суффикс после вывода квартиля локального распределения весов рёбер"]
                     .GetName());
             // sAddedHead += ptrGlobal->ConwertToString(
             //     ptrGlobal->ptrConfig->wsOutSufAmountComp);
@@ -362,7 +409,8 @@ void FOutData::CreateOnlyAllowedHeaderRow(vector<string>&        arrReturn,
     set<wstring> setOnlyAllow = { arrOnlyAllow.begin(), arrOnlyAllow.end() };
 
     int iAmountComp = 1;    // Так как предметы с 0-компетенциями исключаются
-    int iQuartile = 1;      // Номер квартиля
+    int iLocalQuartile = 1;      // Номер квартиля
+    int iGlobalQuartile = 1;      // Номер квартиля
     int i         = 0;
     for (const auto& it : arrParams)
     {
@@ -401,10 +449,24 @@ void FOutData::CreateOnlyAllowedHeaderRow(vector<string>&        arrReturn,
                             .GetName());
                 }
 
-                if (it == L"Количество рёбер указанного квартиля")
+                if (it == L"Количество рёбер указанного квартиля для всей выборки")
                 {
                     sOut += ptrGlobal->ptrConfig->GetSSeparator();
-                    if (iQuartile > ptrGlobal->ptrConfig->GetIAmountQuar())
+                    
+                    sOut += to_string(iGlobalQuartile++) +
+                            ptrGlobal->ptrConfig->GetSSeparator();
+                    
+                    sOut += ptrGlobal->ConwertToString(
+                        ptrGlobal->ptrConfig
+                            ->mapArrOutParams
+                                [L"Суффикс после вывода квартиля общего для выборки распределения весов рёбер"]
+                            .GetName());
+                }
+
+                if (it == L"Локальное количество рёбер указанного квартиля")
+                {
+                    sOut += ptrGlobal->ptrConfig->GetSSeparator();
+                    if (iLocalQuartile > ptrGlobal->ptrConfig->GetIAmountQuar())
                     {
                         sOut = "";
                         sOut += "No" + ptrGlobal->ptrConfig->GetSSeparator() +
@@ -412,13 +474,12 @@ void FOutData::CreateOnlyAllowedHeaderRow(vector<string>&        arrReturn,
                     }
                     else
                     {
-                        sOut += to_string(iQuartile++) +
+                        sOut += to_string(iLocalQuartile++) +
                                 ptrGlobal->ptrConfig->GetSSeparator();
                     }
                     sOut += ptrGlobal->ConwertToString(
                         ptrGlobal->ptrConfig
-                            ->mapArrOutParams[L"Суффикс после вывода квартиля "
-                                              L"распределения весов рёбер"]
+                            ->mapArrOutParams[L"Суффикс после вывода квартиля локального распределения весов рёбер"]
                             .GetName());
                 }
 
@@ -637,18 +698,19 @@ void FOutData::CreateAllCurriculaTotalData(
         arrAllResult.push_back(it->iYearStart);
         arrAllResult.push_back(it->iCodeUGSN);
 
-        //Extended
-        //arrAllResult.push_back(it->dAllSumScore);
+        // Extended
+        // arrAllResult.push_back(it->dAllSumScore);
         arrAllResult.push_back(it->arrETMAllSumScore[ETM_NoExtended]);
-        //arrAllResult.push_back(it->iExtendedAmountDisc);
+        // arrAllResult.push_back(it->iExtendedAmountDisc);
         arrAllResult.push_back(it->arrETMAmountDisc[ETM_NoExtended]);
 
         // Дисциплин факультативов, основных, по выбору  и т.д во всём УП ЗЕ
         {
             int iNumberType = -1;
-            for (auto& wsNameType : ptrGlobal->ptrConfig->GetArrTypeDiscCredits())
+            for (auto& wsNameType :
+                 ptrGlobal->ptrConfig->GetArrTypeDiscCredits())
             {
-                //redimer
+                // redimer
                 ++iNumberType;
                 arrAllResult.push_back(
                     it->mapETMTypeDisc[ETM_NoExtended][ETypeDisc(iNumberType)]
@@ -656,10 +718,12 @@ void FOutData::CreateAllCurriculaTotalData(
             }
         }
 
-        // Дисциплин факультативов, основных, по выбору  и т.д во всём УП количество
+        // Дисциплин факультативов, основных, по выбору  и т.д во всём УП
+        // количество
         {
             int iNumberType = -1;
-            for (auto& wsNameType : ptrGlobal->ptrConfig->GetArrTypeDiscAmount())
+            for (auto& wsNameType :
+                 ptrGlobal->ptrConfig->GetArrTypeDiscAmount())
             {
                 ++iNumberType;
                 arrAllResult.push_back(
@@ -723,17 +787,17 @@ void FOutData::CreateAllCurriculaTotalData(
 }
 
 void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
-                                      const ETypeGraph&              eTypeGraph)
+                                      const ETypeGraph&       eTypeGraph)
 {
-   /* const vector<wstring> arrMetricHead(
-        { L"Всего ЗЕ в графе", L"Кол-во дисциплин в графе",
-          L"Максимальное ЗЕ у дисциплины", L"Минимальное ЗЕ у дисциплины",
-          L"Максимальный вес ребра", L"Минимальный вес ребра",
-          L"Диаметр графа по расстоянию", L"Диаметр графа по количеству рёбер",
-          L"Количество компонент связности", L"Максимальное оставное дерево",
-          L"Минимальное оставное дерево", L"Плотность графа",
-          L"Количество факультативов", L"Количество основных дисциплин",
-          L"Количество дисциплин по выбору" });*/
+    /* const vector<wstring> arrMetricHead(
+         { L"Всего ЗЕ в графе", L"Кол-во дисциплин в графе",
+           L"Максимальное ЗЕ у дисциплины", L"Минимальное ЗЕ у дисциплины",
+           L"Максимальный вес ребра", L"Минимальный вес ребра",
+           L"Диаметр графа по расстоянию", L"Диаметр графа по количеству рёбер",
+           L"Количество компонент связности", L"Максимальное оставное дерево",
+           L"Минимальное оставное дерево", L"Плотность графа",
+           L"Количество факультативов", L"Количество основных дисциплин",
+           L"Количество дисциплин по выбору" });*/
 
     arrReturnData.clear();
     int i = 0;    // Задаём порядок вывода
@@ -752,9 +816,7 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
     wstring wsNameSoMachComp =
         L"Количество дисциплин, формирующих несколько компетенций";
 
-    wstring wsNameQuartileRib = L"Количество рёбер указанного квартиля";
-
-    // Вывод компетенций по количеству
+     // Вывод компетенций по количеству
     for (int iAmountComp = 1;
          iAmountComp <= this->ptrGlobal->ptrConfig->GetISoMachComp();
          ++iAmountComp)
@@ -762,11 +824,24 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
         arrAddedHead.push_back(wsNameSoMachComp);
     }
 
+    wstring wsNameGloabalQuartileRib =
+        L"Количество рёбер указанного квартиля для всей выборки";
+
+    for (int iQuar = 0; iQuar < this->ptrGlobal->ptrConfig->GetIAmountQuar();
+         ++iQuar)    // На один больше квартилей, так как есть отдельно то
+                     // количество, сколько рёбер не соединены
+    {
+        arrAddedHead.push_back(wsNameGloabalQuartileRib);
+    }
+
+
+    wstring wsNameLocalQuartileRib = L"Локальное количество рёбер указанного квартиля";
+
     for (int iQuar = 0; iQuar <= this->ptrGlobal->ptrConfig->GetIAmountQuar();
          ++iQuar)    // На один больше квартилей, так как есть отдельно то
                      // количество, сколько рёбер не соединены
     {
-        arrAddedHead.push_back(wsNameQuartileRib);
+        arrAddedHead.push_back(wsNameLocalQuartileRib);
     }
 
     // Флаги того, какие столбцы выводить
@@ -785,7 +860,7 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
     for (const auto& it : ptrGlobal->ptrSolve->arrDisc)
     {
         // Нет нужного нам курса (например, если 3 курс, а план магистратуры)
-        if (it->iAmountCourse <= int(eTypeGraph))
+        if (it->iAmountCourse <= eTypeGraph.Get())
             continue;
 
         // Выводить короткое, или помное имя
@@ -986,16 +1061,14 @@ void FOutData::OutAddInfo(string sName, string sPath,
 
     vector<vector<string>> arrDataAll;
 
-   
+    // CreateTableInfoInit(arrDataAll, ptrCurrentTree,
+    //                    true);    //, ptrCurrentTree->dChosenSum);
 
-    //CreateTableInfoInit(arrDataAll, ptrCurrentTree,
-    //                   true);    //, ptrCurrentTree->dChosenSum);
-
-    //Не вижу смысла делать исключение
-    // Вывод данных в TotalData файле
-    //OutTableInfo(1, 1, arrDataAll, fFileCache->arrOpenWKS.back());
-    //if (ptrGlobal->ptrConfig->GetBIsOutCSVDate())
-    //    OutTableInfoCSV(arrDataAll, sPath, sName, FMetric::sAllMetric);
+    // Не вижу смысла делать исключение
+    //  Вывод данных в TotalData файле
+    // OutTableInfo(1, 1, arrDataAll, fFileCache->arrOpenWKS.back());
+    // if (ptrGlobal->ptrConfig->GetBIsOutCSVDate())
+    //     OutTableInfoCSV(arrDataAll, sPath, sName, FMetric::sAllMetric);
 
     // Плохое решение было выводить всё в строчку
     // iXShift +=
@@ -1007,8 +1080,8 @@ void FOutData::OutAddInfo(string sName, string sPath,
     for (auto& [sKey, ptrCurrentTree] :
          ptrTree->ptrMetric->ptrTreeMetric->mapChild)
     {
-        //if (sKey == FMetric::sAllMetric)
-        //   continue;    // Мы его уже ранее проверили
+        // if (sKey == FMetric::sAllMetric)
+        //    continue;    // Мы его уже ранее проверили
 
         vector<vector<string>> arrDataAllCourse;
         // Вывод конкретного курса
@@ -1031,7 +1104,7 @@ void FOutData::OutAddInfo(string sName, string sPath,
 
         // Выводим в cтолбец (Если iYShift > 1 , то без заголовка)
         OutTableInfo(1, iYShift, arrDataAllCourse,
-                     fFileCache->arrOpenWKS.back(), 0, min(iYShift-1,1));
+                     fFileCache->arrOpenWKS.back(), 0, min(iYShift - 1, 1));
 
         // Выводим в ширину (глупое решение)
         // OutTableInfo(iXShift, 1, arrDataAllCourse,
@@ -1082,10 +1155,12 @@ void FOutData::OutAddInfo(string sName, string sPath,
             if (ptrGlobal->ptrConfig->GetBOutTotalInfo())
             {
                 vector<vector<string>> arrTotalCourseGraphData;
-                CreateTotalInfo(arrTotalCourseGraphData,
-                                make_shared<FTypeGraph>(
-                                    ptrTree->ptrGraph->mapGraph[ETypeGraph(int(sKey[0] - '1'))]),
-                                EOutType::EOT_Added);
+                CreateTotalInfo(
+                    arrTotalCourseGraphData,
+                    make_shared<FTypeGraph>(
+                        ptrTree->ptrGraph
+                            ->mapGraph[ETypeGraph(int(sKey[0] - '1'))]),
+                    EOutType::EOT_Added);
 
                 OutTableInfo(1,    // Так как 1-индексация
                              arrDataAllCourse.size() +
@@ -1106,10 +1181,11 @@ void FOutData::OutAddInfo(string sName, string sPath,
     if (ptrGlobal->ptrConfig->GetBOutTotalInfo())
     {
         vector<vector<string>> arrTotalGraphData;
-        CreateTotalInfo(arrTotalGraphData,
-                        make_shared<FTypeGraph>(
-                            ptrTree->ptrGraph->mapGraph[ETypeGraph::ETG_Common]),
-                        EOutType::EOT_Added);
+        CreateTotalInfo(
+            arrTotalGraphData,
+            make_shared<FTypeGraph>(
+                ptrTree->ptrGraph->mapGraph[ETypeGraph::ETG_Common]),
+            EOutType::EOT_Added);
         OutTableInfo(1, iYShift + 1,    // Так как 1-индексация
                      arrTotalGraphData, fFileCache->arrOpenWKS.back());
     }
@@ -1219,7 +1295,6 @@ void FOutData::OutTableInfo(const int& iShiftX, const int& iShiftY,
         this->ptrGlobal->ptrError->ErrorBadShiftTable();
         return;
     }
-
 
     for (int y = iShiftDataY; y < arrData.size(); ++y)
     {
@@ -1629,7 +1704,7 @@ void FOutData::OutGephiData(string sName, string sPath,
     // Вывод графа, где вершины - это компетенции
     {
         const ETypeGraph& eTypeGraph = ETypeGraph::ETG_Reverse;
-        string     sFileName =
+        string            sFileName =
             sName + ptrGlobal->ConwertToString(
                         ptrGlobal->ptrConfig
                             ->mapArrOutParams
@@ -1646,7 +1721,7 @@ void FOutData::OutGephiData(string sName, string sPath,
 
     {
         const ETypeGraph& eTypeGraph = ETypeGraph::ETG_Alt;
-        string     sFileName =
+        string            sFileName =
             sName +
             ptrGlobal->ConwertToString(
                 ptrGlobal->ptrConfig
@@ -1667,16 +1742,18 @@ void FOutData::OutGephiData(string sName, string sPath,
     {
         for (int iCourse = 0; iCourse < fCurricula->iAmountCourse; ++iCourse)
         {
-            OutGephiLabel(sPath,
-                          sName + "(" + to_string(iCourse + 1) + ")",
-                          sName,
-                          CreateCommonNameLabel(ETypeGraph(iCourse), fCurricula),
+            OutGephiLabel(
+                sPath,
+                sName + "(" + to_string(iCourse + 1) + ")",
+                sName,
+                CreateCommonNameLabel(ETypeGraph(iCourse), fCurricula),
                 fCurricula->ptrGraph->mapGraph[ETypeGraph(iCourse)]
                     .arrNodeWeight,
                 CreateTag(ETypeGraph(iCourse), fCurricula));
-            OutGephiRib(sPath,
-                        sName + "(" + to_string(iCourse + 1) + ")",
-                        sName,
+            OutGephiRib(
+                sPath,
+                sName + "(" + to_string(iCourse + 1) + ")",
+                sName,
                 fCurricula->ptrGraph->mapGraph[ETypeGraph(iCourse)].fAdjList);
         }
     }

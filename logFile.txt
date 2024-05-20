@@ -1,30 +1,30 @@
-+ РЈС‡РµР±РЅС‹Р№ РїР»Р°РЅ R:/acmp/excelbibltest/ExcelBiblT/plans/one/0103040030_op-21.plm.plx.xlsx СѓСЃРїРµС€РЅРѕ РѕР±СЂР°Р±РѕС‚Р°РЅ
++ Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/0103040030_op-21.plm.plx.xlsx успешно обработан
 
-+ РЈС‡РµР±РЅС‹Р№ РїР»Р°РЅ R:/acmp/excelbibltest/ExcelBiblT/plans/one/0903010030_op-21.plm.plx.xlsx СѓСЃРїРµС€РЅРѕ РѕР±СЂР°Р±РѕС‚Р°РЅ
++ Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/0903010030_op-21.plm.plx.xlsx успешно обработан
 
-Компетенции [СЃС‚СЂРѕРєР° 245] : Р’ СѓС‡РµР±РЅРѕРј РїР»Р°РЅРµ R:/acmp/excelbibltest/ExcelBiblT/plans/one/0903020030_op-21.plm.plx.xlsx РїСЂРёСЃСѓС‚СЃС‚РІСѓРµС‚ РїСѓСЃС‚Р°СЏ СЃС‚СЂРѕРєР°
-- РЈС‡РµР±РЅС‹Р№ РїР»Р°РЅ R:/acmp/excelbibltest/ExcelBiblT/plans/one/0903020030_op-21.plm.plx.xlsx РѕР±СЂР°Р±РѕС‚Р°РЅ СЃ РЅРµРґРѕС‡С‘С‚Р°РјРё
+Компетенции [строка 245] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/0903020030_op-21.plm.plx.xlsx присутствует пустая строка
+- Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/0903020030_op-21.plm.plx.xlsx обработан с недочётами
 
-+ РЈС‡РµР±РЅС‹Р№ РїР»Р°РЅ R:/acmp/excelbibltest/ExcelBiblT/plans/one/0903030031_OP-21.plm.plx.xlsx СѓСЃРїРµС€РЅРѕ РѕР±СЂР°Р±РѕС‚Р°РЅ
++ Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/0903030031_OP-21.plm.plx.xlsx успешно обработан
 
-+ РЈС‡РµР±РЅС‹Р№ РїР»Р°РЅ R:/acmp/excelbibltest/ExcelBiblT/plans/one/0903030032_OP-20.plm.plx.xlsx СѓСЃРїРµС€РЅРѕ РѕР±СЂР°Р±РѕС‚Р°РЅ
++ Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/0903030032_OP-20.plm.plx.xlsx успешно обработан
 
-+ РЈС‡РµР±РЅС‹Р№ РїР»Р°РЅ R:/acmp/excelbibltest/ExcelBiblT/plans/one/0903030033_OP-21.plm.plx.xlsx СѓСЃРїРµС€РЅРѕ РѕР±СЂР°Р±РѕС‚Р°РЅ
++ Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/0903030033_OP-21.plm.plx.xlsx успешно обработан
 
-+ РЈС‡РµР±РЅС‹Р№ РїР»Р°РЅ R:/acmp/excelbibltest/ExcelBiblT/plans/one/0903030035_OP-21.plm.plx.xlsx СѓСЃРїРµС€РЅРѕ РѕР±СЂР°Р±РѕС‚Р°РЅ
++ Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/0903030035_OP-21.plm.plx.xlsx успешно обработан
 
-Компетенции(2) [СЃС‚СЂРѕРєР° 5] : Р’ СѓС‡РµР±РЅРѕРј РїР»Р°РЅРµ R:/acmp/excelbibltest/ExcelBiblT/plans/one/0903040030_op-21.plm.plx.xlsx РЅРµ СѓРєР°Р·Р°РЅС‹ РєРѕРјРїРµС‚РµРЅС†РёРё Сѓ РґРёСЃС†РёРїР»РёРЅС‹ СЃ РёРЅРґРµРєСЃРѕРј Б1.О.02
-Компетенции(2) [СЃС‚СЂРѕРєР° 72] : Р’ СѓС‡РµР±РЅРѕРј РїР»Р°РЅРµ R:/acmp/excelbibltest/ExcelBiblT/plans/one/0903040030_op-21.plm.plx.xlsx РЅРµ СѓРєР°Р·Р°РЅС‹ РєРѕРјРїРµС‚РµРЅС†РёРё Сѓ РґРёСЃС†РёРїР»РёРЅС‹ СЃ РёРЅРґРµРєСЃРѕРј Б2.В
-Компетенции(2) [СЃС‚СЂРѕРєР° 78] : Р’ СѓС‡РµР±РЅРѕРј РїР»Р°РЅРµ R:/acmp/excelbibltest/ExcelBiblT/plans/one/0903040030_op-21.plm.plx.xlsx РЅРµ СѓРєР°Р·Р°РЅС‹ РєРѕРјРїРµС‚РµРЅС†РёРё Сѓ РґРёСЃС†РёРїР»РёРЅС‹ СЃ РёРЅРґРµРєСЃРѕРј К.М
-Компетенции(2) [СЃС‚СЂРѕРєР° 79] : Р’ СѓС‡РµР±РЅРѕРј РїР»Р°РЅРµ R:/acmp/excelbibltest/ExcelBiblT/plans/one/0903040030_op-21.plm.plx.xlsx РЅРµ СѓРєР°Р·Р°РЅС‹ РєРѕРјРїРµС‚РµРЅС†РёРё Сѓ РґРёСЃС†РёРїР»РёРЅС‹ СЃ РёРЅРґРµРєСЃРѕРј К.М.01
-- РЈС‡РµР±РЅС‹Р№ РїР»Р°РЅ R:/acmp/excelbibltest/ExcelBiblT/plans/one/0903040030_op-21.plm.plx.xlsx РѕР±СЂР°Р±РѕС‚Р°РЅ СЃ РЅРµРґРѕС‡С‘С‚Р°РјРё
+Компетенции(2) [строка 5] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/0903040030_op-21.plm.plx.xlsx не указаны компетенции у дисциплины с индексом Б1.О.02
+Компетенции(2) [строка 72] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/0903040030_op-21.plm.plx.xlsx не указаны компетенции у дисциплины с индексом Б2.В
+Компетенции(2) [строка 78] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/0903040030_op-21.plm.plx.xlsx не указаны компетенции у дисциплины с индексом К.М
+Компетенции(2) [строка 79] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/0903040030_op-21.plm.plx.xlsx не указаны компетенции у дисциплины с индексом К.М.01
+- Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/0903040030_op-21.plm.plx.xlsx обработан с недочётами
 
-+ РЈС‡РµР±РЅС‹Р№ РїР»Р°РЅ R:/acmp/excelbibltest/ExcelBiblT/plans/one/1003010031_op-21.plm.plx.xlsx СѓСЃРїРµС€РЅРѕ РѕР±СЂР°Р±РѕС‚Р°РЅ
++ Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/1003010031_op-21.plm.plx.xlsx успешно обработан
 
-Компетенции(2) [СЃС‚СЂРѕРєР° 63] : Р’ СѓС‡РµР±РЅРѕРј РїР»Р°РЅРµ R:/acmp/excelbibltest/ExcelBiblT/plans/one/2703030030_op-21.plm.plx.xlsx РЅРµ СѓРєР°Р·Р°РЅС‹ РєРѕРјРїРµС‚РµРЅС†РёРё Сѓ РґРёСЃС†РёРїР»РёРЅС‹ СЃ РёРЅРґРµРєСЃРѕРј Б2.В
-Компетенции [СЃС‚СЂРѕРєР° 396] : Р’ СѓС‡РµР±РЅРѕРј РїР»Р°РЅРµ R:/acmp/excelbibltest/ExcelBiblT/plans/one/2703030030_op-21.plm.plx.xlsx РїСЂРёСЃСѓС‚СЃС‚РІСѓРµС‚ РїСѓСЃС‚Р°СЏ СЃС‚СЂРѕРєР°
-- РЈС‡РµР±РЅС‹Р№ РїР»Р°РЅ R:/acmp/excelbibltest/ExcelBiblT/plans/one/2703030030_op-21.plm.plx.xlsx РѕР±СЂР°Р±РѕС‚Р°РЅ СЃ РЅРµРґРѕС‡С‘С‚Р°РјРё
+Компетенции(2) [строка 63] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/2703030030_op-21.plm.plx.xlsx не указаны компетенции у дисциплины с индексом Б2.В
+Компетенции [строка 396] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/2703030030_op-21.plm.plx.xlsx присутствует пустая строка
+- Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/2703030030_op-21.plm.plx.xlsx обработан с недочётами
 
-Компетенции(2) [СЃС‚СЂРѕРєР° 61] : Р’ СѓС‡РµР±РЅРѕРј РїР»Р°РЅРµ R:/acmp/excelbibltest/ExcelBiblT/plans/one/2703040030_op-21.plm.plx.xlsx РЅРµ СѓРєР°Р·Р°РЅС‹ РєРѕРјРїРµС‚РµРЅС†РёРё Сѓ РґРёСЃС†РёРїР»РёРЅС‹ СЃ РёРЅРґРµРєСЃРѕРј Б2.В
-- РЈС‡РµР±РЅС‹Р№ РїР»Р°РЅ R:/acmp/excelbibltest/ExcelBiblT/plans/one/2703040030_op-21.plm.plx.xlsx РѕР±СЂР°Р±РѕС‚Р°РЅ СЃ РЅРµРґРѕС‡С‘С‚Р°РјРё
+Компетенции(2) [строка 61] : В учебном плане R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/2703040030_op-21.plm.plx.xlsx не указаны компетенции у дисциплины с индексом Б2.В
+- Учебный план R:/acmp/excelbibltest/ExcelBiblT/plans/grad_sfu/2703040030_op-21.plm.plx.xlsx обработан с недочётами
 
