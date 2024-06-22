@@ -101,6 +101,27 @@ void FGlobal::TakeData(vector<wstring>&       outArrData,
             throw std::out_of_range("No equeal " + to_string(i));
 }
 
+void FGlobal::TakeData(vector<bool>& outArrData,
+    const OpenXLSX::XLRow& row,
+    int                    iSize)
+{
+    outArrData.clear();
+    int i = -1;
+    for (auto& it : row.cells())    // Считываем, начиная со 2 ячейки
+    {
+        i++;
+        if (i)
+        {
+            wstring wsLine = GetValue(it);
+            outArrData.push_back((wsLine.find(L"да") != wstring::npos));
+        }
+    }
+    if (iSize)
+        if (i != (iSize - 1))
+            throw std::out_of_range("No equeal " + to_string(i));
+}
+
+
 void FGlobal::TakeData(vector<string>&        outArrData,
                        const OpenXLSX::XLRow& row,
                        int                    iSize)

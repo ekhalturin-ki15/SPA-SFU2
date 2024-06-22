@@ -4,6 +4,7 @@
 #include "global.h"
 #include "graph.h"
 #include "metric.h"
+#include "adapOutData.h"
 #include "solve.h"
 
 #include <iomanip>

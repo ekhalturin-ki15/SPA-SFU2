@@ -65,6 +65,10 @@ struct FGlobal
                   int iSize);    // Возвращение результата через параметры
                                  // (значение со втрой ячейки)
 
+    void TakeData(vector<bool>&          outArrData,
+                  const OpenXLSX::XLRow& row,
+                  int                    iSize);
+
     void TakeData(vector<string>&        outArrData,
                   const OpenXLSX::XLRow& row,
                   int iSize);    // Возвращение результата через параметры

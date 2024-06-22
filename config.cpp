@@ -47,7 +47,8 @@ FConfig::FConfig(shared_ptr<FGlobal> _ptrGlobal)
       sPrefFullNameCourse("."),
       //sRegexComp("{0, 1}(.{0, } ? );"),
       sFormula("((L + R) / 2) * K"),
-      sFormulaReverseGraph("((L + R) / 2) * D")
+      sFormulaReverseGraph("((L + R) / 2) * D"),
+      wsNamePage(L"Параметры")
 {
     // Unit test против такого
 #ifndef UNIT_TEST
@@ -678,8 +679,16 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
     {
         if (ptrGlobal->ptrError)
         {
-            ptrGlobal->ptrError->ErrorBadConfigSizeParams(
-                ptrGlobal->ConwertToString(wsPatern), eError.what());
+            if (wsPatern == L"")
+            {
+                ptrGlobal->ptrError->ErrorBadConfigSizeParams(
+                    ptrGlobal->ConwertToString(wsKey), eError.what());
+            }
+            else
+            {
+                ptrGlobal->ptrError->ErrorBadConfigSizeParams(
+                    ptrGlobal->ConwertToString(wsPatern), eError.what());
+            }
         }
         return false;
     }

@@ -9,13 +9,8 @@ struct FTypeGraph;
 struct ETypeGraph;
 struct FOutData;
 
-// Куда производится вывод (на главную горизонтально, или в побочные файлы
-// вертикально)
-enum EOutType : int
-{
-    EOT_Head = 1,
-    EOT_Added
-};
+// Куда производится вывод (на главную горизонтально, или в побочные файлы)
+enum EOutType; 
 
 struct FCorridorAdapter
 {

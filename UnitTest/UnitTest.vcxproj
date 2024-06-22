@@ -92,7 +92,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>R:\acmp\excelbibltest\ExcelBiblT\OpenXLSX\headers;R:\acmp\excelbibltest\ExcelBiblT\OpenXLSX;$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\OpenXLSX\headers;$(SolutionDir)\OpenXLSX;$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>UNIT_TEST;DEBUG;OPENXLSX_STATIC_DEFINE;CMAKE_INTDIR="RelWithDebInfo";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -100,7 +100,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>R:\acmp\excelbibltest\ExcelBiblT\UnitTest\OpenXLSX\headers;R:\acmp\excelbibltest\ExcelBiblT\UnitTest\OpenXLSX;R:\acmp\excelbibltest\ExcelBiblT\OpenXLSX\headers;$(VCInstallDir)UnitTest\lib;..\x64\Debug;R:\acmp\excelbibltest\ExcelBiblT\OpenXLSX;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\UnitTest\OpenXLSX\headers;$(SolutionDir)\UnitTest\OpenXLSX;$(SolutionDir)\OpenXLSX\headers;$(VCInstallDir)UnitTest\lib;..\x64\Debug;R:\acmp\excelbibltest\ExcelBiblT\OpenXLSX;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>..\output\Debug\OpenXLSXd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -145,7 +145,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>R:\acmp\excelbibltest\ExcelBiblT\OpenXLSX\headers;R:\acmp\excelbibltest\ExcelBiblT\OpenXLSX;$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\OpenXLSX\headers;$(SolutionDir)\OpenXLSX;$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>UNIT_TEST;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -155,7 +155,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>R:\acmp\excelbibltest\ExcelBiblT\UnitTest\OpenXLSX\headers;R:\acmp\excelbibltest\ExcelBiblT\UnitTest\OpenXLSX;R:\acmp\excelbibltest\ExcelBiblT\OpenXLSX\headers;$(VCInstallDir)UnitTest\lib;..\x64\Debug;R:\acmp\excelbibltest\ExcelBiblT\OpenXLSX;$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\UnitTest\OpenXLSX\headers;$(SolutionDir)\UnitTest\OpenXLSX;$(SolutionDir)\OpenXLSX\headers;$(VCInstallDir)UnitTest\lib;..\x64\Debug;R:\acmp\excelbibltest\ExcelBiblT\OpenXLSX;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>..\output\Release\OpenXLSX.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

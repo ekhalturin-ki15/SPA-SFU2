@@ -9,12 +9,15 @@
 int FAdapOutData::iSinglControll = 0;
 
 FAdapOutData::FAdapOutData(shared_ptr<FGlobal> _ptrGlobal)
-    : ptrGlobal(_ptrGlobal)
+    : wsNamePage(L"Параметры вывода"),
+    ptrGlobal(_ptrGlobal)
 {
     // Unit test против такого
     // if (iSinglControll > 0) throw std::runtime_error("Re-creation
     // Singleton");
     ++iSinglControll;
+
+    wsNamePage = L"Параметры вывода";
 }
 
 bool FAdapOutData::Init()
@@ -22,8 +25,56 @@ bool FAdapOutData::Init()
     return true;
 }
 
+void FAdapOutData::InitVectorBoolMap()
+{
+
+    mapVectorBoolParamsReadKey[L"Всего ЗЕ в графе"] = { &arrTotalCredits, 2 };
+    mapVectorBoolParamsReadKey[L"ЗЕ факультативов"] = { &arrCreditsElective,
+                                                        2 };
+}
+
+bool FAdapOutData::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
+                        OpenXLSX::XLRow row)
+{
+    //wstring wsPatern;
+    try
+    {
+        if (wsKey == L"")
+            return true;
+
+
+        if (mapVectorBoolParamsReadKey.count(wsKey))
+        {
+        }
+
+    }
+    catch (out_of_range eError)
+    {
+        if (ptrGlobal->ptrError)
+        {
+            ptrGlobal->ptrError->ErrorBadConfigSizeParams(
+                ptrGlobal->ConwertToString(wsKey), eError.what());
+        }
+        return false;
+    }
+    catch (...)
+    {
+        return false;
+    }
+    return true;
+}
+
 void FAdapOutData::Create(string sOutPath)
 {
+
+    for (int EOT_Type = 0; EOT_Type < EOutType::EOT_Size; ++EOT_Type)
+    {
+
+    }
+
+
+
+
 }
 //
 // FAdapOutData::FAdapOutData(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal),

@@ -6,19 +6,14 @@ struct FCurricula;
 struct FTreeMetric;
 struct FTypeGraph;
 
-// Куда производится вывод (на главную горизонтально, или в побочные файлы
-// вертикально)
-// enum EOutType : int
-//{
-//    EOT_Head = 1,
-//    EOT_Added
-//};
-//
-// struct FСorridor
-//{
-//    vector<double> dMaxMin = { 0, 0 };
-//    vector<string> sMaxMin = { "", "" };
-//};
+
+enum EOutType : int
+{
+    EOT_Head = 0,
+    EOT_Added,
+    EOT_Size
+};
+
 
 struct FAdapOutData
 {
@@ -39,8 +34,28 @@ public:
     // map<FMetric, vector<vector<string>>> mapAddInfo;
 
 private:
-    // const vector<wstring> arrMetricHead;    // Единожды задаётся в
-    // конструкторе const vector<wstring>
+    // Заголовки тех метрик, с которыми определены алгоритмы вычисления
+    // В идеале, все те параметры, что есть в Config.xlsx на странице "Параметры
+    // вывода" Должны быть перечислены в mapBoolPAllowMetric
+    void InitVectorBoolMap();
+
+    //Аналогично тому, как это делалось в FConfig
+    bool SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
+                                 OpenXLSX::XLRow row);
+
+    map<wstring,
+        pair<vector<bool>*,int>>    // Vector, так как есть несколько режимов доступа
+        mapVectorBoolParamsReadKey;    // Инициализируется в конструкторе
+
+     vector<bool> arrTotalCredits; // Всего ЗЕ в графе
+     vector<bool> arrCreditsElective;    // ЗЕ факультативов
+
+
+      wstring wsNamePage;    // Страница, откуда следует начать считывать
+                            // параметры
+                            // 
+                            // 
+    // const vector<wstring>
     //     arrCompetenceHead;    // Единожды задаётся в конструкторе
 
     //// Составляет таблицу для вывода информации общего вида (не имеющей
