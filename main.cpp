@@ -130,7 +130,7 @@ int main()
                 ptrGlobal->ptrConfig
                     ->GetArrNameFileOut()[category];    // / "TotalData.xlsx";
 
-            ptrGlobal->ptrAdapOutData->Create(sTotalOutName.string());
+            ptrGlobal->ptrAdapOutData->Create();
             ptrGlobal->ptrOutData->Create(sTotalOutName.string());
 
             // Пересоздание

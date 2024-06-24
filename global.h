@@ -1,4 +1,7 @@
-﻿#pragma once
+﻿//v 1.25.2
+
+
+#pragma once
 #include <algorithm>
 #include <codecvt>
 #include <exception>

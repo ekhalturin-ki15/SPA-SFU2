@@ -10,7 +10,7 @@ struct ETypeGraph;
 struct FOutData;
 
 // Куда производится вывод (на главную горизонтально, или в побочные файлы)
-enum EOutType; 
+enum EOutType;
 
 struct FCorridorAdapter
 {
@@ -119,20 +119,17 @@ private:
                        const string& sOutData, const string& sCurName,
                        const bool& bIsConsider, FCorridorAdapter& fSaveData);
 
-    void CreateTotalInfo(vector<vector<string>>& arrReturnData,
-                         const shared_ptr<FTypeGraph>
-                                         fGraph,
-                         const EOutType& eOutType);
+    void CreateTotalInfo(vector<vector<string>>&      arrReturnData,
+                         const shared_ptr<FTypeGraph> fGraph);
+    // const EOutType& eOutType);
 
-    void CreateTotalInfo(vector<double>& arrReturnDataMetrics,
-                         const shared_ptr<FTypeGraph>
-                                         fGraph,
-                         const EOutType& eOutType);
+    void CreateTotalInfo(vector<double>&              arrReturnDataMetrics,
+                         const shared_ptr<FTypeGraph> fGraph);
+    // const EOutType& eOutType);
 
-    void CreateTotalInfo(vector<string>& arrReturnDataHeader,
-                         const shared_ptr<FTypeGraph>
-                                         fGraph,
-                         const EOutType& eOutType);
+    void CreateTotalInfo(vector<string>&              arrReturnDataHeader,
+                         const shared_ptr<FTypeGraph> fGraph);
+    // const EOutType& eOutType);
 
     // Лучше буду генерировать матрицу, и выводить её сразу же
     // Не забываем, что OpenXLSX нумерует всё от единицы (1)

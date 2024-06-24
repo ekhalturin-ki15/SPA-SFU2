@@ -9,74 +9,80 @@
 int FAdapOutData::iSinglControll = 0;
 
 FAdapOutData::FAdapOutData(shared_ptr<FGlobal> _ptrGlobal)
-    : wsNamePage(L"Параметры вывода"),
-    ptrGlobal(_ptrGlobal)
+    : ptrGlobal(_ptrGlobal)
 {
     // Unit test против такого
     // if (iSinglControll > 0) throw std::runtime_error("Re-creation
     // Singleton");
     ++iSinglControll;
 
-    wsNamePage = L"Параметры вывода";
 }
 
 bool FAdapOutData::Init()
 {
+    arrTypeTotalStatistic.push_back(ETypeGraph::ETG_Common);
+    arrTypeTotalStatistic.push_back(ETypeGraph::ETG_Alt);
+    arrTypeTotalStatistic.push_back(ETypeGraph::ETG_Reverse);
+
+    for (int iCourse = 0; iCourse < ptrGlobal->ptrSolve->iMaxCourse; ++iCourse)
+    {
+        arrTypeTotalStatistic.push_back(ETypeGraph(iCourse));
+    }
+
     return true;
 }
 
-void FAdapOutData::InitVectorBoolMap()
+void FAdapOutData::CreateHeader()
 {
+    vector<wstring> arrMetricHead(
+        { 
+          L"Название учебного плана",
+          L"Тип учебного плана",
 
-    mapVectorBoolParamsReadKey[L"Всего ЗЕ в графе"] = { &arrTotalCredits, 2 };
-    mapVectorBoolParamsReadKey[L"ЗЕ факультативов"] = { &arrCreditsElective,
-                                                        2 };
-}
+          L"Год начала подготовки",
+          L"Код направления",
 
-bool FAdapOutData::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
-                        OpenXLSX::XLRow row)
-{
-    //wstring wsPatern;
-    try
-    {
-        if (wsKey == L"")
-            return true;
+          L"Общее кол-во ЗЕ в УП",
+          L"!ЗЕ основных дисциплин",
+          L"!ЗЕ дисциплин по выбору",
+          L"!ЗЕ факультативов",
+
+          L"Общее кол-во дисциплин в УП",
+          L"!Количество основных дисциплин",
+          L"!Количество дисциплин по выбору",
+          L"!Количество факультативов",
 
 
-        if (mapVectorBoolParamsReadKey.count(wsKey))
-        {
-        }
 
-    }
-    catch (out_of_range eError)
-    {
-        if (ptrGlobal->ptrError)
-        {
-            ptrGlobal->ptrError->ErrorBadConfigSizeParams(
-                ptrGlobal->ConwertToString(wsKey), eError.what());
-        }
-        return false;
-    }
-    catch (...)
-    {
-        return false;
-    }
-    return true;
-}
 
-void FAdapOutData::Create(string sOutPath)
-{
 
-    for (int EOT_Type = 0; EOT_Type < EOutType::EOT_Size; ++EOT_Type)
-    {
+          L"Всего ЗЕ в графе", L"Кол-во дисциплин в графе",
 
-    }
 
+          L"Максимальное ЗЕ у дисциплины", L"Минимальное ЗЕ у дисциплины",
+          L"Максимальный вес ребра", L"Минимальный вес ребра",
+          L"Диаметр графа по расстоянию", L"Диаметр графа по количеству рёбер",
+          L"Количество компонент связности", L"Максимальное оставное дерево",
+          L"Минимальное оставное дерево", L"Плотность графа",
+          L"ЗЕ факультативов", L"ЗЕ основных дисциплин",
+          L"ЗЕ дисциплин по выбору", L"Количество факультативов",
+          L"Количество основных дисциплин",
+          L"Количество дисциплин по выбору" });
 
 
 
 }
-//
+
+void FAdapOutData::Create()
+{
+    CreateHeader();
+
+    
+
+
+}
+
+
 // FAdapOutData::FAdapOutData(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal),
 //       arrCompetenceHead(
 //           { L"За какой курс",

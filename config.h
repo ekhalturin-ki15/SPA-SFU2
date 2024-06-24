@@ -17,6 +17,15 @@ enum ETagDisc : int
     ETagD_Size
 };
 
+//Тип вывода (в Excel таблицы) в основные или в подробные сведения
+//enum EOutType : int
+//{
+//    EOT_Head = 0,
+//    EOT_Added,
+//    EOT_Size
+//};
+
+
 struct FPageInfo
 {
     wstring wsName;
@@ -41,19 +50,19 @@ struct FTranslateData
         return arrFlag.at(0);
     }
 
-    bool GetLocal() const
+  /*  bool GetLocal() const
     {
         if (arrFlag.size() < 2)
             throw std::out_of_range("Do not have Total Data \\_/");
         return arrFlag.at(1);
-    }
+    }*/
 
-    bool GetType(int iType) const
+  /*  bool GetType(EOutType iType) const
     {
-        if (arrFlag.size() < iType)
+        if (arrFlag.size() < int(iType))
             throw std::out_of_range("Do not have Total Data ~_~");
-        return arrFlag.at(iType - 1);
-    }
+        return arrFlag.at(int(iType) - 1);
+    }*/
 
 private:
     wstring           wsName;

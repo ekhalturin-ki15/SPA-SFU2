@@ -157,8 +157,8 @@ FOutData::FOutData(shared_ptr<FGlobal> _ptrGlobal)
 
 void FOutData::CreateTotalInfo(vector<double>& arrReturnDataMetrics,
                                const shared_ptr<FTypeGraph>
-                                               fGraph,
-                               const EOutType& eOutType)
+                                               fGraph)
+    //,const EOutType& eOutType)
 {
     arrReturnDataMetrics.clear();
     vector<double> arrResult;    // Соответствует arrHead который
@@ -198,8 +198,8 @@ void FOutData::CreateTotalInfo(vector<double>& arrReturnDataMetrics,
     {
         if (ptrGlobal->ptrConfig->mapArrOutParams.count(arrMetricHead[y]))
         {
-            if (ptrGlobal->ptrConfig->mapArrOutParams[arrMetricHead[y]].GetType(
-                    eOutType))
+            if (ptrGlobal->ptrConfig->mapArrOutParams[arrMetricHead[y]].GetTotal(
+                    ))
             {
                 arrReturnDataMetrics.push_back(arrResult[y]);
             }
@@ -208,8 +208,8 @@ void FOutData::CreateTotalInfo(vector<double>& arrReturnDataMetrics,
 
     wstring wsNameSoMachComp =
         L"Количество дисциплин, формирующих несколько компетенций";
-    if (ptrGlobal->ptrConfig->mapArrOutParams[wsNameSoMachComp].GetType(
-            eOutType))
+    if (ptrGlobal->ptrConfig->mapArrOutParams[wsNameSoMachComp].GetTotal(
+            ))
     {
         // Так как дисциплин с 0-компетенциями исключаются
         for (int iAmountComp = 1;
@@ -229,8 +229,8 @@ void FOutData::CreateTotalInfo(vector<double>& arrReturnDataMetrics,
     }
 
     wstring wsRibGlobalQuar = L"Количество рёбер указанного квартиля для всей выборки";
-    if (ptrGlobal->ptrConfig->mapArrOutParams[wsRibGlobalQuar].GetType(
-            eOutType))
+    if (ptrGlobal->ptrConfig->mapArrOutParams[wsRibGlobalQuar].GetTotal(
+            ))
     {
         for (auto& it : fGraph->arrGlobalQuarAllPairDistance)
         {
@@ -239,7 +239,8 @@ void FOutData::CreateTotalInfo(vector<double>& arrReturnDataMetrics,
     }
 
     wstring wsRibLocalQuar = L"Локальное количество рёбер указанного квартиля";
-    if (ptrGlobal->ptrConfig->mapArrOutParams[wsRibLocalQuar].GetType(eOutType))
+    if (ptrGlobal->ptrConfig->mapArrOutParams[wsRibLocalQuar].GetTotal(
+            ))
     {
         for (auto& it : fGraph->arrLocalQuarAllPairDistance)
         {
@@ -250,8 +251,8 @@ void FOutData::CreateTotalInfo(vector<double>& arrReturnDataMetrics,
 
 void FOutData::CreateTotalInfo(vector<string>& arrReturnDataHeader,
                                const shared_ptr<FTypeGraph>
-                                               fGraph,
-                               const EOutType& eOutType)
+                                               fGraph)
+    // const EOutType& eOutType)
 {
     arrReturnDataHeader.clear();
 
@@ -259,8 +260,9 @@ void FOutData::CreateTotalInfo(vector<string>& arrReturnDataHeader,
     {
         if (ptrGlobal->ptrConfig->mapArrOutParams.count(arrMetricHead[y]))
         {
-            if (ptrGlobal->ptrConfig->mapArrOutParams[arrMetricHead[y]].GetType(
-                    eOutType))
+            if (ptrGlobal->ptrConfig->mapArrOutParams[arrMetricHead[y]]
+                    .GetTotal(
+                    ))
             {
                 arrReturnDataHeader.push_back(ptrGlobal->ConwertToString(
                     ptrGlobal->ptrConfig->mapArrOutParams[arrMetricHead[y]]
@@ -271,8 +273,8 @@ void FOutData::CreateTotalInfo(vector<string>& arrReturnDataHeader,
 
     wstring wsNameSoMachComp =
         L"Количество дисциплин, формирующих несколько компетенций";
-    if (ptrGlobal->ptrConfig->mapArrOutParams[wsNameSoMachComp].GetType(
-            eOutType))
+    if (ptrGlobal->ptrConfig->mapArrOutParams[wsNameSoMachComp].GetTotal(
+            ))
     {
         for (int iAmountComp = 1;
              iAmountComp <= this->ptrGlobal->ptrConfig->GetISoMachComp();
@@ -301,8 +303,8 @@ void FOutData::CreateTotalInfo(vector<string>& arrReturnDataHeader,
     }
 
     wstring wsRibGlobalQuartile = L"Количество рёбер указанного квартиля для всей выборки";
-    if (ptrGlobal->ptrConfig->mapArrOutParams[wsRibGlobalQuartile].GetType(
-            eOutType))
+    if (ptrGlobal->ptrConfig->mapArrOutParams[wsRibGlobalQuartile].GetTotal(
+            ))
     {
         // Вывод общих квартилей
         int iAmountQuartile = -1;
@@ -332,8 +334,8 @@ void FOutData::CreateTotalInfo(vector<string>& arrReturnDataHeader,
 
 
     wstring wsRibLocalQuartile = L"Локальное количество рёбер указанного квартиля";
-    if (ptrGlobal->ptrConfig->mapArrOutParams[wsRibLocalQuartile].GetType(
-            eOutType))
+    if (ptrGlobal->ptrConfig->mapArrOutParams[wsRibLocalQuartile].GetTotal(
+            ))
     {
         
 
@@ -368,17 +370,17 @@ void FOutData::CreateTotalInfo(vector<string>& arrReturnDataHeader,
 
 void FOutData::CreateTotalInfo(vector<vector<string>>& arrReturnData,
                                const shared_ptr<FTypeGraph>
-                                               fGraph,
-                               const EOutType& eOutType)
+                                               fGraph)
+                               //const EOutType& eOutType)
 {
     arrReturnData.clear();
 
     vector<double> arrResult;    // Соответствует arrHead который
                                  // проинициализирован в конструкторе
-    CreateTotalInfo(arrResult, fGraph, eOutType);
+    CreateTotalInfo(arrResult, fGraph);
 
     vector<string> arrHeader;
-    CreateTotalInfo(arrHeader, fGraph, eOutType);
+    CreateTotalInfo(arrHeader, fGraph);
 
     arrReturnData.clear();
     arrReturnData.assign(min(arrResult.size(), arrHeader.size()),
@@ -424,8 +426,8 @@ void FOutData::CreateOnlyAllowedHeaderRow(vector<string>&        arrReturn,
             else
             {
                 arrIsAllowed.push_back(
-                    (ptrGlobal->ptrConfig->mapArrOutParams[it].GetType(
-                        EOutType::EOT_Head)));    // Так как глобальная
+                    (ptrGlobal->ptrConfig->mapArrOutParams[it].GetTotal(
+                       )));    // Так как глобальная
                                                   // информация, то работаем с
                                                   // EOutType::EOT_Head
             }
@@ -496,7 +498,7 @@ void FOutData::CreateOnlyAllowedHeaderRow(vector<string>&        arrReturn,
             {
                 arrIsAllowed.back() =
                     (ptrGlobal->ptrConfig->mapArrOutParams[L"ЗЕ у компетенции"]
-                         .GetType(EOutType::EOT_Head));
+                         .GetTotal());
             }
             if (arrIsAllowed.back())
             {
@@ -873,8 +875,7 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
 
         CreateTotalInfo(
             arrAllResult,
-            make_shared<FTypeGraph>(it->ptrGraph->mapGraph[eTypeGraph]),
-            EOutType::EOT_Head);
+            make_shared<FTypeGraph>(it->ptrGraph->mapGraph[eTypeGraph]));
 
         vector<string> arrCurData;
         CreateOnlyAllowedResultRow(arrCurData, arrHeader.size(), arrOutColm,
@@ -1160,8 +1161,8 @@ void FOutData::OutAddInfo(string sName, string sPath,
                     arrTotalCourseGraphData,
                     make_shared<FTypeGraph>(
                         ptrTree->ptrGraph
-                            ->mapGraph[ETypeGraph(int(sKey[0] - '1'))]),
-                    EOutType::EOT_Added);
+                            ->mapGraph[ETypeGraph(int(sKey[0] - '1'))])
+                  );
 
                 OutTableInfo(1,    // Так как 1-индексация
                              arrDataAllCourse.size() +
@@ -1185,8 +1186,8 @@ void FOutData::OutAddInfo(string sName, string sPath,
         CreateTotalInfo(
             arrTotalGraphData,
             make_shared<FTypeGraph>(
-                ptrTree->ptrGraph->mapGraph[ETypeGraph::ETG_Common]),
-            EOutType::EOT_Added);
+                ptrTree->ptrGraph->mapGraph[ETypeGraph::ETG_Common])
+           );
         OutTableInfo(1, iYShift + 1,    // Так как 1-индексация
                      arrTotalGraphData, fFileCache->arrOpenWKS.back());
     }
