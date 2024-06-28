@@ -6,82 +6,208 @@
 #include "metric.h"
 #include "solve.h"
 
-int FAdapOutData::iSinglControll = 0;
+int              FAdapOutData::iSinglControll = 0;
+const ETypeGraph FAdapOutData::ETG_Total(-10);
 
 FAdapOutData::FAdapOutData(shared_ptr<FGlobal> _ptrGlobal)
-    : ptrGlobal(_ptrGlobal)
+    : ptrGlobal(_ptrGlobal),
+
+      arrOriginMetricTotalHead(
+          { L"Название учебного плана", L"Тип учебного плана",
+            L"Год начала подготовки", L"Код направления",
+            L"Общее кол-во ЗЕ в УП", L"!ЗЕ основных дисциплин",
+            L"!ЗЕ дисциплин по выбору", L"!ЗЕ факультативов",
+            L"Общее кол-во дисциплин в УП", L"!Количество основных дисциплин",
+            L"!Количество дисциплин по выбору", L"!Количество факультативов" }),
+      arrOriginMetricGraphHead(
+          { L"Всего ЗЕ в графе", L"ЗЕ факультативов", L"ЗЕ основных дисциплин",
+            L"ЗЕ дисциплин по выбору",
+
+            L"Кол-во дисциплин в графе", L"Количество основных дисциплин",
+            L"Количество дисциплин по выбору", L"Количество факультативов",
+
+            L"Максимальное ЗЕ у дисциплины", L"Минимальное ЗЕ у дисциплины",
+
+            L"Максимальный вес ребра", L"Минимальный вес ребра",
+
+            L"Диаметр графа по расстоянию",
+            L"Диаметр графа по количеству рёбер",
+            L"Количество компонент связности",
+
+            L"Максимальное оставное дерево", L"Минимальное оставное дерево",
+            L"Плотность графа" }),
+      arrOriginQuartileHead(
+          { { L"Количество рёбер указанного квартиля для всей выборки",
+              L"Суффикс после вывода квартиля" },
+
+            { L"Локальное количество рёбер указанного квартиля",
+              L"Суффикс после вывода квартиля" } })
 {
     // Unit test против такого
     // if (iSinglControll > 0) throw std::runtime_error("Re-creation
     // Singleton");
     ++iSinglControll;
-
 }
 
 bool FAdapOutData::Init()
 {
-    arrTypeTotalStatistic.push_back(ETypeGraph::ETG_Common);
-    arrTypeTotalStatistic.push_back(ETypeGraph::ETG_Alt);
-    arrTypeTotalStatistic.push_back(ETypeGraph::ETG_Reverse);
+    return true;
+}
 
-    for (int iCourse = 0; iCourse < ptrGlobal->ptrSolve->iMaxCourse; ++iCourse)
+void FAdapOutData::CreateTotalHeader()
+{
+    auto& fTotalOutData = mapGraphOutData[ETG_Total];
+
+    for (const auto& wsNameHeader : arrOriginMetricTotalHead)
     {
-        arrTypeTotalStatistic.push_back(ETypeGraph(iCourse));
+        if (ptrGlobal->ptrConfig->mapArrOutParams[wsNameHeader].GetTotal())
+        {
+            fTotalOutData.arrHeader.push_back(ptrGlobal->ConwertToString(
+                ptrGlobal->ptrConfig->mapArrOutParams[wsNameHeader].GetName()));
+        }
     }
 
-    return true;
+    for (const auto& sCompName : ptrGlobal->ptrSolve->setHeaderComp)
+    {
+        wstring wsCompScore = ptrGlobal->ConwertToWstring(sCompName);
+        wsCompScore = ptrGlobal->ptrConfig->mapArrOutParams[L"ЗЕ у компетенции"]
+                          .GetName() +
+                      wsCompScore;
+        fTotalOutData.arrHeader.push_back(
+            ptrGlobal->ConwertToString(wsCompScore));
+        fTotalOutData.arrHeader.push_back(sCompName);
+    }
+}
+
+void FAdapOutData::CreateGraphHeader()
+{
+    vector<pair<string, string>> arrQuartileHead;
+
+    for (const auto& [wsNamePref, wsNameSuf] : arrOriginQuartileHead)
+    {
+        if (ptrGlobal->ptrConfig->mapArrOutParams[wsNamePref].GetTotal())
+        {
+            arrQuartileHead.push_back(
+                { ptrGlobal->ConwertToString(
+                      ptrGlobal->ptrConfig->mapArrOutParams[wsNamePref]
+                          .GetName()),
+                  ptrGlobal->ConwertToString(
+                      ptrGlobal->ptrConfig->mapArrOutParams[wsNameSuf]
+                          .GetName()) });
+        }
+    }
+
+    for (auto& [eType, fData] : mapGraphOutData)
+    {
+        for (const auto& wsNameHeader : arrOriginMetricGraphHead)
+        {
+            if (ptrGlobal->ptrConfig->mapArrOutParams[wsNameHeader].GetTotal())
+            {
+                fData.arrHeader.push_back(ptrGlobal->ConwertToString(
+                    ptrGlobal->ptrConfig->mapArrOutParams[wsNameHeader]
+                        .GetName()));
+            }
+        }
+
+        CompHeaderCreate(fData.arrHeader);
+
+        QuartileHeaderCreate(fData.arrHeader, arrQuartileHead);
+    }
+}
+
+void FAdapOutData::QuartileHeaderCreate(
+    vector<string>&                     arrHeader,
+    const vector<pair<string, string>>& arrQuartileHead)
+{
+    for (int i = 1; i <= arrQuartileHead.size(); ++i)
+    {
+        const auto& [sPref, sSuf] = arrQuartileHead[i - 1];
+
+        for (int iAmountQuartile = 1;
+             iAmountQuartile <= ptrGlobal->ptrConfig->GetIAmountQuar() +
+                                    (i == arrQuartileHead.size());
+             ++iAmountQuartile)
+        {
+            // Последний квартиль отвечает за вывод отсутствующих путей
+            if (iAmountQuartile > ptrGlobal->ptrConfig->GetIAmountQuar())
+            {
+                arrHeader.push_back(
+                    "No" + ptrGlobal->ptrConfig->GetSSeparator() + "Path");
+                continue;
+            }
+
+            string sAddedHead = sPref;
+
+            sAddedHead += ptrGlobal->ptrConfig->GetSSeparator();
+
+            sAddedHead += to_string(iAmountQuartile) +
+                          ptrGlobal->ptrConfig->GetSSeparator();
+
+            sAddedHead += sSuf;
+
+            arrHeader.push_back(sAddedHead);
+        }
+    }
+}
+
+void FAdapOutData::CompHeaderCreate(vector<string>& arrHeader)
+{
+    wstring wsNameSoMachComp =
+        L"Количество дисциплин, формирующих несколько компетенций";
+
+    if (ptrGlobal->ptrConfig->mapArrOutParams[wsNameSoMachComp].GetTotal())
+    {
+        for (int iAmountComp = 1;
+             iAmountComp <= this->ptrGlobal->ptrConfig->GetISoMachComp();
+             ++iAmountComp)
+        {
+            string sAddedHead = ptrGlobal->ConwertToString(
+                ptrGlobal->ptrConfig->mapArrOutParams[wsNameSoMachComp]
+                    .GetName());
+
+            sAddedHead += ptrGlobal->ptrConfig->GetSSeparator();
+            if (iAmountComp == ptrGlobal->ptrConfig->GetISoMachComp())
+                sAddedHead += ">=";
+
+            sAddedHead +=
+                to_string(iAmountComp) + ptrGlobal->ptrConfig->GetSSeparator();
+            sAddedHead += ptrGlobal->ConwertToString(
+                ptrGlobal->ptrConfig
+                    ->mapArrOutParams[L"Суффикс после вывода кол-во "
+                                      L"компетенций у дисциплины"]
+                    .GetName());
+
+            arrHeader.push_back(sAddedHead);
+        }
+    }
 }
 
 void FAdapOutData::CreateHeader()
 {
-    vector<wstring> arrMetricHead(
-        { 
-          L"Название учебного плана",
-          L"Тип учебного плана",
+    mapGraphOutData[ETypeGraph::ETG_Common];
+    mapGraphOutData[ETypeGraph::ETG_Alt];
+    mapGraphOutData[ETypeGraph::ETG_Reverse];
 
-          L"Год начала подготовки",
-          L"Код направления",
+    for (int iCourse = 0; iCourse < ptrGlobal->ptrSolve->iMaxCourse; ++iCourse)
+    {
+        mapGraphOutData[ETypeGraph(iCourse)];
+    }
 
-          L"Общее кол-во ЗЕ в УП",
-          L"!ЗЕ основных дисциплин",
-          L"!ЗЕ дисциплин по выбору",
-          L"!ЗЕ факультативов",
+    CreateGraphHeader();
 
-          L"Общее кол-во дисциплин в УП",
-          L"!Количество основных дисциплин",
-          L"!Количество дисциплин по выбору",
-          L"!Количество факультативов",
+    CreateTotalHeader();
+}
 
-
-
-
-
-          L"Всего ЗЕ в графе", L"Кол-во дисциплин в графе",
-
-
-          L"Максимальное ЗЕ у дисциплины", L"Минимальное ЗЕ у дисциплины",
-          L"Максимальный вес ребра", L"Минимальный вес ребра",
-          L"Диаметр графа по расстоянию", L"Диаметр графа по количеству рёбер",
-          L"Количество компонент связности", L"Максимальное оставное дерево",
-          L"Минимальное оставное дерево", L"Плотность графа",
-          L"ЗЕ факультативов", L"ЗЕ основных дисциплин",
-          L"ЗЕ дисциплин по выбору", L"Количество факультативов",
-          L"Количество основных дисциплин",
-          L"Количество дисциплин по выбору" });
-
-
-
+void FAdapOutData::CreateData()
+{
 }
 
 void FAdapOutData::Create()
 {
     CreateHeader();
 
-    
-
-
+    CreateData();
 }
-
 
 // FAdapOutData::FAdapOutData(FGlobal* _ptrGlobal) : ptrGlobal(_ptrGlobal),
 //       arrCompetenceHead(

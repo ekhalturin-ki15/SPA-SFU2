@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "global.h"
+#include <any>
 
 struct FGlobal;
 struct FCurricula;
@@ -7,6 +8,17 @@ struct FTreeMetric;
 struct FTypeGraph;
 
 struct ETypeGraph;
+
+struct FTableData
+{
+    any fData;
+};
+
+struct FDataType
+{
+    vector<string>             arrHeader;
+    vector<vector<FTableData>> arrData;
+};
 
 struct FAdapOutData
 {
@@ -18,16 +30,28 @@ struct FAdapOutData
     void Create();
 
 public:
-    vector<ETypeGraph> arrTypeTotalStatistic;
-   
+    // FDataType                  fTotalOutData;
+
+    static const ETypeGraph    ETG_Total;
+    map<ETypeGraph, FDataType> mapGraphOutData;
 
 private:
-
     void CreateHeader();
-    vector<string> arrHeaderRow;
+    void CreateData();
 
+    void CreateTotalHeader();
+    void CreateGraphHeader();
+
+    void CompHeaderCreate(vector<string>& arrHeader);
+    void QuartileHeaderCreate(
+        vector<string>&                     arrHeader,
+        const vector<pair<string, string>>& arrQuartileHead);
 
 private:
+    const vector<wstring>                arrOriginMetricGraphHead;
+    const vector<wstring>                arrOriginMetricTotalHead;
+    const vector<pair<wstring, wstring>> arrOriginQuartileHead;
+
     static int iSinglControll;        // Проверка на синглтон
     shared_ptr<FGlobal> ptrGlobal;    // Синглтон
 };
