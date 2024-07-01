@@ -90,19 +90,19 @@ struct FTypeGraph
     double dMinSpanTree = FTypeGraph::dNoInit;
     double dMaxSpanTree = FTypeGraph::dNoInit;
 
-    //Квартильное разбиение
-    // Выборка разбития по квартилям
+    // Квартильное разбиение
+    //  Выборка разбития по квартилям
     vector<double> arrQuarMinPathLen;
     vector<int>
         arrLocalQuarAllPairDistance;    // Локальное квартильное распределение
 
     vector<int>
         arrGlobalQuarAllPairDistance;    // Локальное квартильное распределение
-    
 
     double dGraphAllScore   = FTypeGraph::dNoInit;
     int    iGraphAmountDisc = int(FTypeGraph::dNoInit);
     double dDense           = FTypeGraph::dNoInit;
+    double dGlobalСluster   = FTypeGraph::dNoInit;
 
     map<ETypeDisc, int>    mapGraphAmountTypeDisc;
     map<ETypeDisc, double> mapGraphCreditsTypeDisc;
@@ -115,10 +115,10 @@ struct FTypeGraph
 
 struct FGraph
 {
-    //static const int    iCommon;
-    //static const int    iAlt;
-    //static const int    iReverse;
-    //static const double dAllScoreNotEqualError;
+    // static const int    iCommon;
+    // static const int    iAlt;
+    // static const int    iReverse;
+    // static const double dAllScoreNotEqualError;
 
     // Инверсия зависимости
     explicit FGraph(shared_ptr<FCurricula> _ptrTree);
@@ -127,7 +127,7 @@ struct FGraph
     // заполнен
     void Create();
 
-     // Использовать только после вызова Create у ptrTree
+    // Использовать только после вызова Create у ptrTree
     void CreateAfter();
 
     void CalcAllScoreAndAmount(FTypeGraph& fGraph);
@@ -149,9 +149,8 @@ struct FGraph
 
     void CalculateLocalQuarAllPairDistance(
         vector<double>& arrTotalQuarAllWeigth,
-        vector<double>&
-            arrLocalQuarMinPathLen,
-        vector<int>& arrLocalQuarAmount,
+        vector<double>& arrLocalQuarMinPathLen,
+        vector<int>&    arrLocalQuarAmount,
         const vector<vector<double>>&
             arrAllDistance);    // Считаем квартильное распределение в частности
 
@@ -167,6 +166,10 @@ struct FGraph
         const vector<vector<pair<int, double>>>&
             fCurrentAdj);    // Высчитываем минимальные пути алгоритмом Флойда -
                              // Уоршелла (O(n^3))
+
+    //O(N^3), но на практике меньше, так как разреженный
+    void CalculateCluster(double&                                  dResult,
+                          const vector<vector<pair<int, double>>>& fAdjList);
 
     void CalculateMST(
         double&                                  dResult,
@@ -206,6 +209,6 @@ private:
 
     void CountAllMetric(ETypeGraph eTypeGraph);
 
-    //После вызова Create для всех ptrTree
+    // После вызова Create для всех ptrTree
     void CountAfterAllMetric(ETypeGraph eTypeGraph);
 };

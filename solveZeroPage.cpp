@@ -46,7 +46,7 @@ void FSolve::ZeroPageCreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
     // }
 
 #ifdef DEBUG
-    ofstream out(ptrGlobal->ptrConfig->GetSNameDebugFile() + ".txt");
+//    ofstream out(ptrGlobal->ptrConfig->GetSNameDebugFile() + ".txt", std::ios::app);
 #endif    // DEBUG
 
     int iPreX = -1;    // Root вне учебного плана (в нём все модули) у него

@@ -29,11 +29,16 @@ FError::FError(shared_ptr<FGlobal> _ptrGlobal)
 
 bool FError::Init()
 {
+    // Дебаг всегда перезаписывается
+    ofstream degugOut(ptrGlobal->ptrConfig->GetSNameDebugFile() + ".txt");
+    degugOut << "";
+    degugOut.close();
+
     if (ptrGlobal->ptrConfig->GetBReloadLogFile())
     {
         ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt");
         out << "";
-        out.close();
+        out.close();        
     }
     else
     {

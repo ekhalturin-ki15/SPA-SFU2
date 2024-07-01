@@ -137,7 +137,7 @@ namespace TestFSolve
         {
             try
             {
-                Assert::AreEqual(3ull, ptrGlobal->ptrSolve->arrDisc.size());
+                Assert::AreEqual(6ull, ptrGlobal->ptrSolve->arrDisc.size());
             }
             catch (const std::exception& ex)
             {
@@ -221,6 +221,12 @@ namespace TestFSolve
         shared_ptr<FCurricula> ptrFirst;
         shared_ptr<FCurricula> ptrSecond;
         shared_ptr<FCurricula> ptrThird;
+
+        shared_ptr<FCurricula> ptrFourth;
+        shared_ptr<FCurricula> ptrFifth;
+        shared_ptr<FCurricula> ptrSixth;
+
+
         ETypeGraph             eCommon;
 
     public:
@@ -258,6 +264,11 @@ namespace TestFSolve
             ptrFirst  = ptrGlobal->ptrSolve->arrDisc.front();
             ptrSecond = ptrGlobal->ptrSolve->arrDisc.at(1);
             ptrThird  = ptrGlobal->ptrSolve->arrDisc.at(2);
+            ptrFourth = ptrGlobal->ptrSolve->arrDisc.at(3);
+            ptrFifth = ptrGlobal->ptrSolve->arrDisc.at(4);
+            ptrSixth  = ptrGlobal->ptrSolve->arrDisc.at(5);
+
+
             eCommon   = ETypeGraph::ETG_Common;
         }
 
@@ -380,6 +391,28 @@ namespace TestFSolve
             auto& ptrThis = ptrThird;
             Assert::AreEqual(4,
                              ptrThis->ptrGraph->mapGraph[eCommon].iComponent);
+        }
+
+        TEST_METHOD(FourthClusterFull)
+        {
+            auto& ptrThis = ptrFourth;
+            Assert::AreEqual(1.0,
+                             ptrThis->ptrGraph->mapGraph[eCommon].dGlobalСluster, 1e-2);
+        }
+
+        TEST_METHOD(FifthClusterNotFull)
+        {
+            auto& ptrThis = ptrFifth;
+            Assert::AreEqual(
+                (0.5),ptrThis->ptrGraph->mapGraph[eCommon].dGlobalСluster, 1e-2);
+        }
+
+        TEST_METHOD(SixthlusterNotFull)
+        {
+            auto& ptrThis = ptrSixth;
+            Assert::AreEqual(
+                (1.0/3.0), ptrThis->ptrGraph->mapGraph[eCommon].dGlobalСluster,
+                1e-2);
         }
     };
 

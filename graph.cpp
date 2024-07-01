@@ -160,6 +160,9 @@ void FGraph::CountAllMetric(ETypeGraph eTypeGraph)
     CalculateAllPairDistance(mapGraph[eTypeGraph].arrAllDistance,
                              mapGraph[eTypeGraph].fAdjList);
 
+    CalculateCluster(mapGraph[eTypeGraph].dGlobalСluster,
+                     mapGraph[eTypeGraph].fAdjList);
+
     CalculateLocalQuarAllPairDistance(
         ptrTree->ptrGlobal->ptrSolve->ptrGraphAllData
             ->mapGraphQuarAllWeigth[eTypeGraph],
@@ -679,9 +682,9 @@ void FGraph::CalculateTotalQuarAllPairDistance(
     arrTotalQuarAmount.clear();
     arrTotalQuarAmount.resize(iAmountQuar);
 
-    int iMinInd = arrTotalQuarAllWeigth.size() * dTranc;
-    int iMaxInd = arrTotalQuarAllWeigth.size() - iMinInd;
-    int N       = iMaxInd - iMinInd - 1;
+    int iMinInd   = arrTotalQuarAllWeigth.size() * dTranc;
+    int iMaxInd   = arrTotalQuarAllWeigth.size() - iMinInd;
+    int N         = iMaxInd - iMinInd - 1;
     int iQuarSize = N / iAmountQuar;
 
     // Аномалии выносим в крайние квартили
@@ -691,8 +694,9 @@ void FGraph::CalculateTotalQuarAllPairDistance(
     int iNumQuar = 1;
     for (int i = 0; i < arrLocalQuarMinPathLen.size(); ++i)
     {
-        //Можно было и Бин. Поиск, но квартилей мало
-        //А лучше тегировать в общем массиве то, из какого УП вес и из какого типа графа
+        // Можно было и Бин. Поиск, но квартилей мало
+        // А лучше тегировать в общем массиве то, из какого УП вес и из какого
+        // типа графа
         for (iNumQuar = 1; iNumQuar < iAmountQuar; ++iNumQuar)
         {
             if (arrLocalQuarMinPathLen[i] <=
@@ -774,6 +778,66 @@ void FGraph::CalculateLocalQuarAllPairDistance(
     }
 
     arrLocalQuarAmount.push_back(iAmountNoLink);
+}
+
+bool graphLess(pair<int, double> l, pair<int, double> r)
+{
+    if (l.first == r.first)
+        return l.second < r.second;
+    return l.first < r.first;
+}
+
+
+void FGraph::CalculateCluster(double&                                  dResult,
+                              const vector<vector<pair<int, double>>>& fAdjList)
+{
+    const int N = fAdjList.size();
+
+    int iAmountClosedTriag = 0;
+    int iAmountOpenTriag = 0;
+
+    for (int i = 0; i < N; ++i)
+    {
+        for (const auto& [j, dis] : fAdjList[i])
+        {
+            if (j < i)
+                continue; // Без учёта перестановок
+            for (const auto& [k, dis2] : fAdjList[j])
+            {
+                if (k < j)
+                    continue;    // Без учёта перестановок
+
+                ++iAmountOpenTriag;
+                pair<int, double> k2 = { k, -1 };
+
+                const auto& it =
+                    lower_bound(fAdjList[i].begin(), fAdjList[i].end(), k2);
+
+                if (it != fAdjList[i].end())
+                    if (it->first == k)
+                        ++iAmountClosedTriag;
+            }
+        }
+    }
+
+    if (iAmountOpenTriag)
+    {
+        dResult = iAmountClosedTriag / (double(iAmountOpenTriag));
+    }
+    else
+    {
+        //Слишком маленький граф для подсчёта кластеризации
+        dResult = FTypeGraph::dNoInit;
+    }
+
+#ifdef DEBUG
+    ofstream out(ptrTree->ptrGlobal->ptrConfig->GetSNameDebugFile() + ".txt",
+                 std::ios::app);
+    out << "\n" << ptrTree->sNamePlan;
+    out << "\nCluster coef\n" << dResult << "\n";
+
+
+#endif
 }
 
 void FGraph::CalculateAllPairDistance(
