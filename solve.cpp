@@ -143,7 +143,7 @@ bool FSolve::Create(string _sInPath, string sNamePlan)
         arrDisc.back()->CountDisc();
 
         if (ptrSolveSecondPage->DFSCountingScore(arrDisc.back()->ptrRoot) !=
-            arrDisc.back()->arrETMAllSumScore[ETM_NoIgnore])
+            arrDisc.back()->mapETMTypeDisc[ETM_NoIgnore][ETD_Total].dCredits)
         {
             throw std::logic_error(FError::sNotEqualSum);
         }

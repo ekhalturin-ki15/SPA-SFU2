@@ -200,6 +200,71 @@ void FAdapOutData::CreateHeader()
 
 void FAdapOutData::CreateData()
 {
+    vector<FTableData> arrRow;
+
+    for (const auto& it : ptrGlobal->ptrSolve->arrDisc)
+    {
+        for (int iColumnNum = 0; iColumnNum < arrOriginMetricTotalHead.size();
+             ++iColumnNum)
+        {
+            auto& wsNameHeader = arrOriginMetricTotalHead[iColumnNum];
+            if (ptrGlobal->ptrConfig->mapArrOutParams[wsNameHeader].GetTotal())
+            {
+                FTableData fDataContainer;
+                switch (iColumnNum)
+                {
+                    case 0:
+                        fDataContainer.fData = it->sCurName;
+                        break;
+                    case 1:
+                        fDataContainer.fData = it->sTypePlan;
+                        break;
+                    case 2:
+                        fDataContainer.fData = it->iYearStart;
+                        break;
+                    case 3:
+                        fDataContainer.fData = it->iCodeUGSN;
+                        break;
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                        for (int iTypeDisc = 0;
+                             iTypeDisc < int(ETypeDisc::ETD_Size);
+                            ++iTypeDisc)
+                        {
+                            if (iColumnNum == iTypeDisc + 4)
+                            {
+                                fDataContainer.fData =
+                                    it->mapETMTypeDisc[ETM_NoExtended]
+                                                      [ETypeDisc(iTypeDisc)].dCredits;
+                                break;
+                            }
+                        }                       
+                        break;
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                        for (int iTypeDisc = 0;
+                             iTypeDisc < int(ETypeDisc::ETD_Size);
+                             ++iTypeDisc)
+                        {
+                            if (iColumnNum == iTypeDisc + 8)
+                            {
+                                fDataContainer.fData =
+                                    it->mapETMTypeDisc[ETM_NoExtended]
+                                                      [ETypeDisc(iTypeDisc)]
+                                                          .iAmount;
+                                break;
+                            }
+                        }
+                        break;
+                }
+                arrRow.push_back(fDataContainer);
+            }
+        }
+    }
 }
 
 void FAdapOutData::Create()

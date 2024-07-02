@@ -169,6 +169,13 @@ void FGraph::CountAllMetric(ETypeGraph eTypeGraph)
         mapGraph[eTypeGraph].arrQuarMinPathLen,
         mapGraph[eTypeGraph].arrLocalQuarAllPairDistance,
         mapGraph[eTypeGraph].arrAllDistance);
+
+#ifdef DEBUG
+    ofstream out(ptrTree->ptrGlobal->ptrConfig->GetSNameDebugFile() + ".txt",
+                 std::ios::app);
+    out << "\n" << ptrTree->sNamePlan;
+    out << "\nCluster coef\n" << mapGraph[eTypeGraph].dGlobalСluster << "\n";
+#endif
 }
 
 void FGraph::CalcAllScoreAndAmount(FTypeGraph& fGraph)
@@ -359,8 +366,8 @@ void FGraph::GenerateReverseGraph()
 
     FormulaParser fFormulaParser(
         ptrTree->ptrGlobal->ptrConfig->GetSFormulaReverseGraph(),
-        ptrTree->arrETMAllSumScore[ETM_NoIgnore],
-        ptrTree->arrETMAmountDisc[ETM_NoIgnore]);
+        ptrTree->mapETMTypeDisc[ETM_NoIgnore][ETypeDisc::ETD_Total].dCredits,
+        ptrTree->mapETMTypeDisc[ETM_NoIgnore][ETypeDisc::ETD_Total].iAmount);
     for (int iL = 0; iL < n - 1; ++iL)
     {
         const auto& L = fGraph.arrRel[iL].first;
@@ -400,6 +407,12 @@ void FGraph::GenerateReverseGraph()
             }
         }
     }
+
+    // Отсортируем список смежности
+    for (auto& it : fGraph.fAdjList)
+    {
+        sort(ALL(it));
+    }
 }
 
 void FGraph::GenerateGraph()
@@ -436,8 +449,8 @@ void FGraph::GenerateGraph()
     }
 
     FormulaParser fFormulaParser(ptrTree->ptrGlobal->ptrConfig->GetSFormula(),
-                                 ptrTree->arrETMAllSumScore[ETM_NoIgnore],
-                                 ptrTree->arrETMAmountDisc[ETM_NoIgnore]);
+        ptrTree->mapETMTypeDisc[ETM_NoIgnore][ETypeDisc::ETD_Total].dCredits,
+        ptrTree->mapETMTypeDisc[ETM_NoIgnore][ETypeDisc::ETD_Total].iAmount);
 
     for (int iL = 0; iL < n - 1; ++iL)
     {
@@ -482,6 +495,12 @@ void FGraph::GenerateGraph()
             }
         }
     }
+
+    // Отсортируем список смежности
+    for (auto& it : fGraph.fAdjList)
+    {
+        sort(ALL(it));
+    }
 }
 
 void FGraph::GenerateAltGraph()
@@ -525,8 +544,8 @@ void FGraph::GenerateAltGraph()
     }
 
     FormulaParser fFormulaParser(ptrTree->ptrGlobal->ptrConfig->GetSFormula(),
-                                 ptrTree->arrETMAllSumScore[ETM_NoIgnore],
-                                 ptrTree->arrETMAmountDisc[ETM_NoIgnore]);
+        ptrTree->mapETMTypeDisc[ETM_NoIgnore][ETypeDisc::ETD_Total].dCredits,
+        ptrTree->mapETMTypeDisc[ETM_NoIgnore][ETypeDisc::ETD_Total].iAmount);
 
     for (int iL = 0; iL < n - 1; ++iL)
     {
@@ -611,6 +630,12 @@ void FGraph::GenerateAltGraph()
                 // Игнорируем ошибки, работаем как ни в чём не бывало
             }
         }
+    }
+
+    // Отсортируем список смежности
+    for (auto& it : fGraph.fAdjList)
+    {
+        sort(ALL(it));
     }
 }
 
@@ -787,37 +812,58 @@ bool graphLess(pair<int, double> l, pair<int, double> r)
     return l.first < r.first;
 }
 
-
 void FGraph::CalculateCluster(double&                                  dResult,
                               const vector<vector<pair<int, double>>>& fAdjList)
 {
     const int N = fAdjList.size();
 
     int iAmountClosedTriag = 0;
-    int iAmountOpenTriag = 0;
+    int iAmountOpenTriag   = 0;
 
+    //Вершина треугольника
     for (int i = 0; i < N; ++i)
     {
-        for (const auto& [j, dis] : fAdjList[i])
+        //Левая вершина
+        for (int pairLeft = 0; pairLeft < int(fAdjList[i].size()) - 1; ++pairLeft)
         {
-            if (j < i)
-                continue; // Без учёта перестановок
-            for (const auto& [k, dis2] : fAdjList[j])
+            const auto& [left, distanceLeft] = fAdjList[i][pairLeft];
+
+            for (int pairRight = pairLeft + 1; pairRight < fAdjList[i].size();
+                 ++pairRight)
             {
-                if (k < j)
-                    continue;    // Без учёта перестановок
-
+                const auto& [right, distancepairRight] = fAdjList[i][pairRight];
                 ++iAmountOpenTriag;
-                pair<int, double> k2 = { k, -1 };
 
-                const auto& it =
-                    lower_bound(fAdjList[i].begin(), fAdjList[i].end(), k2);
+                pair<int, double> serchRight = { right, -1 };
 
-                if (it != fAdjList[i].end())
-                    if (it->first == k)
+                // Если замыкает, то есть в i есть k
+                const auto& it = lower_bound(ALL(fAdjList[left]), serchRight);
+
+                if (it != fAdjList[left].end())
+                    if (it->first == right)
                         ++iAmountClosedTriag;
             }
         }
+        //pair<int, double> searchJ = { i, -1 };
+        //auto              pairJ   = lower_bound(ALL(fAdjList[i]), searchJ);
+        //for (; pairJ != fAdjList[i].end(); ++pairJ)
+        //{
+        //    auto& [j, valJ]           = *pairJ;
+        //    pair<int, double> searchK = { j, -1 };
+        //    auto              pairK   = lower_bound(ALL(fAdjList[j]), searchK);
+        //    for (; pairK != fAdjList[j].end(); ++pairK)
+        //    {
+        //        auto& [k, valK] = *pairK;
+        //        ++iAmountOpenTriag;
+        //        pair<int, double> k2 = { k, -1 };
+        //        // Если замыкает, то есть в i есть k
+        //        const auto& it =
+        //            lower_bound(fAdjList[i].begin(), fAdjList[i].end(), k2);
+        //        if (it != fAdjList[i].end())
+        //            if (it->first == k)
+        //                ++iAmountClosedTriag;
+        //    }
+        //}
     }
 
     if (iAmountOpenTriag)
@@ -826,17 +872,14 @@ void FGraph::CalculateCluster(double&                                  dResult,
     }
     else
     {
-        //Слишком маленький граф для подсчёта кластеризации
+        // Слишком маленький граф для подсчёта кластеризации
         dResult = FTypeGraph::dNoInit;
     }
 
 #ifdef DEBUG
     ofstream out(ptrTree->ptrGlobal->ptrConfig->GetSNameDebugFile() + ".txt",
                  std::ios::app);
-    out << "\n" << ptrTree->sNamePlan;
-    out << "\nCluster coef\n" << dResult << "\n";
-
-
+    out << "\n" << iAmountClosedTriag << " " << iAmountOpenTriag;
 #endif
 }
 
@@ -883,11 +926,19 @@ void FGraph::CalculateMST(double&                                  dResult,
 
     for (int l = 0; l < N; ++l)
     {
-        for (const auto& [r, len] : fCurrentAdj[l])
+        auto it = fCurrentAdj[l].begin();
+        if (ptrTree->ptrGlobal->ptrConfig->GetBIsUnDirected())
         {
             // Чтобы не дублировать, он же неориентированный
-            if ((l < r) || (!ptrTree->ptrGlobal->ptrConfig->GetBIsUnDirected()))
-                q.push_back({ len, { l, r } });
+            pair<int, double> searchJ = { l, -1 };
+            it = lower_bound(ALL(fCurrentAdj[l]), searchJ);
+        }
+
+        for (; it != fCurrentAdj[l].end(); ++it)
+        {
+            const auto& [r, len] = *it;
+
+            q.push_back({ len, { l, r } });
         }
     }
     sort(ALL(q), cmp);

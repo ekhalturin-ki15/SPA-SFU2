@@ -21,9 +21,10 @@ enum ETagDisc;
 
 enum ETypeDisc : int
 {
-    ETD_Elective,
+    ETD_Total = 0, //Заглушка, чтобы считать общую статистику в том числе
     ETD_Common,
     ETD_Chosen,
+    ETD_Elective,
     ETD_Size
 };
 
@@ -115,10 +116,10 @@ struct FCurricula
     // в списке) int iExtendedAmountDisc;    // Количество всех дисциплин (не
     // модулей)
 
-    vector<double> arrETMAllSumScore;
-    vector<int>    arrETMAmountDisc;
+    //vector<double> arrETMAllSumScore;
+    //vector<int>    arrETMAmountDisc;
     vector<map<ETypeDisc, FDiscParams>>
-        mapETMTypeDisc;    // Количество и ЗЕ дисциплин по типу (основные, по
+        mapETMTypeDisc;    // Количество и ЗЕ дисциплин по типу (Все, основные, по
                            // выбору, факультативы), Учитываются в том числе
                            // и те, что не считаются в Плане
     vector<map<ETagDisc, FDiscParams>>

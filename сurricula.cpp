@@ -19,9 +19,9 @@ FTreeElement::FTreeElement()
 FCurricula::FCurricula(shared_ptr<FGlobal> _ptrGlobal)
     : ptrGlobal(_ptrGlobal),
       iAmountCourse(0),
-      //dAllSumScore(0.),
-      //iAmountDisc(0),
-      //iExtendedAmountDisc(0),
+      // dAllSumScore(0.),
+      // iAmountDisc(0),
+      // iExtendedAmountDisc(0),
       iYearStart(0),
       iCodeUGSN(0),
       sTypePlan("None")
@@ -33,8 +33,9 @@ FCurricula::FCurricula(shared_ptr<FGlobal> _ptrGlobal)
     // Теперь есть разделение на расширенный и только для учтённых
     mapETMTypeDisc.resize(ETM_Size);
     mapETMTagDisc.resize(ETM_Size);
-    arrETMAllSumScore.resize(ETM_Size);
-    arrETMAmountDisc.resize(ETM_Size);
+
+    //arrETMAllSumScore.resize(ETM_Size);
+    //arrETMAmountDisc.resize(ETM_Size);
 }
 
 FCurricula::~FCurricula()
@@ -78,36 +79,35 @@ void FCurricula::CountDisc()
                     ((it->arrChild.size() == 0) && (it->bAllow) &&
                      (iTypeMetric == 0)) ||
                     // Extended
-                    ((it->arrChild.size() == 0) && (iTypeMetric == 1)) ||//
+                    ((it->arrChild.size() == 0) && (iTypeMetric == 1)) ||    //
                     // No Ignore
                     ((it->arrChild.size() == 0) && (it->bAllow) &&
-                     (it->bNoIgnore) &&
-                     (iTypeMetric == 2))
+                     (it->bNoIgnore) && (iTypeMetric == 2))
 
-                //
+                    //
                 )
             {
-                arrETMAmountDisc[iTypeMetric]++;
-                arrETMAllSumScore[iTypeMetric] += it->dSumScore;
+
+                mapETMTypeDisc[iTypeMetric][ETypeDisc::ETD_Total].iAmount++;
+                mapETMTypeDisc[iTypeMetric][ETypeDisc::ETD_Total].dCredits +=
+                    it->dSumScore;
+
                 mapETMTypeDisc[iTypeMetric][it->eTypeDisc].iAmount++;
                 mapETMTypeDisc[iTypeMetric][it->eTypeDisc].dCredits +=
                     it->dSumScore;
                 if (it->setTagDisc.size() == 0)
                 {
-                    mapETMTagDisc[iTypeMetric][ETagDisc::ETagD_Another].iAmount++;
+                    mapETMTagDisc[iTypeMetric][ETagDisc::ETagD_Another]
+                        .iAmount++;
                     mapETMTagDisc[iTypeMetric][ETagDisc::ETagD_Another]
                         .dCredits += it->dSumScore;
-
                 }
                 for (const auto& et : it->setTagDisc)
                 {
-                    mapETMTagDisc[iTypeMetric][et]
-                        .iAmount++;
-                    mapETMTagDisc[iTypeMetric][et]
-                        .dCredits += it->dSumScore;
+                    mapETMTagDisc[iTypeMetric][et].iAmount++;
+                    mapETMTagDisc[iTypeMetric][et].dCredits += it->dSumScore;
                 }
             }
-
         }
     }
     return;
@@ -115,7 +115,7 @@ void FCurricula::CountDisc()
 
 map<wstring, shared_ptr<FTreeElement>>
     FCurricula::GetMapNoIgnoreDisc(bool IsNecessaryAllow,
-                                bool IsNecessaryNotIgnore)
+                                   bool IsNecessaryNotIgnore)
 {
     map<wstring, shared_ptr<FTreeElement>> mapReturn;
     for (const auto& [key, it] : mapAllDisc)

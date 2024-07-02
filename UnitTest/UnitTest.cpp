@@ -162,7 +162,7 @@ namespace TestFSolve
             }
 
             //Факультативы Основные По выбору
-            Assert::AreEqual(string("0=2 1=6 2=2"), sActual);
+            Assert::AreEqual(string("0=10 1=6 2=2 3=2"), sActual);
         }
 
         TEST_METHOD(CheckTagDisc)
@@ -184,17 +184,24 @@ namespace TestFSolve
 
         TEST_METHOD(AllSumCredits)
         {
-            Assert::AreEqual(25., ptrFirst->arrETMAllSumScore[ETM_NoExtended]);
+            Assert::AreEqual(
+                25.,
+                ptrFirst->mapETMTypeDisc[ETM_NoExtended][ETypeDisc::ETD_Total]
+                    .dCredits);
         }
 
         TEST_METHOD(CountAllowDisc)
         {
-            Assert::AreEqual(7, ptrFirst->arrETMAmountDisc[ETM_NoExtended]);
+            Assert::AreEqual(
+                7,
+                ptrFirst->mapETMTypeDisc[ETM_NoExtended][ETypeDisc::ETD_Total].iAmount);
         }
 
         TEST_METHOD(CountDiscWhithNotAllow)
         {
-            Assert::AreEqual(10, ptrFirst->arrETMAmountDisc[ETM_Extended]);
+            Assert::AreEqual(
+                10,
+                ptrFirst->mapETMTypeDisc[ETM_Extended][ETypeDisc::ETD_Total].iAmount);
         }
 
         TEST_METHOD(AllCompIsFind)
@@ -393,6 +400,14 @@ namespace TestFSolve
                              ptrThis->ptrGraph->mapGraph[eCommon].iComponent);
         }
 
+        TEST_METHOD(FirstClusterFull)
+        {
+            auto& ptrThis = ptrFirst;
+            Assert::AreEqual(
+                (3.0/5.0), ptrThis->ptrGraph->mapGraph[eCommon].dGlobalСluster,
+                1e-2);
+        }
+
         TEST_METHOD(FourthClusterFull)
         {
             auto& ptrThis = ptrFourth;
@@ -404,14 +419,14 @@ namespace TestFSolve
         {
             auto& ptrThis = ptrFifth;
             Assert::AreEqual(
-                (0.5),ptrThis->ptrGraph->mapGraph[eCommon].dGlobalСluster, 1e-2);
+                (0.75),ptrThis->ptrGraph->mapGraph[eCommon].dGlobalСluster, 1e-2);
         }
 
         TEST_METHOD(SixthlusterNotFull)
         {
             auto& ptrThis = ptrSixth;
             Assert::AreEqual(
-                (1.0/3.0), ptrThis->ptrGraph->mapGraph[eCommon].dGlobalСluster,
+                (3.0/5.0), ptrThis->ptrGraph->mapGraph[eCommon].dGlobalСluster,
                 1e-2);
         }
     };
@@ -551,7 +566,7 @@ namespace AnomalTestFSolve
             }
 
             //Все только основные
-            Assert::AreEqual(string("1=4"), sActual);
+            Assert::AreEqual(string("0=4 1=3 2=1"), sActual);
         }
 
         TEST_METHOD(CheckTagDisc)
@@ -573,17 +588,25 @@ namespace AnomalTestFSolve
 
         TEST_METHOD(AllSumCredits)
         {
-            Assert::AreEqual(10., ptrFirst->arrETMAllSumScore[ETM_NoExtended]);
+            Assert::AreEqual(10.,
+                ptrFirst->mapETMTypeDisc[ETM_NoExtended]
+                                                        [ETypeDisc::ETD_Total].dCredits);
         }
 
         TEST_METHOD(CountAllowDisc)
         {
-            Assert::AreEqual(3, ptrFirst->arrETMAmountDisc[ETM_NoExtended]);
+            Assert::AreEqual(
+                3,
+                ptrFirst->mapETMTypeDisc[ETM_NoExtended][ETypeDisc::ETD_Total]
+                    .iAmount);
         }
 
         TEST_METHOD(CountDiscWhithNotAllow)
         {
-            Assert::AreEqual(4, ptrFirst->arrETMAmountDisc[ETM_Extended]);
+            Assert::AreEqual(
+                4,
+                ptrFirst->mapETMTypeDisc[ETM_Extended][ETypeDisc::ETD_Total]
+                    .iAmount);
         }
 
         TEST_METHOD(AllCompIsFind)

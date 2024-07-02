@@ -703,34 +703,29 @@ void FOutData::CreateAllCurriculaTotalData(
 
         // Extended
         // arrAllResult.push_back(it->dAllSumScore);
-        arrAllResult.push_back(it->arrETMAllSumScore[ETM_NoExtended]);
+        //arrAllResult.push_back(it->arrETMAll[ETM_NoExtended].dCredits);
         // arrAllResult.push_back(it->iExtendedAmountDisc);
-        arrAllResult.push_back(it->arrETMAmountDisc[ETM_NoExtended]);
+        //arrAllResult.push_back(it->arrETMAll[ETM_NoExtended].iAmount);
 
-        // Дисциплин факультативов, основных, по выбору  и т.д во всём УП ЗЕ
+        // Дисциплин Всех, основных, по выбору, факультативов,   и т.д во всём УП ЗЕ
         {
-            int iNumberType = -1;
-            for (auto& wsNameType :
-                 ptrGlobal->ptrConfig->GetArrTypeDiscCredits())
+            for (int iTypeDisc = 0; iTypeDisc < int(ETypeDisc::ETD_Size);
+                 ++iTypeDisc)
             {
-                // redimer
-                ++iNumberType;
                 arrAllResult.push_back(
-                    it->mapETMTypeDisc[ETM_NoExtended][ETypeDisc(iNumberType)]
+                    it->mapETMTypeDisc[ETM_NoExtended][ETypeDisc(iTypeDisc)]
                         .dCredits);
             }
         }
 
-        // Дисциплин факультативов, основных, по выбору  и т.д во всём УП
+        // Дисциплин Всех,  основных, по выбору, факультативов  и т.д во всём УП
         // количество
         {
-            int iNumberType = -1;
-            for (auto& wsNameType :
-                 ptrGlobal->ptrConfig->GetArrTypeDiscAmount())
+            for (int iTypeDisc = 0; iTypeDisc < int(ETypeDisc::ETD_Size);
+                 ++iTypeDisc)
             {
-                ++iNumberType;
                 arrAllResult.push_back(
-                    it->mapETMTypeDisc[ETM_NoExtended][ETypeDisc(iNumberType)]
+                    it->mapETMTypeDisc[ETM_NoExtended][ETypeDisc(iTypeDisc)]
                         .iAmount);
             }
         }
