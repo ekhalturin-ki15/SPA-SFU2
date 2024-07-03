@@ -56,13 +56,13 @@ bool FAdapOutData::Init()
 
 void FAdapOutData::CreateTotalHeader()
 {
-    auto& fTotalOutData = mapGraphOutData[ETG_Total];
+    auto& fTotalOutHeader = mapOutData[ETG_Total].arrHeader;
 
     for (const auto& wsNameHeader : arrOriginMetricTotalHead)
     {
         if (ptrGlobal->ptrConfig->mapArrOutParams[wsNameHeader].GetTotal())
         {
-            fTotalOutData.arrHeader.push_back(ptrGlobal->ConwertToString(
+            fTotalOutHeader.push_back(ptrGlobal->ConwertToString(
                 ptrGlobal->ptrConfig->mapArrOutParams[wsNameHeader].GetName()));
         }
     }
@@ -73,9 +73,9 @@ void FAdapOutData::CreateTotalHeader()
         wsCompScore = ptrGlobal->ptrConfig->mapArrOutParams[L"ЗЕ у компетенции"]
                           .GetName() +
                       wsCompScore;
-        fTotalOutData.arrHeader.push_back(
+        fTotalOutHeader.push_back(
             ptrGlobal->ConwertToString(wsCompScore));
-        fTotalOutData.arrHeader.push_back(sCompName);
+        fTotalOutHeader.push_back(sCompName);
     }
 }
 
@@ -97,8 +97,10 @@ void FAdapOutData::CreateGraphHeader()
         }
     }
 
-    for (auto& [eType, fData] : mapGraphOutData)
+    for (auto& [eType, fData] : mapOutData)
     {
+        if (eType == ETG_Total)
+            continue; //Для общей статистики особый заголовок
         for (const auto& wsNameHeader : arrOriginMetricGraphHead)
         {
             if (ptrGlobal->ptrConfig->mapArrOutParams[wsNameHeader].GetTotal())
@@ -184,13 +186,13 @@ void FAdapOutData::CompHeaderCreate(vector<string>& arrHeader)
 
 void FAdapOutData::CreateHeader()
 {
-    mapGraphOutData[ETypeGraph::ETG_Common];
-    mapGraphOutData[ETypeGraph::ETG_Alt];
-    mapGraphOutData[ETypeGraph::ETG_Reverse];
+    mapOutData[ETypeGraph::ETG_Common];
+    mapOutData[ETypeGraph::ETG_Alt];
+    mapOutData[ETypeGraph::ETG_Reverse];
 
     for (int iCourse = 0; iCourse < ptrGlobal->ptrSolve->iMaxCourse; ++iCourse)
     {
-        mapGraphOutData[ETypeGraph(iCourse)];
+        mapOutData[ETypeGraph(iCourse)];
     }
 
     CreateGraphHeader();
@@ -198,12 +200,13 @@ void FAdapOutData::CreateHeader()
     CreateTotalHeader();
 }
 
-void FAdapOutData::CreateData()
+void FAdapOutData::CreateTotalData()
 {
-    vector<FTableData> arrRow;
+    auto& fTotalOutData = mapOutData[ETG_Total].arrData;
 
     for (const auto& it : ptrGlobal->ptrSolve->arrDisc)
     {
+        vector<FTableData> arrRow;
         for (int iColumnNum = 0; iColumnNum < arrOriginMetricTotalHead.size();
              ++iColumnNum)
         {
@@ -229,42 +232,109 @@ void FAdapOutData::CreateData()
                     case 5:
                     case 6:
                     case 7:
-                        for (int iTypeDisc = 0;
-                             iTypeDisc < int(ETypeDisc::ETD_Size);
-                            ++iTypeDisc)
-                        {
-                            if (iColumnNum == iTypeDisc + 4)
-                            {
-                                fDataContainer.fData =
-                                    it->mapETMTypeDisc[ETM_NoExtended]
-                                                      [ETypeDisc(iTypeDisc)].dCredits;
-                                break;
-                            }
-                        }                       
+                        fDataContainer.fData =
+                            it->mapETMTypeDisc[ETM_NoExtended]
+                                .at(ETypeDisc(iColumnNum -
+                                              4)).dCredits;
                         break;
                     case 8:
                     case 9:
                     case 10:
                     case 11:
-                        for (int iTypeDisc = 0;
-                             iTypeDisc < int(ETypeDisc::ETD_Size);
-                             ++iTypeDisc)
-                        {
-                            if (iColumnNum == iTypeDisc + 8)
-                            {
-                                fDataContainer.fData =
-                                    it->mapETMTypeDisc[ETM_NoExtended]
-                                                      [ETypeDisc(iTypeDisc)]
-                                                          .iAmount;
-                                break;
-                            }
-                        }
+                        fDataContainer.fData =
+                            it->mapETMTypeDisc[ETM_NoExtended]
+                                .at(ETypeDisc(iColumnNum -
+                                              8)).iAmount;
                         break;
                 }
                 arrRow.push_back(fDataContainer);
             }
         }
+
+        fTotalOutData.push_back(arrRow);
     }
+}
+
+void FAdapOutData::CreateGraphData()
+{
+    for (auto& [eType, fData] : mapOutData)
+    {
+        if (eType == ETG_Total)
+            continue;    // Для общей статистики особый заголовок
+
+        auto& fTotalOutData = mapOutData[eType].arrData;
+
+        for (const auto& it : ptrGlobal->ptrSolve->arrDisc)
+        {
+            const auto& fGraph = it->ptrGraph->mapGraph[eType];
+
+            vector<FTableData> arrRow;
+            for (int iColumnNum = 0;
+                 iColumnNum < arrOriginMetricGraphHead.size();
+                 ++iColumnNum)
+            {
+                auto& wsNameHeader = arrOriginMetricGraphHead[iColumnNum];
+                if (ptrGlobal->ptrConfig->mapArrOutParams[wsNameHeader]
+                        .GetTotal())
+                {
+                    FTableData fDataContainer;
+                    switch (iColumnNum)
+                    {
+                        case 0:
+                        case 1:
+                        case 2:
+                        case 3:
+                            fDataContainer.fData =
+                                fGraph.mapGraphDataTypeDisc.at(
+                                    ETypeDisc(
+                                    iColumnNum)).dCredits;
+                            break;
+                        case 4:
+                        case 5:
+                        case 6:
+                        case 7:
+                            fDataContainer.fData =
+                                fGraph.mapGraphDataTypeDisc.at(
+                                    ETypeDisc(
+                                    iColumnNum - 4)).iAmount;
+
+                        case 8:
+                            fDataContainer.fData = fGraph.dMaxDiscScore;
+                        case 9:
+                            fDataContainer.fData = fGraph.dMinDiscScore;
+                        case 10:
+                            fDataContainer.fData = fGraph.dMaxRib;
+                        case 11:
+                            fDataContainer.fData = fGraph.dMinRib;
+                        case 12:
+                            fDataContainer.fData = fGraph.dDiametrLen;
+                        case 13:
+                            fDataContainer.fData = fGraph.dDiametrStep;
+                        case 14:
+                            fDataContainer.fData = fGraph.iComponent;
+                        case 15:
+                            fDataContainer.fData = fGraph.dMaxSpanTree;
+                        case 16:
+                            fDataContainer.fData = fGraph.dMinSpanTree;
+                        case 17:
+                            fDataContainer.fData = fGraph.dDense;
+
+                    }
+                    arrRow.push_back(fDataContainer);
+                }
+            }
+
+            fTotalOutData.push_back(arrRow);
+        }
+
+    }
+}
+
+void FAdapOutData::CreateData()
+{
+    CreateTotalData();
+
+    CreateGraphData();
 }
 
 void FAdapOutData::Create()

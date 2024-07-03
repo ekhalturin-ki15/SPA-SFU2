@@ -173,10 +173,10 @@ void FOutData::CreateTotalInfo(vector<double>& arrReturnDataMetrics,
 
     for (int iType = 0; iType < ETypeDisc::ETD_Size; ++iType)
     {
-        if (fGraph->mapGraphCreditsTypeDisc.count(ETypeDisc(iType)))
-            arrResult.push_back(
-                double(fGraph->mapGraphCreditsTypeDisc.find(ETypeDisc(iType))
-                           ->second));
+        if (fGraph->mapGraphDataTypeDisc.count(ETypeDisc(iType)))
+            arrResult.push_back(double(
+                fGraph->mapGraphDataTypeDisc.find(ETypeDisc(iType))
+                           ->second.dCredits));
         else
         {
             arrResult.push_back(0);    // Нет такого вида дисциплин
@@ -185,9 +185,9 @@ void FOutData::CreateTotalInfo(vector<double>& arrReturnDataMetrics,
 
     for (int iType = 0; iType < ETypeDisc::ETD_Size; ++iType)
     {
-        if (fGraph->mapGraphAmountTypeDisc.count(ETypeDisc(iType)))
+        if (fGraph->mapGraphDataTypeDisc.count(ETypeDisc(iType)))
             arrResult.push_back(double(
-                fGraph->mapGraphAmountTypeDisc.find(ETypeDisc(iType))->second));
+                fGraph->mapGraphDataTypeDisc.find(ETypeDisc(iType))->second.iAmount));
         else
         {
             arrResult.push_back(0);    // Нет такого вида дисциплин

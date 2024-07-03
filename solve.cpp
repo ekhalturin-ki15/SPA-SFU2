@@ -148,8 +148,11 @@ bool FSolve::Create(string _sInPath, string sNamePlan)
             throw std::logic_error(FError::sNotEqualSum);
         }
 
-        arrDisc.back()->mapNoIgnoreDisc =
-            arrDisc.back()->GetMapNoIgnoreDisc(true, true);
+        arrDisc.back()->GetMapNoIgnoreDisc(arrDisc.back()->mapNoIgnoreDisc, true,
+                                       true);
+
+        arrDisc.back()->GetMapNoIgnoreComp(arrDisc.back()->mapNoIgnoreComp,
+                                           arrDisc.back()->mapNoIgnoreDisc);
 
         ++iCurrentPage;
     }
@@ -207,12 +210,12 @@ void FSolve::CreateAllGraph()
         it->ptrGraph = make_shared<FGraph>(it);
         it->ptrGraph->Create();    // А теперь, построй граф на основе УП
     }
-    //Добавились данные о всех Графах (генеральной совокупности)
+    // Добавились данные о всех Графах (генеральной совокупности)
     for (auto& it : arrDisc)
     {
         it->ptrGraph->CreateAfter();    // После подсчитанных общих метрик,
-                                       // определить ещё дополнительные (на
-                                       // основе генеральной совокупности)
+                                        // определить ещё дополнительные (на
+                                        // основе генеральной совокупности)
     }
 }
 

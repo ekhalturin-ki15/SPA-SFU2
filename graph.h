@@ -6,6 +6,7 @@
 
 using namespace std;
 struct FCurricula;
+struct FDiscParams;
 
 // Тип зависит от версии графа, сейчас ETG_Common - обычный,
 // ETG_Alt - альтернативный, ETG_Reverse - Обратный
@@ -104,8 +105,8 @@ struct FTypeGraph
     double dDense           = FTypeGraph::dNoInit;
     double dGlobalСluster   = FTypeGraph::dNoInit;
 
-    map<ETypeDisc, int>    mapGraphAmountTypeDisc;
-    map<ETypeDisc, double> mapGraphCreditsTypeDisc;
+    map<ETypeDisc, FDiscParams> mapGraphDataTypeDisc;
+
     vector<int>            arrAmountCountCompDisc;
 
     vector<vector<double>> arrAllDistance;
@@ -115,11 +116,6 @@ struct FTypeGraph
 
 struct FGraph
 {
-    // static const int    iCommon;
-    // static const int    iAlt;
-    // static const int    iReverse;
-    // static const double dAllScoreNotEqualError;
-
     // Инверсия зависимости
     explicit FGraph(shared_ptr<FCurricula> _ptrTree);
 
@@ -211,4 +207,7 @@ private:
 
     // После вызова Create для всех ptrTree
     void CountAfterAllMetric(ETypeGraph eTypeGraph);
+
+
+    shared_ptr<FTreeElement> GetGraphDisc(const wstring& wsKey);
 };

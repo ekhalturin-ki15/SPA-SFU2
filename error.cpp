@@ -250,6 +250,25 @@ void FError::ErrorBadShiftTable() const
     out.close();
 }
 
+void FError::ErrorNoFindDisc(wstring wsDiscName, string sNamePlan) const
+{
+    ErrorNoFindDisc(ptrGlobal->ConwertToString(wsDiscName), sNamePlan);
+}
+
+void FError::ErrorNoFindDisc(string sDiscName, string sNamePlan) const
+{
+    ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt",
+                 std::ios::app);
+
+    out << "- В учебном плане " + sNamePlan;
+    out << " Не найдена дисциплина с индексом ";
+    out << sDiscName;
+    out << END;
+    out << "Возможно, данная дисциплина не используется среди учитываемых";
+    out << END;
+    out.close();
+}
+
 void FError::ErrorToMuchColums() const
 {
     ofstream out = OutHeader();

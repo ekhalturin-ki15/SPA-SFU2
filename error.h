@@ -1,9 +1,23 @@
-﻿#pragma once
+﻿// 1)   если строка начинается с символа «+», то это означает, что УП был
+//      обработан корректно
+//
+// 2)   если строка начинается с символа «-»,
+//      то это означает, что требуется обратить внимание на корректность УП,
+//      в них есть недочёты.Все недочёты будут перечислены строками выше до
+//      пустой
+//      строки переноса
+//
+// 3)   если строка начинается с символа «!», то это означает, что в УП
+//      присутствует критическая ошибка, из-за которой его дальнейшая
+//      обработка невозможна. Данный УП будет изъят из дальнейшего
+//      анализа
+
+#pragma once
 #include "global.h"
 
 struct FGlobal;
 
-//Используется, когда OpenXLSX выдаёт ложные ошибки
+// Используется, когда OpenXLSX выдаёт ложные ошибки
 struct No_Error_Dont_Worry
 {
     string msg = "No error, don't worry";
@@ -63,6 +77,9 @@ struct FError
     void ErrorBadFormula();
 
     void ErrorBadShiftTable() const;
+
+    void ErrorNoFindDisc(string sDiscName, string sNamePlan) const;
+    void ErrorNoFindDisc(wstring wsDiscName, string sNamePlan) const;
 
     void ErrorGraphNoInitWeightDisc(string  sNamePlan,
                                     wstring wsNameIndex) const;

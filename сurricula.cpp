@@ -34,8 +34,8 @@ FCurricula::FCurricula(shared_ptr<FGlobal> _ptrGlobal)
     mapETMTypeDisc.resize(ETM_Size);
     mapETMTagDisc.resize(ETM_Size);
 
-    //arrETMAllSumScore.resize(ETM_Size);
-    //arrETMAmountDisc.resize(ETM_Size);
+    // arrETMAllSumScore.resize(ETM_Size);
+    // arrETMAmountDisc.resize(ETM_Size);
 }
 
 FCurricula::~FCurricula()
@@ -87,7 +87,6 @@ void FCurricula::CountDisc()
                     //
                 )
             {
-
                 mapETMTypeDisc[iTypeMetric][ETypeDisc::ETD_Total].iAmount++;
                 mapETMTypeDisc[iTypeMetric][ETypeDisc::ETD_Total].dCredits +=
                     it->dSumScore;
@@ -113,12 +112,12 @@ void FCurricula::CountDisc()
     return;
 }
 
-map<wstring, shared_ptr<FTreeElement>>
-    FCurricula::GetMapNoIgnoreDisc(bool IsNecessaryAllow,
-                                   bool IsNecessaryNotIgnore)
+void FCurricula::GetMapNoIgnoreDisc(
+    map<wstring, shared_ptr<FTreeElement>>& mapDiscReturn,
+    bool IsNecessaryAllow,
+    bool IsNecessaryNotIgnore)
 {
-    map<wstring, shared_ptr<FTreeElement>> mapReturn;
-    for (const auto& [key, it] : mapAllDisc)
+    for (const auto& [wsKey, it] : mapAllDisc)
     {
         // Нулевые дисциплины тоже нужно убрать
         if ((it->arrChild.size() == 0) && (it->dSumScore > 0))
@@ -131,7 +130,7 @@ map<wstring, shared_ptr<FTreeElement>>
                 if (!it->bAllow)
                     continue;
 
-            mapReturn[key] = it;
+            mapDiscReturn[wsKey] = it;
         }
         else
         {
@@ -145,5 +144,34 @@ map<wstring, shared_ptr<FTreeElement>>
             }
         }
     }
-    return mapReturn;
+}
+
+
+void FCurricula::GetMapNoIgnoreComp(
+    map<wstring, shared_ptr<FTreeElement>>& mapCompReturn,
+    const map<wstring, shared_ptr<FTreeElement>>& mapNoIgnoreDisc)
+{
+
+    for (const auto& [wsKey, it] : mapNoIgnoreDisc)
+    {
+        shared_ptr<FTreeElement> ptrNewNode = nullptr;
+        
+        for (const auto& [sCompKey, arrInd] : it->mapComp)
+        {
+            auto wsCompKey = ptrGlobal->ConwertToWstring(sCompKey);
+            if (!mapCompReturn.count(wsCompKey))
+            {
+                ptrNewNode = make_shared<FTreeElement>();
+                mapCompReturn[wsCompKey] = ptrNewNode;
+            }
+
+            auto& ptrNode = *(mapCompReturn[wsCompKey]);
+            if (ptrGlobal->ptrConfig->GetBIsNormalizeScoreComp())
+                ptrNode.dSumScore += (it->dSumScore / it->mapComp.size());
+            else
+                ptrNode.dSumScore += it->dSumScore;
+
+            ptrNode.mapComp[FError::sDontHaveIndex]; // Нет ни компетенций, ни индикаторов
+        }
+    }
 }

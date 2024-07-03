@@ -21,7 +21,7 @@ enum ETagDisc;
 
 enum ETypeDisc : int
 {
-    ETD_Total = 0, //Заглушка, чтобы считать общую статистику в том числе
+    ETD_Total = 0,    // Заглушка, чтобы считать общую статистику в том числе
     ETD_Common,
     ETD_Chosen,
     ETD_Elective,
@@ -75,8 +75,6 @@ struct FDiscParams
     double dCredits;
 };
 
-
-
 // Один конкретный УП
 struct FCurricula
 {
@@ -95,6 +93,10 @@ struct FCurricula
     map<wstring, shared_ptr<FTreeElement>>
         mapNoIgnoreDisc;    // Оставляем только разрешённые дисциплины (без
                             // модулей) для анализа (и без тех, у кого ЗЕ = 0)
+
+    map<wstring, shared_ptr<FTreeElement>>
+        mapNoIgnoreComp;    // Аналогично mapNoIgnoreDisc, но для компетенций
+                            // (пригодится для ETG_Reverse графа)
 
     map<wstring, wstring> mapNameToIndexDisc;
 
@@ -116,11 +118,11 @@ struct FCurricula
     // в списке) int iExtendedAmountDisc;    // Количество всех дисциплин (не
     // модулей)
 
-    //vector<double> arrETMAllSumScore;
-    //vector<int>    arrETMAmountDisc;
+    // vector<double> arrETMAllSumScore;
+    // vector<int>    arrETMAmountDisc;
     vector<map<ETypeDisc, FDiscParams>>
-        mapETMTypeDisc;    // Количество и ЗЕ дисциплин по типу (Все, основные, по
-                           // выбору, факультативы), Учитываются в том числе
+        mapETMTypeDisc;    // Количество и ЗЕ дисциплин по типу (Все, основные,
+                           // по выбору, факультативы), Учитываются в том числе
                            // и те, что не считаются в Плане
     vector<map<ETagDisc, FDiscParams>>
         mapETMTagDisc;    // Количество дисциплин по теги
@@ -146,8 +148,16 @@ private:
                        ptrThis);    // Поиск в глубину для очистки памяти
 
     // Получить только дисциплины (без модулей)
-    map<wstring, shared_ptr<FTreeElement>>
-        GetMapNoIgnoreDisc(bool IsNecessaryAllow, bool IsNecessaryNotIgnore);
+    //Вывод результата через параметр
+    void GetMapNoIgnoreDisc(
+        map<wstring, shared_ptr<FTreeElement>>& mapDiscReturn,
+                       bool IsNecessaryAllow,
+                       bool IsNecessaryNotIgnore);
+
+    void GetMapNoIgnoreComp(
+        map<wstring, shared_ptr<FTreeElement>>&       mapCompReturn,
+        const map<wstring, shared_ptr<FTreeElement>>& mapNoIgnoreDisc);
+
 };
 
 struct FSolve
@@ -171,8 +181,7 @@ struct FSolve
 public:
     unique_ptr<FGraphAllData>
         ptrGraphAllData;    // Объект для хранения общих данных
-                                           // всех объектов класса FGraph
-
+                            // всех объектов класса FGraph
 
     vector<shared_ptr<FCurricula>>
         arrDisc;    // Указатели на все УП, которые считали (все

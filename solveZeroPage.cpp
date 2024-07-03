@@ -102,14 +102,13 @@ void FSolve::ZeroPageCreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
                         // Смотрим, что это за дисциплина (основная, по выбору
                         // или факультатив)
                         int iTypeNumber = int(ETypeDisc::ETD_Common);
-                        int iPos        = 1e8;
+                        auto iPos        = wstring::npos;
 
                         for (const auto& wsType :
                              ptrGlobal->ptrConfig->GetArrTypeDisc())
                         {
                             int uCurPos = wsData.find(wsType);
-                            if ((uCurPos != wstring::npos)
-                                &&(uCurPos < iPos))
+                            if (uCurPos < iPos)
                             {
                                 iPos                  = uCurPos;
                                 ptrNewNode->eTypeDisc = ETypeDisc(iTypeNumber);

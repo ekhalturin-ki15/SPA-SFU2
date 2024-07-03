@@ -63,6 +63,10 @@ void FGraph::Create()
 
         if (bArrIsSolveGraphMetric.size() > 2)
             if (bArrIsSolveGraphMetric[2])
+                CountAllMetric(ETypeGraph::ETG_Reverse);
+
+        if (bArrIsSolveGraphMetric.size() > 3)
+            if (bArrIsSolveGraphMetric[3])
             {
                 for (int iCourse = 0; iCourse < this->ptrTree->iAmountCourse;
                      ++iCourse)
@@ -178,6 +182,25 @@ void FGraph::CountAllMetric(ETypeGraph eTypeGraph)
 #endif
 }
 
+shared_ptr<FTreeElement> FGraph::GetGraphDisc(const wstring& wsKey)
+{
+    shared_ptr<FTreeElement> ptrReturn = nullptr;
+    if (ptrTree->mapNoIgnoreDisc.count(wsKey))
+        ptrReturn = ptrTree->mapNoIgnoreDisc[wsKey];
+    else
+    {
+        if (ptrTree->mapNoIgnoreComp.count(wsKey))
+            ptrReturn = ptrTree->mapNoIgnoreComp[wsKey];
+    }
+
+    if (ptrReturn == nullptr)
+    {
+        ptrTree->ptrGlobal->ptrError->ErrorNoFindDisc(wsKey, ptrTree->sNamePlan);
+    }
+
+    return ptrReturn;
+}
+
 void FGraph::CalcAllScoreAndAmount(FTypeGraph& fGraph)
 {
     const int& iSoManyComp =
@@ -187,13 +210,18 @@ void FGraph::CalcAllScoreAndAmount(FTypeGraph& fGraph)
     fGraph.iGraphAmountDisc = 0;    // Отчёт от нуля
     fGraph.dGraphAllScore   = 0;    // Отчёт от нуля
 
-    for (const auto& [id, iCourse] : fGraph.arrRel)
+    for (const auto& [wsKey, iCourse] : fGraph.arrRel)
     {
-        const auto& fDisc     = ptrTree->mapNoIgnoreDisc[id];
-        double      dCurScore = FTypeGraph::dNoInit;
+        shared_ptr<FTreeElement> fDisc = GetGraphDisc(wsKey);
+        if (fDisc == nullptr)
+            continue;
 
-        if (ETypeGraph(iCourse) == ETypeGraph::ETG_Common)    // Значит считаем
-                                                              // все
+        double dCurScore = FTypeGraph::dNoInit;
+
+        if (iCourse < 0)
+
+        // Значит считаем
+        // все
         // дисциплины
         // полностью,
         // а не по курсам
@@ -208,19 +236,19 @@ void FGraph::CalcAllScoreAndAmount(FTypeGraph& fGraph)
         if (dCurScore == FTypeGraph::dNoInit)
         {
             ptrTree->ptrGlobal->ptrError->ErrorGraphNoInitWeightDisc(
-                this->ptrTree->sNamePlan, id);
+                this->ptrTree->sNamePlan, wsKey);
             continue;
         }
         fGraph.dGraphAllScore += dCurScore;
         fGraph.iGraphAmountDisc++;
-        fGraph.mapGraphAmountTypeDisc[fDisc->eTypeDisc]++;
-        fGraph.mapGraphCreditsTypeDisc[fDisc->eTypeDisc] += dCurScore;
+        fGraph.mapGraphDataTypeDisc[fDisc->eTypeDisc].iAmount++;
+        fGraph.mapGraphDataTypeDisc[fDisc->eTypeDisc].dCredits += dCurScore;
 
         // Определяем, сколько компетенций формируется
         if (fDisc->mapComp.size() == 0)
         {
             ptrTree->ptrGlobal->ptrError->ErrorGraphZeroComp(
-                this->ptrTree->sNamePlan, id);
+                this->ptrTree->sNamePlan, wsKey);
             continue;
         }
         else if (fDisc->mapComp.size() >= iSoManyComp)
@@ -259,10 +287,13 @@ void FGraph::CalcMinMaxWeight(double&                           dResult,
     dResult = FTypeGraph::dNoInit;
     for (const auto& [l, r] : fCurrentNode)
     {
-        const auto& fDisc     = ptrTree->mapNoIgnoreDisc[l];
-        double      dCurScore = FTypeGraph::dNoInit;
+        shared_ptr<FTreeElement> fDisc = GetGraphDisc(l);
+        if (fDisc == nullptr)
+            continue;
 
-        if (r == ETypeGraph::ETG_Common)    // Значит считаем все дисциплины
+        double dCurScore = FTypeGraph::dNoInit;
+
+        if (r < 0)    // Значит считаем все дисциплины
                                             // полностью, а не по курсам
         {
             dCurScore = fDisc->dSumScore;
@@ -448,7 +479,8 @@ void FGraph::GenerateGraph()
         fGraph.arrNodeWeight[i] = Disc->dSumScore;
     }
 
-    FormulaParser fFormulaParser(ptrTree->ptrGlobal->ptrConfig->GetSFormula(),
+    FormulaParser fFormulaParser(
+        ptrTree->ptrGlobal->ptrConfig->GetSFormula(),
         ptrTree->mapETMTypeDisc[ETM_NoIgnore][ETypeDisc::ETD_Total].dCredits,
         ptrTree->mapETMTypeDisc[ETM_NoIgnore][ETypeDisc::ETD_Total].iAmount);
 
@@ -543,7 +575,8 @@ void FGraph::GenerateAltGraph()
         }
     }
 
-    FormulaParser fFormulaParser(ptrTree->ptrGlobal->ptrConfig->GetSFormula(),
+    FormulaParser fFormulaParser(
+        ptrTree->ptrGlobal->ptrConfig->GetSFormula(),
         ptrTree->mapETMTypeDisc[ETM_NoIgnore][ETypeDisc::ETD_Total].dCredits,
         ptrTree->mapETMTypeDisc[ETM_NoIgnore][ETypeDisc::ETD_Total].iAmount);
 
@@ -820,11 +853,12 @@ void FGraph::CalculateCluster(double&                                  dResult,
     int iAmountClosedTriag = 0;
     int iAmountOpenTriag   = 0;
 
-    //Вершина треугольника
+    // Вершина треугольника
     for (int i = 0; i < N; ++i)
     {
-        //Левая вершина
-        for (int pairLeft = 0; pairLeft < int(fAdjList[i].size()) - 1; ++pairLeft)
+        // Левая вершина
+        for (int pairLeft = 0; pairLeft < int(fAdjList[i].size()) - 1;
+             ++pairLeft)
         {
             const auto& [left, distanceLeft] = fAdjList[i][pairLeft];
 
@@ -844,26 +878,26 @@ void FGraph::CalculateCluster(double&                                  dResult,
                         ++iAmountClosedTriag;
             }
         }
-        //pair<int, double> searchJ = { i, -1 };
-        //auto              pairJ   = lower_bound(ALL(fAdjList[i]), searchJ);
-        //for (; pairJ != fAdjList[i].end(); ++pairJ)
+        // pair<int, double> searchJ = { i, -1 };
+        // auto              pairJ   = lower_bound(ALL(fAdjList[i]), searchJ);
+        // for (; pairJ != fAdjList[i].end(); ++pairJ)
         //{
-        //    auto& [j, valJ]           = *pairJ;
-        //    pair<int, double> searchK = { j, -1 };
-        //    auto              pairK   = lower_bound(ALL(fAdjList[j]), searchK);
-        //    for (; pairK != fAdjList[j].end(); ++pairK)
-        //    {
-        //        auto& [k, valK] = *pairK;
-        //        ++iAmountOpenTriag;
-        //        pair<int, double> k2 = { k, -1 };
-        //        // Если замыкает, то есть в i есть k
-        //        const auto& it =
-        //            lower_bound(fAdjList[i].begin(), fAdjList[i].end(), k2);
-        //        if (it != fAdjList[i].end())
-        //            if (it->first == k)
-        //                ++iAmountClosedTriag;
-        //    }
-        //}
+        //     auto& [j, valJ]           = *pairJ;
+        //     pair<int, double> searchK = { j, -1 };
+        //     auto              pairK   = lower_bound(ALL(fAdjList[j]),
+        //     searchK); for (; pairK != fAdjList[j].end(); ++pairK)
+        //     {
+        //         auto& [k, valK] = *pairK;
+        //         ++iAmountOpenTriag;
+        //         pair<int, double> k2 = { k, -1 };
+        //         // Если замыкает, то есть в i есть k
+        //         const auto& it =
+        //             lower_bound(fAdjList[i].begin(), fAdjList[i].end(), k2);
+        //         if (it != fAdjList[i].end())
+        //             if (it->first == k)
+        //                 ++iAmountClosedTriag;
+        //     }
+        // }
     }
 
     if (iAmountOpenTriag)

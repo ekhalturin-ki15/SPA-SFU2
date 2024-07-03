@@ -33,7 +33,7 @@ public:
     // FDataType                  fTotalOutData;
 
     static const ETypeGraph    ETG_Total;
-    map<ETypeGraph, FDataType> mapGraphOutData;
+    map<ETypeGraph, FDataType> mapOutData;
 
 private:
     void CreateHeader();
@@ -41,6 +41,9 @@ private:
 
     void CreateTotalHeader();
     void CreateGraphHeader();
+
+    void CreateTotalData();
+    void CreateGraphData();
 
     void CompHeaderCreate(vector<string>& arrHeader);
     void QuartileHeaderCreate(
