@@ -76,6 +76,8 @@ struct FError
 
     void ErrorBadFormula();
 
+    void ErrorNoCountAllGraphType() const;
+
     void ErrorBadShiftTable() const;
 
     void ErrorNoFindDisc(string sDiscName, string sNamePlan) const;
@@ -92,8 +94,6 @@ struct FError
 
     void ErrorGraphZeroComp(string sNamePlan, wstring wsNameIndex) const;
     void ErrorGraphZeroComp(string sNamePlan, string sNameIndex) const;
-
-    bool bIsPrint;    // Выводим один раз (пока false)
 
     void        ErrorBadRegex(string sName);
     set<string> setBadRegexName;
@@ -134,6 +134,8 @@ struct FError
     void OutDiscWithoutTag() const;
 
 private:
+    bool bIsPrintErrorBadFormula;    // Выводим один раз (пока false)
+
     static int iSinglControll;
 
     ofstream OutHeader() const;

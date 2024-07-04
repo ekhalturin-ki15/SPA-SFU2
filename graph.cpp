@@ -51,27 +51,34 @@ void FGraph::Create()
         const auto& bArrIsSolveGraphMetric =
             ptrTree->ptrGlobal->ptrConfig->bArrIsSolveGraphMetric;
 
-        if (bArrIsSolveGraphMetric.size() > 0)
+        int iNumberParams = 0;
+
+        if (bArrIsSolveGraphMetric.size() > iNumberParams)
         {
-            if (bArrIsSolveGraphMetric[0])
+            if (bArrIsSolveGraphMetric[iNumberParams++])
                 CountAllMetric(ETypeGraph::ETG_Common);
         }
 
-        if (bArrIsSolveGraphMetric.size() > 1)
-            if (bArrIsSolveGraphMetric[1])
+        if (bArrIsSolveGraphMetric.size() > iNumberParams)
+            if (bArrIsSolveGraphMetric[iNumberParams++])
                 CountAllMetric(ETypeGraph::ETG_Alt);
 
-        if (bArrIsSolveGraphMetric.size() > 2)
-            if (bArrIsSolveGraphMetric[2])
+        if (bArrIsSolveGraphMetric.size() > iNumberParams)
+            if (bArrIsSolveGraphMetric[iNumberParams++])
                 CountAllMetric(ETypeGraph::ETG_Reverse);
 
-        if (bArrIsSolveGraphMetric.size() > 3)
-            if (bArrIsSolveGraphMetric[3])
+        if (bArrIsSolveGraphMetric.size() > iNumberParams)
+            if (bArrIsSolveGraphMetric[iNumberParams++])
             {
                 for (int iCourse = 0; iCourse < this->ptrTree->iAmountCourse;
                      ++iCourse)
                     CountAllMetric(ETypeGraph(iCourse));
             }
+
+        if (iNumberParams != bArrIsSolveGraphMetric.size())
+        {
+            ptrTree->ptrGlobal->ptrError->ErrorNoCountAllGraphType();
+        }
     }
     catch (...)
     {
@@ -86,23 +93,35 @@ void FGraph::CreateAfter()
         const auto& bArrIsSolveGraphMetric =
             ptrTree->ptrGlobal->ptrConfig->bArrIsSolveGraphMetric;
 
-        if (bArrIsSolveGraphMetric.size() > 0)
+
+        int iNumberParams = 0;
+
+        if (bArrIsSolveGraphMetric.size() > iNumberParams)
         {
-            if (bArrIsSolveGraphMetric[0])
+            if (bArrIsSolveGraphMetric[iNumberParams++])
                 CountAfterAllMetric(ETypeGraph::ETG_Common);
         }
 
-        if (bArrIsSolveGraphMetric.size() > 1)
-            if (bArrIsSolveGraphMetric[1])
+        if (bArrIsSolveGraphMetric.size() > iNumberParams)
+            if (bArrIsSolveGraphMetric[iNumberParams++])
                 CountAfterAllMetric(ETypeGraph::ETG_Alt);
 
-        if (bArrIsSolveGraphMetric.size() > 2)
-            if (bArrIsSolveGraphMetric[2])
+         if (bArrIsSolveGraphMetric.size() > iNumberParams)
+            if (bArrIsSolveGraphMetric[iNumberParams++])
+                CountAfterAllMetric(ETypeGraph::ETG_Reverse);
+
+        if (bArrIsSolveGraphMetric.size() > iNumberParams)
+            if (bArrIsSolveGraphMetric[iNumberParams++])
             {
                 for (int iCourse = 0; iCourse < this->ptrTree->iAmountCourse;
                      ++iCourse)
                     CountAfterAllMetric(ETypeGraph(iCourse));
             }
+
+        if (iNumberParams != bArrIsSolveGraphMetric.size())
+        {
+            ptrTree->ptrGlobal->ptrError->ErrorNoCountAllGraphType();
+        }
     }
     catch (...)
     {

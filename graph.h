@@ -208,6 +208,5 @@ private:
     // После вызова Create для всех ptrTree
     void CountAfterAllMetric(ETypeGraph eTypeGraph);
 
-
     shared_ptr<FTreeElement> GetGraphDisc(const wstring& wsKey);
 };

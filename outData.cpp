@@ -308,7 +308,7 @@ void FOutData::CreateTotalInfo(vector<string>& arrReturnDataHeader,
     {
         // Вывод общих квартилей
         int iAmountQuartile = -1;
-        for (auto& it : fGraph->arrGlobalQuarAllPairDistance)
+        for (const auto& it : fGraph->arrGlobalQuarAllPairDistance)
         {
             ++iAmountQuartile;
             string sAddedHead = ptrGlobal->ConwertToString(

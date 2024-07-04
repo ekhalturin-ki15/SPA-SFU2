@@ -17,7 +17,7 @@ const string FError::sNotInitSolve = "Not init Solve pointer";
 int FError::iSinglControll = 0;
 
 FError::FError(shared_ptr<FGlobal> _ptrGlobal)
-    : ptrGlobal(_ptrGlobal), bIsPrint(false)
+    : ptrGlobal(_ptrGlobal), bIsPrintErrorBadFormula(false)
 {
     // Unit test против такого
 #ifndef UNIT_TEST
@@ -315,15 +315,25 @@ void FError::ErrorBadRegex(string sName)
 
 void FError::ErrorBadFormula()
 {
-    if (!bIsPrint)
+    if (!bIsPrintErrorBadFormula)
     {
-        bIsPrint = true;
+        bIsPrintErrorBadFormula = true;
         ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt", std::ios::app);
         out << "!! Неправильная формула для расчёта весов рёбер в файле "
                "config.xlsx";
         out << END;
         out.close();
     }
+}
+
+void FError::ErrorNoCountAllGraphType() const
+{
+    ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt",
+                 std::ios::app);
+    out << "!! Программа не учитывает все виды графов";
+    out << END;
+    out.close();
+
 }
 
 void FError::ErrorEmptyLine() const

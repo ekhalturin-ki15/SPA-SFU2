@@ -171,7 +171,7 @@ void FCurricula::GetMapNoIgnoreComp(
             else
                 ptrNode.dSumScore += it->dSumScore;
 
-            ptrNode.mapComp[FError::sDontHaveIndex]; // Нет ни компетенций, ни индикаторов
+            ptrNode.mapComp[ptrGlobal->ConwertToString(wsKey)];    // Подсчитывается, сколько предметов
         }
     }
 }
