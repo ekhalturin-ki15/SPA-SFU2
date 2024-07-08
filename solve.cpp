@@ -12,7 +12,8 @@ FSolve::FSolve(shared_ptr<FGlobal> _ptrGlobal)
       bIsCorrectParsing(true),
       iCurrentPage(0),
       iCurrentRow(0),
-      iMaxCourse(0)
+      iMaxCourse(0),
+      N(0)
 {
     // Unit test против такого
 #ifndef UNIT_TEST
@@ -24,6 +25,19 @@ FSolve::FSolve(shared_ptr<FGlobal> _ptrGlobal)
     ptrSolveSecondPage = make_unique<FSolveSecondPage>(_ptrGlobal);
 
     ptrGraphAllData = make_unique<FGraphAllData>(_ptrGlobal);
+}
+
+shared_ptr<FCurricula> FSolve::GetCurricula(int iNum)
+{
+    if (iNum < N)
+    {
+        sInPath = arrDisc[iNum]->sCurName;
+        return arrDisc[iNum];
+    }
+    else
+    {
+        throw std::runtime_error("No find Curricula");
+    }
 }
 
 bool FSolve::Init()
@@ -105,6 +119,7 @@ bool FSolve::Create(string _sInPath, string sNamePlan)
     {
         shared_ptr<FCurricula> ptrCurricula =
             make_shared<FCurricula>(ptrGlobal);
+
         arrDisc.push_back(ptrCurricula);
         arrDisc.back()->sNamePlan = sNamePlan;
         arrDisc.back()->sShortNamePlan =
@@ -195,7 +210,10 @@ bool FSolve::Create(string _sInPath, string sNamePlan)
     }
 
     if (this->bIsCorrectParsing)
+    {
+        ++N;
         ptrGlobal->ptrError->OKParsing();
+    }
     else
         ptrGlobal->ptrError->WAParsing();
     fDoc.close();

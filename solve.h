@@ -7,6 +7,7 @@ struct FGlobal;
 struct FGraph;
 struct FMetric;
 struct FGraphAllData;
+struct FSolveSecondPage;
 
 struct FSolve;
 // struct FSemesterScore
@@ -149,16 +150,15 @@ private:
                        ptrThis);    // Поиск в глубину для очистки памяти
 
     // Получить только дисциплины (без модулей)
-    //Вывод результата через параметр
+    // Вывод результата через параметр
     void GetMapNoIgnoreDisc(
         map<wstring, shared_ptr<FTreeElement>>& mapDiscReturn,
-                       bool IsNecessaryAllow,
-                       bool IsNecessaryNotIgnore);
+        bool                                    IsNecessaryAllow,
+        bool                                    IsNecessaryNotIgnore);
 
     void GetMapNoIgnoreComp(
         map<wstring, shared_ptr<FTreeElement>>&       mapCompReturn,
         const map<wstring, shared_ptr<FTreeElement>>& mapNoIgnoreDisc);
-
 };
 
 struct FSolve
@@ -184,9 +184,8 @@ public:
         ptrGraphAllData;    // Объект для хранения общих данных
                             // всех объектов класса FGraph
 
-    vector<shared_ptr<FCurricula>>
-        arrDisc;    // Указатели на все УП, которые считали (все
-                    // они одновременно хранятся в памяти)
+    int                    N;
+    shared_ptr<FCurricula> GetCurricula(int iNum);
 
     int iCurrentPage;    // Какая по счёту страница обрабатывается в данный
                          // момент
@@ -203,7 +202,15 @@ public:
     set<string> setHeaderComp;    // Все заголовки компетенций (УК, ПК, ОПК).
                                   // Нужно для вывода
 
+    friend FSolveSecondPage;
+
 private:
+    // Доступ осуществляется через Гетер  shared_ptr<FCurricula>
+    // GetCurricula(int iNum)
+    vector<shared_ptr<FCurricula>>
+        arrDisc;    // Указатели на все УП, которые считали (все
+                    // они одновременно хранятся в памяти)
+
     static int iSinglControll;    // Проверка на синглтон
 
     void ClearCurricula();

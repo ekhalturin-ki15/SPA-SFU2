@@ -682,9 +682,9 @@ void FOutData::CreateAllCurriculaTotalData(
     // Вывод данных
     // map<int, FСorridor> mapSaveСorridorData;
     FCorridorAdapter fSaveСorridorData(ptrGlobal);
-
-    for (const auto& it : ptrGlobal->ptrSolve->arrDisc)
+    for (int iCur = 0; iCur < ptrGlobal->ptrSolve->N; ++iCur)
     {
+        const auto& it = ptrGlobal->ptrSolve->GetCurricula(iCur);
         // Выводить короткое, или помное имя
         /* sCurPlanName = (ptrGlobal->ptrConfig->bOutShortNameCur)
                             ? it->sShortNamePlan
@@ -855,8 +855,9 @@ void FOutData::CreateSummaryTotalData(vector<vector<string>>& arrReturnData,
     // map<int, FСorridor> mapSaveСorridorData;
     FCorridorAdapter fСorridorData(ptrGlobal);
 
-    for (const auto& it : ptrGlobal->ptrSolve->arrDisc)
+    for (int iCur = 0; iCur < ptrGlobal->ptrSolve->N; ++iCur)
     {
+        const auto& it = ptrGlobal->ptrSolve->GetCurricula(iCur);
         // Нет нужного нам курса (например, если 3 курс, а план магистратуры)
         if (it->iAmountCourse <= eTypeGraph.Get())
             continue;
@@ -986,8 +987,9 @@ void FOutData::Create(string sOutPath)
     fOutFile.save();
     fOutFile.close();
 
-    for (auto& it : ptrGlobal->ptrSolve->arrDisc)
+    for (int iCur = 0; iCur < ptrGlobal->ptrSolve->N; ++iCur)
     {
+        const auto& it = ptrGlobal->ptrSolve->GetCurricula(iCur);
         // Выводить короткое, или помное имя
         sCurPlanName = (ptrGlobal->ptrConfig->GetBOutShortNameCur())
                            ? it->sShortNamePlan

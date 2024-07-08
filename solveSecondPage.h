@@ -12,6 +12,7 @@ struct FSolveSecondPage
     void AddDiscScore(const OpenXLSX::XLWorksheet& fSheet, int iKeyPageNumber);
     double DFSCountingScore(shared_ptr<FTreeElement> ptrThis);
 
+    friend FSolve;    // указываем, что класс дружественный
 private:
     // FSolve* ptrSolve; //Позднее связывание, но не требуется, так как могу
     // обратиться через Global

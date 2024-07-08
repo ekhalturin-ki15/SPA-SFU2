@@ -207,8 +207,10 @@ void FAdapOutData::CreateTotalData()
 {
     auto& fTotalOutData = mapOutData[ETG_Total].arrData;
 
-    for (const auto& it : ptrGlobal->ptrSolve->arrDisc)
+    for (int iCur = 0; iCur < ptrGlobal->ptrSolve->N; ++iCur)
     {
+        const auto&        it = ptrGlobal->ptrSolve->GetCurricula(iCur);
+
         vector<FTableData> arrRow;
         for (int iColumnNum = 0; iColumnNum < arrOriginMetricTotalHead.size();
              ++iColumnNum)
@@ -335,8 +337,10 @@ void FAdapOutData::CreateGraphData()
 
         auto& fTotalOutData = mapOutData[eType].arrData;
 
-        for (const auto& it : ptrGlobal->ptrSolve->arrDisc)
+        for (int iCur = 0; iCur < ptrGlobal->ptrSolve->N; ++iCur)
         {
+            const auto& it = ptrGlobal->ptrSolve->GetCurricula(iCur);
+
             const auto& fGraph = it->ptrGraph->mapGraph[eType];
 
             vector<FTableData> arrRow;

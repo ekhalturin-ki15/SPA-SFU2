@@ -130,14 +130,14 @@ namespace TestFSolve
             // ptrGlobal->ptrSolve
             //     ->CreateAllMetric();    // Метрики не связаны с графом
 
-            ptrFirst = ptrGlobal->ptrSolve->arrDisc.front();
+            ptrFirst = ptrGlobal->ptrSolve->GetCurricula(0);
         }
 
         TEST_METHOD(ItsNotEmpty)
         {
             try
             {
-                Assert::AreEqual(6ull, ptrGlobal->ptrSolve->arrDisc.size());
+                Assert::AreEqual(6, ptrGlobal->ptrSolve->N);
             }
             catch (const std::exception& ex)
             {
@@ -268,12 +268,13 @@ namespace TestFSolve
                 }
             }
             ptrGlobal->ptrSolve->CreateAllGraph();
-            ptrFirst  = ptrGlobal->ptrSolve->arrDisc.front();
-            ptrSecond = ptrGlobal->ptrSolve->arrDisc.at(1);
-            ptrThird  = ptrGlobal->ptrSolve->arrDisc.at(2);
-            ptrFourth = ptrGlobal->ptrSolve->arrDisc.at(3);
-            ptrFifth = ptrGlobal->ptrSolve->arrDisc.at(4);
-            ptrSixth  = ptrGlobal->ptrSolve->arrDisc.at(5);
+            int iNumCur = 0;
+            ptrFirst    = ptrGlobal->ptrSolve->GetCurricula(iNumCur++);
+            ptrSecond   = ptrGlobal->ptrSolve->GetCurricula(iNumCur++);
+            ptrThird    = ptrGlobal->ptrSolve->GetCurricula(iNumCur++);
+            ptrFourth   = ptrGlobal->ptrSolve->GetCurricula(iNumCur++);
+            ptrFifth    = ptrGlobal->ptrSolve->GetCurricula(iNumCur++);
+            ptrSixth    = ptrGlobal->ptrSolve->GetCurricula(iNumCur++);
 
 
             eCommon   = ETypeGraph::ETG_Common;
@@ -534,14 +535,14 @@ namespace AnomalTestFSolve
             // ptrGlobal->ptrSolve
             //     ->CreateAllMetric();    // Метрики не связаны с графом
 
-            ptrFirst = ptrGlobal->ptrSolve->arrDisc.front();
+            ptrFirst = ptrGlobal->ptrSolve->GetCurricula(0);
         }
 
         TEST_METHOD(ItsNotEmpty)
         {
             try
             {
-                Assert::AreEqual(2ull, ptrGlobal->ptrSolve->arrDisc.size());
+                Assert::AreEqual(2, ptrGlobal->ptrSolve->N);
             }
             catch (const std::exception& ex)
             {
@@ -666,7 +667,7 @@ namespace AnomalTestFSolve
                 }
             }
             ptrGlobal->ptrSolve->CreateAllGraph();
-            ptrFirst = ptrGlobal->ptrSolve->arrDisc.front();
+            ptrFirst = ptrGlobal->ptrSolve->GetCurricula(0);
         }
 
         TEST_METHOD(InitGraph)
