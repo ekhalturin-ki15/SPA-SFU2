@@ -214,7 +214,7 @@ shared_ptr<FTreeElement> FGraph::GetGraphDisc(const wstring& wsKey)
 
     if (ptrReturn == nullptr)
     {
-        ptrTree->ptrGlobal->ptrError->ErrorNoFindDisc(wsKey, ptrTree->sNamePlan);
+        ptrTree->ptrGlobal->ptrError->ErrorNoFindDisc(wsKey);
     }
 
     return ptrReturn;

@@ -80,8 +80,12 @@ struct FError
 
     void ErrorBadShiftTable() const;
 
-    void ErrorNoFindDisc(string sDiscName, string sNamePlan) const;
-    void ErrorNoFindDisc(wstring wsDiscName, string sNamePlan) const;
+    void ErrorNoFindDisc(string sDiscName) ;
+    void ErrorNoFindDisc(wstring wsDiscName) ;
+
+
+    void ErrorBadDataCorridor(wstring wsHeader);
+    void ErrorBadDataCorridor(string sHeader);
 
     void ErrorGraphNoInitWeightDisc(string  sNamePlan,
                                     wstring wsNameIndex) const;
@@ -135,6 +139,9 @@ struct FError
 
 private:
     bool bIsPrintErrorBadFormula;    // Выводим один раз (пока false)
+    bool bIsPrintNoFindDisc;    // Выводим один раз (пока false)
+
+
 
     static int iSinglControll;
 

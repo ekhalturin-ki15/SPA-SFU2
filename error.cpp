@@ -17,7 +17,9 @@ const string FError::sNotInitSolve = "Not init Solve pointer";
 int FError::iSinglControll = 0;
 
 FError::FError(shared_ptr<FGlobal> _ptrGlobal)
-    : ptrGlobal(_ptrGlobal), bIsPrintErrorBadFormula(false)
+    : ptrGlobal(_ptrGlobal),
+      bIsPrintErrorBadFormula(false),
+      bIsPrintNoFindDisc(false)
 {
     // Unit test против такого
 #ifndef UNIT_TEST
@@ -250,23 +252,45 @@ void FError::ErrorBadShiftTable() const
     out.close();
 }
 
-void FError::ErrorNoFindDisc(wstring wsDiscName, string sNamePlan) const
+
+
+void FError::ErrorBadDataCorridor(wstring wsHeader)
 {
-    ErrorNoFindDisc(ptrGlobal->ConwertToString(wsDiscName), sNamePlan);
+    ErrorBadDataCorridor(ptrGlobal->ConwertToString(wsHeader));
 }
 
-void FError::ErrorNoFindDisc(string sDiscName, string sNamePlan) const
+void FError::ErrorBadDataCorridor(string sHeader)
 {
+    bIsPrintNoFindDisc = true;
     ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt",
                  std::ios::app);
-
-    out << "- В учебном плане " + sNamePlan;
-    out << " Не найдена дисциплина с индексом ";
-    out << sDiscName;
-    out << END;
-    out << "Возможно, данная дисциплина не используется среди учитываемых";
+    out << "- В учебном плане " + ptrGlobal->ptrSolve->sInPath;
+    out << " Для столбца " + sHeader + " ";
+    out << " невозможно посчитать меры центральной тенденции";
     out << END;
     out.close();
+}
+
+void FError::ErrorNoFindDisc(wstring wsDiscName)
+{
+    ErrorNoFindDisc(ptrGlobal->ConwertToString(wsDiscName));
+}
+
+void FError::ErrorNoFindDisc(string sDiscName)
+{
+    if (!bIsPrintNoFindDisc)
+    {
+        bIsPrintNoFindDisc = true;
+        ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt",
+                     std::ios::app);
+        out << "- В учебном плане " + ptrGlobal->ptrSolve->sInPath;
+        out << " Не найдена дисциплина с индексом ";
+        out << sDiscName;
+        out << END;
+        out << "Возможно, данная дисциплина не используется среди учитываемых";
+        out << END;
+        out.close();
+    }
 }
 
 void FError::ErrorToMuchColums() const
