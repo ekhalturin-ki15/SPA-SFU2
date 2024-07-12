@@ -100,8 +100,8 @@ struct FTypeGraph
     vector<int>
         arrGlobalQuarAllPairDistance;    // Локальное квартильное распределение
 
-    double dGraphAllScore   = FTypeGraph::dNoInit;
-    int    iGraphAmountDisc = int(FTypeGraph::dNoInit);
+    //double dGraphAllScore   = FTypeGraph::dNoInit; // Теперь включена в mapGraphDataTypeDisc по ETypeDisc::ETD_Total
+    //int    iGraphAmountDisc = int(FTypeGraph::dNoInit);  // Теперь включена в mapGraphDataTypeDisc по ETypeDisc::ETD_Total
     double dDense           = FTypeGraph::dNoInit;
     double dGlobalСluster   = FTypeGraph::dNoInit;
 

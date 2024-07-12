@@ -163,6 +163,7 @@ private:
         const vector<vector<pair<int, double>>>&
             fAdjList);    // Вывод данных о графе для Gephi в формате csv
 
+    //Вызывает CreateTableRectInfo
     void CreateTableInfoInit(vector<vector<string>>& arrReturnData,
                              shared_ptr<FTreeMetric>
                                   ptrMetric,

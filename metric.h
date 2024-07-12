@@ -23,8 +23,11 @@ struct FTreeMetric
                // зависимости от ptrConfig->bCompInterDelete)
     double dInclusionPercent = 0.;
 
+    // У root хранятся дети, как какждый курс по отдельности, так и все курсы
+    // вместе (string sAllMetric)
     map<string, shared_ptr<FTreeMetric>> mapChild;
-    shared_ptr<FTreeMetric>              ptrParent = nullptr;
+
+    shared_ptr<FTreeMetric> ptrParent = nullptr;
 
     void Delete();
     void DeleteDFS(shared_ptr<FTreeMetric> th);

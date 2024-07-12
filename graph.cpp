@@ -226,8 +226,8 @@ void FGraph::CalcAllScoreAndAmount(FTypeGraph& fGraph)
         this->ptrTree->ptrGlobal->ptrConfig->GetISoMachComp();
     fGraph.arrAmountCountCompDisc.resize(iSoManyComp + 1);
 
-    fGraph.iGraphAmountDisc = 0;    // Отчёт от нуля
-    fGraph.dGraphAllScore   = 0;    // Отчёт от нуля
+    //fGraph.iGraphAmountDisc = 0;    // Отчёт от нуля
+    //fGraph.dGraphAllScore   = 0;    // Отчёт от нуля
 
     for (const auto& [wsKey, iCourse] : fGraph.arrRel)
     {
@@ -258,8 +258,13 @@ void FGraph::CalcAllScoreAndAmount(FTypeGraph& fGraph)
                 this->ptrTree->sNamePlan, wsKey);
             continue;
         }
-        fGraph.dGraphAllScore += dCurScore;
-        fGraph.iGraphAmountDisc++;
+
+        //fGraph.dGraphAllScore += dCurScore;
+        //fGraph.iGraphAmountDisc++;
+
+        fGraph.mapGraphDataTypeDisc[ETypeDisc::ETD_Total].iAmount++;
+        fGraph.mapGraphDataTypeDisc[ETypeDisc::ETD_Total].dCredits += dCurScore;
+
         fGraph.mapGraphDataTypeDisc[fDisc->eTypeDisc].iAmount++;
         fGraph.mapGraphDataTypeDisc[fDisc->eTypeDisc].dCredits += dCurScore;
 

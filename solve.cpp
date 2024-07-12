@@ -209,9 +209,9 @@ bool FSolve::Create(string _sInPath, string sNamePlan)
         return false;    // Но продолжаем работать с другими файлами
     }
 
+    ++N;
     if (this->bIsCorrectParsing)
     {
-        ++N;
         ptrGlobal->ptrError->OKParsing();
     }
     else

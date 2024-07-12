@@ -163,7 +163,9 @@ void FOutData::CreateTotalInfo(vector<double>& arrReturnDataMetrics,
     arrReturnDataMetrics.clear();
     vector<double> arrResult;    // Соответствует arrHead который
                                  // проинициализирован в конструкторе
-    arrResult = { fGraph->dGraphAllScore, double(fGraph->iGraphAmountDisc),
+    arrResult = {
+        fGraph->mapGraphDataTypeDisc[ETypeDisc::ETD_Total].dCredits,
+                  double(fGraph->mapGraphDataTypeDisc[ETypeDisc::ETD_Total].iAmount),
                   // fGraph->dGraphAllScore,
                   // double(fGraph->iGraphAmountDisc),
                   fGraph->dMaxDiscScore, fGraph->dMinDiscScore, fGraph->dMaxRib,

@@ -8,8 +8,7 @@
 
 #include <typeinfo>
 
-int              FAdapOutData::iSinglControll = 0;
-const ETypeGraph FAdapOutData::ETG_Total(-10);
+int FAdapOutData::iSinglControll = 0;
 
 FAdapOutData::FAdapOutData(shared_ptr<FGlobal> _ptrGlobal)
     : ptrGlobal(_ptrGlobal),
@@ -44,8 +43,25 @@ FAdapOutData::FAdapOutData(shared_ptr<FGlobal> _ptrGlobal)
 
             { L"Локальное количество рёбер указанного квартиля",
               L"Суффикс после вывода квартиля" } }),
-      arrCorridorHeader({ L"Максимальные значения:", L"Минимальные значения:",
-                          L"Мода:", L"Медиана:", L"Среднее усечённое:" })
+      arrOriginCorridorHeader({ L"Максимальные значения:",
+                                L"Минимальные значения:",
+                          L"Мода:", L"Медиана:", L"Среднее усечённое:" }),
+      arrOriginCompTreeHeader(
+              { L"Название УП",
+                L"За какой курс",
+
+                L"Заголовок компетенции", L"ЗЕ Заголовка компетенции",
+                L"Кол-во дисциплин заголовка компетенции",
+
+                L"Процент распределения Заголовка компетенции",
+
+                L"Компетенция", L"Полное название компетенции",
+                L"ЗЕ Компетенций", L"Кол-во дисциплин компетенции",
+                L"Процент распределения Компетенции",
+
+                L"Индикатор", L"Полное название индикатора", L"ЗЕ индикаторов",
+                L"Кол-во дисциплин индикатора",
+                L"Процент распределения Индикатора" })
 {
     // Unit test против такого
     // if (iSinglControll > 0) throw std::runtime_error("Re-creation
@@ -58,9 +74,71 @@ bool FAdapOutData::Init()
     return true;
 }
 
+void FAdapOutData::CreateCompTreeHeader()
+{
+    for (auto& [sName, fCompTreeData] : mapCompTreeData)
+    {
+        for (const auto& wsNameHeader : arrOriginCompTreeHeader)
+        {
+            if (ptrGlobal->ptrConfig->mapArrOutParams.count(
+                    wsNameHeader))    // Если правильно указано название в
+                                      // параметрах
+            {
+                fCompTreeData.arrHeader.push_back(ptrGlobal->ConwertToString(
+                    ptrGlobal->ptrConfig->mapArrOutParams[wsNameHeader]
+                        .GetName()));
+            }
+        }
+    }
+}
+
+void FAdapOutData::CreateRectCompTreeData(
+    vector<vector<FTableData>>& arrReturnData,
+    shared_ptr<FTreeMetric>
+    ptrMetric)
+{
+    int iSizeX = 0, iSizeY = 0; 
+
+    CreateTableRectInfo(true,    // Считаем вхолостую
+                        arrReturnData, iSizeX,
+                        iSizeY,  
+                        ptrMetric, 0);
+
+
+}
+
+void FAdapOutData::CreateTableRectInfo(
+    const bool& bIsCounting,    // Если true - то проход в холостую для
+                                // определения iSizeX
+    vector<vector<FTableData>>&
+        arrReturnData,    // Возвращаемое значение с функции
+    int& iSizeX,    // Если считаем вхолостую, когда bIsCounting == true, то
+                    // записываем в iSizeX результат
+    int& iCurrentY,    // Глобальная переменая
+    shared_ptr<FTreeMetric> ptrMetric, int iDeep)
+{
+
+}
+
+void FAdapOutData::CreateCompTreeData()
+{
+    for (int iCur = 0; iCur < ptrGlobal->ptrSolve->N; ++iCur)
+    {
+        const auto& it            = ptrGlobal->ptrSolve->GetCurricula(iCur);
+        auto        ptrTreeMetric = it->ptrMetric->ptrTreeMetric;
+
+        for (auto& [sName, fData] : mapCompTreeData)
+        {
+            const auto& ptrCurrentTree = ptrTreeMetric->mapChild[sName];
+
+            CreateRectCompTreeData(fData.arrData, ptrCurrentTree); 
+        }
+    }
+}
+
 void FAdapOutData::CreateTotalHeader()
 {
-    auto& fTotalOutHeader = mapOutData[ETG_Total].arrHeader;
+    auto& fTotalOutHeader = fTotalData.arrHeader;
 
     for (const auto& wsNameHeader : arrOriginMetricTotalHead)
     {
@@ -87,7 +165,8 @@ void FAdapOutData::CreateTotalHeader()
         }
     }
 
-    mapOutData[ETG_Total].arrType.resize(fTotalOutHeader.size());
+    //Теперь в CreateType
+    //fTotalData.arrType.resize(fTotalOutHeader.size());
 }
 
 void FAdapOutData::CreateGraphHeader()
@@ -110,8 +189,6 @@ void FAdapOutData::CreateGraphHeader()
 
     for (auto& [eType, fData] : mapOutData)
     {
-        if (eType == ETG_Total)
-            continue;    // Для общей статистики особый заголовок
         for (const auto& wsNameHeader : arrOriginMetricGraphHead)
         {
             if (ptrGlobal->ptrConfig->mapArrOutParams.count(wsNameHeader))
@@ -126,7 +203,8 @@ void FAdapOutData::CreateGraphHeader()
 
         QuartileHeaderCreate(fData.arrHeader, arrQuartileHead);
 
-        fData.arrType.resize(fData.arrHeader.size());
+        // Теперь в CreateType
+        // fData.arrType.resize(fData.arrHeader.size());
     }
 }
 
@@ -199,23 +277,27 @@ void FAdapOutData::CompHeaderCreate(vector<string>& arrHeader)
 
 void FAdapOutData::CreateHeader()
 {
+    CreateTotalHeader();
+
     mapOutData[ETypeGraph::ETG_Common];
     mapOutData[ETypeGraph::ETG_Alt];
     mapOutData[ETypeGraph::ETG_Reverse];
 
+    mapCompTreeData[FMetric::sAllMetric];
     for (int iCourse = 0; iCourse < ptrGlobal->ptrSolve->iMaxCourse; ++iCourse)
     {
         mapOutData[ETypeGraph(iCourse)];
+        mapCompTreeData[to_string(iCourse)];
     }
 
     CreateGraphHeader();
 
-    CreateTotalHeader();
+    CreateCompTreeHeader();
 }
 
 void FAdapOutData::CreateTotalData()
 {
-    auto& fTotalOutData = mapOutData[ETG_Total].arrData;
+    auto& fTotalOutData = fTotalData.arrData;
 
     for (int iCur = 0; iCur < ptrGlobal->ptrSolve->N; ++iCur)
     {
@@ -279,10 +361,6 @@ void FAdapOutData::CreateTotalData()
                         break;
                 }
 
-                if (fDataContainer.fData.has_value())
-                    mapOutData[ETG_Total].arrType[arrRow.size()] =
-                        fDataContainer.fData.type().name();
-
                 arrRow.push_back(fDataContainer);
             }
         }
@@ -334,14 +412,7 @@ void FAdapOutData::CreateTotalData()
                     }
                 }
 
-                if (fCredit.fData.has_value())
-                    mapOutData[ETG_Total].arrType[arrRow.size()] =
-                        fCredit.fData.type().name();
                 arrRow.push_back(fCredit);
-
-                if (fPercent.fData.has_value())
-                    mapOutData[ETG_Total].arrType[arrRow.size()] =
-                        fPercent.fData.type().name();
                 arrRow.push_back(fPercent);
             }
 
@@ -354,9 +425,6 @@ void FAdapOutData::CreateGraphData()
 {
     for (auto& [eType, fData] : mapOutData)
     {
-        if (eType == ETG_Total)
-            continue;    // Для общей статистики особый заголовок
-
         auto& fTotalOutData = mapOutData[eType].arrData;
 
         for (int iCur = 0; iCur < ptrGlobal->ptrSolve->N; ++iCur)
@@ -446,9 +514,6 @@ void FAdapOutData::CreateGraphData()
                             break;
                     }
 
-                    if (fDataContainer.fData.has_value())
-                        fData.arrType[arrRow.size()] =
-                            fDataContainer.fData.type().name();
                     arrRow.push_back(fDataContainer);
                 }
             }
@@ -468,9 +533,6 @@ void FAdapOutData::CreateGraphData()
                     fDataContainer.fData =
                         fGraph.arrAmountCountCompDisc[iAmountComp];
 
-                    if (fDataContainer.fData.has_value())
-                        fData.arrType[arrRow.size()] =
-                            fDataContainer.fData.type().name();
                     arrRow.push_back(fDataContainer);
                 }
             }
@@ -500,9 +562,6 @@ void FAdapOutData::CreateGraphData()
                             FTableData fDataContainer;
                             fDataContainer.fData = it;
 
-                            if (fDataContainer.fData.has_value())
-                                fData.arrType[arrRow.size()] =
-                                    fDataContainer.fData.type().name();
                             arrRow.push_back(fDataContainer);
                         }
                     }
@@ -514,35 +573,248 @@ void FAdapOutData::CreateGraphData()
     }
 }
 
-void FAdapOutData::CalcDataCorridor(vector<vector<FTableData>>& arrDataCorridor,
-                                    const vector<vector<FTableData>>& arrData,
-                                    const string&                     sType,
-                                    const int&                        iCol)
+template<typename T>
+vector<T> AdapterTemplateCalcDataCorridorNoDiv(
+    vector<vector<FTableData>>&       arrDataCorridor,
+    const vector<vector<FTableData>>& arrData,
+    const int&                        iCol)
 {
-    int H = arrData.size();
+    int       H = arrData.size();
+    vector<T> arrLocalData;
+    for (int y = 0; y < H; ++y)
+    {
+        if (arrData[y][iCol].fData.has_value())
+            arrLocalData.push_back(std::any_cast<T>(arrData[y][iCol].fData));
+    }
+    if (arrLocalData.size() < 2)
+        return arrLocalData;
 
+    sort(ALL(arrLocalData));
+
+    /*
+     arrCorridorHeader({ L"Максимальные значения:", L"Минимальные значения:",
+                         L"Мода:", L"Медиана:", L"Среднее усечённое:" })
+     */
+
+    auto& fMax  = arrDataCorridor[0][iCol].fData;
+    auto& fMin  = arrDataCorridor[1][iCol].fData;
+    auto& fMode = arrDataCorridor[2][iCol].fData;
+    // Требуют деление, поэтому не будут подсчитаны, как положены
+    auto& fMean = arrDataCorridor[3][iCol].fData;
+    // auto& fAvg  = arrDataCorridor[4][iCol].fData;
+
+    fMax = arrLocalData.back();
+    fMin = arrLocalData.front();
+
+    // Подсчёт моды
+    {
+        map<T, int> mapCounting;
+        T           fAppMode;
+        bool        bIsUniq   = true;
+        int         iMaxCount = 0;
+        for (const auto& it : arrLocalData)
+        {
+            auto& fCount = mapCounting[it];
+            ++fCount;
+
+            if (iMaxCount < fCount)
+            {
+                bIsUniq   = true;
+                iMaxCount = fCount;
+                fAppMode  = it;
+            }
+            else 
+                if (iMaxCount == fCount)
+            {
+                bIsUniq = false;
+            }
+        }
+
+        if (bIsUniq)
+            fMode = fAppMode;
+    }
+
+
+    // Подсчёт медианы (Но без деления)
+    fMean = arrLocalData[arrLocalData.size() / 2];
+
+    return arrLocalData;
 }
 
-void FAdapOutData::CreateDataCorridor()
+template<typename T>
+bool TemplateCalcDataCorridorNoDiv(vector<vector<FTableData>>& arrDataCorridor,
+                                   const vector<vector<FTableData>>& arrData,
+                                   const int&                        iCol)
 {
+    auto arrLocalData =
+        AdapterTemplateCalcDataCorridorNoDiv<T>(arrDataCorridor, arrData, iCol);
+
+    if (arrLocalData.size() < 2)
+        return false;
+
+    return true;
+}
+
+template<typename T>
+bool TemplateCalcDataCorridorWithDiv(
+    vector<vector<FTableData>>&       arrDataCorridor,
+    const vector<vector<FTableData>>& arrData,
+    const int&                        iCol,
+    const double&                     dTruncAvg)
+{
+
+    auto& fMode = arrDataCorridor[2][iCol].fData;
+    auto& fMean = arrDataCorridor[3][iCol].fData;
+    auto& fAvg  = arrDataCorridor[4][iCol].fData;
+
+    auto arrLocalData =
+        AdapterTemplateCalcDataCorridorNoDiv<T>(arrDataCorridor, arrData, iCol);
+
+    int N = arrLocalData.size();
+
+    if (N < 2)
+        return false;
+
+    if (!fMode.has_value())
+    {
+        map<T, int> mapCounting;
+        T           fMaxCount = 1;
+        for (const auto& it : arrLocalData)
+        {
+            auto& fCount = mapCounting[it];
+            ++fCount;
+            if (fCount > fMaxCount)
+                fMaxCount = fCount;
+        }
+
+        int iCountMax = 0;
+        T   fSum      = 0;
+        for (const auto& [key, val] : mapCounting)
+        {
+            if (val == fMaxCount)
+            {
+                ++iCountMax;
+                fSum += key;
+            }  
+        }
+        fMode = fSum / iCountMax;
+    }
+
+
+    if (!(N & 1))
+    {
+        fMean = (arrLocalData[N / 2] + arrLocalData[(N / 2) - 1]) / 2.0;
+    }
+
+    // Подсчёт Усечённого среднего
+    T dSum = 0;
+
+    int iAmountCut = N * dTruncAvg;
+
+    int iSizeSampling = N - 2 * iAmountCut;
+
+    if (iSizeSampling > 0)
+    {
+        for (int i = iAmountCut; i < N - iAmountCut; ++i)
+        {
+            dSum += arrLocalData[i];
+        }
+        fAvg = dSum / iSizeSampling;    // Усечённое среднее
+    }
+
+    return true;
+}
+
+bool FAdapOutData::CalcDataCorridor(vector<vector<FTableData>>& arrDataCorridor,
+                                    const vector<vector<FTableData>>& arrData,
+                                    const int&                        iCol,
+                                    const string&                     sType)
+
+{
+    bool bIsCheck = false;
+
+    if (sType == "")
+        return true;    // Данный столбец не будет выводится
+
+    if (sType == typeid(string).name())
+    {
+        bIsCheck = TemplateCalcDataCorridorNoDiv<string>(arrDataCorridor,
+                                                         arrData, iCol);
+    }
+    if (sType == typeid(int).name())
+    {
+        bIsCheck = TemplateCalcDataCorridorWithDiv<int>(
+            arrDataCorridor, arrData, iCol,
+            ptrGlobal->ptrConfig->GetDTruncAvg());
+    }
+    if (sType == typeid(double).name())
+    {
+        bIsCheck = TemplateCalcDataCorridorWithDiv<double>(
+            arrDataCorridor, arrData, iCol,
+            ptrGlobal->ptrConfig->GetDTruncAvg());
+    }
+    if (sType == typeid(char).name())
+    {
+        bIsCheck =
+            TemplateCalcDataCorridorNoDiv<char>(arrDataCorridor, arrData, iCol);
+    }
+
+    if (!bIsCheck)
+        return false;
+
+    return true;
+}
+
+
+void FAdapOutData::CreateType(FDataType& fData)
+{
+    int W = fData.arrHeader.size();
+    fData.arrType.resize(W);
+
+    for (int x = 0; x < W; ++x)
+    {
+        for (int y = 0; y < fData.arrData.size(); ++y)
+        {
+            if (fData.arrData[y][x].fData.has_value())
+            {
+                fData.arrType[x] = fData.arrData[y][x].fData.type().name();
+                break;
+            }
+        }
+    }
+}
+
+void FAdapOutData::CreateDataCorridorAndType()
+{
+    vector<FDataType*> arrAllData = { &fTotalData };
     for (auto& [eType, fData] : mapOutData)
     {
+        arrAllData.push_back(&fData);
+    }
+
+    for (auto& ptrData : arrAllData)
+    {
+        auto& fData = *ptrData;
+
+        CreateType(fData);
+
         int W = fData.arrHeader.size();
-        fData.arrDataCorridor.assign(arrCorridorHeader.size(),
+        fData.arrDataCorridor.assign(arrOriginCorridorHeader.size(),
                                      vector<FTableData>(W));
         for (int iCol = 0; iCol < W; ++iCol)
         {
-            if (fData.arrType[iCol] == "")
+            bool bIsCorrect =
+                CalcDataCorridor(fData.arrDataCorridor, fData.arrData, iCol,
+                                 fData.arrType[iCol]);
+
+            if (!bIsCorrect)
             {
                 ptrGlobal->ptrError->ErrorBadDataCorridor(
                     fData.arrHeader[iCol]);
             }
-            
-            CalcDataCorridor(fData.arrDataCorridor, fData.arrData,
-                                 fData.arrType[iCol], iCol);
-            
         }
     }
+
 }
 
 void FAdapOutData::CreateData()
@@ -550,8 +822,12 @@ void FAdapOutData::CreateData()
     CreateTotalData();
 
     CreateGraphData();
+    
+    CreateCompTreeData();
 
-    CreateDataCorridor();
+    //В самом конце, так как считаем меры центральной тенденции для всего ранее посчитанного
+    CreateDataCorridorAndType();
+
 }
 
 void FAdapOutData::Create()

@@ -304,8 +304,9 @@ namespace TestFSolve
             {
                 if (i)
                     sActual += " ";
-                sActual += to_string(
-                    ptrThis->ptrGraph->mapGraph[ETypeGraph(i)].iGraphAmountDisc);
+                sActual += to_string(ptrThis->ptrGraph->mapGraph[ETypeGraph(i)]
+                                  .mapGraphDataTypeDisc[ETypeDisc::ETD_Total]
+                                  .iAmount);
             }
             Assert::AreEqual("2 2 3 0", sActual.c_str());
         }
@@ -319,7 +320,8 @@ namespace TestFSolve
                 if (i)
                     sActual += " ";
                 sActual += to_string(ptrThis->ptrGraph->mapGraph[ETypeGraph(i)]
-                                         .iGraphAmountDisc);
+                                  .mapGraphDataTypeDisc[ETypeDisc::ETD_Total]
+                                  .iAmount);
             }
             Assert::AreEqual("2 2 2 2", sActual.c_str());
         }
@@ -333,9 +335,45 @@ namespace TestFSolve
                 if (i)
                     sActual += " ";
                 sActual += to_string(ptrThis->ptrGraph->mapGraph[ETypeGraph(i)]
-                                         .iGraphAmountDisc);
+                                  .mapGraphDataTypeDisc[ETypeDisc::ETD_Total]
+                                  .iAmount);
             }
             Assert::AreEqual("2 3 4 0", sActual.c_str());
+        }
+
+        TEST_METHOD(ThirdCreditsDiscTotal)
+        {
+            // Не учитывается дисциплина "Технологическая
+            // (проектно-технологическая) практика" Так как она в исключениях
+            // файла config.xlsx "Игнорируемые предметы"
+            auto& ptrThis = ptrThird;
+            Assert::AreEqual(30.,
+                             ptrThis->ptrGraph->mapGraph[eCommon]
+                                    .mapGraphDataTypeDisc[ETypeDisc::ETD_Total]
+                                    .dCredits);
+        }
+
+        TEST_METHOD(ThirdAmountDiscTotal)
+        {
+            // Не учитывается дисциплина "Технологическая
+            // (проектно-технологическая) практика" Так как она в исключениях
+            // файла config.xlsx "Игнорируемые предметы"
+            auto& ptrThis = ptrThird;
+            Assert::AreEqual(9, ptrThis->ptrGraph->mapGraph[eCommon]
+                                    .mapGraphDataTypeDisc[ETypeDisc::ETD_Total]
+                                    .iAmount);
+        }
+
+        TEST_METHOD(ThirdCreditsDiscCommon)
+        {
+            // Не учитывается дисциплина "Технологическая
+            // (проектно-технологическая) практика" Так как она в исключениях
+            // файла config.xlsx "Игнорируемые предметы"
+            auto& ptrThis = ptrThird;
+            Assert::AreEqual(16.,
+                             ptrThis->ptrGraph->mapGraph[eCommon]
+                                 .mapGraphDataTypeDisc[ETypeDisc::ETD_Common]
+                                 .dCredits);
         }
 
         TEST_METHOD(ThirdAmountDiscCommon)
@@ -344,8 +382,9 @@ namespace TestFSolve
             // (проектно-технологическая) практика" Так как она в исключениях
             // файла config.xlsx "Игнорируемые предметы"
             auto& ptrThis = ptrThird;
-            Assert::AreEqual(
-                9, ptrThis->ptrGraph->mapGraph[eCommon].iGraphAmountDisc);
+            Assert::AreEqual(5, ptrThis->ptrGraph->mapGraph[eCommon]
+                                    .mapGraphDataTypeDisc[ETypeDisc::ETD_Common]
+                                    .iAmount);
         }
 
         TEST_METHOD(FirstDenseCommon)
