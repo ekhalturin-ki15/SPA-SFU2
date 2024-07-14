@@ -35,12 +35,13 @@ struct FAdapOutData
     void Create();
 
 public:
+    //Данные по всей выборке УП
     FDataType                  fTotalData;
     map<ETypeGraph, FDataType> mapOutData;
 
     // По курсам и по всем курсам вместе (FMetric::sAllMetric)
-    map<string, FDataType>
-        mapCompTreeData;    // Так как названия курсов даны строкой
+    vector<map<string, FDataType>> //Для каждого отдельного УП
+        arrMapCompTreeData;    // Так как названия курсов даны строкой
 
 private:
     void CreateHeader();
@@ -66,19 +67,13 @@ private:
                           const string&                     sType);
 
     void CreateCompTreeData();
-    void CreateRectCompTreeData(vector<vector<FTableData>>& arrReturnData,
+    void CreateCompTreeData(vector<vector<FTableData>>& arrReturnData,
                                 shared_ptr<FTreeMetric>
                                     ptrMetric);
 
-    void CreateTableRectInfo(
-        const bool& bIsCounting,    // Если true - то проход в холостую для
-                                    // определения iSizeX
-        vector<vector<FTableData>>&
-            arrReturnData,    // Возвращаемое значение с функции
-        int& iSizeX,    // Если считаем вхолостую, когда bIsCounting == true, то
-                        // записываем в iSizeX результат
-        int& iCurrentY,    // Глобальная переменая
-        shared_ptr<FTreeMetric> ptrMetric, int iDeep);
+    void CreateRectCompTreeData(vector<vector<FTableData>>& arrReturnData,
+        vector<FTableData> arrRow, shared_ptr<FTreeMetric> ptrMetric, int x,
+                                int iDeep);
 
     void CompHeaderCreate(vector<string>& arrHeader);
     void QuartileHeaderCreate(

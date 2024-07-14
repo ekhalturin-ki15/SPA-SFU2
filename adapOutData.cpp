@@ -76,48 +76,140 @@ bool FAdapOutData::Init()
 
 void FAdapOutData::CreateCompTreeHeader()
 {
-    for (auto& [sName, fCompTreeData] : mapCompTreeData)
+    for (auto& it : arrMapCompTreeData)
     {
-        for (const auto& wsNameHeader : arrOriginCompTreeHeader)
+        for (auto& [sName, fCompTreeData] : it)
         {
-            if (ptrGlobal->ptrConfig->mapArrOutParams.count(
-                    wsNameHeader))    // Если правильно указано название в
-                                      // параметрах
+            for (const auto& wsNameHeader : arrOriginCompTreeHeader)
             {
-                fCompTreeData.arrHeader.push_back(ptrGlobal->ConwertToString(
-                    ptrGlobal->ptrConfig->mapArrOutParams[wsNameHeader]
-                        .GetName()));
+                if (ptrGlobal->ptrConfig->mapAddOutParams.count(
+                        wsNameHeader))    // Если правильно указано название в
+                                          // параметрах
+                {
+                    fCompTreeData.arrHeader.push_back(
+                        ptrGlobal->ConwertToString(
+                            ptrGlobal->ptrConfig->mapAddOutParams[wsNameHeader]
+                                .GetName()));
+                }
             }
         }
     }
 }
 
-void FAdapOutData::CreateRectCompTreeData(
+void FAdapOutData::CreateCompTreeData(
     vector<vector<FTableData>>& arrReturnData,
     shared_ptr<FTreeMetric>
     ptrMetric)
 {
-    int iSizeX = 0, iSizeY = 0; 
-
-    CreateTableRectInfo(true,    // Считаем вхолостую
-                        arrReturnData, iSizeX,
-                        iSizeY,  
-                        ptrMetric, 0);
+    CreateRectCompTreeData(
+        arrReturnData, {}, ptrMetric, 0, 0);
 
 
 }
 
-void FAdapOutData::CreateTableRectInfo(
-    const bool& bIsCounting,    // Если true - то проход в холостую для
-                                // определения iSizeX
-    vector<vector<FTableData>>&
-        arrReturnData,    // Возвращаемое значение с функции
-    int& iSizeX,    // Если считаем вхолостую, когда bIsCounting == true, то
-                    // записываем в iSizeX результат
-    int& iCurrentY,    // Глобальная переменая
-    shared_ptr<FTreeMetric> ptrMetric, int iDeep)
+void FAdapOutData::CreateRectCompTreeData(
+    vector<vector<FTableData>>& arrReturnData, vector<FTableData> arrRow, 
+    shared_ptr<FTreeMetric> ptrMetric, int x, int iDeep)
 {
+    if (x == 0)
+    {
+        //Вписываем название УП
+        FTableData fTableData;
+        fTableData.fData = ptrGlobal->ptrSolve->sInPath;
+        arrRow.push_back(fTableData);
+        CreateRectCompTreeData(arrReturnData, arrRow, ptrMetric, x + 1, iDeep);
+    }
+    //{
+    //    // Достигнут лимит глубины вывода
+    //    if (x >= iSizeX)
+    //    {
+    //        ++iCurrentY;
+    //        return;
+    //    }
+    //}
+    if (ptrMetric->sName == FMetric::sEmptyIndicator)
+    {
+        arrReturnData.push_back(arrRow);
+        return;
+    }
+    {
+        FTableData fTableData;
+        fTableData.fData = ptrMetric->sName;
+        arrRow.push_back(fTableData);
+    }
 
+    // Выводим полное название компетенции
+    if (iDeep > 1)
+    {
+        ++x;
+        {
+            vector<string> arrName;
+            auto           ptrBuf = ptrMetric;
+            for (int i = 0; i < iDeep; ++i)
+            {
+                arrName.push_back(ptrBuf->sName);
+                ptrBuf = ptrBuf->ptrParent;
+            }
+            string sResult = "";
+            for (int i = iDeep - 1; i >= 0; --i)
+            {
+                sResult += arrName[i];
+                if (i)
+                    sResult +=
+                        ptrGlobal->ptrConfig->GetSPrefFullNameCourse();
+            }
+            FTableData fTableData;
+            fTableData.fData = sResult;
+            arrRow.push_back(fTableData);
+        }
+    }
+
+    // Выводим кол-во ЗЕ
+    if (iDeep > 0)
+    {
+        ++x;
+        {
+            FTableData fTableData;
+            fTableData.fData = ptrMetric->dChosenSum;
+            arrRow.push_back(fTableData);
+            //ptrGlobal->DoubletWithPrecision(ptrMetric->dChosenSum);
+        }
+    }
+
+    // Выводим кол-во дисциплин
+    if (iDeep > 0)
+    {
+        ++x;
+        {
+            FTableData fTableData;
+            fTableData.fData = ptrMetric->iAmountUsingDisc;
+            arrRow.push_back(fTableData);
+            //ptrGlobal->DoubletWithPrecision(ptrMetric->iAmountUsingDisc);
+        }
+    }
+
+    // Выводим процент распределения
+    if (iDeep > 0)
+    {
+        ++x;
+        {
+            FTableData fTableData;
+            fTableData.fData = ptrMetric->dInclusionPercent;
+            arrRow.push_back(fTableData);
+            //ptrGlobal->DoubletWithPrecision(ptrMetric->dInclusionPercent);
+        }
+    }
+    if (ptrMetric->mapChild.size() == 0)
+    {
+        arrReturnData.push_back(arrRow);
+        return;
+    }
+
+    for (auto& [sName, ptrChild] : ptrMetric->mapChild)
+    {
+        CreateRectCompTreeData(arrReturnData, arrRow, ptrChild, x + 1,
+                               iDeep + 1);
+    }
 }
 
 void FAdapOutData::CreateCompTreeData()
@@ -127,11 +219,12 @@ void FAdapOutData::CreateCompTreeData()
         const auto& it            = ptrGlobal->ptrSolve->GetCurricula(iCur);
         auto        ptrTreeMetric = it->ptrMetric->ptrTreeMetric;
 
+        auto& mapCompTreeData = arrMapCompTreeData[iCur];
         for (auto& [sName, fData] : mapCompTreeData)
         {
             const auto& ptrCurrentTree = ptrTreeMetric->mapChild[sName];
 
-            CreateRectCompTreeData(fData.arrData, ptrCurrentTree); 
+            CreateCompTreeData(fData.arrData, ptrCurrentTree); 
         }
     }
 }
@@ -283,11 +376,22 @@ void FAdapOutData::CreateHeader()
     mapOutData[ETypeGraph::ETG_Alt];
     mapOutData[ETypeGraph::ETG_Reverse];
 
-    mapCompTreeData[FMetric::sAllMetric];
+    
     for (int iCourse = 0; iCourse < ptrGlobal->ptrSolve->iMaxCourse; ++iCourse)
     {
         mapOutData[ETypeGraph(iCourse)];
-        mapCompTreeData[to_string(iCourse)];
+    }
+
+    //Для каждого УП в отдельности
+    arrMapCompTreeData.resize(ptrGlobal->ptrSolve->N);
+    for (auto& it : arrMapCompTreeData)
+    {
+        it[FMetric::sAllMetric];
+        for (int iCourse = 1; iCourse <= ptrGlobal->ptrSolve->iMaxCourse;
+             ++iCourse)
+        {
+            it[to_string(iCourse)];
+        }
     }
 
     CreateGraphHeader();
@@ -787,9 +891,18 @@ void FAdapOutData::CreateType(FDataType& fData)
 void FAdapOutData::CreateDataCorridorAndType()
 {
     vector<FDataType*> arrAllData = { &fTotalData };
+    //Для графовых
     for (auto& [eType, fData] : mapOutData)
     {
         arrAllData.push_back(&fData);
+    }
+    //Для дерева компетенций
+    for (auto& it : arrMapCompTreeData)
+    {
+        for (auto& [sType, fData] : it)
+        {
+            arrAllData.push_back(&fData);
+        }
     }
 
     for (auto& ptrData : arrAllData)
