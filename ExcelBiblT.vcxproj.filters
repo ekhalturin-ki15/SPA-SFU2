@@ -61,9 +61,6 @@
     <ClCompile Include="metric.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="outData.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="solve.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -80,6 +77,9 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="solveZeroPage.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="OutData.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -111,10 +111,10 @@
     <ClInclude Include="metric.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="outData.h">
+    <ClInclude Include="solve.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="solve.h">
+    <ClInclude Include="OutData.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

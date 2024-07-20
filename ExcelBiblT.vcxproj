@@ -174,7 +174,7 @@
     <ClCompile Include="graph.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="metric.cpp" />
-    <ClCompile Include="outData.cpp" />
+    <ClCompile Include="OutData.cpp" />
     <ClCompile Include="solve.cpp">
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">/utf-8 </AdditionalOptions>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/utf-8 </AdditionalOptions>
@@ -196,7 +196,7 @@
     <ClInclude Include="global.h" />
     <ClInclude Include="graph.h" />
     <ClInclude Include="metric.h" />
-    <ClInclude Include="outData.h" />
+    <ClInclude Include="OutData.h" />
     <ClInclude Include="solve.h" />
     <ClInclude Include="solveSecondPage.h" />
   </ItemGroup>

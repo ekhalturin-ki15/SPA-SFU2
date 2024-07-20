@@ -6,7 +6,7 @@ struct FGlobal;
 struct FCurricula;
 struct FTreeMetric;
 struct FTypeGraph;
-
+struct FTreeElement;
 struct ETypeGraph;
 
 struct FTableData
@@ -35,21 +35,33 @@ struct FAdapOutData
     void Create();
 
 public:
-    //Данные по всей выборке УП
+    // Данные по всей выборке УП
     FDataType                  fTotalData;
     map<ETypeGraph, FDataType> mapOutData;
 
     // По курсам и по всем курсам вместе (FMetric::sAllMetric)
-    vector<map<string, FDataType>> //Для каждого отдельного УП
+    vector<map<string, FDataType>>    // Для каждого отдельного УП
         arrMapCompTreeData;    // Так как названия курсов даны строкой
 
+    vector<map<ETypeGraph, FDataType>> arrMapGephiLableCSVData;
+    vector<map<ETypeGraph, FDataType>> arrMapGephiRibCSVData;
+
 private:
+    // Header
     void CreateHeader();
-    void CreateData();
 
     void CreateTotalHeader();
     void CreateGraphHeader();
     void CreateCompTreeHeader();
+
+    void CreateGephiCSVHeader();
+
+    void CompHeaderCreate(vector<string>& arrHeader);
+    void QuartileHeaderCreate(
+        vector<string>&                     arrHeader,
+        const vector<pair<string, string>>& arrQuartileHead);
+    // Data
+    void CreateData();
 
     void CreateTotalData();
     void CreateGraphData();
@@ -68,17 +80,28 @@ private:
 
     void CreateCompTreeData();
     void CreateCompTreeData(vector<vector<FTableData>>& arrReturnData,
-                                shared_ptr<FTreeMetric>
-                                    ptrMetric);
+                            shared_ptr<FTreeMetric>
+                                ptrMetric);
 
     void CreateRectCompTreeData(vector<vector<FTableData>>& arrReturnData,
-        vector<FTableData> arrRow, shared_ptr<FTreeMetric> ptrMetric, int x,
+                                vector<FTableData>          arrRow,
+                                shared_ptr<FTreeMetric> ptrMetric, int x,
                                 int iDeep);
 
-    void CompHeaderCreate(vector<string>& arrHeader);
-    void QuartileHeaderCreate(
-        vector<string>&                     arrHeader,
-        const vector<pair<string, string>>& arrQuartileHead);
+    void CreateGephiCSVData();
+    void CreateGephiLableCSVData();
+    void CreateGephiRibCSVData();
+
+private:
+    string CreateCommonNameLabel(const ETypeGraph&               eTypeGraph,
+                                 const pair<wstring, int>&       fInfo,
+                                 const shared_ptr<FTreeElement>& ptrNode);
+    string AddCompString(const map<string, vector<string>>& mapComp);
+
+    string CreateTag(
+        const ETypeGraph& eGraphType, const wstring& wsName,
+        const map<wstring, shared_ptr<FTreeElement>>& mapAllDisc);
+
 
 private:
     const vector<wstring>                arrOriginMetricGraphHead;

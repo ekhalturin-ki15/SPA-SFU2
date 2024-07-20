@@ -117,12 +117,13 @@ void FMetric::Init()
     {
         // fRegexHeaderComp = _ptrTree->ptrGlobal->ptrConfig->sRegexHeaderComp;
         arrRegexHeaderComp.resize(
-            ptrCurricula->ptrGlobal->ptrConfig->arrRegexHeaderComp.size());
+            ptrCurricula->ptrGlobal->ptrConfig->GetArrRegexHeaderComp().size());
         for (int i = 0;
-             i < ptrCurricula->ptrGlobal->ptrConfig->arrRegexHeaderComp.size();
+             i <
+             ptrCurricula->ptrGlobal->ptrConfig->GetArrRegexHeaderComp().size();
              ++i)
             arrRegexHeaderComp[i] =
-                ptrCurricula->ptrGlobal->ptrConfig->arrRegexHeaderComp[i];
+                ptrCurricula->ptrGlobal->ptrConfig->GetArrRegexHeaderComp()[i];
     }
     catch (...)
     {
@@ -135,12 +136,13 @@ void FMetric::Init()
         // fRegexHeaderInd =
         // _ptrTree->ptrGlobal->ptrConfig->sRegexHeaderIndicator;
         arrRegexHeaderInd.resize(
-            ptrCurricula->ptrGlobal->ptrConfig->arrRegexHeaderInd.size());
+            ptrCurricula->ptrGlobal->ptrConfig->GetArrRegexHeaderInd().size());
         for (int i = 0;
-             i < ptrCurricula->ptrGlobal->ptrConfig->arrRegexHeaderInd.size();
+             i <
+             ptrCurricula->ptrGlobal->ptrConfig->GetArrRegexHeaderInd().size();
              ++i)
             arrRegexHeaderInd[i] =
-                ptrCurricula->ptrGlobal->ptrConfig->arrRegexHeaderInd[i];
+                ptrCurricula->ptrGlobal->ptrConfig->GetArrRegexHeaderInd()[i];
     }
     catch (...)
     {

@@ -17,14 +17,13 @@ enum ETagDisc : int
     ETagD_Size
 };
 
-//Тип вывода (в Excel таблицы) в основные или в подробные сведения
-//enum EOutType : int
+// Тип вывода (в Excel таблицы) в основные или в подробные сведения
+// enum EOutType : int
 //{
-//    EOT_Head = 0,
-//    EOT_Added,
-//    EOT_Size
-//};
-
+//     EOT_Head = 0,
+//     EOT_Added,
+//     EOT_Size
+// };
 
 struct FPageInfo
 {
@@ -50,19 +49,19 @@ struct FTranslateData
         return arrFlag.at(0);
     }
 
-  /*  bool GetLocal() const
-    {
-        if (arrFlag.size() < 2)
-            throw std::out_of_range("Do not have Total Data \\_/");
-        return arrFlag.at(1);
-    }*/
+    /*  bool GetLocal() const
+      {
+          if (arrFlag.size() < 2)
+              throw std::out_of_range("Do not have Total Data \\_/");
+          return arrFlag.at(1);
+      }*/
 
-  /*  bool GetType(EOutType iType) const
-    {
-        if (arrFlag.size() < int(iType))
-            throw std::out_of_range("Do not have Total Data ~_~");
-        return arrFlag.at(int(iType) - 1);
-    }*/
+    /*  bool GetType(EOutType iType) const
+      {
+          if (arrFlag.size() < int(iType))
+              throw std::out_of_range("Do not have Total Data ~_~");
+          return arrFlag.at(int(iType) - 1);
+      }*/
 
 private:
     wstring           wsName;
@@ -87,12 +86,12 @@ public:
 
     // String Params
 private:
-    string sNameLabelHeader;
-    string sNameRibHeader;
+    // string sNameLabelHeader;
+    // string sNameRibHeader;
     string sNameRibDir;
     string sSeparator;
     string sPrefFullNameCourse;
-    //string sRegexComp;
+    // string sRegexComp;
     string sFormula;
     string sFormulaReverseGraph;
     string sNoInitData;
@@ -109,14 +108,6 @@ private:
     map<wstring, string*>
         mapStringParamsReadKey;    // Инициализируется в конструкторе
 public:
-    const string& GetSNameLabelHeader() const
-    {
-        return sNameLabelHeader;
-    }
-    const string& GetSNameRibHeader() const
-    {
-        return sNameRibHeader;
-    }
     const string& GetSNameRibDir() const
     {
         return sNameRibDir;
@@ -181,7 +172,7 @@ private:
     int iSoMachComp;
     int iAmountQuar;
     int iPrecision;
-    //int iIndicatorDeep;
+    // int iIndicatorDeep;
 
     // Int Params adapter
 private:
@@ -213,10 +204,10 @@ public:
     {
         return iPrecision;
     }
-    //const int& GetIIndicatorDeep() const
+    // const int& GetIIndicatorDeep() const
     //{
-    //    return iIndicatorDeep;
-    //}
+    //     return iIndicatorDeep;
+    // }
 
     // Bool Params
 private:
@@ -413,16 +404,54 @@ public:
 
     set<char> setIgnoreCharCompHeader;
 
-    vector<string> arrRegexComp;
-    vector<string> arrRegexHeaderInd;
-    vector<vector<int>> arrRegexIndexGroup; // Нумерование групп
-    vector<string> arrRegexHeaderComp;
-    vector<string> arrRegexCodeUGSN;
-
-    vector<bool> bArrIsSolveGraphMetric;
+    vector<vector<int>> arrRegexIndexGroup;    // Нумерование групп
+    vector<bool>   bArrIsSolveGraphMetric;
 
     // Объединять ли данные УП с данными графов
     vector<bool> bArrIsconcatGraphData;
+
+private:
+    void InitVectorStringMap();
+    map<wstring, pair<vector<string>*, int>>
+        mapVectorStringParamsReadKey;    // Инициализируется в конструкторе
+                                          // (значение и размер (ограничение))
+    vector<string> arrNameLabelHeader;
+    vector<string> arrNameRibHeader;
+    vector<string> arrRegexComp;
+    vector<string> arrRegexHeaderInd;
+    vector<string> arrRegexHeaderComp;
+    vector<string> arrRegexCodeUGSN;
+
+public:
+    const vector<string>& GetArrNameLabelHeader() const
+    {
+        return arrNameLabelHeader;
+    }
+
+    const vector<string>& GetArrNameRibHeader() const
+    {
+        return arrNameRibHeader;
+    }
+    
+    const vector<string>& GetArrRegexComp() const
+    {
+        return arrRegexComp;
+    }
+    
+    const vector<string>& GetArrRegexHeaderInd() const
+    {
+        return arrRegexHeaderInd;
+    }
+    
+    const vector<string>& GetArrRegexHeaderComp() const
+    {
+        return arrRegexHeaderComp;
+    }
+    
+    const vector<string>& GetArrRegexCodeUGSN() const
+    {
+        return arrRegexCodeUGSN;
+    }
 
 private:
     static int iSinglControll;
@@ -433,6 +462,6 @@ private:
 
     wstring wsNamePage;    // Страница, откуда следует начать считывать
                            // параметры
-    //wstring             wsFileConfig;    // Теперь хранится у Глобал
-    shared_ptr<FGlobal> ptrGlobal;       // Синглтон
+    // wstring             wsFileConfig;    // Теперь хранится у Глобал
+    shared_ptr<FGlobal> ptrGlobal;    // Синглтон
 };

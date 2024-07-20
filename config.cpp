@@ -1,7 +1,7 @@
 ﻿#include "config.h"
 #include "error.h"
 
-#pragma warning(disable : 4267)    // size_t лучше не использовать, 
+#pragma warning(disable : 4267)    // size_t лучше не использовать,
 
 int FConfig::iSinglControll = 0;
 
@@ -35,8 +35,8 @@ FConfig::FConfig(shared_ptr<FGlobal> _ptrGlobal)
       bOutTotalInfo(true),
       bOutWithoutEmptyCell(true),
       bIsOutCSVDate(false),
-      sNameLabelHeader("Id;Label"),
-      sNameRibHeader("Source;Target;Type;Weight"),
+      arrNameLabelHeader({ "Id", "Label", "Weight", "Tag" }),
+      arrNameRibHeader({ "Source", "Target", "Type", "Label", "Weight" }),
       sNameRibDir("Undirected"),
       arrNameFileIn({ L"plans\grad", L"plans\spec" }),
       arrNameFileOut({ L"result\grad", L"result\spec" }),
@@ -45,7 +45,7 @@ FConfig::FConfig(shared_ptr<FGlobal> _ptrGlobal)
       sNameFileCompData("CompData"),
       sSeparator("_"),
       sPrefFullNameCourse("."),
-      //sRegexComp("{0, 1}(.{0, } ? );"),
+      // sRegexComp("{0, 1}(.{0, } ? );"),
       sFormula("((L + R) / 2) * K"),
       sFormulaReverseGraph("((L + R) / 2) * D"),
       wsNamePage(L"Параметры")
@@ -66,14 +66,15 @@ FConfig::FConfig(shared_ptr<FGlobal> _ptrGlobal)
     InitDoubleMap();
     // InitWStringMap();
     InitVectorWStringMap();
+    InitVectorStringMap();
 }
 
 void FConfig::InitStringMap()
 {
-    mapStringParamsReadKey[L"Заголовок файла с названиями вершин"] =
-        &sNameLabelHeader;
+    /*mapStringParamsReadKey[L"Заголовок файла с названиями вершин"] =
+        &sNameLabelHeader;*/
 
-    mapStringParamsReadKey[L"Заголовок файла с рёбрами"] = &sNameRibHeader;
+    // mapStringParamsReadKey[L"Заголовок файла с рёбрами"] = &sNameRibHeader;
 
     mapStringParamsReadKey[L"Тип рёбер"] = &sNameRibDir;
 
@@ -188,6 +189,32 @@ void FConfig::InitVectorWStringMap()
                                                              0 };
 }
 
+void FConfig::InitVectorStringMap()
+{
+    mapVectorStringParamsReadKey[L"Заголовок файла с названиями вершин"] = {
+        &arrNameLabelHeader, 0
+    };
+
+    mapVectorStringParamsReadKey[L"Заголовок файла с рёбрами"] = {
+        &arrNameRibHeader, 0
+    };
+
+    mapVectorStringParamsReadKey
+        [L"Регулярное выражение разбивки строки ([Компетенции(2)] "
+         L"Формируемые компетенции)"] = { &arrRegexComp, 0 };
+    
+    mapVectorStringParamsReadKey
+        [L"Регулярное выражение разбивки индикатора"] = { &arrRegexHeaderInd, 0 };
+    
+    mapVectorStringParamsReadKey
+        [L"Регулярное выражение разбивки компетенции"] = { &arrRegexHeaderComp,
+                                                          0 };
+    
+    mapVectorStringParamsReadKey
+        [L"Регулярное выражение разбивки кода направления подготовки"] = { &arrRegexCodeUGSN,
+                                                          0 };
+}
+
 bool FConfig::Init()
 {
     OpenXLSX::XLDocument fDoc;
@@ -295,6 +322,15 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             ptrGlobal->TakeData(*mapVectorWStringParamsReadKey[wsKey].first,
                                 row,
                                 mapVectorWStringParamsReadKey[wsKey].second);
+            return true;
+        }
+
+        // Считать переменную из config.xlsx с типом данных vector<string>
+        if (mapVectorStringParamsReadKey.count(wsKey))
+        {
+            ptrGlobal->TakeData(*mapVectorStringParamsReadKey[wsKey].first,
+                                row,
+                                mapVectorStringParamsReadKey[wsKey].second);
             return true;
         }
 
@@ -411,21 +447,6 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
             return true;
         }
 
-        wsPatern = L"Регулярное выражение разбивки строки ([Компетенции(2)] "
-                   L"Формируемые компетенции)";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(arrRegexComp, row, 0);
-            return true;
-        }
-
-        wsPatern = L"Регулярное выражение разбивки индикатора";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(arrRegexHeaderInd, row, 0);
-            return true;
-        }
-
         wsPatern = L"Индексы групп регулярного выражения";
         if (wsKey == wsPatern)
         {
@@ -459,20 +480,6 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
                 arrRegexIndexGroup.push_back(bufInt);
             }
 
-            return true;
-        }
-
-        wsPatern = L"Регулярное выражение разбивки компетенции";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(arrRegexHeaderComp, row, 0);
-            return true;
-        }
-
-        wsPatern = L"Регулярное выражение разбивки кода направления подготовки";
-        if (wsKey == wsPatern)
-        {
-            ptrGlobal->TakeData(arrRegexCodeUGSN, row, 0);
             return true;
         }
 
@@ -642,7 +649,8 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
                                  ptrGlobal->ConwertToString(wsNamePage)),
                              1))
                     {
-                        //Иногда Excel воспринимает последнюю строку, как пустую
+                        // Иногда Excel воспринимает последнюю строку, как
+                        // пустую
                         if (key != L"")
                             setIgnoreDisc.insert(key);
                     }

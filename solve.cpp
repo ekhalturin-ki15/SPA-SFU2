@@ -45,9 +45,9 @@ bool FSolve::Init()
     try
     {
         // fRegexComp = ptrGlobal->ptrConfig->GetSRegexComp();
-        arrRegexComp.resize(ptrGlobal->ptrConfig->arrRegexComp.size());
-        for (int i = 0; i < ptrGlobal->ptrConfig->arrRegexComp.size(); ++i)
-            arrRegexComp[i] = ptrGlobal->ptrConfig->arrRegexComp[i];
+        arrRegexComp.resize(ptrGlobal->ptrConfig->GetArrRegexComp().size());
+        for (int i = 0; i < ptrGlobal->ptrConfig->GetArrRegexComp().size(); ++i)
+            arrRegexComp[i] = ptrGlobal->ptrConfig->GetArrRegexComp()[i];
     }
     catch (...)
     {
@@ -58,9 +58,12 @@ bool FSolve::Init()
 
     try
     {
-        arrRegexCodeUGSN.resize(ptrGlobal->ptrConfig->arrRegexCodeUGSN.size());
-        for (int i = 0; i < ptrGlobal->ptrConfig->arrRegexCodeUGSN.size(); ++i)
-            arrRegexCodeUGSN[i] = ptrGlobal->ptrConfig->arrRegexCodeUGSN[i];
+        arrRegexCodeUGSN.resize(
+            ptrGlobal->ptrConfig->GetArrRegexCodeUGSN().size());
+        for (int i = 0; i < ptrGlobal->ptrConfig->GetArrRegexCodeUGSN().size();
+             ++i)
+            arrRegexCodeUGSN[i] =
+                ptrGlobal->ptrConfig->GetArrRegexCodeUGSN()[i];
     }
     catch (...)
     {
@@ -72,10 +75,12 @@ bool FSolve::Init()
     {
         // fRegexHeaderComp = ptrGlobal->ptrConfig->sRegexHeaderComp;
         arrRegexHeaderComp.resize(
-            ptrGlobal->ptrConfig->arrRegexHeaderComp.size());
-        for (int i = 0; i < ptrGlobal->ptrConfig->arrRegexHeaderComp.size();
+            ptrGlobal->ptrConfig->GetArrRegexHeaderComp().size());
+        for (int i = 0;
+             i < ptrGlobal->ptrConfig->GetArrRegexHeaderComp().size();
              ++i)
-            arrRegexHeaderComp[i] = ptrGlobal->ptrConfig->arrRegexHeaderComp[i];
+            arrRegexHeaderComp[i] =
+                ptrGlobal->ptrConfig->GetArrRegexHeaderComp()[i];
     }
     catch (...)
     {
@@ -87,9 +92,11 @@ bool FSolve::Init()
     {
         // fRegexHeaderInd = ptrGlobal->ptrConfig->sRegexHeaderIndicator;
         arrRegexHeaderInd.resize(
-            ptrGlobal->ptrConfig->arrRegexHeaderInd.size());
-        for (int i = 0; i < ptrGlobal->ptrConfig->arrRegexHeaderInd.size(); ++i)
-            arrRegexHeaderInd[i] = ptrGlobal->ptrConfig->arrRegexHeaderInd[i];
+            ptrGlobal->ptrConfig->GetArrRegexHeaderInd().size());
+        for (int i = 0; i < ptrGlobal->ptrConfig->GetArrRegexHeaderInd().size();
+             ++i)
+            arrRegexHeaderInd[i] =
+                ptrGlobal->ptrConfig->GetArrRegexHeaderInd()[i];
     }
     catch (...)
     {
