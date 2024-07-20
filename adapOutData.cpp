@@ -231,6 +231,62 @@ void FAdapOutData::CreateGephiCSVData()
     CreateGephiRibCSVData();
 }
 
+void FAdapOutData::CreateGephiRibCSVData()
+{
+    for (int iCur = 0; iCur < ptrGlobal->ptrSolve->N; ++iCur)
+    {
+        for (auto& [eType, fData] : arrMapGephiRibCSVData[iCur])
+        {
+            const auto& it = ptrGlobal->ptrSolve->GetCurricula(iCur);
+
+            auto& fTotalOutData   = fData.arrData;
+            auto& fTotalOutHeader = fData.arrHeader;
+
+            const auto& fGraph = it->ptrGraph->mapGraph[eType];
+
+            vector<FTableData> arrRow;
+
+            for (int l = 0; l < fGraph.fAdjList.size(); ++l)
+            {
+                for (const auto& [r, dLen] : fGraph.fAdjList[l])
+                {
+                    // Чтобы не дублировать, он же неориентированный
+                    if ((l < r) || (!ptrGlobal->ptrConfig->GetBIsUnDirected()))
+                    {
+                        for (int iColumnNum = 0;
+                             iColumnNum < fTotalOutHeader.size();
+                             ++iColumnNum)
+                        {
+                            FTableData fDataContainer;
+
+                            switch (iColumnNum)
+                            {
+                                case 0:
+                                    fDataContainer.fData = l;
+                                    break;
+                                case 1:
+                                    fDataContainer.fData = r;
+                                    break;
+                                case 2:
+                                    fDataContainer.fData =
+                                        ptrGlobal->ptrConfig->GetSNameRibDir();
+                                    break;
+                                case 3:
+                                case 4:
+                                    fDataContainer.fData = dLen;
+                                    break;
+                            }
+                            arrRow.push_back(fDataContainer);
+                        }
+
+                        fTotalOutData.push_back(arrRow);
+                    }
+                }
+            }
+        }
+    }
+}
+
 void FAdapOutData::CreateGephiLableCSVData()
 {
     for (int iCur = 0; iCur < ptrGlobal->ptrSolve->N; ++iCur)
@@ -256,7 +312,7 @@ void FAdapOutData::CreateGephiLableCSVData()
                 for (int iColumnNum = 0; iColumnNum < fTotalOutHeader.size();
                      ++iColumnNum)
                 {
-                    FTableData fDataContainer;
+                    FTableData               fDataContainer;
                     shared_ptr<FTreeElement> ptrNode;
 
                     switch (iColumnNum)
@@ -279,8 +335,8 @@ void FAdapOutData::CreateGephiLableCSVData()
                             break;
 
                         case 3:
-                            fDataContainer.fData = CreateTag(eType, fNodeName.first,
-                                          it->mapAllDisc);
+                            fDataContainer.fData = CreateTag(
+                                eType, fNodeName.first, it->mapAllDisc);
                             break;
                     }
 
@@ -341,8 +397,9 @@ string FAdapOutData::AddCompString(const map<string, vector<string>>& mapComp)
     return sReturn;
 }
 
-string FAdapOutData::CreateTag(const ETypeGraph& eGraphType, const wstring& wsName,
-                            const map<wstring, shared_ptr<FTreeElement>>& mapAllDisc)
+string FAdapOutData::CreateTag(
+    const ETypeGraph& eGraphType, const wstring& wsName,
+    const map<wstring, shared_ptr<FTreeElement>>& mapAllDisc)
 {
     /*for (auto& [key, val] :
          fCurricula->ptrGraph->mapGraph[eGraphType].mapReversRel)
@@ -355,10 +412,6 @@ string FAdapOutData::CreateTag(const ETypeGraph& eGraphType, const wstring& wsNa
     }
 
     return sReturn;
-}
-
-void FAdapOutData::CreateGephiRibCSVData()
-{
 }
 
 void FAdapOutData::CreateCompTreeData()
@@ -1069,11 +1122,33 @@ void FAdapOutData::CreateDataCorridorAndType()
         }
     }
 
-    for (auto& ptrData : arrAllData)
+    vector<FDataType*> arrOnlyType= arrAllData;
+    //Для Gephi CSV файлов
+    for (auto& it : arrMapGephiLableCSVData)
+    {
+        for (auto& [sType, fData] : it)
+        {
+            arrOnlyType.push_back(&fData);
+        }
+    }
+    for (auto& it : arrMapGephiRibCSVData)
+    {
+        for (auto& [sType, fData] : it)
+        {
+            arrOnlyType.push_back(&fData);
+        }
+    }
+
+    for (auto& ptrData : arrOnlyType)
     {
         auto& fData = *ptrData;
 
         CreateType(fData);
+    }
+
+    for (auto& ptrData : arrAllData)
+    {
+        auto& fData = *ptrData;
 
         int W = fData.arrHeader.size();
         fData.arrDataCorridor.assign(arrOriginCorridorHeader.size(),
