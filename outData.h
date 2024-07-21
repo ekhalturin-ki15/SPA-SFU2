@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "global.h"
 #include <map>
 
@@ -6,10 +6,9 @@ struct FGlobal;
 struct FCurricula;
 struct FTreeMetric;
 struct FTypeGraph;
-struct ETypeGraph;
+struct FDataType;
+struct FTableData;
 struct FOutData;
-
-
 
 struct FOutData
 {
@@ -18,11 +17,30 @@ struct FOutData
 
     bool Init();
 
-    // ��������� ����� �����
-    void Create(string sOutPath);    // sOutPath - �������, ��� ����� �����
+    // Начальная точка входа
+    void Create(string _sOutPath);    // sOutPath - Каталог, где будут файлы
 
 private:
-    static int iSinglControll;    // �������� �� ��������
+    void OutTotalData();
 
-    shared_ptr<FGlobal> ptrGlobal;    // ��������
+    // Не забываем, что OpenXLSX нумерует всё от единицы (1)
+    void OutTable(
+        const int& iShiftX,    // С каким смещением выводим
+        const int& iShiftY,    // С каким смещением выводим
+        FDataType              fData,    // Что выводим
+        OpenXLSX::XLWorksheet& WKS
+    );    // Куда выводим
+
+    void OutDataCeil(const int& x, const int& y, OpenXLSX::XLWorksheet& WKS,
+                 const FTableData& fData);
+    
+    void OutDataCeil(const int& x, const int& y, OpenXLSX::XLWorksheet& WKS,
+                     const string& sData);
+
+    string sOutPath;
+
+private:
+    static int iSinglControll;    // Проверка на синглтон
+
+    shared_ptr<FGlobal> ptrGlobal;    // Синглтон
 };
