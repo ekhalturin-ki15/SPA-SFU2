@@ -71,16 +71,27 @@ FConfig::FConfig(shared_ptr<FGlobal> _ptrGlobal)
 
 void FConfig::InitStringMap()
 {
-    /*mapStringParamsReadKey[L"Заголовок файла с названиями вершин"] =
-        &sNameLabelHeader;*/
+    mapStringParamsReadKey[L"Предлог перед выводом статистики по всем курсам"] =
+        &sAllCourses;
+    mapStringParamsReadKey
+        [L"Предлог перед выводом статистики по курсу определённого номера"] =
+            &sCurrentCourse;
+    mapStringParamsReadKey[L"Суффикс для вывода УП мер центральной тенденции"] =
+        &sCorridorCurricula;
 
-    // mapStringParamsReadKey[L"Заголовок файла с рёбрами"] = &sNameRibHeader;
+    mapStringParamsReadKey[L"Название обычного графа"] = &sCommonCurricula;
+    mapStringParamsReadKey[L"Название альтернативного графа"] = &sAltCurricula;
+    mapStringParamsReadKey[L"Название обратного графа"]       = &sRevCurricula;
+
+    mapStringParamsReadKey[L"Суффикс после вывода квартиля"] = &sSufQuar;
+
+    mapStringParamsReadKey[L"Суффикс файла с данными вершин Gephi"] = &sSufLableGephiFile;
+    mapStringParamsReadKey[L"Суффикс файла с данными рёбер Gephi"] = &sSufRibGephiFile;
+
+    mapStringParamsReadKey
+        [L"Суффикс после вывода кол-во компетенций у дисциплины"] = &sSufComp;
 
     mapStringParamsReadKey[L"Тип рёбер"] = &sNameRibDir;
-
-    /*  mapStringParamsReadKey[L"Регулярное выражение разбивки строки "
-                             L"([Компетенции(2)] Формируемые компетенции)"] =
-          &sRegexComp;*/
 
     mapStringParamsReadKey
         [L"Формула расчёта весов рёбер графа, где вершины - это дисциплина"] =
@@ -89,9 +100,6 @@ void FConfig::InitStringMap()
     mapStringParamsReadKey
         [L"Формула расчёта весов рёбер графа, где вершины - это компетенция"] =
             &sFormulaReverseGraph;
-
-    mapStringParamsReadKey[L"Вывод строки, если данные не определены"] =
-        &sNoInitData;
 
     mapStringParamsReadKey
         [L"Название файла вывода общей статистике по всей выборке УП"] =
@@ -108,6 +116,11 @@ void FConfig::InitStringMap()
     mapStringParamsReadKey
         [L"Разделитель для вывода полного названия компетенций и индикаторов"] =
             &sPrefFullNameCourse;
+
+    mapStringParamsReadKey[L"Вывод строки, если данные не определены"] =
+        &sNoInitData;
+
+    mapStringParamsReadKey[L"Разделитель CSV файлов"] = &sCSVSeparator;
 
     mapStringParamsReadKey[L"Название файла отладки"] = &sNameDebugFile;
     mapStringParamsReadKey[L"Название лог файла (для пользователя)"] =
@@ -133,7 +146,7 @@ void FConfig::InitBoolMap()
 {
     mapBoolParamsReadKey[L"Создать новый каталог"]       = &bCreateFolder;
     mapBoolParamsReadKey[L"Компактный вывод результата"] = &bCompactOutput;
-    mapBoolParamsReadKey[L"Выводить графы по курсам"]    = &bCourseOutput;
+    //mapBoolParamsReadKey[L"Выводить графы по курсам"]    = &bCourseOutput;
     mapBoolParamsReadKey[L"Если у предмета несколько групп компетенций, "
                          L"учитывать пересечение дважды (для 100% суммы)"] =
         &bCompInterDelete;
@@ -161,7 +174,11 @@ void FConfig::InitBoolMap()
         &bOutAllInfoWithoutTag;
 
     mapBoolParamsReadKey[L"Выводить компетенции с 0 ЗЕ"]  = &bOutEmptyComp;
-    mapBoolParamsReadKey[L"Выводить итоговую статистику"] = &bOutTotalInfo;
+    //mapBoolParamsReadKey[L"Выводить итоговую статистику"] = &bOutTotalInfo;
+
+    mapBoolParamsReadKey[L"Выводить меры центральной тенденции"] =
+        &bOutDataCorridor;
+
     mapBoolParamsReadKey
         [L"Не оставлять пустые ячейки при выводе дерева компетенций"] =
             &bOutWithoutEmptyCell;
@@ -202,17 +219,19 @@ void FConfig::InitVectorStringMap()
     mapVectorStringParamsReadKey
         [L"Регулярное выражение разбивки строки ([Компетенции(2)] "
          L"Формируемые компетенции)"] = { &arrRegexComp, 0 };
-    
+
     mapVectorStringParamsReadKey
-        [L"Регулярное выражение разбивки индикатора"] = { &arrRegexHeaderInd, 0 };
-    
+        [L"Регулярное выражение разбивки индикатора"] = { &arrRegexHeaderInd,
+                                                          0 };
+
     mapVectorStringParamsReadKey
         [L"Регулярное выражение разбивки компетенции"] = { &arrRegexHeaderComp,
-                                                          0 };
-    
+                                                           0 };
+
     mapVectorStringParamsReadKey
-        [L"Регулярное выражение разбивки кода направления подготовки"] = { &arrRegexCodeUGSN,
-                                                          0 };
+        [L"Регулярное выражение разбивки кода направления подготовки"] = {
+            &arrRegexCodeUGSN, 0
+        };
 }
 
 bool FConfig::Init()

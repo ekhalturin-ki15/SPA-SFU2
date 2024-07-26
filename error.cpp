@@ -32,15 +32,11 @@ FError::FError(shared_ptr<FGlobal> _ptrGlobal)
 bool FError::Init()
 {
     // Дебаг всегда перезаписывается
-    ofstream degugOut(ptrGlobal->ptrConfig->GetSNameDebugFile() + ".txt");
-    degugOut << "";
-    degugOut.close();
-
+    ptrGlobal->ClearFile(ptrGlobal->ptrConfig->GetSNameDebugFile() + ".txt");
+   
     if (ptrGlobal->ptrConfig->GetBReloadLogFile())
     {
-        ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt");
-        out << "";
-        out.close();        
+        ptrGlobal->ClearFile(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt");
     }
     else
     {
@@ -366,6 +362,15 @@ void FError::ErrorEmptyLine() const
 
     out << "В учебном плане " + ptrGlobal->ptrSolve->sInPath +
                " присутствует пустая строка";
+    out << END;
+    out.close();
+}
+
+void FError::ErrorNoFindTypeGraph(string sTypeGraph) const
+{
+    ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt",
+                 std::ios::app);
+    out << "Тип графа " << sTypeGraph << "не определён ";
     out << END;
     out.close();
 }

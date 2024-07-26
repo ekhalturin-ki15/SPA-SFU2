@@ -1,4 +1,4 @@
-﻿//v 1.25.15 b
+﻿//v 1.26
 
 #pragma once
 #include <algorithm>
@@ -124,6 +124,8 @@ struct FGlobal
     {
         return sNameFileConfig;
     }
+
+    void ClearFile(const string& sPath);
 
 private:
     static int iSinglControll;

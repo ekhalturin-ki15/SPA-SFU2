@@ -9,7 +9,9 @@ struct FCurricula;
 // индикатор и так далее (сейчас вложеность 3, но нет смысла ограничивать)
 struct FTreeMetric
 {
-    explicit FTreeMetric(shared_ptr<FMetric> _ptrMetric);
+    explicit FTreeMetric(shared_ptr<FMetric> _ptrMetric,
+                         shared_ptr<FCurricula>
+                             _ptrCurricula);
 
     string sName = "-";
 
@@ -47,13 +49,14 @@ struct FTreeMetric
     // mapIndicDistr;//ЗЕ у каждого индикатора по отдельности
 
     shared_ptr<FMetric> ptrMetric;
+    shared_ptr<FCurricula> ptrCurricula;
 };
 
 // Класс похож на FGraph по идеологии, но в нём другие данные
 struct FMetric
 {
-    static string sAllMetric;    // Плохо, что не статик, ну да ладно
-    static const string sEmptyIndicator;
+    //static string sAllMetric;    // Плохо, что не статик, ну да ладно
+    //static const string sEmptyIndicator;
 
     // Инверсия зависимости
     explicit FMetric(shared_ptr<FCurricula> _ptrCurricula);

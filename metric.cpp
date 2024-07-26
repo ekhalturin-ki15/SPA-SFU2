@@ -5,11 +5,15 @@
 
 #include "formulaParser.h"
 
-string       FMetric::sAllMetric      = "All";
-const string FMetric::sEmptyIndicator = "-";
+//string       FMetric::sAllMetric      = "All";
+//const string FMetric::sEmptyIndicator = "-";
 
-FTreeMetric::FTreeMetric(shared_ptr<FMetric> _ptrMetric) : ptrMetric(_ptrMetric)
+FTreeMetric::FTreeMetric(shared_ptr<FMetric> _ptrMetric,
+                         shared_ptr<FCurricula>
+                             _ptrCurricula)
+    : ptrMetric(_ptrMetric), ptrCurricula(_ptrCurricula)
 {
+    sName = ptrCurricula->ptrGlobal->ptrConfig->GetSNoInitData();
 }
 
 void FTreeMetric::DeleteDFS(shared_ptr<FTreeMetric> th)
@@ -104,15 +108,9 @@ FMetric::FMetric(shared_ptr<FCurricula> _ptrCurricula)
 
 void FMetric::Init()
 {
-    // sAllMetric = _ptrTree->ptrGlobal->ConwertToString(
-    //     _ptrTree->ptrGlobal->ptrConfig->wsOutPrefAllCourse);
 
-    sAllMetric = ptrCurricula->ptrGlobal->ConwertToString(
-        ptrCurricula->ptrGlobal->ptrConfig
-            ->mapArrOutParams
-                [L"Предлог перед выводом статистики по всем курсам"]
-            .GetName());
-
+    const auto &
+        sAllCourses = ptrCurricula->ptrGlobal->ptrConfig->GetSAllCourses();
     try
     {
         // fRegexHeaderComp = _ptrTree->ptrGlobal->ptrConfig->sRegexHeaderComp;
@@ -151,21 +149,22 @@ void FMetric::Init()
     }
     // mapAllowDisc = _ptrTree->GewMapAllowDisc(true, true);
 
-    ptrTreeMetric = make_shared<FTreeMetric>(ptrCurricula->ptrMetric);
+    ptrTreeMetric =
+        make_shared<FTreeMetric>(ptrCurricula->ptrMetric, ptrCurricula);
     ptrTreeMetric->ptrParent = nullptr;
     ptrTreeMetric->sName     = "Root";
 
-    ptrTreeMetric->mapChild[sAllMetric] =
-        make_shared<FTreeMetric>(ptrCurricula->ptrMetric);
+    ptrTreeMetric->mapChild[sAllCourses] =
+        make_shared<FTreeMetric>(ptrCurricula->ptrMetric, ptrCurricula);
 
-    ptrTreeMetric->mapChild[sAllMetric]->ptrParent = ptrTreeMetric;
-    ptrTreeMetric->mapChild[sAllMetric]->sName     = sAllMetric;
+    ptrTreeMetric->mapChild[sAllCourses]->ptrParent = ptrTreeMetric;
+    ptrTreeMetric->mapChild[sAllCourses]->sName     = sAllCourses;
 
     for (int iCourse = 1; iCourse <= ptrCurricula->iAmountCourse;
          ++iCourse)    // Делаем 1 нумерацию
     {
         ptrTreeMetric->mapChild[to_string(iCourse)] =
-            make_shared<FTreeMetric>(ptrCurricula->ptrMetric);
+            make_shared<FTreeMetric>(ptrCurricula->ptrMetric, ptrCurricula);
         ptrTreeMetric->mapChild[to_string(iCourse)]->ptrParent = ptrTreeMetric;
         ptrTreeMetric->mapChild[to_string(iCourse)]->sName = to_string(iCourse);
     }
@@ -181,7 +180,7 @@ void FMetric::UpdateMetricBranch(shared_ptr<FTreeMetric> ptrNowTree,
     if (!ptrNowTree->mapChild.count(sName))
     {
         ptrNowTree->mapChild[sName] =
-            make_shared<FTreeMetric>(ptrCurricula->ptrMetric);
+            make_shared<FTreeMetric>(ptrCurricula->ptrMetric, ptrCurricula);
         ptrNowTree->mapChild[sName]->ptrParent = ptrNowTree;
         ptrNowTree->mapChild[sName]->sName     = sName;
     }
@@ -322,7 +321,8 @@ void FMetric::Create()
                     {
                         sCompName        = sData[1].str();
                         sCompNumber      = sData[2].str();
-                        sIndicatorNumber = sEmptyIndicator;
+                        sIndicatorNumber =
+                            ptrCurricula->ptrGlobal->ptrConfig->GetSNoInitData();
                     }
                 }
 
@@ -338,7 +338,9 @@ void FMetric::Create()
                     }
 
                     UpdateCourseMetric(
-                        ptrTreeMetric->mapChild[sAllMetric],
+                        ptrTreeMetric
+                            ->mapChild[ptrCurricula->ptrGlobal->ptrConfig
+                                           ->GetSAllCourses()],
                         setIsTakenScore,
                         { sCompName, sCompNumber, sIndicatorNumber },
                         dNormalizeScore);
@@ -360,7 +362,8 @@ void FMetric::Create()
                                 {
                                     ptrNowTree->mapChild[sCurName] =
                                         make_shared<FTreeMetric>(
-                                            ptrCurricula->ptrMetric);
+                                            ptrCurricula->ptrMetric,
+                                            ptrCurricula);
                                     ptrNowTree->mapChild[sCurName]->ptrParent =
                                         ptrNowTree;
                                     ptrNowTree->mapChild[sCurName]->sName =

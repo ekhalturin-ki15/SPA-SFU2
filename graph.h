@@ -12,22 +12,28 @@ struct FDiscParams;
 // ETG_Alt - альтернативный, ETG_Reverse - Обратный
 struct ETypeGraph
 {
-    int iType;
+    int    iType;
+    string sName;
 
-    ETypeGraph() : iType(0) {};
+    ETypeGraph(); // В graph.cpp //: iType(0), sName("NoInit") {};
 
-    ETypeGraph(int iDefaultType) : iType(iDefaultType)
-    {
-    }
+    ETypeGraph(int _iType);
+
+    ETypeGraph(int _iType, string _sName);
 
     int Get() const
     {
         return iType;
     }
 
-    static const ETypeGraph ETG_Common;
-    static const ETypeGraph ETG_Alt;
-    static const ETypeGraph ETG_Reverse;
+    string Name() const
+    {
+        return sName;
+    }
+
+    static const ETypeGraph ETG_Common;     // -1
+    static const ETypeGraph ETG_Alt;        // -2
+    static const ETypeGraph ETG_Reverse;    // -3
 
     bool operator<(const ETypeGraph& eRightType) const
     {
@@ -100,14 +106,16 @@ struct FTypeGraph
     vector<int>
         arrGlobalQuarAllPairDistance;    // Локальное квартильное распределение
 
-    //double dGraphAllScore   = FTypeGraph::dNoInit; // Теперь включена в mapGraphDataTypeDisc по ETypeDisc::ETD_Total
-    //int    iGraphAmountDisc = int(FTypeGraph::dNoInit);  // Теперь включена в mapGraphDataTypeDisc по ETypeDisc::ETD_Total
-    double dDense           = FTypeGraph::dNoInit;
-    double dGlobalСluster   = FTypeGraph::dNoInit;
+    // double dGraphAllScore   = FTypeGraph::dNoInit; // Теперь включена в
+    // mapGraphDataTypeDisc по ETypeDisc::ETD_Total int    iGraphAmountDisc =
+    // int(FTypeGraph::dNoInit);  // Теперь включена в mapGraphDataTypeDisc по
+    // ETypeDisc::ETD_Total
+    double dDense         = FTypeGraph::dNoInit;
+    double dGlobalСluster = FTypeGraph::dNoInit;
 
     map<ETypeDisc, FDiscParams> mapGraphDataTypeDisc;
 
-    vector<int>            arrAmountCountCompDisc;
+    vector<int> arrAmountCountCompDisc;
 
     vector<vector<double>> arrAllDistance;
 
@@ -163,7 +171,7 @@ struct FGraph
             fCurrentAdj);    // Высчитываем минимальные пути алгоритмом Флойда -
                              // Уоршелла (O(n^3))
 
-    //O(N^3), но на практике меньше, так как разреженный
+    // O(N^3), но на практике меньше, так как разреженный
     void CalculateCluster(double&                                  dResult,
                           const vector<vector<pair<int, double>>>& fAdjList);
 

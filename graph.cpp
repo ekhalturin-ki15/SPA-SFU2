@@ -10,12 +10,25 @@
 //     -1;    // Так как 0 - ... зарезервированы для графов по курсам
 // const int    FGraph::iAlt                   = -2;
 // const int    FGraph::iReverse               = -3;
-const ETypeGraph ETypeGraph::ETG_Common(-1);
-const ETypeGraph ETypeGraph::ETG_Alt(-2);
-const ETypeGraph ETypeGraph::ETG_Reverse(-3);
+const ETypeGraph ETypeGraph::ETG_Common(-1, "Common");
+const ETypeGraph ETypeGraph::ETG_Alt(-2, "Alt");
+const ETypeGraph ETypeGraph::ETG_Reverse(-3, "Rev");
 
 const double FTypeGraph::dNoInit = -2e4;
 const double FTypeGraph::dINF    = 1e8;
+
+ETypeGraph::ETypeGraph() : iType(0), sName("NoInit")
+{
+}
+
+ETypeGraph::ETypeGraph(int _iType) : iType(_iType)
+{
+    sName = to_string(_iType);
+}
+
+ETypeGraph::ETypeGraph(int _iType, string _sName) : iType(_iType), sName(_sName)
+{
+}
 
 // Инверсия зависимости
 FGraph::FGraph(shared_ptr<FCurricula> _ptrTree) : ptrTree(_ptrTree)
@@ -93,7 +106,6 @@ void FGraph::CreateAfter()
         const auto& bArrIsSolveGraphMetric =
             ptrTree->ptrGlobal->ptrConfig->bArrIsSolveGraphMetric;
 
-
         int iNumberParams = 0;
 
         if (bArrIsSolveGraphMetric.size() > iNumberParams)
@@ -106,7 +118,7 @@ void FGraph::CreateAfter()
             if (bArrIsSolveGraphMetric[iNumberParams++])
                 CountAfterAllMetric(ETypeGraph::ETG_Alt);
 
-         if (bArrIsSolveGraphMetric.size() > iNumberParams)
+        if (bArrIsSolveGraphMetric.size() > iNumberParams)
             if (bArrIsSolveGraphMetric[iNumberParams++])
                 CountAfterAllMetric(ETypeGraph::ETG_Reverse);
 
@@ -196,8 +208,8 @@ void FGraph::CountAllMetric(ETypeGraph eTypeGraph)
 #ifdef DEBUG
     ofstream out(ptrTree->ptrGlobal->ptrConfig->GetSNameDebugFile() + ".txt",
                  std::ios::app);
-    out << "\n" << ptrTree->sNamePlan;
-    out << "\nCluster coef\n" << mapGraph[eTypeGraph].dGlobalСluster << "\n";
+    out << ENDL << ptrTree->sNamePlan << ENDL;
+    out << "Cluster coef" << ENDL << mapGraph[eTypeGraph].dGlobalСluster << ENDL;
 #endif
 }
 
@@ -226,8 +238,8 @@ void FGraph::CalcAllScoreAndAmount(FTypeGraph& fGraph)
         this->ptrTree->ptrGlobal->ptrConfig->GetISoMachComp();
     fGraph.arrAmountCountCompDisc.resize(iSoManyComp + 1);
 
-    //fGraph.iGraphAmountDisc = 0;    // Отчёт от нуля
-    //fGraph.dGraphAllScore   = 0;    // Отчёт от нуля
+    // fGraph.iGraphAmountDisc = 0;    // Отчёт от нуля
+    // fGraph.dGraphAllScore   = 0;    // Отчёт от нуля
 
     for (const auto& [wsKey, iCourse] : fGraph.arrRel)
     {
@@ -259,8 +271,8 @@ void FGraph::CalcAllScoreAndAmount(FTypeGraph& fGraph)
             continue;
         }
 
-        //fGraph.dGraphAllScore += dCurScore;
-        //fGraph.iGraphAmountDisc++;
+        // fGraph.dGraphAllScore += dCurScore;
+        // fGraph.iGraphAmountDisc++;
 
         fGraph.mapGraphDataTypeDisc[ETypeDisc::ETD_Total].iAmount++;
         fGraph.mapGraphDataTypeDisc[ETypeDisc::ETD_Total].dCredits += dCurScore;
@@ -318,7 +330,7 @@ void FGraph::CalcMinMaxWeight(double&                           dResult,
         double dCurScore = FTypeGraph::dNoInit;
 
         if (r < 0)    // Значит считаем все дисциплины
-                                            // полностью, а не по курсам
+                      // полностью, а не по курсам
         {
             dCurScore = fDisc->dSumScore;
         }
@@ -937,7 +949,7 @@ void FGraph::CalculateCluster(double&                                  dResult,
 #ifdef DEBUG
     ofstream out(ptrTree->ptrGlobal->ptrConfig->GetSNameDebugFile() + ".txt",
                  std::ios::app);
-    out << "\n" << iAmountClosedTriag << " " << iAmountOpenTriag;
+    out << ENDL << iAmountClosedTriag << " " << iAmountOpenTriag;
 #endif
 }
 

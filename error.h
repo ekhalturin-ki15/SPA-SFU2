@@ -104,6 +104,8 @@ struct FError
 
     void ErrorEmptyLine() const;
 
+    void ErrorNoFindTypeGraph(string sTypeGraph) const;
+
     void ErrorNoFindCourse(wstring wsNameDisc) const;
     void ErrorNoFindCourse(string sNameDisc) const;
 

@@ -2,6 +2,9 @@
 #include "global.h"
 
 #define XLSX ".xlsx"
+#define CSV ".csv"
+#define sDefaultName "Sheet1"
+#define ENDL "\n"
 
 struct FGlobal;
 struct FConfig;
@@ -90,6 +93,7 @@ private:
     // string sNameRibHeader;
     string sNameRibDir;
     string sSeparator;
+    string sCSVSeparator;
     string sPrefFullNameCourse;
     // string sRegexComp;
     string sFormula;
@@ -102,12 +106,76 @@ private:
     string sNameDebugFile;
     string sNameLogFile;
 
+    string sAllCourses;
+    string sCurrentCourse;
+    string sCorridorCurricula;
+    string sSufComp;
+    string sCommonCurricula;
+    string sAltCurricula;
+    string sRevCurricula;
+    string sSufQuar;
+
+    string sSufLableGephiFile;
+    string sSufRibGephiFile;
+
     // String Params adapter
 private:
     void InitStringMap();
     map<wstring, string*>
         mapStringParamsReadKey;    // Инициализируется в конструкторе
 public:
+
+    const string& GetSAllCourses() const
+    {
+        return sAllCourses;
+    }
+    
+    const string& GetSCurrentCourse() const
+    {
+        return sCurrentCourse;
+    }
+    
+    const string& GetSCorridorCurricula() const
+    {
+        return sCorridorCurricula;
+    }
+    
+    const string& GetSSufQuar() const
+    {
+        return sSufQuar;
+    }
+    
+    const string& GetSSufLableGephiFile() const
+    {
+        return sSufLableGephiFile;
+    }
+    
+    const string& GetSSufRibGephiFile() const
+    {
+        return sSufRibGephiFile;
+    }
+
+    const string& GetSSufComp() const
+    {
+        return sSufComp;
+    }
+
+    const string& GetSCommonCurricula() const
+    {
+        return sCommonCurricula;
+    }
+
+
+    const string& GetSAltCurricula() const
+    {
+        return sAltCurricula;
+    }
+    
+    const string& GetSRevCurricula() const
+    {
+        return sRevCurricula;
+    }
+
     const string& GetSNameRibDir() const
     {
         return sNameRibDir;
@@ -115,6 +183,11 @@ public:
     const string& GetSSeparator() const
     {
         return sSeparator;
+    }
+    
+    const string& GetSCSVSeparator() const
+    {
+        return sCSVSeparator;
     }
     const string& GetSPrefFullNameCourse() const
     {
@@ -136,18 +209,18 @@ public:
     {
         return sNoInitData;
     }
-    const string GetSNameFileTotalData(bool bIsExtension = true) const
+    const string GetSNameFileTotalData() const
     {
-        if (bIsExtension)
-            return sNameFileTotalData + XLSX;
-        else
+        //if (bIsExtension)
+        //    return sNameFileTotalData + XLSX;
+        //else
             return sNameFileTotalData;
     }
-    const string GetSNameFileLocalData(bool bIsExtension = true) const
+    const string GetSNameFileLocalData() const
     {
-        if (bIsExtension)
-            return sNameFileLocalData + XLSX;
-        else
+        //if (bIsExtension)
+        //    return sNameFileLocalData + XLSX;
+        //else
             return sNameFileLocalData;
     }
     const string& GetSNameFileCompData() const
@@ -228,6 +301,7 @@ private:
     bool bOutAllInfoWithoutTag;
     bool bOutEmptyComp;
     bool bOutTotalInfo;
+    bool bOutDataCorridor;
     bool bOutWithoutEmptyCell;
 
     // Bool Params adapter
@@ -303,6 +377,11 @@ public:
     const bool& GetBOutTotalInfo() const
     {
         return bOutTotalInfo;
+    }
+    
+    const bool& GetBOutDataCorridor() const
+    {
+        return bOutDataCorridor;
     }
     const bool& GetBOutWithoutEmptyCell() const
     {

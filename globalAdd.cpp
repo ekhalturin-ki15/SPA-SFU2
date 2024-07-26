@@ -2,9 +2,6 @@
 #include "error.h"
 #include "global.h"
 
-
-
-
 void FGlobal::DeleteSpechChars(string& sData) const
 {
     if (ptrConfig == nullptr)
@@ -186,6 +183,13 @@ void FGlobal::TakeData(double& outIData, const OpenXLSX::XLRow& row)
             outIData = it.value().get<int>();
         }
     }
+}
+
+void FGlobal::ClearFile(const string& sPath)
+{
+    ofstream out(sPath);
+    out << "";
+    out.close();
 }
 
 vector<pair<wstring, vector<wstring>>>
