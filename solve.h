@@ -197,7 +197,7 @@ public:
                        // всем курсам)
 
     string sInPath;    // Для отладки
-    string sOutPath;
+    //string sOutPath;
     // Не могу перенести в FMetric, так как это общее для всех УП сразу
     set<string> setHeaderComp;    // Все заголовки компетенций (УК, ПК, ОПК).
                                   // Нужно для вывода

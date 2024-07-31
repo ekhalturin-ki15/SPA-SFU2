@@ -10,9 +10,9 @@
 //     -1;    // Так как 0 - ... зарезервированы для графов по курсам
 // const int    FGraph::iAlt                   = -2;
 // const int    FGraph::iReverse               = -3;
-const ETypeGraph ETypeGraph::ETG_Common(-1, "Common");
-const ETypeGraph ETypeGraph::ETG_Alt(-2, "Alt");
-const ETypeGraph ETypeGraph::ETG_Reverse(-3, "Rev");
+ETypeGraph ETypeGraph::ETG_Common(-1, "Common");
+ETypeGraph ETypeGraph::ETG_Alt(-2, "Alt");
+ETypeGraph ETypeGraph::ETG_Reverse(-3, "Rev");
 
 const double FTypeGraph::dNoInit = -2e4;
 const double FTypeGraph::dINF    = 1e8;

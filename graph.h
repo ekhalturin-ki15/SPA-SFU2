@@ -31,9 +31,9 @@ struct ETypeGraph
         return sName;
     }
 
-    static const ETypeGraph ETG_Common;     // -1
-    static const ETypeGraph ETG_Alt;        // -2
-    static const ETypeGraph ETG_Reverse;    // -3
+    static ETypeGraph ETG_Common;     // -1
+    static ETypeGraph ETG_Alt;        // -2
+    static ETypeGraph ETG_Reverse;    // -3
 
     bool operator<(const ETypeGraph& eRightType) const
     {

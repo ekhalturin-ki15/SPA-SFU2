@@ -1,5 +1,6 @@
 ﻿#include "config.h"
 #include "error.h"
+#include "graph.h"
 
 #pragma warning(disable : 4267)    // size_t лучше не использовать,
 
@@ -106,7 +107,7 @@ void FConfig::InitStringMap()
             &sNameFileTotalData;
 
     mapStringParamsReadKey[L"Название файла вывода общей локальной статистики "
-                           L"по конкретному УП"] = &sNameFileLocalData;
+                           L"по конкретному УП"] = &sNameFileAllLocalData;
 
     mapStringParamsReadKey[L"Названия файлов с данными компетенций"] =
         &sNameFileCompData;
@@ -168,6 +169,10 @@ void FConfig::InitBoolMap()
     mapBoolParamsReadKey[L"Граф неориентированный"]  = &bIsUnDirected;
     mapBoolParamsReadKey[L"Перезаписывать лог файл"] = &bReloadLogFile;
     mapBoolParamsReadKey[L"Вывод доп файлов csv"]    = &bIsOutCSVDate;
+    mapBoolParamsReadKey
+        [L"Вывод файла общей локальной статистики по конкретному УП"] =
+            &bIsOutFileAllLocalData;
+
     mapBoolParamsReadKey[L"Использовать многоуровневые индикаторы"] =
         &bMultiIndicator;
     mapBoolParamsReadKey[L"Вывод полной информации о дисциплин без тега"] =
@@ -267,6 +272,10 @@ bool FConfig::Init()
     }
 
     fDoc.close();
+
+    ETypeGraph::ETG_Common.sName = sCommonCurricula;
+    ETypeGraph::ETG_Alt.sName    = sAltCurricula;
+    ETypeGraph::ETG_Reverse.sName = sRevCurricula;
 
     return true;
 }

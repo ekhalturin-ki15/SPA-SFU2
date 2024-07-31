@@ -60,7 +60,7 @@ void FOutData::OutLocalGephiCSVData()
         for (const auto& [eType, fPairData] :
              ptrGlobal->ptrAdapOutData->arrMapGephiCSVData[iCur])
         {
-            string sLableGephiPath   = ptrGlobal->ptrConfig->GetSNoInitData();
+            string sLableGephiPath = ptrGlobal->ptrConfig->GetSNoInitData();
             string sRibGephiPath   = ptrGlobal->ptrConfig->GetSNoInitData();
             {
                 string sGephiPath = sCurPlanName;
@@ -77,24 +77,22 @@ void FOutData::OutLocalGephiCSVData()
                 }
 
                 sGephiPath = sNewFile + "/" + sGephiPath +
-                               ptrGlobal->ptrConfig->GetSSeparator();
-
+                             ptrGlobal->ptrConfig->GetSSeparator();
 
                 sLableGephiPath =
-                    sGephiPath +
-                    ptrGlobal->ptrConfig->GetSSufLableGephiFile();
-                
+                    sGephiPath + ptrGlobal->ptrConfig->GetSSufLableGephiFile();
+
                 sRibGephiPath =
-                    sGephiPath +
-                    ptrGlobal->ptrConfig->GetSSufRibGephiFile();
+                    sGephiPath + ptrGlobal->ptrConfig->GetSSufRibGephiFile();
             }
 
             const auto& [fLableData, fRibData] = fPairData;
 
-            //Вывод вершин
-            OutTable(0, 0, true, fLableData, false, nullptr, sLableGephiPath + CSV);
+            // Вывод вершин
+            OutTable(0, 0, true, fLableData, false, nullptr,
+                     sLableGephiPath + CSV);
 
-            //Вывод рёбер
+            // Вывод рёбер
             OutTable(0, 0, true, fRibData, false, nullptr, sRibGephiPath + CSV);
         }
     }
@@ -106,6 +104,7 @@ void FOutData::OutLocalData()
 {
     // Чтобы пересоздавать через синглтон (
     vector<OpenXLSX::XLDocument> arrOutFile;
+    vector<OpenXLSX::XLDocument> arrAllCompareData;
 
     for (int iCur = 0; iCur < ptrGlobal->ptrSolve->N; ++iCur)
     {
@@ -130,6 +129,35 @@ void FOutData::OutLocalData()
                 // файлом
             }
         }
+
+        const string sCreateAllCompareDataPath =
+            sNewFile + "/" + ptrGlobal->ptrConfig->GetSNameFileAllLocalData();
+
+        const string sAllCompareDataPageName = sCurPlanName;
+
+        OpenXLSX::XLWorksheet wksAllCompare;
+
+        if (ptrGlobal->ptrConfig->GetBIsOutFileAllLocalData())
+        {
+            if (arrAllCompareData.size() == 1)
+            {
+                arrAllCompareData.back().save();
+                arrAllCompareData.back().close();
+                arrAllCompareData.clear();
+            }
+
+            arrAllCompareData.resize(1);
+
+            OpenXLSX::XLDocument& fAllCompareOutFile = arrAllCompareData.back();
+
+            fAllCompareOutFile.create(sCreateAllCompareDataPath + XLSX);
+            fAllCompareOutFile.workbook().addWorksheet(sAllCompareDataPageName);
+            fAllCompareOutFile.workbook().deleteSheet(sDefaultName);
+            wksAllCompare =
+                fAllCompareOutFile.workbook().worksheet(
+                    sAllCompareDataPageName);
+        }
+        int iAllCompareShiftY = 0;
 
         for (const auto& [sName, fData] :
              ptrGlobal->ptrAdapOutData->arrMapCompTreeData[iCur])
@@ -161,11 +189,29 @@ void FOutData::OutLocalData()
                      (ptrGlobal->ptrConfig->GetBIsOutCSVDate()
                           ? sCreatePath + CSV
                           : ""));
+
+            bool bIsOutHeader = (iAllCompareShiftY == 0);
+            if (ptrGlobal->ptrConfig->GetBIsOutFileAllLocalData())
+            {
+                OutTable(iAllCompareShiftY, 0, bIsOutHeader, fData, false,
+                         &wksAllCompare,
+                         (ptrGlobal->ptrConfig->GetBIsOutCSVDate()
+                              ? sCreateAllCompareDataPath + CSV
+                              : ""));
+            }
+
+            iAllCompareShiftY +=
+                fData.arrData.size() +
+                bIsOutHeader;    // Если выводили заголовок, то тоже нужно
+                                 // сделать доп. смещение вниз
         }
     }
 
     arrOutFile.back().save();
     arrOutFile.back().close();
+
+    arrAllCompareData.back().save();
+    arrAllCompareData.back().close();
 }
 
 // FAdapOutData
@@ -192,7 +238,7 @@ void FOutData::OutTotalData()
 
         OutTable(0, 0, true, ptrGlobal->ptrAdapOutData->fTotalData,
                  ptrGlobal->ptrConfig->GetBOutDataCorridor(), &wks,
-            (ptrGlobal->ptrConfig->GetBIsOutCSVDate() ? sCreatePath+ CSV
+                 (ptrGlobal->ptrConfig->GetBIsOutCSVDate() ? sCreatePath + CSV
                                                            : ""));
     }
 
@@ -261,7 +307,7 @@ void FOutData::IncRow(int& iRow, ofstream* outDataCSVStream)
 
 void FOutData::OutTable(const int& iYShift, const int& iXShift,
                         const bool& bIsOutHeader, FDataType fData,
-                        const bool& bIsOutCorridor, OpenXLSX::XLWorksheet* WKS, 
+                        const bool& bIsOutCorridor, OpenXLSX::XLWorksheet* WKS,
                         const string& sNameDataCSVStream)
 {
     ofstream* ptrDataCSVStream = nullptr;
@@ -270,9 +316,9 @@ void FOutData::OutTable(const int& iYShift, const int& iXShift,
     {
         // Выводим с нуля, иначе дополняем
         ptrGlobal->ClearFile(sNameDataCSVStream);
-        outDataCSVStream.open(sNameDataCSVStream, std::ios::app);
-        ptrDataCSVStream = &outDataCSVStream;
     }
+    outDataCSVStream.open(sNameDataCSVStream, std::ios::app);
+    ptrDataCSVStream = &outDataCSVStream;
 
     const auto& arrIsOut = fData.arrIsOut;
 
@@ -325,8 +371,7 @@ void FOutData::OutTable(const int& iYShift, const int& iXShift,
                             outDataCSVStream
                                 << ptrGlobal->ptrConfig->GetSCSVSeparator();
 
-                        outDataCSVStream
-                            << ConvertAnyToString(arrData[y][x]);
+                        outDataCSVStream << ConvertAnyToString(arrData[y][x]);
                     }
                     if (WKS != nullptr)
                     {

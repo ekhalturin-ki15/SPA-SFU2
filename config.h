@@ -100,7 +100,7 @@ private:
     string sFormulaReverseGraph;
     string sNoInitData;
     string sNameFileTotalData;
-    string sNameFileLocalData;
+    string sNameFileAllLocalData;
     string sNameFileCompData;
 
     string sNameDebugFile;
@@ -160,11 +160,10 @@ public:
         return sSufComp;
     }
 
-    const string& GetSCommonCurricula() const
+    /*const string& GetSCommonCurricula() const
     {
         return sCommonCurricula;
     }
-
 
     const string& GetSAltCurricula() const
     {
@@ -174,7 +173,7 @@ public:
     const string& GetSRevCurricula() const
     {
         return sRevCurricula;
-    }
+    }*/
 
     const string& GetSNameRibDir() const
     {
@@ -216,12 +215,12 @@ public:
         //else
             return sNameFileTotalData;
     }
-    const string GetSNameFileLocalData() const
+    const string GetSNameFileAllLocalData() const
     {
         //if (bIsExtension)
         //    return sNameFileLocalData + XLSX;
         //else
-            return sNameFileLocalData;
+            return sNameFileAllLocalData;
     }
     const string& GetSNameFileCompData() const
     {
@@ -289,6 +288,7 @@ private:
     bool bCourseOutput;
     bool bReloadLogFile;
     bool bIsOutCSVDate;
+    bool bIsOutFileAllLocalData;
     bool bMultiIndicator;
     bool bCompInterDelete;
     bool bIsPercentRegAll;
@@ -329,6 +329,10 @@ public:
     const bool& GetBIsOutCSVDate() const
     {
         return bIsOutCSVDate;
+    }
+    const bool& GetBIsOutFileAllLocalData() const
+    {
+        return bIsOutFileAllLocalData;
     }
     const bool& GetBMultiIndicator() const
     {
