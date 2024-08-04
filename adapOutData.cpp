@@ -20,23 +20,31 @@ FAdapOutData::FAdapOutData(shared_ptr<FGlobal> _ptrGlobal)
             L"!ЗЕ дисциплин по выбору", L"!ЗЕ факультативов",
             L"Общее кол-во дисциплин в УП", L"!Количество основных дисциплин",
             L"!Количество дисциплин по выбору", L"!Количество факультативов" }),
-      arrOriginMetricGraphHead(
-          { L"Всего ЗЕ в графе", L"ЗЕ факультативов", L"ЗЕ основных дисциплин",
-            L"ЗЕ дисциплин по выбору",
+      arrOriginMetricGraphHead({ L"Название учебного плана",
+                                 L"Всего ЗЕ в графе",
+                                 L"ЗЕ факультативов",
+                                 L"ЗЕ основных дисциплин",
+                                 L"ЗЕ дисциплин по выбору",
 
-            L"Кол-во дисциплин в графе", L"Количество основных дисциплин",
-            L"Количество дисциплин по выбору", L"Количество факультативов",
+                                 L"Кол-во дисциплин в графе",
+                                 L"Количество основных дисциплин",
+                                 L"Количество дисциплин по выбору",
+                                 L"Количество факультативов",
 
-            L"Максимальное ЗЕ у дисциплины", L"Минимальное ЗЕ у дисциплины",
+                                 L"Максимальное ЗЕ у дисциплины",
+                                 L"Минимальное ЗЕ у дисциплины",
 
-            L"Максимальный вес ребра", L"Минимальный вес ребра",
+                                 L"Максимальный вес ребра",
+                                 L"Минимальный вес ребра",
 
-            L"Диаметр графа по расстоянию",
-            L"Диаметр графа по количеству рёбер",
-            L"Количество компонент связности",
+                                 L"Диаметр графа по расстоянию",
+                                 L"Диаметр графа по количеству рёбер",
+                                 L"Количество компонент связности",
 
-            L"Максимальное оставное дерево", L"Минимальное оставное дерево",
-            L"Плотность графа", L"Коэффициент кластеризации (Глобальный)" }),
+                                 L"Максимальное оставное дерево",
+                                 L"Минимальное оставное дерево",
+                                 L"Плотность графа",
+                                 L"Коэффициент кластеризации (Глобальный)" }),
       arrOriginQuartileHead(
           { L"Количество рёбер указанного квартиля для всей выборки",
             L"Локальное количество рёбер указанного квартиля" }),
@@ -107,8 +115,7 @@ void FAdapOutData::CreateGephiCSVHeader()
                  ptrGlobal->ptrConfig->GetArrNameLabelHeader())
             {
                 fLableData.arrHeader.push_back(sHead);
-                fLableData.arrIsOut.push_back(
-                    true);    // В Gephi выводим всё
+                fLableData.arrIsOut.push_back(true);    // В Gephi выводим всё
             }
 
             for (const auto& sHead :
@@ -774,9 +781,12 @@ void FAdapOutData::CreateGraphData()
                     switch (iColumnNum)
                     {
                         case 0:
+                            fDataContainer = it->sCurName;
+                            break;
                         case 1:
                         case 2:
                         case 3:
+                        case 4:
                             if (fGraph.mapGraphDataTypeDisc.count(
                                     ETypeDisc(iColumnNum)))
                             {
@@ -789,10 +799,10 @@ void FAdapOutData::CreateGraphData()
                                 // fDataContainer.fData = FTypeGraph::dNoInit;
                             }
                             break;
-                        case 4:
                         case 5:
                         case 6:
                         case 7:
+                        case 8:
                             if (fGraph.mapGraphDataTypeDisc.count(
                                     ETypeDisc(iColumnNum - 4)))
                             {
@@ -806,37 +816,37 @@ void FAdapOutData::CreateGraphData()
                                 // fDataContainer.fData = FTypeGraph::dNoInit;
                             }
                             break;
-                        case 8:
+                        case 9:
                             fDataContainer = fGraph.dMaxDiscScore;
                             break;
-                        case 9:
+                        case 10:
                             fDataContainer = fGraph.dMinDiscScore;
                             break;
-                        case 10:
+                        case 11:
                             fDataContainer = fGraph.dMaxRib;
                             break;
-                        case 11:
+                        case 12:
                             fDataContainer = fGraph.dMinRib;
                             break;
-                        case 12:
+                        case 13:
                             fDataContainer = fGraph.dDiametrLen;
                             break;
-                        case 13:
+                        case 14:
                             fDataContainer = fGraph.dDiametrStep;
                             break;
-                        case 14:
+                        case 15:
                             fDataContainer = fGraph.iComponent;
                             break;
-                        case 15:
+                        case 16:
                             fDataContainer = fGraph.dMaxSpanTree;
                             break;
-                        case 16:
+                        case 17:
                             fDataContainer = fGraph.dMinSpanTree;
                             break;
-                        case 17:
+                        case 18:
                             fDataContainer = fGraph.dDense;
                             break;
-                        case 18:
+                        case 19:
                             fDataContainer = fGraph.dGlobalСluster;
                             break;
                     }
