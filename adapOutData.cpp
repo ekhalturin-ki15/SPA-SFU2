@@ -22,9 +22,9 @@ FAdapOutData::FAdapOutData(shared_ptr<FGlobal> _ptrGlobal)
             L"!Количество дисциплин по выбору", L"!Количество факультативов" }),
       arrOriginMetricGraphHead({ L"Название учебного плана",
                                  L"Всего ЗЕ в графе",
-                                 L"ЗЕ факультативов",
                                  L"ЗЕ основных дисциплин",
                                  L"ЗЕ дисциплин по выбору",
+                                 L"ЗЕ факультативов",
 
                                  L"Кол-во дисциплин в графе",
                                  L"Количество основных дисциплин",
@@ -788,10 +788,10 @@ void FAdapOutData::CreateGraphData()
                         case 3:
                         case 4:
                             if (fGraph.mapGraphDataTypeDisc.count(
-                                    ETypeDisc(iColumnNum)))
+                                    ETypeDisc(iColumnNum - 1)))
                             {
                                 fDataContainer = fGraph.mapGraphDataTypeDisc
-                                                     .at(ETypeDisc(iColumnNum))
+                                                     .at(ETypeDisc(iColumnNum - 1))
                                                      .dCredits;
                             }
                             else
@@ -804,11 +804,11 @@ void FAdapOutData::CreateGraphData()
                         case 7:
                         case 8:
                             if (fGraph.mapGraphDataTypeDisc.count(
-                                    ETypeDisc(iColumnNum - 4)))
+                                    ETypeDisc(iColumnNum - 5)))
                             {
                                 fDataContainer =
                                     fGraph.mapGraphDataTypeDisc
-                                        .at(ETypeDisc(iColumnNum - 4))
+                                        .at(ETypeDisc(iColumnNum - 5))
                                         .iAmount;
                             }
                             else
