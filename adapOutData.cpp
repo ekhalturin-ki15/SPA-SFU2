@@ -657,15 +657,18 @@ void FAdapOutData::CreateTotalData()
                     case 3:
                         fDataContainer = it->iCodeUGSN;
                         break;
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                        if (it->mapETMTypeDisc[ETM_NoExtended].count(
-                                ETypeDisc(iColumnNum - 4)))
+
+#define START_TYPE_DISC_CREDITS 4
+                    case START_TYPE_DISC_CREDITS:
+                    case START_TYPE_DISC_CREDITS+1:
+                    case START_TYPE_DISC_CREDITS+2:
+                    case START_TYPE_DISC_CREDITS+3:
+                        if (it->mapETMTypeDisc[ETM_NoExtended].count(ETypeDisc(
+                                iColumnNum - START_TYPE_DISC_CREDITS)))
                         {
                             fDataContainer = it->mapETMTypeDisc[ETM_NoExtended]
-                                                 .at(ETypeDisc(iColumnNum - 4))
+                                    .at(ETypeDisc(iColumnNum -
+                                                  START_TYPE_DISC_CREDITS))
                                                  .dCredits;
                         }
                         else
@@ -673,15 +676,18 @@ void FAdapOutData::CreateTotalData()
                             // fDataContainer.fData = FTypeGraph::dNoInit;
                         }
                         break;
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
+
+#define START_TYPE_DISC_AMOUNT 8
+                    case START_TYPE_DISC_AMOUNT:
+                    case START_TYPE_DISC_AMOUNT+1:
+                    case START_TYPE_DISC_AMOUNT+2:
+                    case START_TYPE_DISC_AMOUNT+3:
                         if (it->mapETMTypeDisc[ETM_NoExtended].count(
-                                ETypeDisc(iColumnNum - 8)))
+                                ETypeDisc(iColumnNum - START_TYPE_DISC_AMOUNT)))
                         {
                             fDataContainer = it->mapETMTypeDisc[ETM_NoExtended]
-                                                 .at(ETypeDisc(iColumnNum - 8))
+                                    .at(ETypeDisc(iColumnNum -
+                                                  START_TYPE_DISC_AMOUNT))
                                                  .iAmount;
                         }
                         else
@@ -783,15 +789,18 @@ void FAdapOutData::CreateGraphData()
                         case 0:
                             fDataContainer = it->sCurName;
                             break;
-                        case 1:
-                        case 2:
-                        case 3:
-                        case 4:
-                            if (fGraph.mapGraphDataTypeDisc.count(
-                                    ETypeDisc(iColumnNum - 1)))
+
+#define START_GRAPH_DATA_CREDITS 1
+                        case START_GRAPH_DATA_CREDITS:
+                        case START_GRAPH_DATA_CREDITS+1:
+                        case START_GRAPH_DATA_CREDITS+2:
+                        case START_GRAPH_DATA_CREDITS+3:
+                            if (fGraph.mapGraphDataTypeDisc.count(ETypeDisc(
+                                    iColumnNum - START_GRAPH_DATA_CREDITS)))
                             {
                                 fDataContainer = fGraph.mapGraphDataTypeDisc
-                                                     .at(ETypeDisc(iColumnNum - 1))
+                                        .at(ETypeDisc(iColumnNum -
+                                                      START_GRAPH_DATA_CREDITS))
                                                      .dCredits;
                             }
                             else
@@ -799,16 +808,19 @@ void FAdapOutData::CreateGraphData()
                                 // fDataContainer.fData = FTypeGraph::dNoInit;
                             }
                             break;
-                        case 5:
-                        case 6:
-                        case 7:
-                        case 8:
-                            if (fGraph.mapGraphDataTypeDisc.count(
-                                    ETypeDisc(iColumnNum - 5)))
+
+#define START_GRAPH_DATA_AMOUNT 5
+                        case START_GRAPH_DATA_AMOUNT:
+                        case START_GRAPH_DATA_AMOUNT+1:
+                        case START_GRAPH_DATA_AMOUNT+2:
+                        case START_GRAPH_DATA_AMOUNT+3:
+                            if (fGraph.mapGraphDataTypeDisc.count(ETypeDisc(
+                                    iColumnNum - START_GRAPH_DATA_AMOUNT)))
                             {
                                 fDataContainer =
                                     fGraph.mapGraphDataTypeDisc
-                                        .at(ETypeDisc(iColumnNum - 5))
+                                        .at(ETypeDisc(iColumnNum -
+                                                      START_GRAPH_DATA_AMOUNT))
                                         .iAmount;
                             }
                             else
