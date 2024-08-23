@@ -87,12 +87,11 @@ private:
                           const string&               sType);
 
     void CreateCompTreeData();
-    void CreateCompTreeData(vector<vector<any>>& arrReturnData,
-                            shared_ptr<FTreeMetric>
-                                ptrMetric);
+    void CreateCompTreeData(const int& W, vector<vector<any>>& arrReturnData,
+                            shared_ptr<FTreeMetric> ptrMetric);
 
     void CreateRectCompTreeData(vector<vector<any>>&    arrReturnData,
-                                vector<any>             arrRow,
+                                vector<any>&            arrRow,
                                 shared_ptr<FTreeMetric> ptrMetric, int x,
                                 int iDeep);
 

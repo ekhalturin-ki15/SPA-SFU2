@@ -441,7 +441,14 @@ void FOutData::OutTable(const int& iYShift, const int& iXShift,
 void FOutData::OutDataCeil(const int& y, const int& x,
                            OpenXLSX::XLWorksheet& WKS, const string& sData)
 {
-    WKS.cell(y, x).value() = sData;
+    if (sData == to_string(FTypeGraph::dNoInit))
+    {
+        WKS.cell(y, x).value() = ptrGlobal->ptrConfig->GetSNoInitData();
+    }
+    else
+    {
+        WKS.cell(y, x).value() = sData;
+    }
 }
 
 string FOutData::ConvertAnyToString(const any& fData)
@@ -474,14 +481,17 @@ string FOutData::ConvertAnyToString(const any& fData)
         sOutData = to_string(std::any_cast<char>(fData));
     }
 
+    if (sOutData == to_string(FTypeGraph::dNoInit))
+    {
+        return ptrGlobal->ptrConfig->GetSNoInitData();
+    }
+
     if (bIsCheck)
     {
         return sOutData;
     }
-    else
-    {
-        return ptrGlobal->ptrConfig->GetSNoInitData();
-    }
+    
+    return ptrGlobal->ptrConfig->GetSNoInitData();
 }
 
 void FOutData::OutDataCeil(const int& y, const int& x,
@@ -506,7 +516,15 @@ void FOutData::OutDataCeil(const int& y, const int& x,
     if (sType == typeid(double).name())
     {
         bIsCheck               = true;
-        WKS.cell(y, x).value() = std::any_cast<double>(fData);
+        double dCheck          = std::any_cast<double>(fData);
+        if (dCheck == FTypeGraph::dNoInit)
+        {
+            WKS.cell(y, x).value() = ptrGlobal->ptrConfig->GetSNoInitData();
+        }
+        else
+        {
+            WKS.cell(y, x).value() = std::any_cast<double>(fData);
+        }
     }
     if (sType == typeid(char).name())
     {
