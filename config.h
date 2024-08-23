@@ -289,6 +289,7 @@ private:
     bool bReloadLogFile;
     bool bIsOutCSVDate;
     bool bIsOutFileAllLocalData;
+    bool bIsOutCorridorCurricula;
     bool bMultiIndicator;
     bool bCompInterDelete;
     bool bIsPercentRegAll;
@@ -333,6 +334,11 @@ public:
     const bool& GetBIsOutFileAllLocalData() const
     {
         return bIsOutFileAllLocalData;
+    } 
+    
+    const bool& GetBIsOutCorridorCurricula() const
+    {
+        return bIsOutCorridorCurricula;
     }
     const bool& GetBMultiIndicator() const
     {

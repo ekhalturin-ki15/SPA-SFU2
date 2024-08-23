@@ -6,6 +6,10 @@ FormulaParser::FormulaParser(string _sInput, double _dSumScore,
 {
 }
 
+vector<string> FormulaParser::arrToken({ "+", "-", "^", "*", "/", "mod", "abs",
+                                         "sin", "cos", "log", "(", ")", "L",
+                                         "R", "A", "N", "K", "D" });
+
 std::string FormulaParser::ParserToken()
 {
     while (true)
@@ -28,22 +32,13 @@ std::string FormulaParser::ParserToken()
         return number;
     }
 
-    vector<string> arrToken = { "+",   "-",   "^",   "*",   "/", "mod",
+    /*vector<string> arrToken = { "+",   "-",   "^",   "*",   "/", "mod",
                                 "abs", "sin", "cos", "log", "(", ")",
-                                "L",   "R",   "A",   "N",   "K", "D" };
+                                "L",   "R",   "A",   "N",   "K", "D" };*/
 
     for (auto& s : arrToken)
     {
-        bool bIsEqual = true;
-        for (int j = 0; j < s.size(); ++j)    // Проверка на равенство Токену
-        {
-            if ((i + j >= sInput.size()) || (sInput[i + j] != s[j]))
-            {
-                bIsEqual = false;
-                break;
-            }
-        }
-        if (bIsEqual)
+        if (sInput.substr(i, s.size()) == s)
         {
             i += s.size();
             return s;

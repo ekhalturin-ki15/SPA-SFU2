@@ -128,9 +128,10 @@ void FAdapOutData::CreateGephiCSVHeader()
     }
 }
 
-void FAdapOutData::CreateCompTreeData(const int&              W,
-                                      vector<vector<any>>&    arrReturnData,
-                                      shared_ptr<FTreeMetric> ptrMetric)
+void FAdapOutData::CreateCompTreeData(const int&           W,
+                                      vector<vector<any>>& arrReturnData,
+                                      shared_ptr<FTreeMetric>
+                                          ptrMetric)
 {
     vector<any> arrRow(W);
     CreateRectCompTreeData(arrReturnData, arrRow, ptrMetric, 0, 0);
@@ -252,43 +253,47 @@ void FAdapOutData::CreateGephiRibCSVData()
             auto& fTotalOutData   = fRibData.arrData;
             auto& fTotalOutHeader = fRibData.arrHeader;
 
-            const auto& fGraph = it->ptrGraph->mapGraph[eType];
-
-            for (int l = 0; l < fGraph.fAdjList.size(); ++l)
+            if (it->ptrGraph->mapGraph.count(eType))
             {
-                for (const auto& [r, dLen] : fGraph.fAdjList[l])
+                const auto& fGraph = it->ptrGraph->mapGraph[eType];
+
+                for (int l = 0; l < fGraph.fAdjList.size(); ++l)
                 {
-                    vector<any> arrRow(fTotalOutHeader.size());
-                    // Чтобы не дублировать, он же неориентированный
-                    if ((l < r) || (!ptrGlobal->ptrConfig->GetBIsUnDirected()))
+                    for (const auto& [r, dLen] : fGraph.fAdjList[l])
                     {
-                        for (int iColumnNum = 0;
-                             iColumnNum < fTotalOutHeader.size();
-                             ++iColumnNum)
+                        vector<any> arrRow(fTotalOutHeader.size());
+                        // Чтобы не дублировать, он же неориентированный
+                        if ((l < r) ||
+                            (!ptrGlobal->ptrConfig->GetBIsUnDirected()))
                         {
-                            any fDataContainer;
-
-                            switch (iColumnNum)
+                            for (int iColumnNum = 0;
+                                 iColumnNum < fTotalOutHeader.size();
+                                 ++iColumnNum)
                             {
-                                case 0:
-                                    fDataContainer = l;
-                                    break;
-                                case 1:
-                                    fDataContainer = r;
-                                    break;
-                                case 2:
-                                    fDataContainer =
-                                        ptrGlobal->ptrConfig->GetSNameRibDir();
-                                    break;
-                                case 3:
-                                case 4:
-                                    fDataContainer = dLen;
-                                    break;
-                            }
-                            arrRow[iColumnNum] = (fDataContainer);
-                        }
+                                any fDataContainer;
 
-                        fTotalOutData.push_back(arrRow);
+                                switch (iColumnNum)
+                                {
+                                    case 0:
+                                        fDataContainer = l;
+                                        break;
+                                    case 1:
+                                        fDataContainer = r;
+                                        break;
+                                    case 2:
+                                        fDataContainer = ptrGlobal->ptrConfig
+                                                             ->GetSNameRibDir();
+                                        break;
+                                    case 3:
+                                    case 4:
+                                        fDataContainer = dLen;
+                                        break;
+                                }
+                                arrRow[iColumnNum] = (fDataContainer);
+                            }
+
+                            fTotalOutData.push_back(arrRow);
+                        }
                     }
                 }
             }
@@ -308,48 +313,61 @@ void FAdapOutData::CreateGephiLableCSVData()
             auto& fTotalOutData   = fLableData.arrData;
             auto& fTotalOutHeader = fLableData.arrHeader;
 
-            const auto& fGraph = it->ptrGraph->mapGraph[eType];
-
-            for (int iRowNum = 0;
-                 iRowNum <
-                 fGraph.mapGraphDataTypeDisc.at(ETypeDisc::ETD_Total).iAmount;
-                 ++iRowNum)
+            if (it->ptrGraph->mapGraph.count(eType))
             {
-                const auto& fNodeName = fGraph.arrRel[iRowNum];
-                vector<any> arrRow(fTotalOutHeader.size());
-
-                for (int iColumnNum = 0; iColumnNum < fTotalOutHeader.size();
-                     ++iColumnNum)
+                const auto& fGraph = it->ptrGraph->mapGraph[eType];
+                try
                 {
-                    any                      fDataContainer;
-                    shared_ptr<FTreeElement> ptrNode;
-
-                    switch (iColumnNum)
+                    for (int iRowNum = 0;
+                         iRowNum <
+                         fGraph.mapGraphDataTypeDisc.at(ETypeDisc::ETD_Total)
+                             .iAmount;
+                         ++iRowNum)
                     {
-                        case 0:
-                            fDataContainer = iRowNum;    // Номер строки
-                            break;
-                        case 1:
-                            if (it->mapAllDisc.count(fNodeName.first))
-                                ptrNode = it->mapAllDisc[fNodeName.first];
+                        const auto& fNodeName = fGraph.arrRel[iRowNum];
+                        vector<any> arrRow(fTotalOutHeader.size());
 
-                            fDataContainer = CreateCommonNameLabel(
-                                eType, fNodeName, ptrNode);
+                        for (int iColumnNum = 0;
+                             iColumnNum < fTotalOutHeader.size();
+                             ++iColumnNum)
+                        {
+                            any                      fDataContainer;
+                            shared_ptr<FTreeElement> ptrNode;
 
-                            break;
-                        case 2:
-                            fDataContainer = fGraph.arrNodeWeight[iRowNum];
-                            break;
+                            switch (iColumnNum)
+                            {
+                                case 0:
+                                    fDataContainer = iRowNum;    // Номер строки
+                                    break;
+                                case 1:
+                                    if (it->mapAllDisc.count(fNodeName.first))
+                                        ptrNode =
+                                            it->mapAllDisc[fNodeName.first];
 
-                        case 3:
-                            fDataContainer = CreateTag(eType, fNodeName.first,
-                                                       it->mapAllDisc);
-                            break;
+                                    fDataContainer = CreateCommonNameLabel(
+                                        eType, fNodeName, ptrNode);
+
+                                    break;
+                                case 2:
+                                    fDataContainer =
+                                        fGraph.arrNodeWeight[iRowNum];
+                                    break;
+
+                                case 3:
+                                    fDataContainer = CreateTag(
+                                        eType, fNodeName.first, it->mapAllDisc);
+                                    break;
+                            }
+
+                            arrRow[iColumnNum] = (fDataContainer);
+                        }
+                        fTotalOutData.push_back(arrRow);
                     }
+                } 
+                catch (...) //Возможно, данного курса нет в данном УП
+                {
 
-                    arrRow[iColumnNum] = (fDataContainer);
                 }
-                fTotalOutData.push_back(arrRow);
             }
         }
     }
@@ -431,9 +449,13 @@ void FAdapOutData::CreateCompTreeData()
         auto& mapCompTreeData = arrMapCompTreeData[iCur];
         for (auto& [sName, fData] : mapCompTreeData)
         {
-            const auto& ptrCurrentTree = ptrTreeMetric->mapChild[sName];
+            if (ptrTreeMetric->mapChild.count(sName))
+            {
+                const auto& ptrCurrentTree = ptrTreeMetric->mapChild[sName];
 
-            CreateCompTreeData(fData.arrHeader.size(), fData.arrData, ptrCurrentTree);
+                CreateCompTreeData(fData.arrHeader.size(), fData.arrData,
+                                   ptrCurrentTree);
+            }
         }
     }
 }
@@ -638,8 +660,8 @@ void FAdapOutData::CreateTotalData()
 
         vector<any> arrRow(
             fTotalData.arrHeader
-                .size());    // Без push_back, чтобы гарантировать совпадение
-                             // кол-во столбцов
+                .size());    // Без push_back, чтобы гарантировать
+                             // совпадение кол-во столбцов
         for (int iColumnNum = 0; iColumnNum < arrOriginMetricTotalHead.size();
              ++iColumnNum)
         {
@@ -714,9 +736,9 @@ void FAdapOutData::CreateTotalData()
         {
             for (auto& sHeaderComp : ptrGlobal->ptrSolve->setHeaderComp)
             {
-                any fCredit;
+                any  fCredit;
                 bool bIsFCreditInit = false;
-                any fPercent;
+                any  fPercent;
                 bool bIsFPercentInit = false;
 
                 if (it->ptrMetric)
@@ -742,7 +764,7 @@ void FAdapOutData::CreateTotalData()
                     // Если ЗЕ равно 0, то и не выводить
                     if (dScore > 0)
                     {
-                        fCredit = dScore;
+                        fCredit        = dScore;
                         bIsFCreditInit = true;
                     }
                     else
@@ -752,7 +774,7 @@ void FAdapOutData::CreateTotalData()
 
                     if (dRes > ptrGlobal->ptrConfig->GetDMinComp())
                     {
-                        fPercent = dRes * 100;
+                        fPercent        = dRes * 100;
                         bIsFPercentInit = true;
                     }
                     else
@@ -820,7 +842,8 @@ void FAdapOutData::CreateGraphData()
                             }
                             else
                             {
-                                // fDataContainer.fData = FTypeGraph::dNoInit;
+                                // fDataContainer.fData =
+                                // FTypeGraph::dNoInit;
                             }
                             break;
 
@@ -840,7 +863,8 @@ void FAdapOutData::CreateGraphData()
                             }
                             else
                             {
-                                // fDataContainer.fData = FTypeGraph::dNoInit;
+                                // fDataContainer.fData =
+                                // FTypeGraph::dNoInit;
                             }
                             break;
                         case 9:
@@ -896,9 +920,19 @@ void FAdapOutData::CreateGraphData()
                      ++iAmountComp)
                 {
                     any fDataContainer;
-                    fDataContainer = fGraph.arrAmountCountCompDisc[iAmountComp];
+                    try
+                    {
+                        // Если УП обработан некорректно
+                        fDataContainer =
+                            fGraph.arrAmountCountCompDisc.at(iAmountComp);
 
-                    arrRow[iCurrentX++] = (fDataContainer);
+                        arrRow[iCurrentX] = (fDataContainer);
+                    }
+                    catch (...)
+                    {
+                    }
+
+                    ++iCurrentX;
                 }
             }
 
@@ -1235,8 +1269,8 @@ void FAdapOutData::CreateData()
 
     CreateGephiCSVData();
 
-    // В самом конце, так как считаем меры центральной тенденции для всего ранее
-    // посчитанного
+    // В самом конце, так как считаем меры центральной тенденции для всего
+    // ранее посчитанного
     CreateDataCorridorAndType();
 }
 

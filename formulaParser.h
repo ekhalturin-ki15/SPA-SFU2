@@ -31,6 +31,8 @@ private:
 
 struct FormulaParser
 {
+    static vector<string> arrToken;
+
     FormulaParser() = default;
 
     explicit FormulaParser(string _sInput, double _dSumScore,

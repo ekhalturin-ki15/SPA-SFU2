@@ -171,7 +171,11 @@ void FConfig::InitBoolMap()
     mapBoolParamsReadKey[L"Вывод доп файлов csv"]    = &bIsOutCSVDate;
     mapBoolParamsReadKey
         [L"Вывод файла общей локальной статистики по конкретному УП"] =
-            &bIsOutFileAllLocalData;
+            &bIsOutFileAllLocalData; 
+    
+    mapBoolParamsReadKey
+        [L"Выводить УП мер центральной тенденции"] =
+        &bIsOutCorridorCurricula;
 
     mapBoolParamsReadKey[L"Использовать многоуровневые индикаторы"] =
         &bMultiIndicator;

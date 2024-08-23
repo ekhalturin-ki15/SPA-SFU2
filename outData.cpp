@@ -408,17 +408,6 @@ void FOutData::OutTable(const int& iYShift, const int& iXShift,
                 {
                     string sOutString =
                         ConvertAnyToString(arrCorridor[y][x].fData);
-                    if (arrCorridor[y][x].iAddInfo != FTypeGraph::dNoInit)
-                    {
-                        sOutString +=
-                            " (" +
-                            ptrGlobal->ptrConfig->GetSCorridorCurricula();
-
-                        auto ptrCurricula = ptrGlobal->ptrSolve->GetCurricula(
-                            arrCorridor[y][x].iAddInfo);
-                        sOutString += ptrCurricula->sShortNamePlan + ")";
-                    }
-
                     if (ptrDataCSVStream !=
                         nullptr)    // Продублируем в виде CSV
                     {
@@ -426,11 +415,36 @@ void FOutData::OutTable(const int& iYShift, const int& iXShift,
                             << ptrGlobal->ptrConfig->GetSCSVSeparator()
                             << sOutString;
                     }
-                    if (WKS != nullptr)
+                    if (ptrGlobal->ptrConfig->GetBIsOutCorridorCurricula())
                     {
-                        OutDataCeil(iYShift + iRealY, iXShift + x + 1, *WKS,
-                                    sOutString);
+                        if (arrCorridor[y][x].iAddInfo != FTypeGraph::dNoInit)
+                        {
+                            sOutString +=
+                                " (" +
+                                ptrGlobal->ptrConfig->GetSCorridorCurricula();
+
+                            auto ptrCurricula =
+                                ptrGlobal->ptrSolve->GetCurricula(
+                                    arrCorridor[y][x].iAddInfo);
+                            sOutString += ptrCurricula->sShortNamePlan + ")";
+                        }
+                        
+                        if (WKS != nullptr)
+                        {
+                            OutDataCeil(iYShift + iRealY, iXShift + x + 1, *WKS,
+                                        sOutString);
+                        }
                     }
+                    else
+                    {
+                        if (WKS != nullptr)
+                        {
+                            OutDataCeil(iYShift + iRealY, iXShift + x + 1, *WKS,
+                                        arrCorridor[y][x].fData);
+                        }
+                    }
+
+                   
                 }
             }
             IncRow(iRealY, ptrDataCSVStream);
@@ -506,12 +520,20 @@ void FOutData::OutDataCeil(const int& y, const int& x,
     if (sType == typeid(string).name())
     {
         bIsCheck               = true;
-        WKS.cell(y, x).value() = std::any_cast<string>(fData);
+        OutDataCeil(y, x, WKS, std::any_cast<string>(fData));
     }
     if (sType == typeid(int).name())
     {
         bIsCheck               = true;
-        WKS.cell(y, x).value() = std::any_cast<int>(fData);
+        int dCheck = std::any_cast<int>(fData);
+        if (dCheck == int(FTypeGraph::dNoInit))
+        {
+            WKS.cell(y, x).value() = ptrGlobal->ptrConfig->GetSNoInitData();
+        }
+        else
+        {
+            WKS.cell(y, x).value() = dCheck;
+        }
     }
     if (sType == typeid(double).name())
     {
@@ -523,7 +545,7 @@ void FOutData::OutDataCeil(const int& y, const int& x,
         }
         else
         {
-            WKS.cell(y, x).value() = std::any_cast<double>(fData);
+            WKS.cell(y, x).value() = dCheck;
         }
     }
     if (sType == typeid(char).name())

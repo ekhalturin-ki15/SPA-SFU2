@@ -144,8 +144,28 @@ void FGlobal::TakeData(wstring& outWsData, const OpenXLSX::XLRow& row)
 
 void FGlobal::TakeData(string& outWsData, const OpenXLSX::XLRow& row)
 {
+    try
+    {
+        for (auto& it : row.cells(2, 2))    // Считываем только вторую ячейку
+            outWsData = it.value().get<string>();
+        return;
+    }
+    catch (...)
+    {
+        //Мда, OPENXLSX не может сама конвертировать типы 
+    }
+    try
+    {
+        for (auto& it : row.cells(2, 2))    // Считываем только вторую ячейку
+            outWsData = to_string(it.value().get<double>());
+        return;
+    }
+    catch (...)
+    {
+    }
     for (auto& it : row.cells(2, 2))    // Считываем только вторую ячейку
-        outWsData = it.value().get<string>();
+        outWsData = to_string(it.value().get<int>());
+    return;
 }
 
 void FGlobal::TakeData(int& outIData, const OpenXLSX::XLRow& row)
