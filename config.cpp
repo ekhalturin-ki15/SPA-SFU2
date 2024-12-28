@@ -30,6 +30,8 @@ FConfig::FConfig(shared_ptr<FGlobal> _ptrGlobal)
       bOutShortNameCur(true),
       bIsUnDirected(true),
       bIsNormalizeScoreComp(true),
+      bIsNormalizeScoreDisc(true),
+      bIsIgnoreTreeInd(false),
       bDelSpecCharDiscName(true),
       bOutAllInfoWithoutTag(true),
       bOutEmptyComp(true),
@@ -86,8 +88,10 @@ void FConfig::InitStringMap()
 
     mapStringParamsReadKey[L"Суффикс после вывода квартиля"] = &sSufQuar;
 
-    mapStringParamsReadKey[L"Суффикс файла с данными вершин Gephi"] = &sSufLableGephiFile;
-    mapStringParamsReadKey[L"Суффикс файла с данными рёбер Gephi"] = &sSufRibGephiFile;
+    mapStringParamsReadKey[L"Суффикс файла с данными вершин Gephi"] =
+        &sSufLableGephiFile;
+    mapStringParamsReadKey[L"Суффикс файла с данными рёбер Gephi"] =
+        &sSufRibGephiFile;
 
     mapStringParamsReadKey
         [L"Суффикс после вывода кол-во компетенций у дисциплины"] = &sSufComp;
@@ -147,7 +151,7 @@ void FConfig::InitBoolMap()
 {
     mapBoolParamsReadKey[L"Создать новый каталог"]       = &bCreateFolder;
     mapBoolParamsReadKey[L"Компактный вывод результата"] = &bCompactOutput;
-    //mapBoolParamsReadKey[L"Выводить графы по курсам"]    = &bCourseOutput;
+    // mapBoolParamsReadKey[L"Выводить графы по курсам"]    = &bCourseOutput;
     mapBoolParamsReadKey[L"Если у предмета несколько групп компетенций, "
                          L"учитывать пересечение дважды (для 100% суммы)"] =
         &bCompInterDelete;
@@ -166,15 +170,17 @@ void FConfig::InitBoolMap()
         [L"Делить ЗЕ у компетенции на кол-во дисциплин в компетенции"] =
             &bIsNormalizeScoreDisc;
 
+    mapBoolParamsReadKey[L"Игнорировать индикаторы в дереве компетенций"] =
+        &bIsIgnoreTreeInd;
+
     mapBoolParamsReadKey[L"Граф неориентированный"]  = &bIsUnDirected;
     mapBoolParamsReadKey[L"Перезаписывать лог файл"] = &bReloadLogFile;
     mapBoolParamsReadKey[L"Вывод доп файлов csv"]    = &bIsOutCSVDate;
     mapBoolParamsReadKey
         [L"Вывод файла общей локальной статистики по конкретному УП"] =
-            &bIsOutFileAllLocalData; 
-    
-    mapBoolParamsReadKey
-        [L"Выводить УП мер центральной тенденции"] =
+            &bIsOutFileAllLocalData;
+
+    mapBoolParamsReadKey[L"Выводить УП мер центральной тенденции"] =
         &bIsOutCorridorCurricula;
 
     mapBoolParamsReadKey[L"Использовать многоуровневые индикаторы"] =
@@ -182,8 +188,8 @@ void FConfig::InitBoolMap()
     mapBoolParamsReadKey[L"Вывод полной информации о дисциплин без тега"] =
         &bOutAllInfoWithoutTag;
 
-    mapBoolParamsReadKey[L"Выводить компетенции с 0 ЗЕ"]  = &bOutEmptyComp;
-    //mapBoolParamsReadKey[L"Выводить итоговую статистику"] = &bOutTotalInfo;
+    mapBoolParamsReadKey[L"Выводить компетенции с 0 ЗЕ"] = &bOutEmptyComp;
+    // mapBoolParamsReadKey[L"Выводить итоговую статистику"] = &bOutTotalInfo;
 
     mapBoolParamsReadKey[L"Выводить меры центральной тенденции"] =
         &bOutDataCorridor;
@@ -277,8 +283,8 @@ bool FConfig::Init()
 
     fDoc.close();
 
-    ETypeGraph::ETG_Common.sName = sCommonCurricula;
-    ETypeGraph::ETG_Alt.sName    = sAltCurricula;
+    ETypeGraph::ETG_Common.sName  = sCommonCurricula;
+    ETypeGraph::ETG_Alt.sName     = sAltCurricula;
     ETypeGraph::ETG_Reverse.sName = sRevCurricula;
 
     return true;

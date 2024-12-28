@@ -5,8 +5,8 @@
 
 #include "formulaParser.h"
 
-//string       FMetric::sAllMetric      = "All";
-//const string FMetric::sEmptyIndicator = "-";
+// string       FMetric::sAllMetric      = "All";
+// const string FMetric::sEmptyIndicator = "-";
 
 FTreeMetric::FTreeMetric(shared_ptr<FMetric> _ptrMetric,
                          shared_ptr<FCurricula>
@@ -108,9 +108,8 @@ FMetric::FMetric(shared_ptr<FCurricula> _ptrCurricula)
 
 void FMetric::Init()
 {
-
-    const auto &
-        sAllCourses = ptrCurricula->ptrGlobal->ptrConfig->GetSAllCourses();
+    const auto& sAllCourses =
+        ptrCurricula->ptrGlobal->ptrConfig->GetSAllCourses();
     try
     {
         // fRegexHeaderComp = _ptrTree->ptrGlobal->ptrConfig->sRegexHeaderComp;
@@ -252,13 +251,26 @@ void FMetric::Create()
                                 // также и по типу анализа
         //(целиком, или только по определённому курсу)
 
-        double dAmountInd = 0;    // Если установлен флаг bIsNormalizeScoreComp,
-                                  // то делим ЗЕ на кол-во индикаторов
-        for (auto& [comp, arrInd] : it->mapComp)
+        double dAmountList =
+            0;    // Если установлен флаг bIsNormalizeScoreComp,
+                  // то делим ЗЕ:
+                  // Если фоаг bIsIgnoreTreeInd на кол-во компетенций
+                  // Иначе на кол-во индикаторов
+
+        if (ptrCurricula->ptrGlobal->ptrConfig->GetBIsIgnoreTreeInd())
         {
-            dAmountInd += 1 > arrInd.size() ? 1 : arrInd.size();
+            dAmountList = it->mapComp.size();
         }
-        dAmountInd = 1 > dAmountInd ? 1 : dAmountInd;    // Но 0 делить нельзя
+        else
+        {
+            for (auto& [comp, arrInd] : it->mapComp)
+            {
+                dAmountList += 1 > arrInd.size() ? 1 : arrInd.size();
+            }
+        }
+
+        dAmountList =
+            1 > dAmountList ? 1 : dAmountList;    // Но 0 делить нельзя
 
         ++iL;
         for (auto& [comp, arrInd] : it->mapComp)
@@ -321,76 +333,70 @@ void FMetric::Create()
                     {
                         sCompName        = sData[1].str();
                         sCompNumber      = sData[2].str();
-                        sIndicatorNumber =
-                            ptrCurricula->ptrGlobal->ptrConfig->GetSNoInitData();
+                        sIndicatorNumber = ptrCurricula->ptrGlobal->ptrConfig
+                                               ->GetSNoInitData();
                     }
                 }
 
+                // В холостую пройдёмся по дереву, чтобы создать недостающие
+                // нулевые узлы
+                if (ptrCurricula->ptrGlobal->ptrConfig->GetBOutEmptyComp())
                 {
-                    double dNormalizeScore = it->dSumScore;
-                    if (ptrCurricula->ptrGlobal->ptrConfig
-                            ->GetBIsNormalizeScoreComp())
+                    for (int iCourse = 1;
+                         iCourse <= ptrCurricula->iAmountCourse;
+                         ++iCourse)    // Делаем 1 нумерацию
                     {
-                        // Делим всё на кол-во индикаторов, так как считаем, что
-                        // все ЗЕ равномерно делятся на изучение каждого
-                        // индикатора (причём, не параллельно)
-                        dNormalizeScore /= dAmountInd;
-                    }
-
-                    UpdateCourseMetric(
-                        ptrTreeMetric
-                            ->mapChild[ptrCurricula->ptrGlobal->ptrConfig
-                                           ->GetSAllCourses()],
-                        setIsTakenScore,
-                        { sCompName, sCompNumber, sIndicatorNumber },
-                        dNormalizeScore);
-
-                    // В холостую пройдёмся по дереву, чтобы создать недостающие
-                    // нулевые узлы
-                    if (ptrCurricula->ptrGlobal->ptrConfig->GetBOutEmptyComp())
-                    {
-                        for (int iCourse = 1;
-                             iCourse <= ptrCurricula->iAmountCourse;
-                             ++iCourse)    // Делаем 1 нумерацию
+                        auto ptrNowTree =
+                            ptrTreeMetric->mapChild[to_string(iCourse)];
+                        for (const auto& sCurName :
+                             { sCompName, sCompNumber, sIndicatorNumber })
                         {
-                            auto ptrNowTree =
-                                ptrTreeMetric->mapChild[to_string(iCourse)];
-                            for (const auto& sCurName :
-                                 { sCompName, sCompNumber, sIndicatorNumber })
+                            if (!ptrNowTree->mapChild.count(sCurName))
                             {
-                                if (!ptrNowTree->mapChild.count(sCurName))
-                                {
-                                    ptrNowTree->mapChild[sCurName] =
-                                        make_shared<FTreeMetric>(
-                                            ptrCurricula->ptrMetric,
-                                            ptrCurricula);
-                                    ptrNowTree->mapChild[sCurName]->ptrParent =
-                                        ptrNowTree;
-                                    ptrNowTree->mapChild[sCurName]->sName =
-                                        sCurName;
-                                }
-                                ptrNowTree = ptrNowTree->mapChild[sCurName];
+                                ptrNowTree->mapChild[sCurName] =
+                                    make_shared<FTreeMetric>(
+                                        ptrCurricula->ptrMetric,
+                                        ptrCurricula);
+                                ptrNowTree->mapChild[sCurName]->ptrParent =
+                                    ptrNowTree;
+                                ptrNowTree->mapChild[sCurName]->sName =
+                                    sCurName;
                             }
+                            ptrNowTree = ptrNowTree->mapChild[sCurName];
                         }
                     }
                 }
 
-                // Только для определённого курса
+                vector<pair<string, double>> arrTreeRootBrach;
+                arrTreeRootBrach.push_back(
+                    { ptrCurricula->ptrGlobal->ptrConfig->GetSAllCourses(),
+                      it->dSumScore });
                 for (const auto& [iCourse, dScore] : it->mapCourseScore)
+                {
+                    arrTreeRootBrach.push_back(
+                        { to_string(iCourse + 1), dScore });
+                }
+
+                // Инициализация для всех курсов
+                for (const auto& [sTag, dScore] : arrTreeRootBrach)
                 {
                     double dNormalizeScore = dScore;
                     if (ptrCurricula->ptrGlobal->ptrConfig
                             ->GetBIsNormalizeScoreComp())
                     {
-                        dNormalizeScore /= dAmountInd;
+                        dNormalizeScore /= dAmountList;
                     }
 
-                    string sCourse = to_string(iCourse + 1);
-                    UpdateCourseMetric(
-                        ptrTreeMetric->mapChild[sCourse],
-                        setIsTakenScore,
-                        { sCompName, sCompNumber, sIndicatorNumber },
-                        dNormalizeScore);
+                    vector<string> arrRectUpdate({ sCompName, sCompNumber });
+                    if (!ptrCurricula->ptrGlobal->ptrConfig
+                             ->GetBIsIgnoreTreeInd())
+                    {
+                        arrRectUpdate.push_back(sIndicatorNumber);
+                    }
+
+                    UpdateCourseMetric(ptrTreeMetric->mapChild[sTag],
+                                       setIsTakenScore, arrRectUpdate,
+                                       dNormalizeScore);
                 }
             }
         }

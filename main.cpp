@@ -24,6 +24,8 @@
 using namespace std;
 // using namespace OpenXLSX;
 
+#define CONF_FILE L"config.xlsx"
+
 
 bool Create(shared_ptr<FGlobal>& _ptrGlobal, wstring wsNameConfig);
 bool Create(shared_ptr<FGlobal>& _ptrGlobal, wstring wsNameConfig)
@@ -43,7 +45,7 @@ int main()
     {
         shared_ptr<FGlobal> ptrGlobal;
 
-        if (!Create(ptrGlobal, L"config.xlsx"))
+        if (!Create(ptrGlobal, CONF_FILE))
 #ifdef DEBUG
             return 4;    // Аварийное завершение
 #else

@@ -87,8 +87,10 @@ private:
                           const string&               sType);
 
     void CreateCompTreeData();
-    void CreateCompTreeData(const int& W, vector<vector<any>>& arrReturnData,
-                            shared_ptr<FTreeMetric> ptrMetric);
+    int  CreateCompTreeData(
+         const int& W, vector<vector<any>>& arrReturnData,
+         shared_ptr<FTreeMetric>
+             ptrMetric);    // Возвращает актуальную ширину дерева компетенций
 
     void CreateRectCompTreeData(vector<vector<any>>&    arrReturnData,
                                 vector<any>&            arrRow,

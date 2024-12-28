@@ -128,13 +128,54 @@ void FAdapOutData::CreateGephiCSVHeader()
     }
 }
 
-void FAdapOutData::CreateCompTreeData(const int&           W,
+//Возвращает актуальную ширину дерева компетенций
+int FAdapOutData::CreateCompTreeData(const int&           W,
                                       vector<vector<any>>& arrReturnData,
                                       shared_ptr<FTreeMetric>
                                           ptrMetric)
 {
     vector<any> arrRow(W);
     CreateRectCompTreeData(arrReturnData, arrRow, ptrMetric, 0, 0);
+    // Для усечения с конца таблицы в случаи, если индикаторы (в дальнейшем дескрипторы)
+    // не были обнаружены
+    // Пробегаемся по всем строчкам записей дерева, и если везде нет
+    // индикаторов, то прозводим учечение
+
+    int iCheckRow = FTypeGraph::dNoInit;
+    int iRowSize  = 0;
+    if (arrReturnData.size())
+        iRowSize = arrReturnData.at(0).size();
+    for (auto& it : arrReturnData)
+    {
+        int* iBufSize = &iRowSize;
+        if (iCheckRow == FTypeGraph::dNoInit)
+        {
+            iBufSize = &iCheckRow;
+        }
+        (*iBufSize) = it.size();
+        for (int iX = it.size() - 1; iX >= 0; --iX)
+        {
+            any    empty;
+            if (it[iX].type() == empty.type())
+                --(*iBufSize);
+        }
+        if ((*iBufSize) != iCheckRow)
+        {
+            iCheckRow = FTypeGraph::dNoInit;
+            break;
+        }
+    }
+
+    if (iCheckRow != FTypeGraph::dNoInit)
+    {
+        for (auto& it : arrReturnData)
+        {
+            it.resize(iCheckRow);
+        }
+        return iCheckRow;
+    }
+
+    return W;
 }
 
 void FAdapOutData::CreateRectCompTreeData(vector<vector<any>>&    arrReturnData,
@@ -149,6 +190,7 @@ void FAdapOutData::CreateRectCompTreeData(vector<vector<any>>&    arrReturnData,
         fTableData = ptrGlobal->ptrSolve->sInPath;
         arrRow[x]  = (fTableData);
         CreateRectCompTreeData(arrReturnData, arrRow, ptrMetric, x + 1, iDeep);
+        return;
     }
     if (ptrMetric->sName == ptrGlobal->ptrConfig->GetSNoInitData())
     {
@@ -363,10 +405,9 @@ void FAdapOutData::CreateGephiLableCSVData()
                         }
                         fTotalOutData.push_back(arrRow);
                     }
-                } 
-                catch (...) //Возможно, данного курса нет в данном УП
+                }
+                catch (...)    // Возможно, данного курса нет в данном УП
                 {
-
                 }
             }
         }
@@ -453,8 +494,9 @@ void FAdapOutData::CreateCompTreeData()
             {
                 const auto& ptrCurrentTree = ptrTreeMetric->mapChild[sName];
 
-                CreateCompTreeData(fData.arrHeader.size(), fData.arrData,
+                int iSize = CreateCompTreeData(fData.arrHeader.size(), fData.arrData,
                                    ptrCurrentTree);
+                fData.arrHeader.resize(iSize);
             }
         }
     }

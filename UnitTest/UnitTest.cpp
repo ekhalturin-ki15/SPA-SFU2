@@ -16,6 +16,11 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace std;
 // using namespace OpenXLSX;
 
+#define CONF_FILE1 L"1_test_config.xlsx"
+#define CONF_FILE2 L"2_anomal_test_config.xlsx"
+#define CONF_FILE3 L"3_real.xlsx"
+#define CONF_FILE4 L"4_real.xlsx"
+
 bool Create(shared_ptr<FGlobal>& _ptrGlobal, const wstring& _wsNameConfig)
 {
     _ptrGlobal = make_shared<FGlobal>(_wsNameConfig);
@@ -31,7 +36,7 @@ bool Create(shared_ptr<FGlobal>& _ptrGlobal, const wstring& _wsNameConfig)
 
 namespace TestFSolve
 {
-    const wstring wsNameConfig = L"test_config.xlsx";
+    const wstring wsNameConfig = CONF_FILE1;
 
     TEST_CLASS(TestFSolveOnly)
     {
@@ -475,7 +480,7 @@ namespace TestFSolve
 
 namespace AnomalTestFSolve
 {
-    const wstring wsNameConfigAnomal = L"anomal_test_config.xlsx";
+    const wstring wsNameConfigAnomal = CONF_FILE2;
 
     TEST_CLASS(TestFSolveOnly)
     {

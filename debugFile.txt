@@ -1,0 +1,40 @@
+
+45 61
+0903020031_OP-23.plm.plx.xlsx
+Cluster coef
+0.737705
+
+36 56
+0903020031_OP-23.plm.plx.xlsx
+Cluster coef
+0.642857
+
+75 118
+0903020031_OP-23.plm.plx.xlsx
+Cluster coef
+0.635593
+
+9 17
+0903020031_OP-23.plm.plx.xlsx
+Cluster coef
+0.529412
+
+33 41
+0903010030_op-21.plm.plx.xlsx
+Cluster coef
+0.804878
+
+54 82
+0903010030_op-21.plm.plx.xlsx
+Cluster coef
+0.658537
+
+27 44
+0903010030_op-21.plm.plx.xlsx
+Cluster coef
+0.613636
+
+39 61
+0903010030_op-21.plm.plx.xlsx
+Cluster coef
+0.639344

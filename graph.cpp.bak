@@ -23,18 +23,6 @@ ETypeGraph::ETypeGraph() : iType(0), sName("NoInit")
 
 ETypeGraph::ETypeGraph(int _iType) : iType(_iType)
 {
-    switch (_iType)
-    {
-       case -1:
-            *this = ETypeGraph::ETG_Common;
-           return;
-       case -2:
-           *this = ETypeGraph::ETG_Alt;
-           return;
-       case -3:
-           *this = ETypeGraph::ETG_Reverse;
-           return;
-    }
     sName = to_string(_iType);
 }
 
@@ -78,16 +66,19 @@ void FGraph::Create()
 
         int iNumberParams = 0;
 
-        for (int iType = ETypeGraph::ETG_Common.Get();
-             iType >= ETypeGraph::ETG_Reverse.Get();
-             --iType)
+        if (bArrIsSolveGraphMetric.size() > iNumberParams)
         {
-            if (bArrIsSolveGraphMetric.size() > iNumberParams)
-            {
-                if (bArrIsSolveGraphMetric[iNumberParams++])
-                    CountAfterAllMetric(ETypeGraph(iType));
-            }
+            if (bArrIsSolveGraphMetric[iNumberParams++])
+                CountAllMetric(ETypeGraph::ETG_Common);
         }
+
+        if (bArrIsSolveGraphMetric.size() > iNumberParams)
+            if (bArrIsSolveGraphMetric[iNumberParams++])
+                CountAllMetric(ETypeGraph::ETG_Alt);
+
+        if (bArrIsSolveGraphMetric.size() > iNumberParams)
+            if (bArrIsSolveGraphMetric[iNumberParams++])
+                CountAllMetric(ETypeGraph::ETG_Reverse);
 
         if (bArrIsSolveGraphMetric.size() > iNumberParams)
             if (bArrIsSolveGraphMetric[iNumberParams++])
@@ -118,21 +109,18 @@ void FGraph::CreateAfter()
         int iNumberParams = 0;
 
         if (bArrIsSolveGraphMetric.size() > iNumberParams)
-            if (bArrIsSolveGraphMetric[iNumberParams++])
-                CountAllMetric(ETypeGraph::ETG_Common);
-
-        iNumberParams = 0;
-
-        for (int iType = ETypeGraph::ETG_Common.Get();
-             iType >= ETypeGraph::ETG_Reverse.Get();
-             --iType)
         {
-            if (bArrIsSolveGraphMetric.size() > iNumberParams)
-            {
-                if (bArrIsSolveGraphMetric[iNumberParams++])
-                    CountAfterAllMetric(ETypeGraph(iType));
-            }
+            if (bArrIsSolveGraphMetric[iNumberParams++])
+                CountAfterAllMetric(ETypeGraph::ETG_Common);
         }
+
+        if (bArrIsSolveGraphMetric.size() > iNumberParams)
+            if (bArrIsSolveGraphMetric[iNumberParams++])
+                CountAfterAllMetric(ETypeGraph::ETG_Alt);
+
+        if (bArrIsSolveGraphMetric.size() > iNumberParams)
+            if (bArrIsSolveGraphMetric[iNumberParams++])
+                CountAfterAllMetric(ETypeGraph::ETG_Reverse);
 
         if (bArrIsSolveGraphMetric.size() > iNumberParams)
             if (bArrIsSolveGraphMetric[iNumberParams++])
@@ -221,8 +209,7 @@ void FGraph::CountAllMetric(ETypeGraph eTypeGraph)
     ofstream out(ptrTree->ptrGlobal->ptrConfig->GetSNameDebugFile() + ".txt",
                  std::ios::app);
     out << ENDL << ptrTree->sNamePlan << ENDL;
-    out << "Cluster coef" << ENDL << mapGraph[eTypeGraph].dGlobalСluster
-        << ENDL;
+    out << "Cluster coef" << ENDL << mapGraph[eTypeGraph].dGlobalСluster << ENDL;
 #endif
 }
 

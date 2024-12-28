@@ -79,7 +79,7 @@
     <ClCompile Include="solveZeroPage.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="OutData.cpp">
+    <ClCompile Include="outData.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -114,7 +114,7 @@
     <ClInclude Include="solve.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="OutData.h">
+    <ClInclude Include="outData.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

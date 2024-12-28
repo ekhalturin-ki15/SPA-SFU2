@@ -299,6 +299,8 @@ private:
     bool bDelSpecCharDiscName;
     bool bIsNormalizeScoreComp;
     bool bIsNormalizeScoreDisc;
+    bool bIsIgnoreTreeInd;
+
     bool bOutAllInfoWithoutTag;
     bool bOutEmptyComp;
     bool bOutTotalInfo;
@@ -375,6 +377,10 @@ public:
     const bool& GetBIsNormalizeScoreDisc() const
     {
         return bIsNormalizeScoreDisc;
+    }
+    const bool& GetBIsIgnoreTreeInd() const
+    {
+        return bIsIgnoreTreeInd;
     }
     const bool& GetBOutAllInfoWithoutTag() const
     {
