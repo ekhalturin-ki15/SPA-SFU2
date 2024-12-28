@@ -26,13 +26,14 @@ ETypeGraph::ETypeGraph(int _iType) : iType(_iType)
     switch (_iType)
     {
        case -1:
-            *this = ETypeGraph::ETG_Common;
+           //Так как оператор = переопределён
+           this->sName = ETypeGraph::ETG_Common.sName;
            return;
        case -2:
-           *this = ETypeGraph::ETG_Alt;
+           this->sName = ETypeGraph::ETG_Alt.sName;
            return;
        case -3:
-           *this = ETypeGraph::ETG_Reverse;
+           this->sName = ETypeGraph::ETG_Reverse.sName;
            return;
     }
     sName = to_string(_iType);
@@ -78,6 +79,7 @@ void FGraph::Create()
 
         int iNumberParams = 0;
 
+        //Аналогично считается в CountAfterAllMetric
         for (int iType = ETypeGraph::ETG_Common.Get();
              iType >= ETypeGraph::ETG_Reverse.Get();
              --iType)
@@ -85,7 +87,7 @@ void FGraph::Create()
             if (bArrIsSolveGraphMetric.size() > iNumberParams)
             {
                 if (bArrIsSolveGraphMetric[iNumberParams++])
-                    CountAfterAllMetric(ETypeGraph(iType));
+                    CountAllMetric(ETypeGraph(iType));
             }
         }
 
@@ -117,12 +119,6 @@ void FGraph::CreateAfter()
 
         int iNumberParams = 0;
 
-        if (bArrIsSolveGraphMetric.size() > iNumberParams)
-            if (bArrIsSolveGraphMetric[iNumberParams++])
-                CountAllMetric(ETypeGraph::ETG_Common);
-
-        iNumberParams = 0;
-
         for (int iType = ETypeGraph::ETG_Common.Get();
              iType >= ETypeGraph::ETG_Reverse.Get();
              --iType)
@@ -153,7 +149,7 @@ void FGraph::CreateAfter()
     }
 }
 
-void FGraph::CountAfterAllMetric(ETypeGraph eTypeGraph)
+void FGraph::CountAfterAllMetric(const ETypeGraph& eTypeGraph)
 {
     auto& arrTotal = ptrTree->ptrGlobal->ptrSolve->ptrGraphAllData
                          ->mapGraphQuarAllWeigth[eTypeGraph];
@@ -165,7 +161,7 @@ void FGraph::CountAfterAllMetric(ETypeGraph eTypeGraph)
         mapGraph[eTypeGraph].arrQuarMinPathLen);
 }
 
-void FGraph::CountAllMetric(ETypeGraph eTypeGraph)
+void FGraph::CountAllMetric(const ETypeGraph& eTypeGraph)
 {
     CalcAllScoreAndAmount(mapGraph[eTypeGraph]);
 

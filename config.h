@@ -293,7 +293,10 @@ private:
     bool bMultiIndicator;
     bool bCompInterDelete;
     bool bIsPercentRegAll;
+
     bool bOutCompWithName;
+    bool bOutCourseNumWithName;
+
     bool bOutShortNameCur;
     bool bIsUnDirected;
     bool bDelSpecCharDiscName;
@@ -357,6 +360,11 @@ public:
     const bool& GetBOutCompWithName() const
     {
         return bOutCompWithName;
+    } 
+    
+    const bool& GetBOutCourseNumWithName() const
+    {
+        return bOutCourseNumWithName;
     }
     const bool& GetBOutShortNameCur() const
     {

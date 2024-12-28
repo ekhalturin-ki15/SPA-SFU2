@@ -128,18 +128,17 @@ void FAdapOutData::CreateGephiCSVHeader()
     }
 }
 
-//Возвращает актуальную ширину дерева компетенций
+// Возвращает актуальную ширину дерева компетенций
 int FAdapOutData::CreateCompTreeData(const int&           W,
-                                      vector<vector<any>>& arrReturnData,
-                                      shared_ptr<FTreeMetric>
-                                          ptrMetric)
+                                     vector<vector<any>>& arrReturnData,
+                                     shared_ptr<FTreeMetric>
+                                         ptrMetric)
 {
     vector<any> arrRow(W);
     CreateRectCompTreeData(arrReturnData, arrRow, ptrMetric, 0, 0);
-    // Для усечения с конца таблицы в случаи, если индикаторы (в дальнейшем дескрипторы)
-    // не были обнаружены
-    // Пробегаемся по всем строчкам записей дерева, и если везде нет
-    // индикаторов, то прозводим учечение
+    // Для усечения с конца таблицы в случаи, если индикаторы (в дальнейшем
+    // дескрипторы) не были обнаружены Пробегаемся по всем строчкам записей
+    // дерева, и если везде нет индикаторов, то прозводим учечение
 
     int iCheckRow = FTypeGraph::dNoInit;
     int iRowSize  = 0;
@@ -155,7 +154,7 @@ int FAdapOutData::CreateCompTreeData(const int&           W,
         (*iBufSize) = it.size();
         for (int iX = it.size() - 1; iX >= 0; --iX)
         {
-            any    empty;
+            any empty;
             if (it[iX].type() == empty.type())
                 --(*iBufSize);
         }
@@ -399,6 +398,42 @@ void FAdapOutData::CreateGephiLableCSVData()
                                     fDataContainer = CreateTag(
                                         eType, fNodeName.first, it->mapAllDisc);
                                     break;
+
+                                case 4:
+                                    // Не забываем про нуль нумерацию курсов
+                                    if (fNodeName.second < 0)
+                                    {
+                                        if (it->mapAllDisc.count(
+                                                fNodeName.first))
+                                        {
+                                            if (it->mapAllDisc[fNodeName.first]
+                                                    ->mapCourseScore.size())
+                                            {
+                                                fDataContainer =
+                                                    it->mapAllDisc[fNodeName
+                                                                       .first]
+                                                        ->mapCourseScore
+                                                        .begin()
+                                                        ->first + 1;
+                                            }
+                                            break;
+                                        }
+
+                                        // Курс неопределён
+                                        fDataContainer = ptrGlobal->ptrConfig
+                                                             ->GetSNoInitData();
+                                        break;
+                                    }
+                                    fDataContainer = fNodeName.second + 1;
+                                    break;
+
+                                case 5:
+                                    if (it->mapAllDisc.count(fNodeName.first))
+                                        fDataContainer = AddCompString(
+                                            it->mapAllDisc[fNodeName.first]
+                                                ->mapComp,
+                                            false);
+                                    break;
                             }
 
                             arrRow[iColumnNum] = (fDataContainer);
@@ -432,10 +467,13 @@ string
     string sReturn = ptrNode->sName;
 
     // Не забываем про нуль нумерацию курсов
-    if (eTypeGraph == ETypeGraph::ETG_Alt)
+    if (ptrGlobal->ptrConfig->GetBOutCourseNumWithName())
     {
-        sReturn +=
-            ptrGlobal->ptrConfig->GetSSeparator() + to_string(fInfo.second + 1);
+        if (eTypeGraph == ETypeGraph::ETG_Alt)
+        {
+            sReturn += ptrGlobal->ptrConfig->GetSSeparator() +
+                       to_string(fInfo.second + 1);
+        }
     }
 
     // ptrGlobal->ReversUTF16RU(ptrGlobal->ConwertToString(wsNameRaw));
@@ -448,10 +486,14 @@ string
     return sReturn;
 }
 
-string FAdapOutData::AddCompString(const map<string, vector<string>>& mapComp)
+string FAdapOutData::AddCompString(const map<string, vector<string>>& mapComp,
+                                   bool                               bIsBrache)
 {
-    string sReturn = "(";
-    int    j       = -1;
+    string sReturn;
+    if (bIsBrache)
+        sReturn += "(";
+
+    int j = -1;
     for (const auto& [sNameComp, arrIndicator] : mapComp)
     {
         ++j;
@@ -459,7 +501,9 @@ string FAdapOutData::AddCompString(const map<string, vector<string>>& mapComp)
             sReturn += ",";
         sReturn += sNameComp;
     }
-    sReturn += ")";
+    if (bIsBrache)
+        sReturn += ")";
+
     return sReturn;
 }
 
@@ -494,8 +538,8 @@ void FAdapOutData::CreateCompTreeData()
             {
                 const auto& ptrCurrentTree = ptrTreeMetric->mapChild[sName];
 
-                int iSize = CreateCompTreeData(fData.arrHeader.size(), fData.arrData,
-                                   ptrCurrentTree);
+                int iSize = CreateCompTreeData(fData.arrHeader.size(),
+                                               fData.arrData, ptrCurrentTree);
                 fData.arrHeader.resize(iSize);
             }
         }

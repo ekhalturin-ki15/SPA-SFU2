@@ -211,10 +211,10 @@ private:
 
     void GenerateCourseGraph();    // Графы для каждого курса по отдельности
 
-    void CountAllMetric(ETypeGraph eTypeGraph);
+    void CountAllMetric(const ETypeGraph& eTypeGraph);
 
     // После вызова Create для всех ptrTree
-    void CountAfterAllMetric(ETypeGraph eTypeGraph);
+    void CountAfterAllMetric(const ETypeGraph& eTypeGraph);
 
     shared_ptr<FTreeElement> GetGraphDisc(const wstring& wsKey);
 };

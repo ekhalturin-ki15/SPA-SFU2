@@ -27,6 +27,7 @@ FConfig::FConfig(shared_ptr<FGlobal> _ptrGlobal)
       bCompInterDelete(true),
       bIsPercentRegAll(true),
       bOutCompWithName(true),
+      bOutCourseNumWithName(true),
       bOutShortNameCur(true),
       bIsUnDirected(true),
       bIsNormalizeScoreComp(true),
@@ -159,6 +160,9 @@ void FConfig::InitBoolMap()
         &bIsPercentRegAll;
     mapBoolParamsReadKey[L"Отображать компетенции в названии"] =
         &bOutCompWithName;
+    mapBoolParamsReadKey[L"Отображать номер курса в названии"] =
+        &bOutCourseNumWithName;
+
     mapBoolParamsReadKey[L"Выводить короткое имя для УП"] = &bOutShortNameCur;
     mapBoolParamsReadKey[L"Удалить спецсимволы из названия дисциплин"] =
         &bDelSpecCharDiscName;

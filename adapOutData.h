@@ -105,7 +105,8 @@ private:
     string CreateCommonNameLabel(const ETypeGraph&               eTypeGraph,
                                  const pair<wstring, int>&       fInfo,
                                  const shared_ptr<FTreeElement>& ptrNode);
-    string AddCompString(const map<string, vector<string>>& mapComp);
+    string AddCompString(const map<string, vector<string>>& mapComp,
+                         bool                               bIsBrache = true);
 
     string CreateTag(const ETypeGraph& eGraphType, const wstring& wsName,
                      const map<wstring, shared_ptr<FTreeElement>>& mapAllDisc);
