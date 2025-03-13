@@ -32,7 +32,7 @@ bool Create(shared_ptr<FGlobal>& _ptrGlobal, const wstring& _wsNameConfig)
     return true;
 }
 
-//bool isSameExcel();
+// bool isSameExcel();
 
 namespace TestFSolve
 {
@@ -166,7 +166,7 @@ namespace TestFSolve
                 sActual += to_string(val.iAmount);
             }
 
-            //Факультативы Основные По выбору
+            // Факультативы Основные По выбору
             Assert::AreEqual(string("0=10 1=6 2=2 3=2"), sActual);
         }
 
@@ -199,14 +199,16 @@ namespace TestFSolve
         {
             Assert::AreEqual(
                 7,
-                ptrFirst->mapETMTypeDisc[ETM_NoExtended][ETypeDisc::ETD_Total].iAmount);
+                ptrFirst->mapETMTypeDisc[ETM_NoExtended][ETypeDisc::ETD_Total]
+                    .iAmount);
         }
 
         TEST_METHOD(CountDiscWhithNotAllow)
         {
             Assert::AreEqual(
                 10,
-                ptrFirst->mapETMTypeDisc[ETM_Extended][ETypeDisc::ETD_Total].iAmount);
+                ptrFirst->mapETMTypeDisc[ETM_Extended][ETypeDisc::ETD_Total]
+                    .iAmount);
         }
 
         TEST_METHOD(AllCompIsFind)
@@ -238,8 +240,7 @@ namespace TestFSolve
         shared_ptr<FCurricula> ptrFifth;
         shared_ptr<FCurricula> ptrSixth;
 
-
-        ETypeGraph             eCommon;
+        ETypeGraph eCommon;
 
     public:
         TestFGraph()
@@ -281,8 +282,7 @@ namespace TestFSolve
             ptrFifth    = ptrGlobal->ptrSolve->GetCurricula(iNumCur++);
             ptrSixth    = ptrGlobal->ptrSolve->GetCurricula(iNumCur++);
 
-
-            eCommon   = ETypeGraph::ETG_Common;
+            eCommon = ETypeGraph::ETG_Common;
         }
 
         TEST_METHOD(InitGraph)
@@ -309,7 +309,8 @@ namespace TestFSolve
             {
                 if (i)
                     sActual += " ";
-                sActual += to_string(ptrThis->ptrGraph->mapGraph[ETypeGraph(i)]
+                sActual +=
+                    to_string(ptrThis->ptrGraph->mapGraph[ETypeGraph(i)]
                                   .mapGraphDataTypeDisc[ETypeDisc::ETD_Total]
                                   .iAmount);
             }
@@ -324,7 +325,8 @@ namespace TestFSolve
             {
                 if (i)
                     sActual += " ";
-                sActual += to_string(ptrThis->ptrGraph->mapGraph[ETypeGraph(i)]
+                sActual +=
+                    to_string(ptrThis->ptrGraph->mapGraph[ETypeGraph(i)]
                                   .mapGraphDataTypeDisc[ETypeDisc::ETD_Total]
                                   .iAmount);
             }
@@ -339,7 +341,8 @@ namespace TestFSolve
             {
                 if (i)
                     sActual += " ";
-                sActual += to_string(ptrThis->ptrGraph->mapGraph[ETypeGraph(i)]
+                sActual +=
+                    to_string(ptrThis->ptrGraph->mapGraph[ETypeGraph(i)]
                                   .mapGraphDataTypeDisc[ETypeDisc::ETD_Total]
                                   .iAmount);
             }
@@ -354,8 +357,8 @@ namespace TestFSolve
             auto& ptrThis = ptrThird;
             Assert::AreEqual(30.,
                              ptrThis->ptrGraph->mapGraph[eCommon]
-                                    .mapGraphDataTypeDisc[ETypeDisc::ETD_Total]
-                                    .dCredits);
+                                 .mapGraphDataTypeDisc[ETypeDisc::ETD_Total]
+                                 .dCredits);
         }
 
         TEST_METHOD(ThirdAmountDiscTotal)
@@ -449,30 +452,92 @@ namespace TestFSolve
         {
             auto& ptrThis = ptrFirst;
             Assert::AreEqual(
-                (3.0/5.0), ptrThis->ptrGraph->mapGraph[eCommon].dGlobalСluster,
-                1e-2);
+                (3.0 / 5.0),
+                ptrThis->ptrGraph->mapGraph[eCommon].dGlobalСluster, 1e-2);
         }
 
         TEST_METHOD(FourthClusterFull)
         {
             auto& ptrThis = ptrFourth;
-            Assert::AreEqual(1.0,
-                             ptrThis->ptrGraph->mapGraph[eCommon].dGlobalСluster, 1e-2);
+            Assert::AreEqual(
+                1.0, ptrThis->ptrGraph->mapGraph[eCommon].dGlobalСluster, 1e-2);
         }
 
         TEST_METHOD(FifthClusterNotFull)
         {
             auto& ptrThis = ptrFifth;
             Assert::AreEqual(
-                (0.75),ptrThis->ptrGraph->mapGraph[eCommon].dGlobalСluster, 1e-2);
+                (0.75), ptrThis->ptrGraph->mapGraph[eCommon].dGlobalСluster,
+                1e-2);
         }
 
         TEST_METHOD(SixthlusterNotFull)
         {
             auto& ptrThis = ptrSixth;
             Assert::AreEqual(
-                (3.0/5.0), ptrThis->ptrGraph->mapGraph[eCommon].dGlobalСluster,
-                1e-2);
+                (3.0 / 5.0),
+                ptrThis->ptrGraph->mapGraph[eCommon].dGlobalСluster, 1e-2);
+        }
+    };
+
+    TEST_CLASS(TestCompTree)    // Проверка рекурсивного дерева
+    {
+        shared_ptr<FGlobal>    ptrGlobal;
+        shared_ptr<FCurricula> ptrFirst;
+
+    public:
+        TestCompTree()
+        {
+            if (!Create(ptrGlobal, wsNameConfig))
+            {
+                Assert::Fail(L"Не удалось инициплизировать объект Глобал");
+                return;
+            }
+
+            auto fFile = ptrGlobal->GetCurrentPath();
+            for (int category = 0;
+                 category < ptrGlobal->ptrConfig->GetArrNameFileIn().size();
+                 ++category)
+            {
+                auto fInFile =
+                    fFile / ptrGlobal->ptrConfig->GetArrNameFileIn()[category];
+
+                for (auto it : filesystem::directory_iterator(fInFile))
+                {
+                    if (!it.is_directory())
+                    {
+                        if (ptrGlobal->ptrConfig->setIgnoreСurriculum.count(
+                                it.path().filename().string()))
+                            continue;
+
+                        ptrGlobal->ptrSolve->Create(
+                            it.path().string(),
+                            it.path().filename().string());
+                    }
+                }
+
+                ptrGlobal->ptrSolve->CreateAllGraph();
+                ptrGlobal->ptrSolve
+                    ->CreateAllMetric();    // Метрики не связаны с графом
+
+                ptrGlobal->ptrAdapOutData
+                    ->Create();    // Будет производится проверка адаптера
+            }
+
+            ptrFirst = ptrGlobal->ptrSolve->GetCurricula(0);
+        }
+
+        TEST_METHOD(ItsNotEmpty)
+        {
+            try
+            {
+                Assert::AreEqual(6, ptrGlobal->ptrSolve->N);
+            }
+            catch (const std::exception& ex)
+            {
+                string str = ex.what();
+                Assert::Fail(wstring(ALL(str)).c_str());
+            }
         }
     };
 
@@ -610,7 +675,7 @@ namespace AnomalTestFSolve
                 sActual += to_string(val.iAmount);
             }
 
-            //Все только основные
+            // Все только основные
             Assert::AreEqual(string("0=4 1=3 2=1"), sActual);
         }
 
@@ -633,9 +698,10 @@ namespace AnomalTestFSolve
 
         TEST_METHOD(AllSumCredits)
         {
-            Assert::AreEqual(10.,
-                ptrFirst->mapETMTypeDisc[ETM_NoExtended]
-                                                        [ETypeDisc::ETD_Total].dCredits);
+            Assert::AreEqual(
+                10.,
+                ptrFirst->mapETMTypeDisc[ETM_NoExtended][ETypeDisc::ETD_Total]
+                    .dCredits);
         }
 
         TEST_METHOD(CountAllowDisc)

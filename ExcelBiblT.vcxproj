@@ -162,7 +162,6 @@
   <ItemGroup>
     <None Include=".clang-format" />
     <None Include=".gitignore" />
-    <None Include="0903010030-21.plm.plx.xlsx" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="adapOutData.cpp" />
