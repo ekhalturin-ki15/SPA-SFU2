@@ -414,7 +414,8 @@ void FAdapOutData::CreateGephiLableCSVData()
                                                                        .first]
                                                         ->mapCourseScore
                                                         .begin()
-                                                        ->first + 1;
+                                                        ->first +
+                                                    1;
                                             }
                                             break;
                                         }
@@ -433,6 +434,19 @@ void FAdapOutData::CreateGephiLableCSVData()
                                             it->mapAllDisc[fNodeName.first]
                                                 ->mapComp,
                                             false);
+                                    break;
+                                case 6:
+                                    if (it->mapAllDisc.count(fNodeName.first))
+                                        fDataContainer =
+                                            int(it->mapAllDisc[fNodeName.first]
+                                                ->mapComp.size());
+                                    break;
+                                case 7:
+                                    if (it->mapAllDisc.count(fNodeName.first))
+                                        fDataContainer =
+                                            fGraph.arrNodeWeight[iRowNum] /
+                                            it->mapAllDisc[fNodeName.first]
+                                                ->mapComp.size();
                                     break;
                             }
 
