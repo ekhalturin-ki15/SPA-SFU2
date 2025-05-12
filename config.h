@@ -40,6 +40,7 @@ struct FTranslateData
 {
     friend struct FConfig;
 
+    // bIsLocal - Требуется ли переводить?
     wstring GetName() const
     {
         return wsName;
@@ -52,23 +53,9 @@ struct FTranslateData
         return arrFlag.at(0);
     }
 
-    /*  bool GetLocal() const
-      {
-          if (arrFlag.size() < 2)
-              throw std::out_of_range("Do not have Total Data \\_/");
-          return arrFlag.at(1);
-      }*/
-
-    /*  bool GetType(EOutType iType) const
-      {
-          if (arrFlag.size() < int(iType))
-              throw std::out_of_range("Do not have Total Data ~_~");
-          return arrFlag.at(int(iType) - 1);
-      }*/
-
 private:
-    wstring           wsName;
-    std::vector<bool> arrFlag;
+    wstring          wsName;
+    std::vector<int> arrFlag;
 };
 
 struct FConfig
@@ -124,32 +111,31 @@ private:
     map<wstring, string*>
         mapStringParamsReadKey;    // Инициализируется в конструкторе
 public:
-
     const string& GetSAllCourses() const
     {
         return sAllCourses;
     }
-    
+
     const string& GetSCurrentCourse() const
     {
         return sCurrentCourse;
     }
-    
+
     const string& GetSCorridorCurricula() const
     {
         return sCorridorCurricula;
     }
-    
+
     const string& GetSSufQuar() const
     {
         return sSufQuar;
     }
-    
+
     const string& GetSSufLableGephiFile() const
     {
         return sSufLableGephiFile;
     }
-    
+
     const string& GetSSufRibGephiFile() const
     {
         return sSufRibGephiFile;
@@ -169,7 +155,7 @@ public:
     {
         return sAltCurricula;
     }
-    
+
     const string& GetSRevCurricula() const
     {
         return sRevCurricula;
@@ -183,7 +169,7 @@ public:
     {
         return sSeparator;
     }
-    
+
     const string& GetSCSVSeparator() const
     {
         return sCSVSeparator;
@@ -210,17 +196,17 @@ public:
     }
     const string GetSNameFileTotalData() const
     {
-        //if (bIsExtension)
-        //    return sNameFileTotalData + XLSX;
-        //else
-            return sNameFileTotalData;
+        // if (bIsExtension)
+        //     return sNameFileTotalData + XLSX;
+        // else
+        return sNameFileTotalData;
     }
     const string GetSNameFileAllLocalData() const
     {
-        //if (bIsExtension)
-        //    return sNameFileLocalData + XLSX;
-        //else
-            return sNameFileAllLocalData;
+        // if (bIsExtension)
+        //     return sNameFileLocalData + XLSX;
+        // else
+        return sNameFileAllLocalData;
     }
     const string& GetSNameFileCompData() const
     {
@@ -289,6 +275,7 @@ private:
     bool bReloadLogFile;
     bool bIsOutCSVDate;
     bool bIsOutFileAllLocalData;
+    bool bIsLocaleData;
     bool bIsOutCorridorCurricula;
     bool bMultiIndicator;
     bool bCompInterDelete;
@@ -339,8 +326,11 @@ public:
     const bool& GetBIsOutFileAllLocalData() const
     {
         return bIsOutFileAllLocalData;
-    } 
-    
+    }
+    const bool& GetBIsLocaleData() const
+    {
+        return bIsLocaleData;
+    }
     const bool& GetBIsOutCorridorCurricula() const
     {
         return bIsOutCorridorCurricula;
@@ -360,8 +350,8 @@ public:
     const bool& GetBOutCompWithName() const
     {
         return bOutCompWithName;
-    } 
-    
+    }
+
     const bool& GetBOutCourseNumWithName() const
     {
         return bOutCourseNumWithName;
@@ -402,7 +392,7 @@ public:
     {
         return bOutTotalInfo;
     }
-    
+
     const bool& GetBOutDataCorridor() const
     {
         return bOutDataCorridor;
@@ -508,16 +498,16 @@ public:
     set<char> setIgnoreCharCompHeader;
 
     vector<vector<int>> arrRegexIndexGroup;    // Нумерование групп
-    vector<bool>   bArrIsSolveGraphMetric;
+    vector<int> bArrIsSolveGraphMetric;
 
     // Объединять ли данные УП с данными графов
-    vector<bool> bArrIsconcatGraphData;
+    vector<int> bArrIsconcatGraphData;
 
 private:
     void InitVectorStringMap();
     map<wstring, pair<vector<string>*, int>>
         mapVectorStringParamsReadKey;    // Инициализируется в конструкторе
-                                          // (значение и размер (ограничение))
+                                         // (значение и размер (ограничение))
     vector<string> arrNameLabelHeader;
     vector<string> arrNameRibHeader;
     vector<string> arrRegexComp;
@@ -535,22 +525,22 @@ public:
     {
         return arrNameRibHeader;
     }
-    
+
     const vector<string>& GetArrRegexComp() const
     {
         return arrRegexComp;
     }
-    
+
     const vector<string>& GetArrRegexHeaderInd() const
     {
         return arrRegexHeaderInd;
     }
-    
+
     const vector<string>& GetArrRegexHeaderComp() const
     {
         return arrRegexHeaderComp;
     }
-    
+
     const vector<string>& GetArrRegexCodeUGSN() const
     {
         return arrRegexCodeUGSN;

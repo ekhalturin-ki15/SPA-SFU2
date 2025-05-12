@@ -2,6 +2,7 @@
 #include "error.h"
 #include "global.h"
 #include "solve.h"
+#include "сurricula.h"
 
 void FSolve::FirstPageAddCompIndicator(const OpenXLSX::XLWorksheet& fSheet,
                                        int iKeyPageNumber)
@@ -59,7 +60,7 @@ void FSolve::FirstPageAddCompIndicator(const OpenXLSX::XLWorksheet& fSheet,
                                               // индекс в строке
                         // Если указан среди перечня компетенций
 
-                        if (arrDisc.back()->fAllComp.count(sData))
+                        if (arrDisc.back()->setAllComp.count(sData))
                         {
                             sLastComp = sData;
                             continue;
@@ -79,7 +80,7 @@ void FSolve::FirstPageAddCompIndicator(const OpenXLSX::XLWorksheet& fSheet,
                                 // компетенция с индикатором ОПК-4.1.1
 
                                 string sReserveData =
-                                    sLastComp.substr(0,sLastComp.find('.'));
+                                    sLastComp.substr(0, sLastComp.find('.'));
 
                                 if (!ptrThis->mapComp.count(sReserveData))
                                 {

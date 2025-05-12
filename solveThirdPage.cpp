@@ -2,6 +2,7 @@
 #include "error.h"
 #include "global.h"
 #include "solve.h"
+#include "сurricula.h"
 
 void FSolve::ThirdPageFindTypePlan(const OpenXLSX::XLWorksheet& fSheet,
                                    int                          iKeyPageNumber)

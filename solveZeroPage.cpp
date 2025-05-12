@@ -2,6 +2,7 @@
 #include "error.h"
 #include "global.h"
 #include "solve.h"
+#include "сurricula.h"
 
 void FSolve::ZeroPageCreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
                                     int                          iKeyPageNumber)
@@ -248,7 +249,7 @@ void FSolve::ZeroPageCreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
                             ptrGlobal->DeleteSpechChars(sCompName);
 
                             ptrNewNode->mapComp[sCompName] = {};
-                            arrDisc.back()->fAllComp.insert(sCompName);
+                            arrDisc.back()->setAllComp.insert(sCompName);
                         }
                         break;
                     }

@@ -52,7 +52,7 @@ private:
                      const string& sData);
 
     string         sOutPath;
-    vector<bool>   arrIsOutCorridor;
+    vector<int>   arrIsOutCorridor;
     vector<string> arrNameCorridor;
 
 private:

@@ -1,0 +1,1480 @@
+
+4074 4515
+0103040030_op-21.plm.plx.xlsx
+Cluster coef
+0.902326
+
+438 499
+0103040030_op-21.plm.plx.xlsx
+Cluster coef
+0.877756
+
+18 38
+0103040030_op-21.plm.plx.xlsx
+Cluster coef
+0.473684
+
+105 105
+0103040030_op-21.plm.plx.xlsx
+Cluster coef
+1
+
+171 171
+0103040030_op-21.plm.plx.xlsx
+Cluster coef
+1
+
+138 162
+0103040030_op-21.plm.plx.xlsx
+Cluster coef
+0.851852
+
+24 41
+0103040030_op-21.plm.plx.xlsx
+Cluster coef
+0.585366
+
+183 220
+0104020007_op-20.plm.plx.xlsx
+Cluster coef
+0.831818
+
+69 89
+0104020007_op-20.plm.plx.xlsx
+Cluster coef
+0.775281
+
+180 244
+0104020007_op-20.plm.plx.xlsx
+Cluster coef
+0.737705
+
+60 65
+0104020007_op-20.plm.plx.xlsx
+Cluster coef
+0.923077
+
+9 15
+0104020007_op-20.plm.plx.xlsx
+Cluster coef
+0.6
+
+837 1083
+0104020009_OP-20.plm.plx.xlsx
+Cluster coef
+0.772853
+
+183 239
+0104020009_OP-20.plm.plx.xlsx
+Cluster coef
+0.76569
+
+189 266
+0104020009_OP-20.plm.plx.xlsx
+Cluster coef
+0.710526
+
+114 161
+0104020009_OP-20.plm.plx.xlsx
+Cluster coef
+0.708075
+
+69 78
+0104020009_OP-20.plm.plx.xlsx
+Cluster coef
+0.884615
+
+837 1083
+0104020009_OP-21.plm.plx.xlsx
+Cluster coef
+0.772853
+
+183 239
+0104020009_OP-21.plm.plx.xlsx
+Cluster coef
+0.76569
+
+189 266
+0104020009_OP-21.plm.plx.xlsx
+Cluster coef
+0.710526
+
+114 161
+0104020009_OP-21.plm.plx.xlsx
+Cluster coef
+0.708075
+
+69 78
+0104020009_OP-21.plm.plx.xlsx
+Cluster coef
+0.884615
+
+1383 2148
+0903010030_op-21.plm.plx.xlsx
+Cluster coef
+0.643855
+
+153 244
+0903010030_op-21.plm.plx.xlsx
+Cluster coef
+0.627049
+
+75 138
+0903010030_op-21.plm.plx.xlsx
+Cluster coef
+0.543478
+
+33 41
+0903010030_op-21.plm.plx.xlsx
+Cluster coef
+0.804878
+
+54 82
+0903010030_op-21.plm.plx.xlsx
+Cluster coef
+0.658537
+
+27 44
+0903010030_op-21.plm.plx.xlsx
+Cluster coef
+0.613636
+
+39 61
+0903010030_op-21.plm.plx.xlsx
+Cluster coef
+0.639344
+
+2244 2438
+0903020030_op-21.plm.plx.xlsx
+Cluster coef
+0.920427
+
+249 256
+0903020030_op-21.plm.plx.xlsx
+Cluster coef
+0.972656
+
+15 34
+0903020030_op-21.plm.plx.xlsx
+Cluster coef
+0.441176
+
+12 12
+0903020030_op-21.plm.plx.xlsx
+Cluster coef
+1
+
+9 15
+0903020030_op-21.plm.plx.xlsx
+Cluster coef
+0.6
+
+168 168
+0903020030_op-21.plm.plx.xlsx
+Cluster coef
+1
+
+60 60
+0903020030_op-21.plm.plx.xlsx
+Cluster coef
+1
+
+1971 3043
+0903020031_OP-23.plm.plx.xlsx
+Cluster coef
+0.647716
+
+165 259
+0903020031_OP-23.plm.plx.xlsx
+Cluster coef
+0.637066
+
+42 92
+0903020031_OP-23.plm.plx.xlsx
+Cluster coef
+0.456522
+
+45 61
+0903020031_OP-23.plm.plx.xlsx
+Cluster coef
+0.737705
+
+36 56
+0903020031_OP-23.plm.plx.xlsx
+Cluster coef
+0.642857
+
+75 118
+0903020031_OP-23.plm.plx.xlsx
+Cluster coef
+0.635593
+
+9 17
+0903020031_OP-23.plm.plx.xlsx
+Cluster coef
+0.529412
+
+222 364
+0903030031_OP-21.plm.plx.xlsx
+Cluster coef
+0.60989
+
+81 114
+0903030031_OP-21.plm.plx.xlsx
+Cluster coef
+0.710526
+
+18 55
+0903030031_OP-21.plm.plx.xlsx
+Cluster coef
+0.327273
+
+0 1
+0903030031_OP-21.plm.plx.xlsx
+Cluster coef
+0
+
+6 9
+0903030031_OP-21.plm.plx.xlsx
+Cluster coef
+0.666667
+
+72 88
+0903030031_OP-21.plm.plx.xlsx
+Cluster coef
+0.818182
+
+3 10
+0903030031_OP-21.plm.plx.xlsx
+Cluster coef
+0.3
+
+267 491
+0903030032_OP-20.plm.plx.xlsx
+Cluster coef
+0.543788
+
+42 72
+0903030032_OP-20.plm.plx.xlsx
+Cluster coef
+0.583333
+
+27 97
+0903030032_OP-20.plm.plx.xlsx
+Cluster coef
+0.278351
+
+0 1
+0903030032_OP-20.plm.plx.xlsx
+Cluster coef
+0
+
+6 9
+0903030032_OP-20.plm.plx.xlsx
+Cluster coef
+0.666667
+
+21 39
+0903030032_OP-20.plm.plx.xlsx
+Cluster coef
+0.538462
+
+15 19
+0903030032_OP-20.plm.plx.xlsx
+Cluster coef
+0.789474
+
+261 426
+0903030033_OP-21.plm.plx.xlsx
+Cluster coef
+0.612676
+
+54 92
+0903030033_OP-21.plm.plx.xlsx
+Cluster coef
+0.586957
+
+12 53
+0903030033_OP-21.plm.plx.xlsx
+Cluster coef
+0.226415
+
+3 9
+0903030033_OP-21.plm.plx.xlsx
+Cluster coef
+0.333333
+
+6 9
+0903030033_OP-21.plm.plx.xlsx
+Cluster coef
+0.666667
+
+42 58
+0903030033_OP-21.plm.plx.xlsx
+Cluster coef
+0.724138
+
+3 9
+0903030033_OP-21.plm.plx.xlsx
+Cluster coef
+0.333333
+
+888 1413
+0903030035_OP-21.plm.plx.xlsx
+Cluster coef
+0.62845
+
+150 232
+0903030035_OP-21.plm.plx.xlsx
+Cluster coef
+0.646552
+
+87 214
+0903030035_OP-21.plm.plx.xlsx
+Cluster coef
+0.406542
+
+0 1
+0903030035_OP-21.plm.plx.xlsx
+Cluster coef
+0
+
+6 9
+0903030035_OP-21.plm.plx.xlsx
+Cluster coef
+0.666667
+
+99 152
+0903030035_OP-21.plm.plx.xlsx
+Cluster coef
+0.651316
+
+45 66
+0903030035_OP-21.plm.plx.xlsx
+Cluster coef
+0.681818
+
+378 418
+0903040030_op-21.plm.plx.xlsx
+Cluster coef
+0.904306
+
+30 42
+0903040030_op-21.plm.plx.xlsx
+Cluster coef
+0.714286
+
+87 116
+0903040030_op-21.plm.plx.xlsx
+Cluster coef
+0.75
+
+12 15
+0903040030_op-21.plm.plx.xlsx
+Cluster coef
+0.8
+
+3 3
+0903040030_op-21.plm.plx.xlsx
+Cluster coef
+1
+
+15 18
+0903040030_op-21.plm.plx.xlsx
+Cluster coef
+0.833333
+
+0 0
+0903040030_op-21.plm.plx.xlsx
+Cluster coef
+-20000
+
+27 45
+0904010001_OP-20.plm.plx.xlsx
+Cluster coef
+0.6
+
+9 20
+0904010001_OP-20.plm.plx.xlsx
+Cluster coef
+0.45
+
+15 31
+0904010001_OP-20.plm.plx.xlsx
+Cluster coef
+0.483871
+
+9 13
+0904010001_OP-20.plm.plx.xlsx
+Cluster coef
+0.692308
+
+0 2
+0904010001_OP-20.plm.plx.xlsx
+Cluster coef
+0
+
+27 45
+0904010001_OP-21.plm.plx.xlsx
+Cluster coef
+0.6
+
+9 20
+0904010001_OP-21.plm.plx.xlsx
+Cluster coef
+0.45
+
+15 31
+0904010001_OP-21.plm.plx.xlsx
+Cluster coef
+0.483871
+
+9 13
+0904010001_OP-21.plm.plx.xlsx
+Cluster coef
+0.692308
+
+0 2
+0904010001_OP-21.plm.plx.xlsx
+Cluster coef
+0
+
+66 114
+0904010003_OP-20.plm.plx.xlsx
+Cluster coef
+0.578947
+
+30 46
+0904010003_OP-20.plm.plx.xlsx
+Cluster coef
+0.652174
+
+18 41
+0904010003_OP-20.plm.plx.xlsx
+Cluster coef
+0.439024
+
+9 14
+0904010003_OP-20.plm.plx.xlsx
+Cluster coef
+0.642857
+
+21 24
+0904010003_OP-20.plm.plx.xlsx
+Cluster coef
+0.875
+
+66 114
+0904010003_OP-21.plm.plx.xlsx
+Cluster coef
+0.578947
+
+30 46
+0904010003_OP-21.plm.plx.xlsx
+Cluster coef
+0.652174
+
+18 41
+0904010003_OP-21.plm.plx.xlsx
+Cluster coef
+0.439024
+
+9 14
+0904010003_OP-21.plm.plx.xlsx
+Cluster coef
+0.642857
+
+21 24
+0904010003_OP-21.plm.plx.xlsx
+Cluster coef
+0.875
+
+66 112
+0904010004_OP-20.plm.plx.xlsx
+Cluster coef
+0.589286
+
+24 45
+0904010004_OP-20.plm.plx.xlsx
+Cluster coef
+0.533333
+
+39 68
+0904010004_OP-20.plm.plx.xlsx
+Cluster coef
+0.573529
+
+12 18
+0904010004_OP-20.plm.plx.xlsx
+Cluster coef
+0.666667
+
+12 21
+0904010004_OP-20.plm.plx.xlsx
+Cluster coef
+0.571429
+
+66 112
+0904010004_OP-21.plm.plx.xlsx
+Cluster coef
+0.589286
+
+24 45
+0904010004_OP-21.plm.plx.xlsx
+Cluster coef
+0.533333
+
+39 68
+0904010004_OP-21.plm.plx.xlsx
+Cluster coef
+0.573529
+
+12 18
+0904010004_OP-21.plm.plx.xlsx
+Cluster coef
+0.666667
+
+12 21
+0904010004_OP-21.plm.plx.xlsx
+Cluster coef
+0.571429
+
+33 70
+0904010006_OP-20.plm.plx.xlsx
+Cluster coef
+0.471429
+
+18 37
+0904010006_OP-20.plm.plx.xlsx
+Cluster coef
+0.486486
+
+18 41
+0904010006_OP-20.plm.plx.xlsx
+Cluster coef
+0.439024
+
+15 21
+0904010006_OP-20.plm.plx.xlsx
+Cluster coef
+0.714286
+
+3 9
+0904010006_OP-20.plm.plx.xlsx
+Cluster coef
+0.333333
+
+99 155
+0904010010_OP-20.plm.plx.xlsx
+Cluster coef
+0.63871
+
+30 53
+0904010010_OP-20.plm.plx.xlsx
+Cluster coef
+0.566038
+
+12 35
+0904010010_OP-20.plm.plx.xlsx
+Cluster coef
+0.342857
+
+18 25
+0904010010_OP-20.plm.plx.xlsx
+Cluster coef
+0.72
+
+12 18
+0904010010_OP-20.plm.plx.xlsx
+Cluster coef
+0.666667
+
+99 155
+0904010010_OP-21.plm.plx.xlsx
+Cluster coef
+0.63871
+
+30 53
+0904010010_OP-21.plm.plx.xlsx
+Cluster coef
+0.566038
+
+12 35
+0904010010_OP-21.plm.plx.xlsx
+Cluster coef
+0.342857
+
+18 25
+0904010010_OP-21.plm.plx.xlsx
+Cluster coef
+0.72
+
+12 18
+0904010010_OP-21.plm.plx.xlsx
+Cluster coef
+0.666667
+
+78 118
+0904010011_OP-21.plm.plx.xlsx
+Cluster coef
+0.661017
+
+36 57
+0904010011_OP-21.plm.plx.xlsx
+Cluster coef
+0.631579
+
+27 47
+0904010011_OP-21.plm.plx.xlsx
+Cluster coef
+0.574468
+
+30 37
+0904010011_OP-21.plm.plx.xlsx
+Cluster coef
+0.810811
+
+6 12
+0904010011_OP-21.plm.plx.xlsx
+Cluster coef
+0.5
+
+111 142
+0904010012_OP-21.plm.plx.xlsx
+Cluster coef
+0.78169
+
+51 72
+0904010012_OP-21.plm.plx.xlsx
+Cluster coef
+0.708333
+
+36 72
+0904010012_OP-21.plm.plx.xlsx
+Cluster coef
+0.5
+
+18 25
+0904010012_OP-21.plm.plx.xlsx
+Cluster coef
+0.72
+
+33 35
+0904010012_OP-21.plm.plx.xlsx
+Cluster coef
+0.942857
+
+33 41
+0904020001_OP-20.plm.plx.xlsx
+Cluster coef
+0.804878
+
+18 27
+0904020001_OP-20.plm.plx.xlsx
+Cluster coef
+0.666667
+
+0 4
+0904020001_OP-20.plm.plx.xlsx
+Cluster coef
+0
+
+18 22
+0904020001_OP-20.plm.plx.xlsx
+Cluster coef
+0.818182
+
+0 0
+0904020001_OP-20.plm.plx.xlsx
+Cluster coef
+-20000
+
+33 41
+0904020001_OP-21.plm.plx.xlsx
+Cluster coef
+0.804878
+
+18 27
+0904020001_OP-21.plm.plx.xlsx
+Cluster coef
+0.666667
+
+0 4
+0904020001_OP-21.plm.plx.xlsx
+Cluster coef
+0
+
+18 22
+0904020001_OP-21.plm.plx.xlsx
+Cluster coef
+0.818182
+
+0 0
+0904020001_OP-21.plm.plx.xlsx
+Cluster coef
+-20000
+
+42 73
+0904020002_OP-20.plm.plx.xlsx
+Cluster coef
+0.575342
+
+12 25
+0904020002_OP-20.plm.plx.xlsx
+Cluster coef
+0.48
+
+6 24
+0904020002_OP-20.plm.plx.xlsx
+Cluster coef
+0.25
+
+12 20
+0904020002_OP-20.plm.plx.xlsx
+Cluster coef
+0.6
+
+0 1
+0904020002_OP-20.plm.plx.xlsx
+Cluster coef
+0
+
+42 73
+0904020002_OP-21.plm.plx.xlsx
+Cluster coef
+0.575342
+
+12 25
+0904020002_OP-21.plm.plx.xlsx
+Cluster coef
+0.48
+
+6 24
+0904020002_OP-21.plm.plx.xlsx
+Cluster coef
+0.25
+
+12 20
+0904020002_OP-21.plm.plx.xlsx
+Cluster coef
+0.6
+
+0 1
+0904020002_OP-21.plm.plx.xlsx
+Cluster coef
+0
+
+36 49
+0904020003_OP-20.plm.plx.xlsx
+Cluster coef
+0.734694
+
+12 14
+0904020003_OP-20.plm.plx.xlsx
+Cluster coef
+0.857143
+
+0 4
+0904020003_OP-20.plm.plx.xlsx
+Cluster coef
+0
+
+12 13
+0904020003_OP-20.plm.plx.xlsx
+Cluster coef
+0.923077
+
+0 0
+0904020003_OP-20.plm.plx.xlsx
+Cluster coef
+-20000
+
+36 49
+0904020003_OP-21.plm.plx.xlsx
+Cluster coef
+0.734694
+
+12 14
+0904020003_OP-21.plm.plx.xlsx
+Cluster coef
+0.857143
+
+0 4
+0904020003_OP-21.plm.plx.xlsx
+Cluster coef
+0
+
+12 13
+0904020003_OP-21.plm.plx.xlsx
+Cluster coef
+0.923077
+
+0 0
+0904020003_OP-21.plm.plx.xlsx
+Cluster coef
+-20000
+
+24 33
+0904020004_OP-20.plm.plx.xlsx
+Cluster coef
+0.727273
+
+3 8
+0904020004_OP-20.plm.plx.xlsx
+Cluster coef
+0.375
+
+0 4
+0904020004_OP-20.plm.plx.xlsx
+Cluster coef
+0
+
+3 7
+0904020004_OP-20.plm.plx.xlsx
+Cluster coef
+0.428571
+
+0 0
+0904020004_OP-20.plm.plx.xlsx
+Cluster coef
+-20000
+
+24 33
+0904020004_OP-21.plm.plx.xlsx
+Cluster coef
+0.727273
+
+3 8
+0904020004_OP-21.plm.plx.xlsx
+Cluster coef
+0.375
+
+0 4
+0904020004_OP-21.plm.plx.xlsx
+Cluster coef
+0
+
+3 7
+0904020004_OP-21.plm.plx.xlsx
+Cluster coef
+0.428571
+
+0 0
+0904020004_OP-21.plm.plx.xlsx
+Cluster coef
+-20000
+
+21 35
+0904020005_OP-20.plm.plx.xlsx
+Cluster coef
+0.6
+
+9 18
+0904020005_OP-20.plm.plx.xlsx
+Cluster coef
+0.5
+
+0 4
+0904020005_OP-20.plm.plx.xlsx
+Cluster coef
+0
+
+9 14
+0904020005_OP-20.plm.plx.xlsx
+Cluster coef
+0.642857
+
+0 0
+0904020005_OP-20.plm.plx.xlsx
+Cluster coef
+-20000
+
+21 35
+0904020005_OP-21.plm.plx.xlsx
+Cluster coef
+0.6
+
+9 18
+0904020005_OP-21.plm.plx.xlsx
+Cluster coef
+0.5
+
+0 4
+0904020005_OP-21.plm.plx.xlsx
+Cluster coef
+0
+
+9 14
+0904020005_OP-21.plm.plx.xlsx
+Cluster coef
+0.642857
+
+0 0
+0904020005_OP-21.plm.plx.xlsx
+Cluster coef
+-20000
+
+15 31
+0904020006_OP-20.plm.plx.xlsx
+Cluster coef
+0.483871
+
+9 22
+0904020006_OP-20.plm.plx.xlsx
+Cluster coef
+0.409091
+
+0 5
+0904020006_OP-20.plm.plx.xlsx
+Cluster coef
+0
+
+9 18
+0904020006_OP-20.plm.plx.xlsx
+Cluster coef
+0.5
+
+0 0
+0904020006_OP-20.plm.plx.xlsx
+Cluster coef
+-20000
+
+15 31
+0904020006_OP-21.plm.plx.xlsx
+Cluster coef
+0.483871
+
+9 22
+0904020006_OP-21.plm.plx.xlsx
+Cluster coef
+0.409091
+
+0 5
+0904020006_OP-21.plm.plx.xlsx
+Cluster coef
+0
+
+9 18
+0904020006_OP-21.plm.plx.xlsx
+Cluster coef
+0.5
+
+0 0
+0904020006_OP-21.plm.plx.xlsx
+Cluster coef
+-20000
+
+30 48
+0904040001_OP-20.plm.plx.xlsx
+Cluster coef
+0.625
+
+3 9
+0904040001_OP-20.plm.plx.xlsx
+Cluster coef
+0.333333
+
+114 150
+0904040001_OP-20.plm.plx.xlsx
+Cluster coef
+0.76
+
+3 8
+0904040001_OP-20.plm.plx.xlsx
+Cluster coef
+0.375
+
+0 0
+0904040001_OP-20.plm.plx.xlsx
+Cluster coef
+-20000
+
+6 20
+0904040002_OP-20.plm.plx.xlsx
+Cluster coef
+0.3
+
+0 5
+0904040002_OP-20.plm.plx.xlsx
+Cluster coef
+0
+
+69 85
+0904040002_OP-20.plm.plx.xlsx
+Cluster coef
+0.811765
+
+0 4
+0904040002_OP-20.plm.plx.xlsx
+Cluster coef
+0
+
+0 1
+0904040002_OP-20.plm.plx.xlsx
+Cluster coef
+0
+
+6 20
+0904040002_OP-21.plm.plx.xlsx
+Cluster coef
+0.3
+
+0 5
+0904040002_OP-21.plm.plx.xlsx
+Cluster coef
+0
+
+69 85
+0904040002_OP-21.plm.plx.xlsx
+Cluster coef
+0.811765
+
+0 4
+0904040002_OP-21.plm.plx.xlsx
+Cluster coef
+0
+
+0 1
+0904040002_OP-21.plm.plx.xlsx
+Cluster coef
+0
+
+18 34
+0904040003_OP-21.plm.plx.xlsx
+Cluster coef
+0.529412
+
+3 14
+0904040003_OP-21.plm.plx.xlsx
+Cluster coef
+0.214286
+
+15 28
+0904040003_OP-21.plm.plx.xlsx
+Cluster coef
+0.535714
+
+0 5
+0904040003_OP-21.plm.plx.xlsx
+Cluster coef
+0
+
+3 5
+0904040003_OP-21.plm.plx.xlsx
+Cluster coef
+0.6
+
+762 986
+09_03_02_FR_IPTIP_2022.plx.xlsx
+Cluster coef
+0.772819
+
+129 205
+09_03_02_FR_IPTIP_2022.plx.xlsx
+Cluster coef
+0.629268
+
+87 124
+09_03_02_FR_IPTIP_2022.plx.xlsx
+Cluster coef
+0.701613
+
+21 26
+09_03_02_FR_IPTIP_2022.plx.xlsx
+Cluster coef
+0.807692
+
+27 31
+09_03_02_FR_IPTIP_2022.plx.xlsx
+Cluster coef
+0.870968
+
+75 100
+09_03_02_FR_IPTIP_2022.plx.xlsx
+Cluster coef
+0.75
+
+6 6
+09_03_02_FR_IPTIP_2022.plx.xlsx
+Cluster coef
+1
+
+57 72
+09_04_02_SP_IPTIP_2022.plx.xlsx
+Cluster coef
+0.791667
+
+18 40
+09_04_02_SP_IPTIP_2022.plx.xlsx
+Cluster coef
+0.45
+
+33 42
+09_04_02_SP_IPTIP_2022.plx.xlsx
+Cluster coef
+0.785714
+
+18 24
+09_04_02_SP_IPTIP_2022.plx.xlsx
+Cluster coef
+0.75
+
+0 1
+09_04_02_SP_IPTIP_2022.plx.xlsx
+Cluster coef
+0
+
+1119 1355
+1003010031_op-21.plm.plx.xlsx
+Cluster coef
+0.82583
+
+123 141
+1003010031_op-21.plm.plx.xlsx
+Cluster coef
+0.87234
+
+192 251
+1003010031_op-21.plm.plx.xlsx
+Cluster coef
+0.76494
+
+12 13
+1003010031_op-21.plm.plx.xlsx
+Cluster coef
+0.923077
+
+0 3
+1003010031_op-21.plm.plx.xlsx
+Cluster coef
+0
+
+6 9
+1003010031_op-21.plm.plx.xlsx
+Cluster coef
+0.666667
+
+105 105
+1003010031_op-21.plm.plx.xlsx
+Cluster coef
+1
+
+1404 1525
+1005010034_OP-21.pli.plx.xlsx
+Cluster coef
+0.920656
+
+87 119
+1005010034_OP-21.pli.plx.xlsx
+Cluster coef
+0.731092
+
+24 48
+1005010034_OP-21.pli.plx.xlsx
+Cluster coef
+0.5
+
+15 15
+1005010034_OP-21.pli.plx.xlsx
+Cluster coef
+1
+
+30 30
+1005010034_OP-21.pli.plx.xlsx
+Cluster coef
+1
+
+18 28
+1005010034_OP-21.pli.plx.xlsx
+Cluster coef
+0.642857
+
+3 3
+1005010034_OP-21.pli.plx.xlsx
+Cluster coef
+1
+
+21 25
+1005010034_OP-21.pli.plx.xlsx
+Cluster coef
+0.84
+
+0 0
+1005010034_OP-21.pli.plx.xlsx
+Cluster coef
+-20000
+
+1917 2376
+1005030035_OP-21.pli.plx.xlsx
+Cluster coef
+0.806818
+
+126 160
+1005030035_OP-21.pli.plx.xlsx
+Cluster coef
+0.7875
+
+126 224
+1005030035_OP-21.pli.plx.xlsx
+Cluster coef
+0.5625
+
+15 20
+1005030035_OP-21.pli.plx.xlsx
+Cluster coef
+0.75
+
+30 30
+1005030035_OP-21.pli.plx.xlsx
+Cluster coef
+1
+
+12 12
+1005030035_OP-21.pli.plx.xlsx
+Cluster coef
+1
+
+6 9
+1005030035_OP-21.pli.plx.xlsx
+Cluster coef
+0.666667
+
+63 70
+1005030035_OP-21.pli.plx.xlsx
+Cluster coef
+0.9
+
+0 0
+1005030035_OP-21.pli.plx.xlsx
+Cluster coef
+-20000
+
+13419 17091
+1503040000_op-21.plm.plx.xlsx
+Cluster coef
+0.78515
+
+1215 1540
+1503040000_op-21.plm.plx.xlsx
+Cluster coef
+0.788961
+
+999 1424
+1503040000_op-21.plm.plx.xlsx
+Cluster coef
+0.701545
+
+177 193
+1503040000_op-21.plm.plx.xlsx
+Cluster coef
+0.917098
+
+186 236
+1503040000_op-21.plm.plx.xlsx
+Cluster coef
+0.788136
+
+504 619
+1503040000_op-21.plm.plx.xlsx
+Cluster coef
+0.814216
+
+348 416
+1503040000_op-21.plm.plx.xlsx
+Cluster coef
+0.836538
+
+822 1220
+2703030030_op-21.plm.plx.xlsx
+Cluster coef
+0.67377
+
+150 235
+2703030030_op-21.plm.plx.xlsx
+Cluster coef
+0.638298
+
+261 404
+2703030030_op-21.plm.plx.xlsx
+Cluster coef
+0.64604
+
+30 34
+2703030030_op-21.plm.plx.xlsx
+Cluster coef
+0.882353
+
+12 15
+2703030030_op-21.plm.plx.xlsx
+Cluster coef
+0.8
+
+27 52
+2703030030_op-21.plm.plx.xlsx
+Cluster coef
+0.519231
+
+81 104
+2703030030_op-21.plm.plx.xlsx
+Cluster coef
+0.778846
+
+177 273
+2703040030_op-21.plm.plx.xlsx
+Cluster coef
+0.648352
+
+30 63
+2703040030_op-21.plm.plx.xlsx
+Cluster coef
+0.47619
+
+12 39
+2703040030_op-21.plm.plx.xlsx
+Cluster coef
+0.307692
+
+12 12
+2703040030_op-21.plm.plx.xlsx
+Cluster coef
+1
+
+6 10
+2703040030_op-21.plm.plx.xlsx
+Cluster coef
+0.6
+
+9 20
+2703040030_op-21.plm.plx.xlsx
+Cluster coef
+0.45
+
+3 8
+2703040030_op-21.plm.plx.xlsx
+Cluster coef
+0.375
+
+2049 2490
+2704030006_op-20.plm.plx.xlsx
+Cluster coef
+0.822892
+
+912 1152
+2704030006_op-20.plm.plx.xlsx
+Cluster coef
+0.791667
+
+462 515
+2704030006_op-20.plm.plx.xlsx
+Cluster coef
+0.897087
+
+828 988
+2704030006_op-20.plm.plx.xlsx
+Cluster coef
+0.838057
+
+84 107
+2704030006_op-20.plm.plx.xlsx
+Cluster coef
+0.785047
+
+2559 2994
+2704030006_OP-21.plm..plx.xlsx
+Cluster coef
+0.854709
+
+1119 1416
+2704030006_OP-21.plm..plx.xlsx
+Cluster coef
+0.790254
+
+624 866
+2704030006_OP-21.plm..plx.xlsx
+Cluster coef
+0.720554
+
+948 1164
+2704030006_OP-21.plm..plx.xlsx
+Cluster coef
+0.814433
+
+171 185
+2704030006_OP-21.plm..plx.xlsx
+Cluster coef
+0.924324
+
+1344 1584
+2704040001_OP-20.plm.plx.xlsx
+Cluster coef
+0.848485
+
+663 836
+2704040001_OP-20.plm.plx.xlsx
+Cluster coef
+0.793062
+
+2730 2957
+2704040001_OP-20.plm.plx.xlsx
+Cluster coef
+0.923233
+
+648 790
+2704040001_OP-20.plm.plx.xlsx
+Cluster coef
+0.820253
+
+15 19
+2704040001_OP-20.plm.plx.xlsx
+Cluster coef
+0.789474
+
+2031 2244
+2704040004_OP-20.plm.plx.xlsx
+Cluster coef
+0.90508
+
+1068 1244
+2704040004_OP-20.plm.plx.xlsx
+Cluster coef
+0.858521
+
+2022 2416
+2704040004_OP-20.plm.plx.xlsx
+Cluster coef
+0.836921
+
+1047 1192
+2704040004_OP-20.plm.plx.xlsx
+Cluster coef
+0.878356
+
+21 24
+2704040004_OP-20.plm.plx.xlsx
+Cluster coef
+0.875
+
+195 360
+2704040005_OP-21.plm.plx.xlsx
+Cluster coef
+0.541667
+
+57 138
+2704040005_OP-21.plm.plx.xlsx
+Cluster coef
+0.413043
+
+309 500
+2704040005_OP-21.plm.plx.xlsx
+Cluster coef
+0.618
+
+39 80
+2704040005_OP-21.plm.plx.xlsx
+Cluster coef
+0.4875
+
+18 34
+2704040005_OP-21.plm.plx.xlsx
+Cluster coef
+0.529412

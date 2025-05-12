@@ -23,7 +23,7 @@ struct FTableData
 struct FDataType
 {
     vector<string> arrHeader;
-    vector<bool>   arrIsOut;
+    vector<int>   arrIsOut;
 
     vector<string> arrType;
 

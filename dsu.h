@@ -8,12 +8,12 @@ using namespace std;
 // Система непересекающихся множеств, своя реализация
 // (https://github.com/ekhalturin-ki15/Kata)
 template<typename T>
-struct True_DSU
+struct DSU
 {
 public:
-    True_DSU() = delete;
+    DSU() = delete;
 
-    True_DSU(int _n) : n { _n }
+    DSU(int _n) : n { _n }
     {
         count = n;
         rank.assign(n, 0);

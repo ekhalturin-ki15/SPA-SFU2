@@ -400,7 +400,7 @@ void FGraph::GenerateReverseGraph()
     FTypeGraph& fGraph = mapGraph[ETypeGraph::ETG_Reverse];
 
     int i = -1;
-    for (const auto& sKeyIt : ptrTree->fAllComp)
+    for (const auto& sKeyIt : ptrTree->setAllComp)
     {
         ++i;
         wstring wsKeyIt = ptrTree->ptrGlobal->ConwertToWstring(sKeyIt);
@@ -1022,7 +1022,7 @@ void FGraph::CalculateMST(double&                                  dResult,
     }
     sort(ALL(q), cmp);
 
-    True_DSU<int> fDSU(N);
+    DSU<int> fDSU(N);
 
     for (const auto& it : q)
     {

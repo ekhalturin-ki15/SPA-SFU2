@@ -54,10 +54,10 @@ FAdapOutData::FAdapOutData(shared_ptr<FGlobal> _ptrGlobal)
       arrOriginCompTreeHeader(
           { L"Название УП", L"За какой курс",
 
-            L"Заголовок компетенции", L"ЗЕ Заголовка компетенции",
-            L"Кол-во дисциплин заголовка компетенции",
+            L"Группа компетенции", L"ЗЕ группы компетенции",
+            L"Кол-во дисциплин группы компетенции",
 
-            L"Процент распределения Заголовка компетенции",
+            L"Процент распределения группы компетенции",
 
             L"Компетенция", L"Полное название компетенции", L"ЗЕ Компетенций",
             L"Кол-во дисциплин компетенции",
@@ -633,7 +633,7 @@ void FAdapOutData::QuartileHeaderCreate(FDataType&             fData,
                                         const vector<wstring>& arrQuartileHead)
 {
     vector<string>& arrHeader = fData.arrHeader;
-    vector<bool>&   arrIsOut  = fData.arrIsOut;
+    vector<int>&   arrIsOut  = fData.arrIsOut;
 
     for (int i = 1; i <= arrQuartileHead.size(); ++i)
     {
@@ -647,8 +647,10 @@ void FAdapOutData::QuartileHeaderCreate(FDataType&             fData,
             // Последний квартиль отвечает за вывод отсутствующих путей
             if (iAmountQuartile > ptrGlobal->ptrConfig->GetIAmountQuar())
             {
-                arrHeader.push_back(
-                    "No" + ptrGlobal->ptrConfig->GetSSeparator() + "Path");
+                wstring wsNoPath = L"Нет пути между вершинами";
+                arrHeader.push_back(ptrGlobal->ConwertToString(
+                    ptrGlobal->ptrConfig->mapArrOutParams[wsNoPath].GetName()));
+                //"No" + ptrGlobal->ptrConfig->GetSSeparator() + "Path");
 
                 arrIsOut.push_back(
                     ptrGlobal->ptrConfig->mapArrOutParams[wsPref].GetTotal());
@@ -676,7 +678,7 @@ void FAdapOutData::QuartileHeaderCreate(FDataType&             fData,
 void FAdapOutData::CompHeaderCreate(FDataType& fData)
 {
     vector<string>& arrHeader = fData.arrHeader;
-    vector<bool>&   arrIsOut  = fData.arrIsOut;
+    vector<int>&   arrIsOut  = fData.arrIsOut;
 
     wstring wsNameSoMachComp =
         L"Количество дисциплин, формирующих несколько компетенций";

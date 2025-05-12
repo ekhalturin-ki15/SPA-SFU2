@@ -98,7 +98,7 @@ void FGlobal::TakeData(vector<wstring>&       outArrData,
             throw std::out_of_range("No equeal " + to_string(i));
 }
 
-void FGlobal::TakeData(vector<bool>& outArrData,
+void FGlobal::TakeData(vector<int>& outArrData,
     const OpenXLSX::XLRow& row,
     int                    iSize)
 {

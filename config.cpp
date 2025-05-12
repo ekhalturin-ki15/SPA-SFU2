@@ -152,7 +152,12 @@ void FConfig::InitBoolMap()
 {
     mapBoolParamsReadKey[L"Создать новый каталог"]       = &bCreateFolder;
     mapBoolParamsReadKey[L"Компактный вывод результата"] = &bCompactOutput;
-    // mapBoolParamsReadKey[L"Выводить графы по курсам"]    = &bCourseOutput;
+    mapBoolParamsReadKey[L"Перезаписывать лог файл"] = &bReloadLogFile;
+    mapBoolParamsReadKey[L"Вывод доп файлов csv"]    = &bIsOutCSVDate;
+    mapBoolParamsReadKey
+        [L"Вывод файла общей локальной статистики по конкретному УП"] =
+            &bIsOutFileAllLocalData;
+
     mapBoolParamsReadKey[L"Если у предмета несколько групп компетенций, "
                          L"учитывать пересечение дважды (для 100% суммы)"] =
         &bCompInterDelete;
@@ -178,11 +183,8 @@ void FConfig::InitBoolMap()
         &bIsIgnoreTreeInd;
 
     mapBoolParamsReadKey[L"Граф неориентированный"]  = &bIsUnDirected;
-    mapBoolParamsReadKey[L"Перезаписывать лог файл"] = &bReloadLogFile;
-    mapBoolParamsReadKey[L"Вывод доп файлов csv"]    = &bIsOutCSVDate;
-    mapBoolParamsReadKey
-        [L"Вывод файла общей локальной статистики по конкретному УП"] =
-            &bIsOutFileAllLocalData;
+    
+    mapBoolParamsReadKey[L"Переводить на латиницу"] = &bIsLocaleData;
 
     mapBoolParamsReadKey[L"Выводить УП мер центральной тенденции"] =
         &bIsOutCorridorCurricula;
@@ -193,7 +195,6 @@ void FConfig::InitBoolMap()
         &bOutAllInfoWithoutTag;
 
     mapBoolParamsReadKey[L"Выводить компетенции с 0 ЗЕ"] = &bOutEmptyComp;
-    // mapBoolParamsReadKey[L"Выводить итоговую статистику"] = &bOutTotalInfo;
 
     mapBoolParamsReadKey[L"Выводить меры центральной тенденции"] =
         &bOutDataCorridor;
@@ -628,7 +629,15 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
                                     // выводить
                     {
                         auto& it  = mapAddOutParams[key];
-                        it.wsName = val.at(0);
+
+                        if (GetBIsLocaleData())
+                        {
+                            it.wsName = val.at(0);
+                        }
+                        else
+                        {
+                            it.wsName = key;
+                        }
 
                         for (int k = 1; k < val.size(); ++k)
                         {
@@ -657,8 +666,16 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
                                  ptrGlobal->ConwertToString(wsNamePage)),
                              { 2, 3, 4 }))
                     {
-                        auto& it  = mapArrOutParams[key];
-                        it.wsName = val.at(0);
+                        auto& it = mapArrOutParams[key];
+
+                        if (GetBIsLocaleData())
+                        {
+                            it.wsName = val.at(0);
+                        }
+                        else
+                        {
+                            it.wsName = key;
+                        }
 
                         for (int k = 1; k < val.size(); ++k)
                         {

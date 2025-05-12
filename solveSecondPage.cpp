@@ -3,6 +3,7 @@
 #include "error.h"
 #include "global.h"
 #include "solve.h"
+#include "сurricula.h"
 
 FSolveSecondPage::FSolveSecondPage(shared_ptr<FGlobal> _ptrGlobal)
     : ptrGlobal(_ptrGlobal)

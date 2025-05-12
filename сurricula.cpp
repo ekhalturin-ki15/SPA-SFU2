@@ -3,7 +3,8 @@
 #include "global.h"
 #include "graph.h"
 #include "metric.h"
-#include "solve.h"
+//#include "solve.h"
+#include "сurricula.h"
 
 FTreeElement::FTreeElement()
     : dSumScore(0.),

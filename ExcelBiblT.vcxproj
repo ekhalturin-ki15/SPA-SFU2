@@ -198,6 +198,7 @@
     <ClInclude Include="outData.h" />
     <ClInclude Include="solve.h" />
     <ClInclude Include="solveSecondPage.h" />
+    <ClInclude Include="сurricula.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

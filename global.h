@@ -1,4 +1,4 @@
-﻿//v 1.30
+﻿//v 1.31
 
 #pragma once
 #include <algorithm>
@@ -67,7 +67,7 @@ struct FGlobal
                   int iSize);    // Возвращение результата через параметры
                                  // (значение со втрой ячейки)
 
-    void TakeData(vector<bool>&          outArrData,
+    void TakeData(vector<int>&          outArrData,
                   const OpenXLSX::XLRow& row,
                   int                    iSize);
 

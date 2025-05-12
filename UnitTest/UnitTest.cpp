@@ -215,7 +215,7 @@ namespace TestFSolve
         {
             // 12 Штук = УК-1 УК-2 УК-3 ПК-1 ПК-2 ОПК-1 ОПК-2 ОПК-3 ОПК-4 ДПК-1
             // ДОПК-1 СПК-1
-            Assert::AreEqual(12ull, ptrFirst->fAllComp.size());
+            Assert::AreEqual(12ull, ptrFirst->setAllComp.size());
         }
 
         TEST_METHOD(Year)
@@ -726,7 +726,7 @@ namespace AnomalTestFSolve
             // Компетенции УК-3.1 УК-3.2 проигнорируются и будут считаться как
             // УК-3 Это неплохой компромис, так как в некоторых УП на странице
             // Компетенции(2) указываются индикаторы
-            Assert::AreEqual(3ull, ptrFirst->fAllComp.size());
+            Assert::AreEqual(3ull, ptrFirst->setAllComp.size());
         }
 
         TEST_METHOD(Year)

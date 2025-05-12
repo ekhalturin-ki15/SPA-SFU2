@@ -1,5 +1,6 @@
 ﻿#pragma once
-#include "solve.h"
+//#include "solve.h"
+#include "сurricula.h"
 #include <map>
 
 using namespace std;
