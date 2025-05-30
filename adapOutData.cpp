@@ -579,7 +579,7 @@ void FAdapOutData::CreateTotalHeader()
         }
     }
 
-    wstring wsName = L"ЗЕ у компетенции";
+    wstring wsName = L"ЗЕ у компетенции ";
     if (ptrGlobal->ptrConfig->mapArrOutParams.count(wsName))
     {
         for (const auto& sCompName : ptrGlobal->ptrSolve->setHeaderComp)
@@ -833,7 +833,7 @@ void FAdapOutData::CreateTotalData()
 
         int iCurrentX = arrOriginMetricTotalHead.size();
 
-        wstring wsName = L"ЗЕ у компетенции";
+        wstring wsName = L"ЗЕ у компетенции ";
         if (ptrGlobal->ptrConfig->mapArrOutParams.count(wsName))
         {
             for (auto& sHeaderComp : ptrGlobal->ptrSolve->setHeaderComp)

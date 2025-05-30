@@ -144,6 +144,7 @@ void FConfig::InitIntMap()
                         L"число больше X ="]                 = &iSoMachComp;
     mapIntParamsReadKey[L"Количество квартилей"]             = &iAmountQuar;
     mapIntParamsReadKey[L"Макс кол-во знаков после запятой"] = &iPrecision;
+    mapIntParamsReadKey[L"До какой строки считывать заголовок"] = &iHeaderRow;
     // mapIntParamsReadKey[L"Индикатор находится на глубине X="] =
     // &iIndicatorDeep;
 }

@@ -230,6 +230,7 @@ private:
     int iSoMachComp;
     int iAmountQuar;
     int iPrecision;
+    int iHeaderRow;
     // int iIndicatorDeep;
 
     // Int Params adapter
@@ -261,6 +262,10 @@ public:
     const int& GetIPrecision() const
     {
         return iPrecision;
+    } 
+    const int& GetIHeaderRow() const
+    {
+        return iHeaderRow;
     }
     // const int& GetIIndicatorDeep() const
     //{

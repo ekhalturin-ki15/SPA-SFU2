@@ -122,6 +122,8 @@ bool FSolve::Create(string _sInPath, string sNamePlan)
     iCurrentPage      = 0;
     bIsCorrectParsing = true;
 
+    bool bIsOpen = false;
+
     try
     {
         shared_ptr<FCurricula> ptrCurricula =
@@ -138,6 +140,9 @@ bool FSolve::Create(string _sInPath, string sNamePlan)
 
         fDoc.open(sInPath);
         fBook = fDoc.workbook();
+
+        bIsOpen = true;
+
         ZeroPageCreateDiscTree(
             fBook.worksheet(
                 ptrGlobal->ptrConfig->GetKeyPage(iCurrentPage).sName),
@@ -211,7 +216,19 @@ bool FSolve::Create(string _sInPath, string sNamePlan)
         }
         else
         {
-            ptrGlobal->ptrError->ErrorInFileNotFind(sInPath);
+            if (!bIsOpen)
+            {
+                ptrGlobal->ptrError->ErrorInFileNotFind(sInPath);
+            }
+            else
+            {
+                arrDisc.back().reset();
+                arrDisc.pop_back();
+                ptrGlobal->ptrError->ErrorInPageNotFind(
+                    sInPath,
+                    ptrGlobal->ptrConfig->GetKeyPage(iCurrentPage).sName);
+
+            }
         }
         return false;    // Но продолжаем работать с другими файлами
     }

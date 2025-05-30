@@ -84,6 +84,16 @@ void FError::ErrorInFileNotFind(string sPathName) const
     out.close();
 }
 
+void FError::ErrorInPageNotFind(string sPathName, string sPageName) const
+{
+    ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt",
+                 std::ios::app);
+    out << "! В файле " + sPathName + "не обнаружена страница  " + sPageName;
+    out << END;
+    out.close();
+}
+
+
 void FError::ErrorInFileNotFind(wstring wsPathName) const
 {
     ErrorInFileNotFind(ptrGlobal->ConwertToString(wsPathName));
@@ -110,6 +120,15 @@ void FError::ErrorNotFoundConfig() const
 {
     ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt", std::ios::app);
     out << "!!! не найден файл config.xlsx";
+    out << END;
+    out.close();
+}
+
+void FError::ErrorEmptyOutFile() const
+{
+    ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt",
+                 std::ios::app);
+    out << "!!! нечего выводить";
     out << END;
     out.close();
 }

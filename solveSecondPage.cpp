@@ -166,7 +166,8 @@ void FSolveSecondPage::AddDiscScore(const OpenXLSX::XLWorksheet& fSheet,
     }
 
     auto& iAmountCource = ptrGlobal->ptrSolve->arrDisc.back()->iAmountCourse =
-        ((iIdRScore - iIdLScore) / ptrGlobal->ptrConfig->GetICourseLen());
+        //Округление вверх до целого
+        ((iIdRScore - iIdLScore + (ptrGlobal->ptrConfig->GetICourseLen()-1)) / ptrGlobal->ptrConfig->GetICourseLen());
 
     if (ptrGlobal->ptrSolve->iMaxCourse < iAmountCource)
         ptrGlobal->ptrSolve->iMaxCourse =

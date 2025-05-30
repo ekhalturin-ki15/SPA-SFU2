@@ -15,27 +15,38 @@ void FSolve::ZeroPageCreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
 
     shared_ptr<FTreeElement> ptrThis    = arrDisc.back()->ptrRoot;
     shared_ptr<FTreeElement> ptrNewNode = nullptr;
+
+     int yShift = 0;
     // Считываем заголовок
     {
-        int x = 0;
-        for (const auto& it : fSheet.rows().begin()->cells())
+        for (const auto& row : fSheet.rows())
         {
-            if (ptrGlobal->ptrConfig->GetKeyPage(iKeyPageNumber)
-                    .arrHeader[0]
-                    .count(ptrGlobal->GetValue(it)))
-                iIdIndex = x;
+            int x = 0;
+            for (const auto& it : row.cells())
+            {
+                wstring ws = ptrGlobal->GetValue(it);
+                if (ptrGlobal->ptrConfig->GetKeyPage(iKeyPageNumber)
+                        .arrHeader[0]
+                        .count(ws))
+                    iIdIndex = x;
 
-            if (ptrGlobal->ptrConfig->GetKeyPage(iKeyPageNumber)
-                    .arrHeader[1]
-                    .count(ptrGlobal->GetValue(it)))
-                iIdName = x;
+                if (ptrGlobal->ptrConfig->GetKeyPage(iKeyPageNumber)
+                        .arrHeader[1]
+                        .count(ws))
+                    iIdName = x;
 
-            if (ptrGlobal->ptrConfig->GetKeyPage(iKeyPageNumber)
-                    .arrHeader[2]
-                    .count(ptrGlobal->GetValue(it)))
-                iIdComp = x;
+                if (ptrGlobal->ptrConfig->GetKeyPage(iKeyPageNumber)
+                        .arrHeader[2]
+                        .count(ws))
+                    iIdComp = x;
 
-            ++x;
+                ++x;
+            }
+
+            // Считали столбец индекса
+            if (iIdIndex != -1)
+                break;
+            ++yShift;
         }
     }
 
@@ -47,7 +58,8 @@ void FSolve::ZeroPageCreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
     // }
 
 #ifdef DEBUG
-//    ofstream out(ptrGlobal->ptrConfig->GetSNameDebugFile() + ".txt", std::ios::app);
+//    ofstream out(ptrGlobal->ptrConfig->GetSNameDebugFile() + ".txt",
+//    std::ios::app);
 #endif    // DEBUG
 
     int iPreX = -1;    // Root вне учебного плана (в нём все модули) у него
@@ -66,7 +78,7 @@ void FSolve::ZeroPageCreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
         bool bReadName  = false;
         bool bReadComp  = false;
 
-        if (iCurrentRow != 0)
+        if (iCurrentRow > yShift)
         {
             for (const auto& it : row.cells())
             {
@@ -102,7 +114,7 @@ void FSolve::ZeroPageCreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
 
                         // Смотрим, что это за дисциплина (основная, по выбору
                         // или факультатив)
-                        int iTypeNumber = int(ETypeDisc::ETD_Common);
+                        int  iTypeNumber = int(ETypeDisc::ETD_Common);
                         auto iPos        = wstring::npos;
 
                         for (const auto& wsType :
@@ -113,7 +125,8 @@ void FSolve::ZeroPageCreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
                             {
                                 iPos                  = uCurPos;
                                 ptrNewNode->eTypeDisc = ETypeDisc(iTypeNumber);
-                                //break; // Какой индекс встречается ранее, такой и тип
+                                // break; // Какой индекс встречается ранее,
+                                // такой и тип
                             }
                             ++iTypeNumber;
                         }

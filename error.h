@@ -45,6 +45,8 @@ struct FError
     void ErrorInFileNotFind(wstring wsPathName)
         const;    // Если ошибки при открытии файла в виде zip
 
+    void ErrorInPageNotFind(string sPathName, string sPageName) const;
+
     void ErrorOutFileNotFind(string sPathName) const;
     void ErrorOutFileNotFind(wstring wsPathName) const;
 
@@ -55,6 +57,8 @@ struct FError
     void ErrorOutFileCreate(wstring wsPathName) const;
 
     void ErrorNotFoundConfig() const;
+
+    void ErrorEmptyOutFile() const;
 
     void FatalErrorFewConfigPages() const;
 

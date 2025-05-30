@@ -207,11 +207,25 @@ void FOutData::OutLocalData()
         }
     }
 
-    arrOutFile.back().save();
-    arrOutFile.back().close();
+    if (arrOutFile.size())
+    {
+        arrOutFile.back().save();
+        arrOutFile.back().close();
+    }
+    else
+    {
+        ptrGlobal->ptrError->ErrorEmptyOutFile();
+    }
 
-    arrAllCompareData.back().save();
-    arrAllCompareData.back().close();
+    if (arrOutFile.size())
+    {
+        arrAllCompareData.back().save();
+        arrAllCompareData.back().close();
+    }
+    else
+    {
+        ptrGlobal->ptrError->ErrorEmptyOutFile();
+    }
 }
 
 // FAdapOutData
