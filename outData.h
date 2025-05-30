@@ -45,7 +45,8 @@ private:
     void OutDataCeil(const int& y, const int& x, OpenXLSX::XLWorksheet& WKS,
                      const any& fData);
 
-    string ConvertAnyToString(const any& fData);
+    // Теперь в Global
+    //string ConvertAnyToString(const any& fData);
     void   IncRow(int& iRow, ofstream* outDataCSVStream);
 
     void OutDataCeil(const int& y, const int& x, OpenXLSX::XLWorksheet& WKS,

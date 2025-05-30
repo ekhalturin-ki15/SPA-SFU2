@@ -385,7 +385,8 @@ void FOutData::OutTable(const int& iYShift, const int& iXShift,
                             outDataCSVStream
                                 << ptrGlobal->ptrConfig->GetSCSVSeparator();
 
-                        outDataCSVStream << ConvertAnyToString(arrData[y][x]);
+                        outDataCSVStream
+                            << ptrGlobal->ConvertAnyToString(arrData[y][x]);
                     }
                     if (WKS != nullptr)
                     {
@@ -421,7 +422,7 @@ void FOutData::OutTable(const int& iYShift, const int& iXShift,
                 for (int x = 1; x < arrCorridor[y].size(); ++x)
                 {
                     string sOutString =
-                        ConvertAnyToString(arrCorridor[y][x].fData);
+                        ptrGlobal->ConvertAnyToString(arrCorridor[y][x].fData);
                     if (ptrDataCSVStream !=
                         nullptr)    // Продублируем в виде CSV
                     {
@@ -431,7 +432,7 @@ void FOutData::OutTable(const int& iYShift, const int& iXShift,
                     }
                     if (ptrGlobal->ptrConfig->GetBIsOutCorridorCurricula())
                     {
-                        if (arrCorridor[y][x].iAddInfo != FTypeGraph::dNoInit)
+                        if (arrCorridor[y][x].iAddInfo != FGlobal::dNoInit)
                         {
                             sOutString +=
                                 " (" +
@@ -469,7 +470,7 @@ void FOutData::OutTable(const int& iYShift, const int& iXShift,
 void FOutData::OutDataCeil(const int& y, const int& x,
                            OpenXLSX::XLWorksheet& WKS, const string& sData)
 {
-    if (sData == to_string(FTypeGraph::dNoInit))
+    if (sData == to_string(FGlobal::dNoInit))
     {
         WKS.cell(y, x).value() = ptrGlobal->ptrConfig->GetSNoInitData();
     }
@@ -477,49 +478,6 @@ void FOutData::OutDataCeil(const int& y, const int& x,
     {
         WKS.cell(y, x).value() = sData;
     }
-}
-
-string FOutData::ConvertAnyToString(const any& fData)
-{
-    string sType;
-    if (fData.has_value())
-        sType = fData.type().name();
-
-    bool   bIsCheck = false;
-    string sOutData;
-
-    if (sType == typeid(string).name())
-    {
-        bIsCheck = true;
-        sOutData = std::any_cast<string>(fData);
-    }
-    if (sType == typeid(int).name())
-    {
-        bIsCheck = true;
-        sOutData = to_string(std::any_cast<int>(fData));
-    }
-    if (sType == typeid(double).name())
-    {
-        bIsCheck = true;
-        sOutData = to_string(std::any_cast<double>(fData));
-    }
-    if (sType == typeid(char).name())
-    {
-        bIsCheck = true;
-        sOutData = to_string(std::any_cast<char>(fData));
-    }
-
-    if (sOutData == to_string(FTypeGraph::dNoInit))
-    {
-        return ptrGlobal->ptrConfig->GetSNoInitData();
-    }
-
-    if (bIsCheck)
-    {
-        return sOutData;
-    }
-    
-    return ptrGlobal->ptrConfig->GetSNoInitData();
 }
 
 void FOutData::OutDataCeil(const int& y, const int& x,
@@ -540,7 +498,7 @@ void FOutData::OutDataCeil(const int& y, const int& x,
     {
         bIsCheck               = true;
         int dCheck = std::any_cast<int>(fData);
-        if (dCheck == int(FTypeGraph::dNoInit))
+        if (dCheck == int(FGlobal::dNoInit))
         {
             WKS.cell(y, x).value() = ptrGlobal->ptrConfig->GetSNoInitData();
         }
@@ -553,7 +511,7 @@ void FOutData::OutDataCeil(const int& y, const int& x,
     {
         bIsCheck               = true;
         double dCheck          = std::any_cast<double>(fData);
-        if (dCheck == FTypeGraph::dNoInit)
+        if (dCheck == FGlobal::dNoInit)
         {
             WKS.cell(y, x).value() = ptrGlobal->ptrConfig->GetSNoInitData();
         }

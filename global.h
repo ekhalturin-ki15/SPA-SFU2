@@ -1,4 +1,4 @@
-﻿//v 1.32
+﻿//v 1.33
 
 #pragma once
 #include <algorithm>
@@ -32,6 +32,9 @@ struct FGlobal
 {
     explicit FGlobal(wstring wsNameConfig);
     ~FGlobal();
+
+    static const double dNoInit;
+    static const double dINF;
 
     bool ReCreate();
     bool Init(shared_ptr<FGlobal> _ptrThis);
@@ -126,6 +129,8 @@ struct FGlobal
     }
 
     void ClearFile(const string& sPath);
+
+    string ConvertAnyToString(const any& fData);
 
 private:
     static int iSinglControll;

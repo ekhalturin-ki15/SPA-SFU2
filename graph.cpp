@@ -14,9 +14,6 @@ ETypeGraph ETypeGraph::ETG_Common(-1, "Common");
 ETypeGraph ETypeGraph::ETG_Alt(-2, "Alt");
 ETypeGraph ETypeGraph::ETG_Reverse(-3, "Rev");
 
-const double FTypeGraph::dNoInit = -2e4;
-const double FTypeGraph::dINF    = 1e8;
-
 ETypeGraph::ETypeGraph() : iType(0), sName("NoInit")
 {
 }
@@ -256,7 +253,7 @@ void FGraph::CalcAllScoreAndAmount(FTypeGraph& fGraph)
         if (fDisc == nullptr)
             continue;
 
-        double dCurScore = FTypeGraph::dNoInit;
+        double dCurScore = FGlobal::dNoInit;
 
         if (iCourse < 0)
 
@@ -273,7 +270,7 @@ void FGraph::CalcAllScoreAndAmount(FTypeGraph& fGraph)
             if (fDisc->mapCourseScore.count(iCourse))
                 dCurScore = fDisc->mapCourseScore[iCourse];
         }
-        if (dCurScore == FTypeGraph::dNoInit)
+        if (dCurScore == FGlobal::dNoInit)
         {
             ptrTree->ptrGlobal->ptrError->ErrorGraphNoInitWeightDisc(
                 this->ptrTree->sNamePlan, wsKey);
@@ -316,7 +313,7 @@ void FGraph::CalcAllScoreAndAmount(FTypeGraph& fGraph)
 
     if (N <= 1)
     {
-        fGraph.dDense = FTypeGraph::dNoInit;
+        fGraph.dDense = FGlobal::dNoInit;
     }
     else
     {
@@ -329,14 +326,14 @@ void FGraph::CalcMinMaxWeight(double&                           dResult,
                               auto                              cmp)
 {
     // Подсчёт мин макс веса вершины (Min-Max DiscScore)
-    dResult = FTypeGraph::dNoInit;
+    dResult = FGlobal::dNoInit;
     for (const auto& [l, r] : fCurrentNode)
     {
         shared_ptr<FTreeElement> fDisc = GetGraphDisc(l);
         if (fDisc == nullptr)
             continue;
 
-        double dCurScore = FTypeGraph::dNoInit;
+        double dCurScore = FGlobal::dNoInit;
 
         if (r < 0)    // Значит считаем все дисциплины
                       // полностью, а не по курсам
@@ -349,7 +346,7 @@ void FGraph::CalcMinMaxWeight(double&                           dResult,
                 dCurScore = fDisc->mapCourseScore[r];
         }
 
-        if (dCurScore == FTypeGraph::dNoInit)
+        if (dCurScore == FGlobal::dNoInit)
         {
             ptrTree->ptrGlobal->ptrError->ErrorGraphNoInitWeightDisc(
                 this->ptrTree->sNamePlan, l);
@@ -360,7 +357,7 @@ void FGraph::CalcMinMaxWeight(double&                           dResult,
             ptrTree->ptrGlobal->ptrError->ErrorGraphZeroValue(
                 this->ptrTree->sNamePlan, l);
 
-        if (dResult == FTypeGraph::dNoInit)
+        if (dResult == FGlobal::dNoInit)
         {
             dResult = dCurScore;
         }
@@ -377,13 +374,13 @@ void FGraph::CalcMinMaxEdge(
     const vector<vector<pair<int, double>>>& fCurrentAdj,
     auto                                     cmp)
 {
-    dResult = FTypeGraph::dNoInit;
+    dResult = FGlobal::dNoInit;
 
     for (const auto& it : fCurrentAdj)
     {
         for (const auto& [iDest, dIdge] : it)
         {
-            if (dResult == FTypeGraph::dNoInit)
+            if (dResult == FGlobal::dNoInit)
             {
                 dResult = dIdge;
             }
@@ -835,7 +832,7 @@ void FGraph::CalculateLocalQuarAllPairDistance(
     {
         for (int j = i + 1; j < N; ++j)
         {
-            if (arrAllDistance[i][j] == FTypeGraph::dINF)
+            if (arrAllDistance[i][j] == FGlobal::dINF)
             {
                 ++iAmountNoLink;
                 continue;
@@ -952,7 +949,7 @@ void FGraph::CalculateCluster(double&                                  dResult,
     else
     {
         // Слишком маленький граф для подсчёта кластеризации
-        dResult = FTypeGraph::dNoInit;
+        dResult = FGlobal::dNoInit;
     }
 
 #ifdef DEBUG
@@ -967,7 +964,7 @@ void FGraph::CalculateAllPairDistance(
     const vector<vector<pair<int, double>>>& fCurrentAdj)
 {
     const int N = fCurrentAdj.size();
-    arrAllDistance.assign(N, vector<double>(N, FTypeGraph::dINF));
+    arrAllDistance.assign(N, vector<double>(N, FGlobal::dINF));
 
     for (int L = 0; L < N; ++L)
     {

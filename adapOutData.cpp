@@ -129,10 +129,9 @@ void FAdapOutData::CreateGephiCSVHeader()
 }
 
 // Возвращает актуальную ширину дерева компетенций
-int FAdapOutData::CreateCompTreeData(const int&           W,
-                                     vector<vector<any>>& arrReturnData,
-                                     shared_ptr<FTreeMetric>
-                                         ptrMetric)
+int FAdapOutData::CreateCompTreeData(int W, vector<vector<any>>& arrReturnData,
+                                     const vector<int>&      arrIsOut,
+                                     shared_ptr<FTreeMetric> ptrMetric)
 {
     vector<any> arrRow(W);
     CreateRectCompTreeData(arrReturnData, arrRow, ptrMetric, 0, 0);
@@ -140,14 +139,15 @@ int FAdapOutData::CreateCompTreeData(const int&           W,
     // дескрипторы) не были обнаружены Пробегаемся по всем строчкам записей
     // дерева, и если везде нет индикаторов, то прозводим учечение
 
-    int iCheckRow = FTypeGraph::dNoInit;
+    int iCheckRow = FGlobal::dNoInit;
     int iRowSize  = 0;
     if (arrReturnData.size())
         iRowSize = arrReturnData.at(0).size();
+
     for (auto& it : arrReturnData)
     {
         int* iBufSize = &iRowSize;
-        if (iCheckRow == FTypeGraph::dNoInit)
+        if (iCheckRow == FGlobal::dNoInit)
         {
             iBufSize = &iCheckRow;
         }
@@ -160,18 +160,54 @@ int FAdapOutData::CreateCompTreeData(const int&           W,
         }
         if ((*iBufSize) != iCheckRow)
         {
-            iCheckRow = FTypeGraph::dNoInit;
+            iCheckRow = FGlobal::dNoInit;
             break;
         }
     }
 
-    if (iCheckRow != FTypeGraph::dNoInit)
+    if (iCheckRow != FGlobal::dNoInit)
     {
+        W = iCheckRow;
         for (auto& it : arrReturnData)
         {
             it.resize(iCheckRow);
         }
-        return iCheckRow;
+    }
+
+    // swap дублирующихся строк
+    int iShiftRow = 0;
+    for (int iY = 1; iY < arrReturnData.size(); ++iY)
+    {
+        bool bIsEqual = true;
+        for (int iX = 0; iX < W; ++iX)
+        {
+            if (!arrIsOut[iX])
+                continue;
+            string l = ptrGlobal->ConvertAnyToString(arrReturnData[iY][iX]);
+            string r = ptrGlobal->ConvertAnyToString(
+                arrReturnData[iY - 1 - iShiftRow][iX]);
+            if (l != r)
+            {
+                bIsEqual = false;
+                break;
+            }
+        }
+
+        if (bIsEqual)
+        {
+            ++iShiftRow;
+        }
+        else
+        {
+            if (iShiftRow)
+                swap(arrReturnData[iY - iShiftRow], arrReturnData[iY]);
+        }
+    }
+
+    for (int i = 0; i < iShiftRow; ++i)
+    {
+        // Устраняем дубликаты
+        arrReturnData.pop_back();
     }
 
     return W;
@@ -439,7 +475,7 @@ void FAdapOutData::CreateGephiLableCSVData()
                                     if (it->mapAllDisc.count(fNodeName.first))
                                         fDataContainer =
                                             int(it->mapAllDisc[fNodeName.first]
-                                                ->mapComp.size());
+                                                    ->mapComp.size());
                                     break;
                                 case 7:
                                     if (it->mapAllDisc.count(fNodeName.first))
@@ -552,8 +588,9 @@ void FAdapOutData::CreateCompTreeData()
             {
                 const auto& ptrCurrentTree = ptrTreeMetric->mapChild[sName];
 
-                int iSize = CreateCompTreeData(fData.arrHeader.size(),
-                                               fData.arrData, ptrCurrentTree);
+                int iSize =
+                    CreateCompTreeData(fData.arrHeader.size(), fData.arrData,
+                                       fData.arrIsOut, ptrCurrentTree);
                 fData.arrHeader.resize(iSize);
             }
         }
@@ -578,23 +615,54 @@ void FAdapOutData::CreateTotalHeader()
                 ptrGlobal->ptrConfig->mapArrOutParams[wsNameHeader].GetTotal());
         }
     }
-
-    wstring wsName = L"ЗЕ у компетенции ";
-    if (ptrGlobal->ptrConfig->mapArrOutParams.count(wsName))
     {
-        for (const auto& sCompName : ptrGlobal->ptrSolve->setHeaderComp)
+        wstring wsName = L"ЗЕ у компетенции ";
+        if (ptrGlobal->ptrConfig->mapArrOutParams.count(wsName))
         {
-            wstring wsCompScore = ptrGlobal->ConwertToWstring(sCompName);
-            wsCompScore =
-                ptrGlobal->ptrConfig->mapArrOutParams[wsName].GetName() +
-                wsCompScore;
-            fTotalOutHeader.push_back(ptrGlobal->ConwertToString(wsCompScore));
-            fTotalOutHeader.push_back(sCompName);
+            for (const auto& sCompName : ptrGlobal->ptrSolve->setHeaderComp)
+            {
+                wstring wsCompScore = ptrGlobal->ConwertToWstring(sCompName);
+                wsCompScore =
+                    ptrGlobal->ptrConfig->mapArrOutParams[wsName].GetName() +
+                    wsCompScore;
+                fTotalOutHeader.push_back(
+                    ptrGlobal->ConwertToString(wsCompScore));
+                fTotalOutHeader.push_back(sCompName);
 
-            fIsOutHeader.push_back(
-                ptrGlobal->ptrConfig->mapArrOutParams[wsName].GetTotal());
-            fIsOutHeader.push_back(
-                ptrGlobal->ptrConfig->mapArrOutParams[wsName].GetTotal());
+                fIsOutHeader.push_back(
+                    ptrGlobal->ptrConfig->mapArrOutParams[wsName].GetTotal());
+                fIsOutHeader.push_back(
+                    ptrGlobal->ptrConfig->mapArrOutParams[wsName].GetTotal());
+            }
+        }
+    }
+    {
+        wstring wsName = L"ЗЕ у компетенции за курс ";
+        if (ptrGlobal->ptrConfig->mapArrOutParams.count(wsName))
+        {
+            for (int iCourse = 0; iCourse < ptrGlobal->ptrSolve->iMaxCourse;
+                 ++iCourse)
+                for (const auto& sCompName : ptrGlobal->ptrSolve->setHeaderComp)
+                {
+                    wstring wsCompScore =
+                        ptrGlobal->ConwertToWstring(sCompName);
+                    wsCompScore = to_wstring(iCourse + 1) +
+                                  ptrGlobal->ptrConfig->mapArrOutParams[wsName]
+                                      .GetName() +
+                                  wsCompScore;
+                    fTotalOutHeader.push_back(
+                        ptrGlobal->ConwertToString(wsCompScore));
+                    fTotalOutHeader.push_back(
+                        to_string(iCourse + 1) +
+                        ptrGlobal->ptrConfig->GetSSeparator() + sCompName);
+
+                    fIsOutHeader.push_back(
+                        ptrGlobal->ptrConfig->mapArrOutParams[wsName]
+                            .GetTotal());
+                    fIsOutHeader.push_back(
+                        ptrGlobal->ptrConfig->mapArrOutParams[wsName]
+                            .GetTotal());
+                }
         }
     }
 
@@ -633,7 +701,7 @@ void FAdapOutData::QuartileHeaderCreate(FDataType&             fData,
                                         const vector<wstring>& arrQuartileHead)
 {
     vector<string>& arrHeader = fData.arrHeader;
-    vector<int>&   arrIsOut  = fData.arrIsOut;
+    vector<int>&    arrIsOut  = fData.arrIsOut;
 
     for (int i = 1; i <= arrQuartileHead.size(); ++i)
     {
@@ -678,7 +746,7 @@ void FAdapOutData::QuartileHeaderCreate(FDataType&             fData,
 void FAdapOutData::CompHeaderCreate(FDataType& fData)
 {
     vector<string>& arrHeader = fData.arrHeader;
-    vector<int>&   arrIsOut  = fData.arrIsOut;
+    vector<int>&    arrIsOut  = fData.arrIsOut;
 
     wstring wsNameSoMachComp =
         L"Количество дисциплин, формирующих несколько компетенций";
@@ -802,7 +870,7 @@ void FAdapOutData::CreateTotalData()
                         }
                         else
                         {
-                            // fDataContainer.fData = FTypeGraph::dNoInit;
+                            // fDataContainer.fData = FGlobal::dNoInit;
                         }
                         break;
 
@@ -822,7 +890,7 @@ void FAdapOutData::CreateTotalData()
                         }
                         else
                         {
-                            // fDataContainer.fData = FTypeGraph::dNoInit;
+                            // fDataContainer.fData = FGlobal::dNoInit;
                         }
                         break;
                 }
@@ -833,68 +901,93 @@ void FAdapOutData::CreateTotalData()
 
         int iCurrentX = arrOriginMetricTotalHead.size();
 
-        wstring wsName = L"ЗЕ у компетенции ";
-        if (ptrGlobal->ptrConfig->mapArrOutParams.count(wsName))
+        if (it->ptrMetric)
         {
-            for (auto& sHeaderComp : ptrGlobal->ptrSolve->setHeaderComp)
             {
-                any  fCredit;
-                bool bIsFCreditInit = false;
-                any  fPercent;
-                bool bIsFPercentInit = false;
-
-                if (it->ptrMetric)
+                wstring wsName = L"ЗЕ у компетенции ";
+                if (ptrGlobal->ptrConfig->mapArrOutParams.count(wsName))
                 {
-                    auto ptrTreeMetric =
-                        it->ptrMetric->ptrTreeMetric
-                            ->mapChild[ptrGlobal->ptrConfig->GetSAllCourses()];
-                    double dScore = 0.;
-                    double dRes   = 0.;
-                    if (ptrTreeMetric->mapChild.count(sHeaderComp))
+                    for (auto& sHeaderComp : ptrGlobal->ptrSolve->setHeaderComp)
                     {
-                        dScore =
-                            ptrTreeMetric->mapChild[sHeaderComp]->dChosenSum;
-                        dRes = ptrTreeMetric->mapChild[sHeaderComp]
-                                   ->dInclusionPercent;
-                    }
-                    else
-                    {
-                        dScore = 0.;
-                        dRes   = 0.;
-                    }
+                        any fCredit;
+                        any fPercent;
 
-                    // Если ЗЕ равно 0, то и не выводить
-                    if (dScore > 0)
-                    {
-                        fCredit        = dScore;
-                        bIsFCreditInit = true;
-                    }
-                    else
-                    {
-                        // fCredit.fData = FTypeGraph::dNoInit;
-                    }
+                        SolveCompCreditAndPercent(
+                            fCredit, fPercent,
+                            it->ptrMetric->ptrTreeMetric->mapChild
+                                [ptrGlobal->ptrConfig->GetSAllCourses()],
+                            sHeaderComp);
 
-                    if (dRes > ptrGlobal->ptrConfig->GetDMinComp())
-                    {
-                        fPercent        = dRes * 100;
-                        bIsFPercentInit = true;
-                    }
-                    else
-                    {
-                        // fPercent.fData = FTypeGraph::dNoInit;
+                        if (fCredit.has_value())
+                            arrRow[iCurrentX] = (fCredit);
+                        ++iCurrentX;
+                        if (fPercent.has_value())
+                            arrRow[iCurrentX] = (fPercent);
+                        ++iCurrentX;
                     }
                 }
-
-                if (bIsFCreditInit)
-                    arrRow[iCurrentX] = (fCredit);
-                ++iCurrentX;
-                if (bIsFPercentInit)
-                    arrRow[iCurrentX] = (fPercent);
-                ++iCurrentX;
             }
 
-            fTotalOutData.push_back(arrRow);
+            wstring wsName = L"ЗЕ у компетенции за курс ";
+            {
+                if (ptrGlobal->ptrConfig->mapArrOutParams.count(wsName))
+                {
+                    for (auto [sName, et] : it->ptrMetric->ptrTreeMetric->mapChild)
+                    {
+                        if (sName == ptrGlobal->ptrConfig->GetSAllCourses())
+                            continue;
+                        for (auto& sHeaderComp :
+                             ptrGlobal->ptrSolve->setHeaderComp)
+                        {
+                            any fCredit;
+                            any fPercent;
+
+                            SolveCompCreditAndPercent(
+                                fCredit, fPercent, et,
+                                sHeaderComp);
+
+                            if (fCredit.has_value())
+                                arrRow[iCurrentX] = (fCredit);
+                            ++iCurrentX;
+                            if (fPercent.has_value())
+                                arrRow[iCurrentX] = (fPercent);
+                            ++iCurrentX;
+                        }
+                    }
+                }
+            }
+
         }
+
+        fTotalOutData.push_back(arrRow);
+    }
+}
+
+void FAdapOutData::SolveCompCreditAndPercent(
+    any& fCredit, any& fPercent, shared_ptr<FTreeMetric> ptrTreeMetric, string sComp)
+{
+    double dScore = 0.;
+    double dRes   = 0.;
+    if (ptrTreeMetric->mapChild.count(sComp))
+    {
+        dScore = ptrTreeMetric->mapChild[sComp]->dChosenSum;
+        dRes   = ptrTreeMetric->mapChild[sComp]->dInclusionPercent;
+    }
+    else
+    {
+        dScore = 0.;
+        dRes   = 0.;
+    }
+
+    // Если ЗЕ равно 0, то и не выводить
+    if (dScore > 0)
+    {
+        fCredit        = dScore;
+    }
+
+    if (dRes > ptrGlobal->ptrConfig->GetDMinComp())
+    {
+        fPercent        = dRes * 100;
     }
 }
 
@@ -945,7 +1038,7 @@ void FAdapOutData::CreateGraphData()
                             else
                             {
                                 // fDataContainer.fData =
-                                // FTypeGraph::dNoInit;
+                                // FGlobal::dNoInit;
                             }
                             break;
 
@@ -966,7 +1059,7 @@ void FAdapOutData::CreateGraphData()
                             else
                             {
                                 // fDataContainer.fData =
-                                // FTypeGraph::dNoInit;
+                                // FGlobal::dNoInit;
                             }
                             break;
                         case 9:
@@ -1385,5 +1478,5 @@ void FAdapOutData::Create()
 
 FTableData::FTableData()
 {
-    iAddInfo = FTypeGraph::dNoInit;    // например, номер УП
+    iAddInfo = FGlobal::dNoInit;    // например, номер УП
 }

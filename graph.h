@@ -68,9 +68,6 @@ private:
 // Конкретный граф (с расчитаными метриками для него, лежащими внутри)
 struct FTypeGraph
 {
-    static const double dNoInit;
-    static const double dINF;
-
     // Сопоставление id его названия и номера курса (инициализируются при
     // создании)
     vector<pair<wstring, int>> arrRel;
@@ -86,17 +83,17 @@ struct FTypeGraph
     // В паре first куда, second вес
     vector<vector<pair<int, double>>> fAdjList;
 
-    double dMinDiscScore = FTypeGraph::dNoInit;
-    double dMaxDiscScore = FTypeGraph::dNoInit;
+    double dMinDiscScore = FGlobal::dNoInit;
+    double dMaxDiscScore = FGlobal::dNoInit;
 
-    double dMinRib = FTypeGraph::dNoInit;
-    double dMaxRib = FTypeGraph::dNoInit;
+    double dMinRib = FGlobal::dNoInit;
+    double dMaxRib = FGlobal::dNoInit;
 
-    double dDiametrLen  = FTypeGraph::dNoInit;
-    double dDiametrStep = FTypeGraph::dNoInit;
+    double dDiametrLen  = FGlobal::dNoInit;
+    double dDiametrStep = FGlobal::dNoInit;
 
-    double dMinSpanTree = FTypeGraph::dNoInit;
-    double dMaxSpanTree = FTypeGraph::dNoInit;
+    double dMinSpanTree = FGlobal::dNoInit;
+    double dMaxSpanTree = FGlobal::dNoInit;
 
     // Квартильное разбиение
     //  Выборка разбития по квартилям
@@ -107,12 +104,12 @@ struct FTypeGraph
     vector<int>
         arrGlobalQuarAllPairDistance;    // Локальное квартильное распределение
 
-    // double dGraphAllScore   = FTypeGraph::dNoInit; // Теперь включена в
+    // double dGraphAllScore   = FGlobal::dNoInit; // Теперь включена в
     // mapGraphDataTypeDisc по ETypeDisc::ETD_Total int    iGraphAmountDisc =
-    // int(FTypeGraph::dNoInit);  // Теперь включена в mapGraphDataTypeDisc по
+    // int(FGlobal::dNoInit);  // Теперь включена в mapGraphDataTypeDisc по
     // ETypeDisc::ETD_Total
-    double dDense         = FTypeGraph::dNoInit;
-    double dGlobalСluster = FTypeGraph::dNoInit;
+    double dDense         = FGlobal::dNoInit;
+    double dGlobalСluster = FGlobal::dNoInit;
 
     map<ETypeDisc, FDiscParams> mapGraphDataTypeDisc;
 
@@ -120,7 +117,7 @@ struct FTypeGraph
 
     vector<vector<double>> arrAllDistance;
 
-    int iComponent = int(FTypeGraph::dNoInit);
+    int iComponent = int(FGlobal::dNoInit);
 };
 
 struct FGraph

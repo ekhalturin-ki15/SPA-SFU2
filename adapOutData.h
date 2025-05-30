@@ -16,16 +16,17 @@ struct FTableData
 
     any fData;
 
-    // По умолчанию = FTypeGraph::dNoInit;
+    // По умолчанию = FGlobal::dNoInit;
     int iAddInfo;    // например, номер УП
 };
 
 struct FDataType
 {
     vector<string> arrHeader;
-    vector<int>   arrIsOut;
+    vector<int>   arrIsOut; // Требуется ли выводить
 
-    vector<string> arrType;
+    vector<string> arrType; // Существуют следующие типы (из FGlobal ConvertAnyToString): 
+    //string, int, double, char
 
     vector<vector<any>> arrData;
     vector<vector<FTableData>>
@@ -88,7 +89,7 @@ private:
 
     void CreateCompTreeData();
     int  CreateCompTreeData(
-         const int& W, vector<vector<any>>& arrReturnData,
+         int W, vector<vector<any>>& arrReturnData, const vector<int>& arrIsOut,
          shared_ptr<FTreeMetric>
              ptrMetric);    // Возвращает актуальную ширину дерева компетенций
 
@@ -110,6 +111,10 @@ private:
 
     string CreateTag(const ETypeGraph& eGraphType, const wstring& wsName,
                      const map<wstring, shared_ptr<FTreeElement>>& mapAllDisc);
+
+    void SolveCompCreditAndPercent(any& fCredit, any& fPercent,
+                                   shared_ptr<FTreeMetric> ptrTreeMetric,
+                                   string                  sComp);
 
 public:
     const vector<wstring>

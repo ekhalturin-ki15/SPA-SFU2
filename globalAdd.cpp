@@ -344,3 +344,46 @@ int FGlobal::HeightPage(const OpenXLSX::XLWorksheet& fSheet)
 
     return h;
 }
+
+string FGlobal::ConvertAnyToString(const any& fData)
+{
+    string sType;
+    if (fData.has_value())
+        sType = fData.type().name();
+
+    bool   bIsCheck = false;
+    string sOutData;
+
+    if (sType == typeid(string).name())
+    {
+        bIsCheck = true;
+        sOutData = std::any_cast<string>(fData);
+    }
+    if (sType == typeid(int).name())
+    {
+        bIsCheck = true;
+        sOutData = to_string(std::any_cast<int>(fData));
+    }
+    if (sType == typeid(double).name())
+    {
+        bIsCheck = true;
+        sOutData = to_string(std::any_cast<double>(fData));
+    }
+    if (sType == typeid(char).name())
+    {
+        bIsCheck = true;
+        sOutData = to_string(std::any_cast<char>(fData));
+    }
+
+    if (sOutData == to_string(FGlobal::dNoInit))
+    {
+        return ptrConfig->GetSNoInitData();
+    }
+
+    if (bIsCheck)
+    {
+        return sOutData;
+    }
+
+    return ptrConfig->GetSNoInitData();
+}

@@ -9,6 +9,9 @@
 
 int FGlobal::iSinglControll = 0;
 
+const double FGlobal::dNoInit = -2e4;
+const double FGlobal::dINF    = 1e8;
+
 FGlobal::FGlobal(wstring wsNameConfig)
 {
     sNameFileConfig = ConwertToString(GetCurrentPath() / wsNameConfig);
