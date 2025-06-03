@@ -13,6 +13,7 @@ FConfig::FConfig(shared_ptr<FGlobal> _ptrGlobal)
       iIgnoreEmptyLine(5),
       iSoMachComp(6),
       iPrecision(5),
+      iHeaderRow(1),
       // iIndicatorDeep(3),
       dMinWeigthRib(0.01),
       dMinComp(0.01),
