@@ -1,4 +1,4 @@
-﻿//v 1.34
+﻿//v 1.35
 
 #pragma once
 #include <algorithm>
@@ -142,8 +142,7 @@ private:
     map<char, char>       mapTranslit;
     map<wchar_t, wchar_t> mapWTranslit;
 
-    map<char, char>             mapFirstUnicRU;
-    map<char, char>             mapLastUnicRU;
+    map<char, pair<char, char>> mapUnic;
     map<pair<char, char>, char> mapReversUnic;
 
     shared_ptr<FGlobal> ptrThis;

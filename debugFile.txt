@@ -1,0 +1,35 @@
+
+156 187
+Rasp0903020030_op-21.plm.plx.xlsx
+Cluster coef
+0.834225
+
+15 20
+Rasp0903020030_op-21.plm.plx.xlsx
+Cluster coef
+0.75
+
+3996 4601
+Rasp0903020030_op-21.plm.plx.xlsx
+Cluster coef
+0.868507
+
+3 4
+Rasp0903020030_op-21.plm.plx.xlsx
+Cluster coef
+0.75
+
+3 3
+Rasp0903020030_op-21.plm.plx.xlsx
+Cluster coef
+1
+
+6 8
+Rasp0903020030_op-21.plm.plx.xlsx
+Cluster coef
+0.75
+
+3 3
+Rasp0903020030_op-21.plm.plx.xlsx
+Cluster coef
+1

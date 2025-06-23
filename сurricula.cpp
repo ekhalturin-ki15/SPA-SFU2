@@ -159,7 +159,18 @@ void FCurricula::GetMapNoIgnoreComp(
         
         for (const auto& [sCompKey, arrInd] : it->mapComp)
         {
-            auto wsCompKey = ptrGlobal->ConwertToWstring(sCompKey);
+            wstring wsCompKey
+            = ptrGlobal->ConwertToWstring(sCompKey);
+            /*if (!ptrGlobal->ptrConfig->GetBOutCompRU())
+            {
+                wsCompKey = ptrGlobal->ConwertToWstring(sCompKey);
+            }
+            else
+            {
+                wsCompKey = ptrGlobal->ConwertToWstring(
+                    ptrGlobal->ConwertUTF16RU(sCompKey));
+            }*/
+
             if (!mapCompReturn.count(wsCompKey))
             {
                 ptrNewNode = make_shared<FTreeElement>();

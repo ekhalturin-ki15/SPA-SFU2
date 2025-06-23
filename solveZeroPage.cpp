@@ -230,8 +230,21 @@ void FSolve::ZeroPageCreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
                     else if ((iIdComp <= x) && (!bReadComp))
                     {
                         bReadComp           = true;
-                        string sParsingData = ptrGlobal->ConwertToString(
-                            ptrGlobal->ConwertPathFormat(wsData));
+
+
+                        string sParsingData;
+
+                        if (!ptrGlobal->ptrConfig->GetBOutCompRU())
+                        {
+                            sParsingData = ptrGlobal->ConwertToString(
+                                ptrGlobal->ConwertPathFormat(wsData));
+                        }
+                        else
+                        {
+                            sParsingData = ptrGlobal->ReversUTF16RU(ptrGlobal->ConwertToString(wsData));
+                        }
+
+
 
                         bool           bIsTrueMatchComp = false;
                         vector<smatch> matchesComp;

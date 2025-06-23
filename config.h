@@ -301,6 +301,7 @@ private:
     bool bOutTotalInfo;
     bool bOutDataCorridor;
     bool bOutWithoutEmptyCell;
+    bool bOutCompRU;
 
     // Bool Params adapter
 private:
@@ -405,6 +406,11 @@ public:
     const bool& GetBOutWithoutEmptyCell() const
     {
         return bOutWithoutEmptyCell;
+    }
+    
+    const bool& GetBOutCompRU() const
+    {
+        return bOutCompRU;
     }
 
     // double Params

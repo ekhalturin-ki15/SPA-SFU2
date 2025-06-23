@@ -52,8 +52,18 @@ void FSolve::FirstPageAddCompIndicator(const OpenXLSX::XLWorksheet& fSheet,
 
                 if (wsData != L"")
                 {
-                    string sData = ptrGlobal->ConwertToString(
-                        ptrGlobal->ConwertPathFormat(wsData));
+                    string sData;
+                    if (!ptrGlobal->ptrConfig->GetBOutCompRU())
+                    {
+                        sData = ptrGlobal->ConwertToString(
+                            ptrGlobal->ConwertPathFormat(wsData));
+                    }
+                    else
+                    {
+                        sData = ptrGlobal->ReversUTF16RU(
+                            ptrGlobal->ConwertToString(wsData));
+                    }
+
                     if ((iIdIndex <= x) && (!bReadIndex))
                     {
                         bReadIndex = true;    // Чтобы повторно не находить

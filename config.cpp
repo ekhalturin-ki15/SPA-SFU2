@@ -39,6 +39,7 @@ FConfig::FConfig(shared_ptr<FGlobal> _ptrGlobal)
       bOutEmptyComp(true),
       bOutTotalInfo(true),
       bOutWithoutEmptyCell(true),
+      bOutCompRU(true),
       bIsOutCSVDate(false),
       arrNameLabelHeader({ "Id", "Label", "Weight", "Tag" }),
       arrNameRibHeader({ "Source", "Target", "Type", "Label", "Weight" }),
@@ -204,6 +205,10 @@ void FConfig::InitBoolMap()
     mapBoolParamsReadKey
         [L"Не оставлять пустые ячейки при выводе дерева компетенций"] =
             &bOutWithoutEmptyCell;
+    
+    mapBoolParamsReadKey
+        [L"Компетенции на кириллице"] =
+            &bOutCompRU;
 }
 
 void FConfig::InitDoubleMap()
