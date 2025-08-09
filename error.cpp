@@ -70,8 +70,8 @@ void FError::FatalErrorFewConfigPages() const
 {
     ofstream out(ptrGlobal->ptrConfig->GetSNameLogFile() + ".txt",
                  std::ios::app);
-    out << "!! Не хватает указаний страниц для парсинга УП (их 3, обычно их "
-           "названия: Компетенции(2), Компетенции, ПланСвод";
+    out << "!! Не хватает указаний страниц для парсинга УП (их 4, обычно их "
+           "названия: Компетенции(2), Компетенции, ПланСвод", "Титул";
     out << END;
     out.close();
 }

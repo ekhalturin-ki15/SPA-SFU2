@@ -395,12 +395,20 @@ void FAdapOutData::CreateGephiLableCSVData()
                 const auto& fGraph = it->ptrGraph->mapGraph[eType];
                 try
                 {
-                    for (int iRowNum = 0;
+                    int iRowNum = -1;
+                    for (const auto& [wsKey, iCourse] : fGraph.arrRel)
+                    {
+                        ++iRowNum;
+                        shared_ptr<FTreeElement> fDisc =
+                            it->ptrGraph->GetGraphDisc(wsKey);
+                        if (fDisc == nullptr)
+                            continue;
+                  /*  for (int iRowNum = 0;
                          iRowNum <
                          fGraph.mapGraphDataTypeDisc.at(ETypeDisc::ETD_Total)
                              .iAmount;
-                         ++iRowNum)
-                    {
+                         ++iRowNum)*/
+                    
                         const auto& fNodeName = fGraph.arrRel[iRowNum];
                         vector<any> arrRow(fTotalOutHeader.size());
 

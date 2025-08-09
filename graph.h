@@ -182,6 +182,7 @@ struct FGraph
         mapGraph;    // Тип зависит от версии графа, сейчас iCommon - обычный,
                      // iAlt - альтернативный, iReverse - Обратный
 
+    shared_ptr<FTreeElement> GetGraphDisc(const wstring& wsKey);
 private:
     shared_ptr<FCurricula> ptrTree;
 
@@ -213,6 +214,4 @@ private:
 
     // После вызова Create для всех ptrTree
     void CountAfterAllMetric(const ETypeGraph& eTypeGraph);
-
-    shared_ptr<FTreeElement> GetGraphDisc(const wstring& wsKey);
 };

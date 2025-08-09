@@ -1,35 +1,35 @@
 
-156 187
-Rasp0903020030_op-21.plm.plx.xlsx
+3 5
+Frag0903020030_op-21.plm.plx.xlsx
 Cluster coef
-0.834225
+0.6
 
-15 20
-Rasp0903020030_op-21.plm.plx.xlsx
+0 0
+Frag0903020030_op-21.plm.plx.xlsx
 Cluster coef
-0.75
-
-3996 4601
-Rasp0903020030_op-21.plm.plx.xlsx
-Cluster coef
-0.868507
-
-3 4
-Rasp0903020030_op-21.plm.plx.xlsx
-Cluster coef
-0.75
+-20000
 
 3 3
-Rasp0903020030_op-21.plm.plx.xlsx
+Frag0903020030_op-21.plm.plx.xlsx
 Cluster coef
 1
 
-6 8
-Rasp0903020030_op-21.plm.plx.xlsx
+0 0
+Frag0903020030_op-21.plm.plx.xlsx
 Cluster coef
-0.75
+-20000
 
-3 3
-Rasp0903020030_op-21.plm.plx.xlsx
+0 0
+Frag0903020030_op-21.plm.plx.xlsx
 Cluster coef
-1
+-20000
+
+0 0
+Frag0903020030_op-21.plm.plx.xlsx
+Cluster coef
+-20000
+
+0 0
+Frag0903020030_op-21.plm.plx.xlsx
+Cluster coef
+-20000
