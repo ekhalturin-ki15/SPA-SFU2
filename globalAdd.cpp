@@ -1,6 +1,7 @@
 ﻿#include "config.h"
 #include "error.h"
 #include "global.h"
+#include <random>
 
 void FGlobal::DeleteSpechChars(string& sData) const
 {
@@ -386,4 +387,14 @@ string FGlobal::ConvertAnyToString(const any& fData)
     }
 
     return ptrConfig->GetSNoInitData();
+}
+
+int FGlobal::GetRandomInt(int l, int r)
+{
+    std::random_device rd;
+    std::mt19937       gen(rd());
+
+    std::uniform_int_distribution<> dist(l, r-1);
+
+    return int(dist(gen));
 }

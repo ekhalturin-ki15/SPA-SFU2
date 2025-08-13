@@ -147,6 +147,16 @@ void FConfig::InitIntMap()
     mapIntParamsReadKey[L"Количество квартилей"]             = &iAmountQuar;
     mapIntParamsReadKey[L"Макс кол-во знаков после запятой"] = &iPrecision;
     mapIntParamsReadKey[L"До какой строки считывать заголовок"] = &iHeaderRow;
+
+    mapIntParamsReadKey[L"Сколько вершин в одной строке"] =
+        &iRowSizeGraph;
+
+    mapIntParamsReadKey[L"Сдвиг вершин по X"] =
+        &iShiftXGraph;
+    mapIntParamsReadKey[L"Сдвиг вершин по Y"] =
+        &iShiftYGraph;
+    mapIntParamsReadKey[L"Сдвиг вершин по Z"] =
+        &iShiftZGraph;
     // mapIntParamsReadKey[L"Индикатор находится на глубине X="] =
     // &iIndicatorDeep;
 }

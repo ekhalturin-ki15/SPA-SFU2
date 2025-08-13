@@ -34,6 +34,12 @@ struct FDataType
                             // прочее...)
 };
 
+struct FAddGraphParams
+{
+    int X, Y, Z;
+    int Color;
+};
+
 struct FAdapOutData
 {
     explicit FAdapOutData(shared_ptr<FGlobal> _ptrGlobal);
@@ -115,6 +121,12 @@ private:
     void SolveCompCreditAndPercent(any& fCredit, any& fPercent,
                                    shared_ptr<FTreeMetric> ptrTreeMetric,
                                    string                  sComp);
+
+    //Выбор X Y Z и Color
+    void CreateXYZColor(shared_ptr<FCurricula>         ptrCurricula,
+                        const FTypeGraph&              fGraph,
+                        map<pair<wstring, int>, FAddGraphParams>&
+                            mapAddGraphParams);
 
 public:
     const vector<wstring>

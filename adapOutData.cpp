@@ -395,7 +395,12 @@ void FAdapOutData::CreateGephiLableCSVData()
                 const auto& fGraph = it->ptrGraph->mapGraph[eType];
                 try
                 {
+                    // Вывод X Y Z Color
+                    map<pair<wstring, int>, FAddGraphParams> mapAddGraphParams;
+                    CreateXYZColor(it, fGraph, mapAddGraphParams);
+
                     int iRowNum = -1;
+
                     for (const auto& [wsKey, iCourse] : fGraph.arrRel)
                     {
                         ++iRowNum;
@@ -403,22 +408,22 @@ void FAdapOutData::CreateGephiLableCSVData()
                             it->ptrGraph->GetGraphDisc(wsKey);
                         if (fDisc == nullptr)
                             continue;
-                  /*  for (int iRowNum = 0;
-                         iRowNum <
-                         fGraph.mapGraphDataTypeDisc.at(ETypeDisc::ETD_Total)
-                             .iAmount;
-                         ++iRowNum)*/
-                    
+                        /*  for (int iRowNum = 0;
+                               iRowNum <
+                               fGraph.mapGraphDataTypeDisc.at(ETypeDisc::ETD_Total)
+                                   .iAmount;
+                               ++iRowNum)*/
+
                         const auto& fNodeName = fGraph.arrRel[iRowNum];
                         vector<any> arrRow(fTotalOutHeader.size());
 
+                        int iFirstCourse = 0;
                         for (int iColumnNum = 0;
                              iColumnNum < fTotalOutHeader.size();
                              ++iColumnNum)
                         {
                             any                      fDataContainer;
                             shared_ptr<FTreeElement> ptrNode;
-
                             switch (iColumnNum)
                             {
                                 case 0:
@@ -453,23 +458,26 @@ void FAdapOutData::CreateGephiLableCSVData()
                                             if (it->mapAllDisc[fNodeName.first]
                                                     ->mapCourseScore.size())
                                             {
-                                                fDataContainer =
+                                                iFirstCourse =
                                                     it->mapAllDisc[fNodeName
                                                                        .first]
                                                         ->mapCourseScore
                                                         .begin()
-                                                        ->first +
-                                                    1;
+                                                        ->first;
+                                                fDataContainer =
+                                                    iFirstCourse + 1;
+                                                break;
                                             }
-                                            break;
                                         }
 
                                         // Курс неопределён
+                                        iFirstCourse   = fNodeName.second;
                                         fDataContainer = ptrGlobal->ptrConfig
                                                              ->GetSNoInitData();
                                         break;
                                     }
-                                    fDataContainer = fNodeName.second + 1;
+                                    iFirstCourse   = fNodeName.second;
+                                    fDataContainer = iFirstCourse + 1;
                                     break;
 
                                 case 5:
@@ -492,10 +500,43 @@ void FAdapOutData::CreateGephiLableCSVData()
                                             it->mapAllDisc[fNodeName.first]
                                                 ->mapComp.size();
                                     break;
-                            }
 
+                                    // X
+                                case 8:
+                                    if (it->mapAllDisc.count(fNodeName.first))
+                                        fDataContainer =
+                                            mapAddGraphParams[{ wsKey,
+                                                                iFirstCourse }]
+                                                .X;
+                                    break;
+                                    // Y
+                                case 9:
+                                    if (it->mapAllDisc.count(fNodeName.first))
+                                        fDataContainer =
+                                            mapAddGraphParams[{ wsKey,
+                                                                iFirstCourse }]
+                                                .Y;
+                                    break;
+                                    // Z
+                                case 10:
+                                    if (it->mapAllDisc.count(fNodeName.first))
+                                        fDataContainer =
+                                            mapAddGraphParams[{ wsKey,
+                                                                iFirstCourse }]
+                                                .Z;
+                                    break;
+                                    // Color
+                                case 11:
+                                    if (it->mapAllDisc.count(fNodeName.first))
+                                        fDataContainer =
+                                            mapAddGraphParams[{ wsKey,
+                                                                iFirstCourse }]
+                                                .Color;
+                                    break;
+                            }
                             arrRow[iColumnNum] = (fDataContainer);
                         }
+
                         fTotalOutData.push_back(arrRow);
                     }
                 }
@@ -940,7 +981,8 @@ void FAdapOutData::CreateTotalData()
             {
                 if (ptrGlobal->ptrConfig->mapArrOutParams.count(wsName))
                 {
-                    for (auto [sName, et] : it->ptrMetric->ptrTreeMetric->mapChild)
+                    for (auto [sName, et] :
+                         it->ptrMetric->ptrTreeMetric->mapChild)
                     {
                         if (sName == ptrGlobal->ptrConfig->GetSAllCourses())
                             continue;
@@ -950,9 +992,8 @@ void FAdapOutData::CreateTotalData()
                             any fCredit;
                             any fPercent;
 
-                            SolveCompCreditAndPercent(
-                                fCredit, fPercent, et,
-                                sHeaderComp);
+                            SolveCompCreditAndPercent(fCredit, fPercent, et,
+                                                      sHeaderComp);
 
                             if (fCredit.has_value())
                                 arrRow[iCurrentX] = (fCredit);
@@ -964,7 +1005,6 @@ void FAdapOutData::CreateTotalData()
                     }
                 }
             }
-
         }
 
         fTotalOutData.push_back(arrRow);
@@ -972,7 +1012,8 @@ void FAdapOutData::CreateTotalData()
 }
 
 void FAdapOutData::SolveCompCreditAndPercent(
-    any& fCredit, any& fPercent, shared_ptr<FTreeMetric> ptrTreeMetric, string sComp)
+    any& fCredit, any& fPercent, shared_ptr<FTreeMetric> ptrTreeMetric,
+    string sComp)
 {
     double dScore = 0.;
     double dRes   = 0.;
@@ -990,12 +1031,124 @@ void FAdapOutData::SolveCompCreditAndPercent(
     // Если ЗЕ равно 0, то и не выводить
     if (dScore > 0)
     {
-        fCredit        = dScore;
+        fCredit = dScore;
     }
 
     if (dRes > ptrGlobal->ptrConfig->GetDMinComp())
     {
-        fPercent        = dRes * 100;
+        fPercent = dRes * 100;
+    }
+}
+
+void FAdapOutData::CreateXYZColor(
+    shared_ptr<FCurricula> ptrCurricula, const FTypeGraph& fGraph,
+    map<pair<wstring, int>, FAddGraphParams>& mapAddGraphParams)
+{
+    int                       iRowNum = -1;
+    map<int, vector<pair<wstring, int>>>
+                     mapReverceCourse;    // Разбиение на курсы
+    map<string, int>          mapCompColor;        // Перечень компетенций
+
+    for (const auto& [wsKey, iCourse] : fGraph.arrRel)
+    {
+        ++iRowNum;
+        shared_ptr<FTreeElement> fDisc =
+            ptrCurricula->ptrGraph->GetGraphDisc(wsKey);
+        if (fDisc == nullptr)
+            continue;
+        
+        const auto& fNodeName = fGraph.arrRel[iRowNum];
+        int         iFirstCourse = iCourse;
+        if (ptrCurricula->mapAllDisc.count(fNodeName.first))
+        {
+            for (const auto& [sNameComp, arrIndicator] :
+                 ptrCurricula->mapAllDisc[fNodeName.first]->mapComp)
+            {
+                mapCompColor[sNameComp];
+            }
+            if (fNodeName.second < 0)
+            {
+                if (ptrCurricula->mapAllDisc[fNodeName.first]
+                        ->mapCourseScore.size())
+                {
+                    iFirstCourse = ptrCurricula->mapAllDisc[fNodeName.first]
+                                       ->mapCourseScore.begin()
+                                       ->first;
+                }
+            }
+        }
+
+        mapReverceCourse[iCourse].push_back({ wsKey, iFirstCourse });
+    }
+
+    set<int> setChooseColor;
+    // Выбор цвета Монте-Карло
+
+    int iAllColor = 1 << 24;
+    for (auto& [sName, iColor] : mapCompColor)
+    {
+        while (true)
+        {
+            // Слишком тусклые цвета не используются
+            int r = ptrGlobal->GetRandomInt(1 << 3, 1 << 8);
+            int g = ptrGlobal->GetRandomInt(1 << 3, 1 << 8);
+            int b = ptrGlobal->GetRandomInt(1 << 3, 1 << 8);
+
+            iColor = (r << 16) + (g << 8) + b;
+
+            if (setChooseColor.size())
+            {
+                auto lIt = setChooseColor.lower_bound(iColor);
+                if (lIt != setChooseColor.begin())
+                {
+                    // Слишком близко цвет
+                    if (abs(iColor - *(--lIt)) <
+                        (iAllColor / (10 * (setChooseColor.size() + 3))))
+                        continue;
+                }
+
+                auto rIt = setChooseColor.upper_bound(iColor);
+
+                if (rIt != setChooseColor.end())
+                {
+                    // Слишком близко цвет
+                    if (abs(*rIt - iColor) <
+                        (iAllColor / (10 * (setChooseColor.size() + 3))))
+                        continue;
+                }
+            }
+            break;
+        }
+        setChooseColor.insert(iColor);
+    }
+
+    for (const auto& [iCourse, arrWsDisc] : mapReverceCourse)
+    {
+        int iX = -1;
+        for (const auto& [wsDisc, iCourse] : arrWsDisc)
+        {
+            ++iX;
+
+            mapAddGraphParams[{ wsDisc, iCourse }].X =
+                (iX % ptrGlobal->ptrConfig->GetIRowSizeGraph()) *
+                ptrGlobal->ptrConfig->GetIShiftXGraph();
+
+            mapAddGraphParams[{ wsDisc, iCourse }].Y =
+                (iX / ptrGlobal->ptrConfig->GetIRowSizeGraph()) *
+                ptrGlobal->ptrConfig->GetIShiftYGraph();
+
+            mapAddGraphParams[{ wsDisc, iCourse }].Z =
+                abs(iCourse) * ptrGlobal->ptrConfig->GetIShiftZGraph();
+
+            if (ptrCurricula->mapAllDisc.count(wsDisc))
+                for (const auto& [sNameComp, arrIndicator] :
+                     ptrCurricula->mapAllDisc[wsDisc]->mapComp)
+                {
+                    mapAddGraphParams[{ wsDisc, iCourse }].Color ^=
+                        mapCompColor[sNameComp];    // Генерируем обобщённый
+                                                    // цвет
+                }
+        }
     }
 }
 

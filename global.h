@@ -1,4 +1,4 @@
-﻿//v 1.36
+﻿//v 1.38
 
 #pragma once
 #include <algorithm>
@@ -131,6 +131,8 @@ struct FGlobal
     void ClearFile(const string& sPath);
 
     string ConvertAnyToString(const any& fData);
+
+    int GetRandomInt(int l, int r);
 
 private:
     static int iSinglControll;

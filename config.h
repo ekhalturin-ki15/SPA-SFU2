@@ -231,6 +231,11 @@ private:
     int iAmountQuar;
     int iPrecision;
     int iHeaderRow;
+    
+    int iRowSizeGraph;
+    int iShiftXGraph;
+    int iShiftYGraph;
+    int iShiftZGraph;
     // int iIndicatorDeep;
 
     // Int Params adapter
@@ -266,6 +271,23 @@ public:
     const int& GetIHeaderRow() const
     {
         return iHeaderRow;
+    }
+
+    const int& GetIRowSizeGraph() const
+    {
+        return iRowSizeGraph;
+    }
+    const int& GetIShiftXGraph() const
+    {
+        return iShiftXGraph;
+    }
+    const int& GetIShiftYGraph() const
+    {
+        return iShiftYGraph;
+    }
+    const int& GetIShiftZGraph() const
+    {
+        return iShiftZGraph;
     }
     // const int& GetIIndicatorDeep() const
     //{
