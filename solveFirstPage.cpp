@@ -53,7 +53,7 @@ void FSolve::FirstPageAddCompIndicator(const OpenXLSX::XLWorksheet& fSheet,
                 if (wsData != L"")
                 {
                     string sData;
-                    if (!ptrGlobal->ptrConfig->GetBOutCompRU())
+                    if (ptrGlobal->ptrConfig->GetBOutCompEN())
                     {
                         sData = ptrGlobal->ConwertToString(
                             ptrGlobal->ConwertPathFormat(wsData));
@@ -64,7 +64,9 @@ void FSolve::FirstPageAddCompIndicator(const OpenXLSX::XLWorksheet& fSheet,
                             ptrGlobal->ConwertToString(wsData));
                     }
 
-                    if ((iIdIndex <= x) && (!bReadIndex))
+                    if ((iIdIndex <= x) &&
+                        ((!bReadIndex) ||
+                         (ptrGlobal->ptrConfig->GetBSolveFirstPageMultirow())))
                     {
                         bReadIndex = true;    // Чтобы повторно не находить
                                               // индекс в строке
@@ -110,7 +112,7 @@ void FSolve::FirstPageAddCompIndicator(const OpenXLSX::XLWorksheet& fSheet,
                                 }
                             }
 
-                            ptrThis->mapComp[sLastComp].push_back(
+                            ptrThis->mapComp[sLastComp].insert(
                                 sLastIndicator);
 
                             vector<smatch> matchesHeaderComp;

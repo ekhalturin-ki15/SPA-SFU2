@@ -88,8 +88,8 @@ void FCurricula::CountDisc()
                     //
                 )
             {
-                mapETMTypeDisc[iTypeMetric][ETypeDisc::ETD_Total].iAmount++;
-                mapETMTypeDisc[iTypeMetric][ETypeDisc::ETD_Total].dCredits +=
+                mapETMTypeDisc[iTypeMetric][EClassicTypeDisc::ETD_Total].iAmount++;
+                mapETMTypeDisc[iTypeMetric][EClassicTypeDisc::ETD_Total].dCredits +=
                     it->dSumScore;
 
                 mapETMTypeDisc[iTypeMetric][it->eTypeDisc].iAmount++;

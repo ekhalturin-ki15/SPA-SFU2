@@ -1,4 +1,4 @@
-﻿//v 1.38
+﻿//v 1.39
 
 #pragma once
 #include <algorithm>

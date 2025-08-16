@@ -7,14 +7,17 @@ struct FMetric;
 enum ETagDisc;
 
 // Тип дисциплины (основная, по выбору, факультатив)
-enum ETypeDisc : int
+enum EClassicTypeDisc : int
 {
     ETD_Total = 0,    // Заглушка, чтобы считать общую статистику в том числе
     ETD_Common,
     ETD_Chosen,
     ETD_Elective,
+    ETD_Add,
     ETD_Size
 };
+
+//using ETypeDisc = int; // Больше типов данных
 
 struct FTreeElement
 {
@@ -35,11 +38,12 @@ struct FTreeElement
     vector<shared_ptr<FTreeElement>> arrChild;    // Дисциплины внутри модуля
     // Указаны компетенции с индикаторами для дополнительной валидации УП (что у
     // страницы Компетенции (2) есть весь перечень компетенций)
-    map<string, vector<string>>
+    map<string, set<string>>
         mapComp;    // Компетенции, у каждой из которых перечень индикаторов
                     // Для обратного графа перечислены дисциплины
 
-    ETypeDisc eTypeDisc = ETypeDisc::ETD_Common;
+    //ETypeDisc eTypeDisc = ETypeDisc::ETD_Common;
+    int eTypeDisc = EClassicTypeDisc::ETD_Common;
     // Перечисляются теги дисциплины (Гуманитарная, естеств., общепроф.)
     // Может быть несколько тегов у одной дисциплины
     set<ETagDisc> setTagDisc;
@@ -99,7 +103,7 @@ struct FCurricula
 
     // vector<double> arrETMAllSumScore;
     // vector<int>    arrETMAmountDisc;
-    vector<map<ETypeDisc, FDiscParams>>
+    vector<map<int, FDiscParams>>
         mapETMTypeDisc;    // Количество и ЗЕ дисциплин по типу (Все, основные,
                            // по выбору, факультативы), Учитываются в том числе
                            // и те, что не считаются в Плане

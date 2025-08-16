@@ -139,23 +139,28 @@ void FOutData::OutLocalData()
 
         if (ptrGlobal->ptrConfig->GetBIsOutFileAllLocalData())
         {
-            if (arrAllCompareData.size() == 1)
+            
+            if (ptrGlobal->ptrConfig->GetBIsOutExcel())
             {
-                arrAllCompareData.back().save();
-                arrAllCompareData.back().close();
-                arrAllCompareData.clear();
-            }
+                if (arrAllCompareData.size() == 1)
+                {
+                    arrAllCompareData.back().save();
+                    arrAllCompareData.back().close();
+                    arrAllCompareData.clear();
+                }
 
-            arrAllCompareData.resize(1);
+                arrAllCompareData.resize(1);
 
-            OpenXLSX::XLDocument& fAllCompareOutFile = arrAllCompareData.back();
+                OpenXLSX::XLDocument& fAllCompareOutFile =
+                    arrAllCompareData.back();
 
-            fAllCompareOutFile.create(sCreateAllCompareDataPath + XLSX);
-            fAllCompareOutFile.workbook().addWorksheet(sAllCompareDataPageName);
-            fAllCompareOutFile.workbook().deleteSheet(sDefaultName);
-            wksAllCompare =
-                fAllCompareOutFile.workbook().worksheet(
+                fAllCompareOutFile.create(sCreateAllCompareDataPath + XLSX);
+                fAllCompareOutFile.workbook().addWorksheet(
                     sAllCompareDataPageName);
+                fAllCompareOutFile.workbook().deleteSheet(sDefaultName);
+                wksAllCompare = fAllCompareOutFile.workbook().worksheet(
+                    sAllCompareDataPageName);
+            }
         }
         int iAllCompareShiftY = 0;
 
@@ -168,33 +173,49 @@ void FOutData::OutLocalData()
 
             const string sPageName = sCurPlanName;
 
-            if (arrOutFile.size() == 1)
+            if (ptrGlobal->ptrConfig->GetBIsOutExcel())
             {
-                arrOutFile.back().save();
-                arrOutFile.back().close();
-                arrOutFile.clear();
+                if (arrOutFile.size() == 1)
+                {
+                    arrOutFile.back().save();
+                    arrOutFile.back().close();
+                    arrOutFile.clear();
+                }
+
+                arrOutFile.resize(1);
             }
 
-            arrOutFile.resize(1);
+            bool                  bIsOutHeader  = (iAllCompareShiftY == 0);
+            
+            if (ptrGlobal->ptrConfig->GetBIsOutExcel())
+            {
+                OpenXLSX::XLDocument& fLocalOutFile = arrOutFile.back();
+                fLocalOutFile.create(sCreatePath + XLSX);
+                fLocalOutFile.workbook().addWorksheet(sPageName);
+                fLocalOutFile.workbook().deleteSheet(sDefaultName);
+                OpenXLSX::XLWorksheet wksLocal =
+                    fLocalOutFile.workbook().worksheet(sPageName);
 
-            OpenXLSX::XLDocument& fLocalOutFile = arrOutFile.back();
+                OutTable(0, 0, true, fData, false, &wksLocal,
+                         (ptrGlobal->ptrConfig->GetBIsOutCSVDate()
+                              ? sCreatePath + CSV
+                              : ""));
+            }
+            else
+            {
+                OutTable(iAllCompareShiftY, 0, bIsOutHeader, fData, false,
+                         nullptr,
+                         (ptrGlobal->ptrConfig->GetBIsOutCSVDate()
+                              ? sCreateAllCompareDataPath + CSV
+                              : ""));
+            }
 
-            fLocalOutFile.create(sCreatePath + XLSX);
-            fLocalOutFile.workbook().addWorksheet(sPageName);
-            fLocalOutFile.workbook().deleteSheet(sDefaultName);
-            OpenXLSX::XLWorksheet wksLocal =
-                fLocalOutFile.workbook().worksheet(sPageName);
-
-            OutTable(0, 0, true, fData, false, &wksLocal,
-                     (ptrGlobal->ptrConfig->GetBIsOutCSVDate()
-                          ? sCreatePath + CSV
-                          : ""));
-
-            bool bIsOutHeader = (iAllCompareShiftY == 0);
             if (ptrGlobal->ptrConfig->GetBIsOutFileAllLocalData())
             {
                 OutTable(iAllCompareShiftY, 0, bIsOutHeader, fData, false,
-                         &wksAllCompare,
+                         (ptrGlobal->ptrConfig->GetBIsOutExcel())
+                             ? &wksAllCompare
+                             : nullptr,
                          (ptrGlobal->ptrConfig->GetBIsOutCSVDate()
                               ? sCreateAllCompareDataPath + CSV
                               : ""));
@@ -207,24 +228,27 @@ void FOutData::OutLocalData()
         }
     }
 
-    if (arrOutFile.size())
+    if (ptrGlobal->ptrConfig->GetBIsOutExcel())
     {
-        arrOutFile.back().save();
-        arrOutFile.back().close();
-    }
-    else
-    {
-        ptrGlobal->ptrError->ErrorEmptyOutFile();
-    }
+        if (arrOutFile.size())
+        {
+            arrOutFile.back().save();
+            arrOutFile.back().close();
+        }
+        else
+        {
+            ptrGlobal->ptrError->ErrorEmptyOutFile();
+        }
 
-    if (arrOutFile.size())
-    {
-        arrAllCompareData.back().save();
-        arrAllCompareData.back().close();
-    }
-    else
-    {
-        ptrGlobal->ptrError->ErrorEmptyOutFile();
+        if (arrOutFile.size())
+        {
+            arrAllCompareData.back().save();
+            arrAllCompareData.back().close();
+        }
+        else
+        {
+            ptrGlobal->ptrError->ErrorEmptyOutFile();
+        }
     }
 }
 
@@ -244,16 +268,28 @@ void FOutData::OutTotalData()
 
         const string sPageName = ptrGlobal->ptrConfig->GetSNameFileTotalData();
 
-        fTotalOutFile.create(sCreatePath + XLSX);
-        fTotalOutFile.workbook().addWorksheet(sPageName);
-        fTotalOutFile.workbook().deleteSheet(sDefaultName);
-        OpenXLSX::XLWorksheet wks =
-            fTotalOutFile.workbook().worksheet(sPageName);
+        if (ptrGlobal->ptrConfig->GetBIsOutExcel())
+        {
+            fTotalOutFile.create(sCreatePath + XLSX);
+            fTotalOutFile.workbook().addWorksheet(sPageName);
+            fTotalOutFile.workbook().deleteSheet(sDefaultName);
+            OpenXLSX::XLWorksheet wks =
+                fTotalOutFile.workbook().worksheet(sPageName);
 
-        OutTable(0, 0, true, ptrGlobal->ptrAdapOutData->fTotalData,
-                 ptrGlobal->ptrConfig->GetBOutDataCorridor(), &wks,
-                 (ptrGlobal->ptrConfig->GetBIsOutCSVDate() ? sCreatePath + CSV
-                                                           : ""));
+            OutTable(0, 0, true, ptrGlobal->ptrAdapOutData->fTotalData,
+                     ptrGlobal->ptrConfig->GetBOutDataCorridor(), &wks,
+                     (ptrGlobal->ptrConfig->GetBIsOutCSVDate()
+                          ? sCreatePath + CSV
+                          : ""));
+        }
+        else
+        {
+            OutTable(0, 0, true, ptrGlobal->ptrAdapOutData->fTotalData,
+                     ptrGlobal->ptrConfig->GetBOutDataCorridor(), nullptr,
+                     (ptrGlobal->ptrConfig->GetBIsOutCSVDate()
+                          ? sCreatePath + CSV
+                          : ""));
+        }
     }
 
     for (const auto& [eType, fData] : ptrGlobal->ptrAdapOutData->mapGraphData)
@@ -277,37 +313,45 @@ void FOutData::OutTotalData()
         // Выводить в этом же файле
         if (ptrGlobal->ptrConfig->GetBCompactOutput())
         {
-            fTotalOutFile.workbook().addWorksheet(sGraphPageName);
-            wksCourse = fTotalOutFile.workbook().worksheet(sGraphPageName);
+            if (ptrGlobal->ptrConfig->GetBIsOutExcel())
+            {
+                fTotalOutFile.workbook().addWorksheet(sGraphPageName);
+                wksCourse = fTotalOutFile.workbook().worksheet(sGraphPageName);
+            }
         }
         else
         {
-            if (arrOutFile.size() == 1)
+            if (ptrGlobal->ptrConfig->GetBIsOutExcel())
             {
-                arrOutFile.back().save();
-                arrOutFile.back().close();
-                arrOutFile.clear();
+                if (arrOutFile.size() == 1)
+                {
+                    arrOutFile.back().save();
+                    arrOutFile.back().close();
+                    arrOutFile.clear();
+                }
+
+                arrOutFile.resize(1);
+                OpenXLSX::XLDocument& fGraphOutFile = arrOutFile.back();
+
+                fGraphOutFile.create(sGraphCreatePath + XLSX);
+                fGraphOutFile.workbook().addWorksheet(sGraphPageName);
+                fGraphOutFile.workbook().deleteSheet(sDefaultName);
+                wksCourse = fGraphOutFile.workbook().worksheet(sGraphPageName);
             }
-
-            arrOutFile.resize(1);
-
-            OpenXLSX::XLDocument& fGraphOutFile = arrOutFile.back();
-
-            fGraphOutFile.create(sGraphCreatePath + XLSX);
-            fGraphOutFile.workbook().addWorksheet(sGraphPageName);
-            fGraphOutFile.workbook().deleteSheet(sDefaultName);
-            wksCourse = fGraphOutFile.workbook().worksheet(sGraphPageName);
         }
 
-        OutTable(0, 0, true, fData, ptrGlobal->ptrConfig->GetBOutDataCorridor(),
-                 &wksCourse,
-                 (ptrGlobal->ptrConfig->GetBIsOutCSVDate()
-                      ? sGraphCreatePath + CSV
-                      : ""));
+        OutTable(
+            0, 0, true, fData, ptrGlobal->ptrConfig->GetBOutDataCorridor(),
+            (ptrGlobal->ptrConfig->GetBIsOutExcel()) ? &wksCourse : nullptr,
+            (ptrGlobal->ptrConfig->GetBIsOutCSVDate() ? sGraphCreatePath + CSV
+                                                      : ""));
     }
 
-    arrOutFile.back().save();
-    arrOutFile.back().close();
+    if (ptrGlobal->ptrConfig->GetBIsOutExcel())
+    {
+        arrOutFile.back().save();
+        arrOutFile.back().close();
+    }
 }
 
 void FOutData::IncRow(int& iRow, ofstream* outDataCSVStream)
@@ -443,7 +487,7 @@ void FOutData::OutTable(const int& iYShift, const int& iXShift,
                                     arrCorridor[y][x].iAddInfo);
                             sOutString += ptrCurricula->sShortNamePlan + ")";
                         }
-                        
+
                         if (WKS != nullptr)
                         {
                             OutDataCeil(iYShift + iRealY, iXShift + x + 1, *WKS,
@@ -458,8 +502,6 @@ void FOutData::OutTable(const int& iYShift, const int& iXShift,
                                         arrCorridor[y][x].fData);
                         }
                     }
-
-                   
                 }
             }
             IncRow(iRealY, ptrDataCSVStream);
@@ -491,12 +533,12 @@ void FOutData::OutDataCeil(const int& y, const int& x,
 
     if (sType == typeid(string).name())
     {
-        bIsCheck               = true;
+        bIsCheck = true;
         OutDataCeil(y, x, WKS, std::any_cast<string>(fData));
     }
     if (sType == typeid(int).name())
     {
-        bIsCheck               = true;
+        bIsCheck   = true;
         int dCheck = std::any_cast<int>(fData);
         if (dCheck == int(FGlobal::dNoInit))
         {
@@ -509,8 +551,8 @@ void FOutData::OutDataCeil(const int& y, const int& x,
     }
     if (sType == typeid(double).name())
     {
-        bIsCheck               = true;
-        double dCheck          = std::any_cast<double>(fData);
+        bIsCheck      = true;
+        double dCheck = std::any_cast<double>(fData);
         if (dCheck == FGlobal::dNoInit)
         {
             WKS.cell(y, x).value() = ptrGlobal->ptrConfig->GetSNoInitData();

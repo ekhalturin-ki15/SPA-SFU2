@@ -191,7 +191,9 @@ namespace TestFSolve
         {
             Assert::AreEqual(
                 25.,
-                ptrFirst->mapETMTypeDisc[ETM_NoExtended][ETypeDisc::ETD_Total]
+                             ptrFirst
+                                 ->mapETMTypeDisc[ETM_NoExtended]
+                                                 [EClassicTypeDisc::ETD_Total]
                     .dCredits);
         }
 
@@ -199,7 +201,9 @@ namespace TestFSolve
         {
             Assert::AreEqual(
                 7,
-                ptrFirst->mapETMTypeDisc[ETM_NoExtended][ETypeDisc::ETD_Total]
+                             ptrFirst
+                                 ->mapETMTypeDisc[ETM_NoExtended]
+                                                 [EClassicTypeDisc::ETD_Total]
                     .iAmount);
         }
 
@@ -207,7 +211,8 @@ namespace TestFSolve
         {
             Assert::AreEqual(
                 10,
-                ptrFirst->mapETMTypeDisc[ETM_Extended][ETypeDisc::ETD_Total]
+                ptrFirst
+                    ->mapETMTypeDisc[ETM_Extended][EClassicTypeDisc::ETD_Total]
                     .iAmount);
         }
 
@@ -311,7 +316,7 @@ namespace TestFSolve
                     sActual += " ";
                 sActual +=
                     to_string(ptrThis->ptrGraph->mapGraph[ETypeGraph(i)]
-                                  .mapGraphDataTypeDisc[ETypeDisc::ETD_Total]
+                        .mapGraphDataTypeDisc[EClassicTypeDisc::ETD_Total]
                                   .iAmount);
             }
             Assert::AreEqual("2 2 3 0", sActual.c_str());
@@ -327,7 +332,7 @@ namespace TestFSolve
                     sActual += " ";
                 sActual +=
                     to_string(ptrThis->ptrGraph->mapGraph[ETypeGraph(i)]
-                                  .mapGraphDataTypeDisc[ETypeDisc::ETD_Total]
+                                  .mapGraphDataTypeDisc[EClassicTypeDisc::ETD_Total]
                                   .iAmount);
             }
             Assert::AreEqual("2 2 2 2", sActual.c_str());
@@ -343,7 +348,7 @@ namespace TestFSolve
                     sActual += " ";
                 sActual +=
                     to_string(ptrThis->ptrGraph->mapGraph[ETypeGraph(i)]
-                                  .mapGraphDataTypeDisc[ETypeDisc::ETD_Total]
+                        .mapGraphDataTypeDisc[EClassicTypeDisc::ETD_Total]
                                   .iAmount);
             }
             Assert::AreEqual("2 3 4 0", sActual.c_str());
@@ -357,7 +362,7 @@ namespace TestFSolve
             auto& ptrThis = ptrThird;
             Assert::AreEqual(30.,
                              ptrThis->ptrGraph->mapGraph[eCommon]
-                                 .mapGraphDataTypeDisc[ETypeDisc::ETD_Total]
+                                 .mapGraphDataTypeDisc[EClassicTypeDisc::ETD_Total]
                                  .dCredits);
         }
 
@@ -368,7 +373,7 @@ namespace TestFSolve
             // файла config.xlsx "Игнорируемые предметы"
             auto& ptrThis = ptrThird;
             Assert::AreEqual(9, ptrThis->ptrGraph->mapGraph[eCommon]
-                                    .mapGraphDataTypeDisc[ETypeDisc::ETD_Total]
+                                    .mapGraphDataTypeDisc[EClassicTypeDisc::ETD_Total]
                                     .iAmount);
         }
 
@@ -380,7 +385,7 @@ namespace TestFSolve
             auto& ptrThis = ptrThird;
             Assert::AreEqual(16.,
                              ptrThis->ptrGraph->mapGraph[eCommon]
-                                 .mapGraphDataTypeDisc[ETypeDisc::ETD_Common]
+                                 .mapGraphDataTypeDisc[EClassicTypeDisc::ETD_Common]
                                  .dCredits);
         }
 
@@ -391,7 +396,7 @@ namespace TestFSolve
             // файла config.xlsx "Игнорируемые предметы"
             auto& ptrThis = ptrThird;
             Assert::AreEqual(5, ptrThis->ptrGraph->mapGraph[eCommon]
-                                    .mapGraphDataTypeDisc[ETypeDisc::ETD_Common]
+                                    .mapGraphDataTypeDisc[EClassicTypeDisc::ETD_Common]
                                     .iAmount);
         }
 
@@ -700,7 +705,7 @@ namespace AnomalTestFSolve
         {
             Assert::AreEqual(
                 10.,
-                ptrFirst->mapETMTypeDisc[ETM_NoExtended][ETypeDisc::ETD_Total]
+                ptrFirst->mapETMTypeDisc[ETM_NoExtended][EClassicTypeDisc::ETD_Total]
                     .dCredits);
         }
 
@@ -708,7 +713,7 @@ namespace AnomalTestFSolve
         {
             Assert::AreEqual(
                 3,
-                ptrFirst->mapETMTypeDisc[ETM_NoExtended][ETypeDisc::ETD_Total]
+                ptrFirst->mapETMTypeDisc[ETM_NoExtended][EClassicTypeDisc::ETD_Total]
                     .iAmount);
         }
 
@@ -716,7 +721,7 @@ namespace AnomalTestFSolve
         {
             Assert::AreEqual(
                 4,
-                ptrFirst->mapETMTypeDisc[ETM_Extended][ETypeDisc::ETD_Total]
+                ptrFirst->mapETMTypeDisc[ETM_Extended][EClassicTypeDisc::ETD_Total]
                     .iAmount);
         }
 
@@ -801,6 +806,7 @@ namespace TestFormulaParser
             // K - мощность пересечения по компетенциям
             // D - мощность пересечения по дисциплинам
 
+            
             fTestFormula.push_back(FormulaParser("((L + R) / 2) * K", 244.,
                                                  17));    // A = 244 N = 17
 

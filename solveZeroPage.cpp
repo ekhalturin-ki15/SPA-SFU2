@@ -114,7 +114,7 @@ void FSolve::ZeroPageCreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
 
                         // Смотрим, что это за дисциплина (основная, по выбору
                         // или факультатив)
-                        int  iTypeNumber = int(ETypeDisc::ETD_Common);
+                        int  iTypeNumber = int(EClassicTypeDisc::ETD_Common);
                         auto iPos        = wstring::npos;
 
                         for (const auto& wsType :
@@ -124,7 +124,7 @@ void FSolve::ZeroPageCreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
                             if (uCurPos < iPos)
                             {
                                 iPos                  = uCurPos;
-                                ptrNewNode->eTypeDisc = ETypeDisc(iTypeNumber);
+                                ptrNewNode->eTypeDisc = EClassicTypeDisc(iTypeNumber);
                                 // break; // Какой индекс встречается ранее,
                                 // такой и тип
                             }
@@ -163,6 +163,12 @@ void FSolve::ZeroPageCreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
                         }
                         else
                         {
+                            if (ptrNewNode == nullptr)
+                            {
+                                throw std::logic_error(FError::sBadTree);
+                                return;
+                            }
+
                             ptrNewNode->sName = ptrGlobal->ReversUTF16RU(
                                 ptrGlobal->ConwertToString(wsData));
 
@@ -234,7 +240,7 @@ void FSolve::ZeroPageCreateDiscTree(const OpenXLSX::XLWorksheet& fSheet,
 
                         string sParsingData;
 
-                        if (!ptrGlobal->ptrConfig->GetBOutCompRU())
+                        if (ptrGlobal->ptrConfig->GetBOutCompEN())
                         {
                             sParsingData = ptrGlobal->ConwertToString(
                                 ptrGlobal->ConwertPathFormat(wsData));

@@ -39,7 +39,8 @@ FConfig::FConfig(shared_ptr<FGlobal> _ptrGlobal)
       bOutEmptyComp(true),
       bOutTotalInfo(true),
       bOutWithoutEmptyCell(true),
-      bOutCompRU(true),
+      bOutCompEN(true),
+      bIsOutExcel(true),
       bIsOutCSVDate(false),
       arrNameLabelHeader({ "Id", "Label", "Weight", "Tag" }),
       arrNameRibHeader({ "Source", "Target", "Type", "Label", "Weight" }),
@@ -143,20 +144,18 @@ void FConfig::InitIntMap()
         [L"Игнорировать пустые строки в конце странице, если их не менее X ="] =
             &iIgnoreEmptyLine;
     mapIntParamsReadKey[L"Считать, что у дисциплины компетенций много, если их "
-                        L"число больше X ="]                 = &iSoMachComp;
-    mapIntParamsReadKey[L"Количество квартилей"]             = &iAmountQuar;
-    mapIntParamsReadKey[L"Макс кол-во знаков после запятой"] = &iPrecision;
+                        L"число больше X ="]                    = &iSoMachComp;
+    mapIntParamsReadKey[L"Количество квартилей"]                = &iAmountQuar;
+    mapIntParamsReadKey[L"Макс кол-во знаков после запятой"]    = &iPrecision;
     mapIntParamsReadKey[L"До какой строки считывать заголовок"] = &iHeaderRow;
 
-    mapIntParamsReadKey[L"Сколько вершин в одной строке"] =
-        &iRowSizeGraph;
+    mapIntParamsReadKey[L"Сколько вершин в одной строке"] = &iRowSizeGraph;
 
-    mapIntParamsReadKey[L"Сдвиг вершин по X"] =
-        &iShiftXGraph;
-    mapIntParamsReadKey[L"Сдвиг вершин по Y"] =
-        &iShiftYGraph;
-    mapIntParamsReadKey[L"Сдвиг вершин по Z"] =
-        &iShiftZGraph;
+    mapIntParamsReadKey[L"Сдвиг вершин по X"] = &iShiftXGraph;
+    mapIntParamsReadKey[L"Сдвиг вершин по Y"] = &iShiftYGraph;
+    mapIntParamsReadKey[L"Сдвиг вершин по Z"] = &iShiftZGraph;
+
+    mapIntParamsReadKey[L"Разброс координат"] = &iRandomShift;
     // mapIntParamsReadKey[L"Индикатор находится на глубине X="] =
     // &iIndicatorDeep;
 }
@@ -165,8 +164,8 @@ void FConfig::InitBoolMap()
 {
     mapBoolParamsReadKey[L"Создать новый каталог"]       = &bCreateFolder;
     mapBoolParamsReadKey[L"Компактный вывод результата"] = &bCompactOutput;
-    mapBoolParamsReadKey[L"Перезаписывать лог файл"] = &bReloadLogFile;
-    mapBoolParamsReadKey[L"Вывод доп файлов csv"]    = &bIsOutCSVDate;
+    mapBoolParamsReadKey[L"Перезаписывать лог файл"]     = &bReloadLogFile;
+    mapBoolParamsReadKey[L"Вывод доп файлов csv"]        = &bIsOutCSVDate;
     mapBoolParamsReadKey
         [L"Вывод файла общей локальной статистики по конкретному УП"] =
             &bIsOutFileAllLocalData;
@@ -195,8 +194,8 @@ void FConfig::InitBoolMap()
     mapBoolParamsReadKey[L"Игнорировать индикаторы в дереве компетенций"] =
         &bIsIgnoreTreeInd;
 
-    mapBoolParamsReadKey[L"Граф неориентированный"]  = &bIsUnDirected;
-    
+    mapBoolParamsReadKey[L"Граф неориентированный"] = &bIsUnDirected;
+
     mapBoolParamsReadKey[L"Переводить на латиницу"] = &bIsLocaleData;
 
     mapBoolParamsReadKey[L"Выводить УП мер центральной тенденции"] =
@@ -215,10 +214,13 @@ void FConfig::InitBoolMap()
     mapBoolParamsReadKey
         [L"Не оставлять пустые ячейки при выводе дерева компетенций"] =
             &bOutWithoutEmptyCell;
-    
+
+    mapBoolParamsReadKey[L"Компетенции на латинице"] = &bOutCompEN;
+
+    mapBoolParamsReadKey[L"Выводить .xlsx файлы"] = &bIsOutExcel;
     mapBoolParamsReadKey
-        [L"Компетенции на кириллице"] =
-            &bOutCompRU;
+        [L"На странице индикаторов несколько данных в одной строке"] =
+            &bSolveFirstPageMultirow;
 }
 
 void FConfig::InitDoubleMap()
@@ -583,6 +585,8 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
                              0))
                     {
                         int iNum = -1;
+                        if (key.size() == 0)
+                            break;
                         if (key.size() < 3)    // У нас не будет более 100 тегов
                         {
                             try
@@ -625,6 +629,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
                     }
                 }
             }
+
             return true;
         }
 
@@ -645,7 +650,7 @@ bool FConfig::SetParams(OpenXLSX::XLWorkbook& fBook, wstring wsKey,
                              3))    // Теперь ещё и считываем, требуется ли
                                     // выводить
                     {
-                        auto& it  = mapAddOutParams[key];
+                        auto& it = mapAddOutParams[key];
 
                         if (GetBIsLocaleData())
                         {

@@ -115,6 +115,9 @@ private:
     string AddCompString(const map<string, vector<string>>& mapComp,
                          bool                               bIsBrache = true);
 
+    string AddCompString(const map<string, set<string>>& mapComp,
+                         bool                            bIsBrache = true);
+
     string CreateTag(const ETypeGraph& eGraphType, const wstring& wsName,
                      const map<wstring, shared_ptr<FTreeElement>>& mapAllDisc);
 

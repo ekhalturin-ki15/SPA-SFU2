@@ -119,8 +119,8 @@ void FMetric::Init()
              i <
              ptrCurricula->ptrGlobal->ptrConfig->GetArrRegexHeaderComp().size();
              ++i)
-            arrRegexHeaderComp[i] =
-                ptrCurricula->ptrGlobal->ptrConfig->GetArrRegexHeaderComp()[i];
+            arrRegexHeaderComp[i] =ptrCurricula->ptrGlobal->ReversUTF16RU(
+                ptrCurricula->ptrGlobal->ptrConfig->GetArrRegexHeaderComp()[i]);
     }
     catch (...)
     {
@@ -138,8 +138,8 @@ void FMetric::Init()
              i <
              ptrCurricula->ptrGlobal->ptrConfig->GetArrRegexHeaderInd().size();
              ++i)
-            arrRegexHeaderInd[i] =
-                ptrCurricula->ptrGlobal->ptrConfig->GetArrRegexHeaderInd()[i];
+            arrRegexHeaderInd[i] =ptrCurricula->ptrGlobal->ReversUTF16RU(
+                ptrCurricula->ptrGlobal->ptrConfig->GetArrRegexHeaderInd()[i]);
     }
     catch (...)
     {

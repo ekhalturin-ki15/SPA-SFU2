@@ -45,9 +45,16 @@ bool FSolve::Init()
     try
     {
         // fRegexComp = ptrGlobal->ptrConfig->GetSRegexComp();
-        arrRegexComp.resize(ptrGlobal->ptrConfig->GetArrRegexComp().size());
+        //arrRegexComp.resize(ptrGlobal->ptrConfig->GetArrRegexComp().size());
         for (int i = 0; i < ptrGlobal->ptrConfig->GetArrRegexComp().size(); ++i)
-            arrRegexComp[i] = ptrGlobal->ptrConfig->GetArrRegexComp()[i];
+        {
+            //Предварительно закешируем регулярное выражение
+            std::regex re((ptrGlobal->ReversUTF16RU(
+                ptrGlobal->ptrConfig->GetArrRegexComp()[i])),
+                          std::regex::ECMAScript | std::regex::optimize);
+
+            arrRegexComp.emplace_back(re);
+        }
     }
     catch (...)
     {
@@ -62,8 +69,8 @@ bool FSolve::Init()
             ptrGlobal->ptrConfig->GetArrRegexCodeUGSN().size());
         for (int i = 0; i < ptrGlobal->ptrConfig->GetArrRegexCodeUGSN().size();
              ++i)
-            arrRegexCodeUGSN[i] =
-                ptrGlobal->ptrConfig->GetArrRegexCodeUGSN()[i];
+            arrRegexCodeUGSN[i] = ptrGlobal->ReversUTF16RU(
+                ptrGlobal->ptrConfig->GetArrRegexCodeUGSN()[i]);
     }
     catch (...)
     {
@@ -79,8 +86,8 @@ bool FSolve::Init()
         for (int i = 0;
              i < ptrGlobal->ptrConfig->GetArrRegexHeaderComp().size();
              ++i)
-            arrRegexHeaderComp[i] =
-                ptrGlobal->ptrConfig->GetArrRegexHeaderComp()[i];
+            arrRegexHeaderComp[i] =ptrGlobal->ReversUTF16RU(
+                ptrGlobal->ptrConfig->GetArrRegexHeaderComp()[i]);
     }
     catch (...)
     {
@@ -95,8 +102,8 @@ bool FSolve::Init()
             ptrGlobal->ptrConfig->GetArrRegexHeaderInd().size());
         for (int i = 0; i < ptrGlobal->ptrConfig->GetArrRegexHeaderInd().size();
              ++i)
-            arrRegexHeaderInd[i] =
-                ptrGlobal->ptrConfig->GetArrRegexHeaderInd()[i];
+            arrRegexHeaderInd[i] =ptrGlobal->ReversUTF16RU(
+                ptrGlobal->ptrConfig->GetArrRegexHeaderInd()[i]);
     }
     catch (...)
     {

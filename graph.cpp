@@ -22,16 +22,16 @@ ETypeGraph::ETypeGraph(int _iType) : iType(_iType)
 {
     switch (_iType)
     {
-       case -1:
-           //Так как оператор = переопределён
-           this->sName = ETypeGraph::ETG_Common.sName;
-           return;
-       case -2:
-           this->sName = ETypeGraph::ETG_Alt.sName;
-           return;
-       case -3:
-           this->sName = ETypeGraph::ETG_Reverse.sName;
-           return;
+        case -1:
+            // Так как оператор = переопределён
+            this->sName = ETypeGraph::ETG_Common.sName;
+            return;
+        case -2:
+            this->sName = ETypeGraph::ETG_Alt.sName;
+            return;
+        case -3:
+            this->sName = ETypeGraph::ETG_Reverse.sName;
+            return;
     }
     sName = to_string(_iType);
 }
@@ -76,7 +76,7 @@ void FGraph::Create()
 
         int iNumberParams = 0;
 
-        //Аналогично считается в CountAfterAllMetric
+        // Аналогично считается в CountAfterAllMetric
         for (int iType = ETypeGraph::ETG_Common.Get();
              iType >= ETypeGraph::ETG_Reverse.Get();
              --iType)
@@ -280,8 +280,9 @@ void FGraph::CalcAllScoreAndAmount(FTypeGraph& fGraph)
         // fGraph.dGraphAllScore += dCurScore;
         // fGraph.iGraphAmountDisc++;
 
-        fGraph.mapGraphDataTypeDisc[ETypeDisc::ETD_Total].iAmount++;
-        fGraph.mapGraphDataTypeDisc[ETypeDisc::ETD_Total].dCredits += dCurScore;
+        fGraph.mapGraphDataTypeDisc[EClassicTypeDisc::ETD_Total].iAmount++;
+        fGraph.mapGraphDataTypeDisc[EClassicTypeDisc::ETD_Total].dCredits +=
+            dCurScore;
 
         fGraph.mapGraphDataTypeDisc[fDisc->eTypeDisc].iAmount++;
         fGraph.mapGraphDataTypeDisc[fDisc->eTypeDisc].dCredits += dCurScore;
@@ -439,8 +440,10 @@ void FGraph::GenerateReverseGraph()
 
     FormulaParser fFormulaParser(
         ptrTree->ptrGlobal->ptrConfig->GetSFormulaReverseGraph(),
-        ptrTree->mapETMTypeDisc[ETM_NoIgnore][ETypeDisc::ETD_Total].dCredits,
-        ptrTree->mapETMTypeDisc[ETM_NoIgnore][ETypeDisc::ETD_Total].iAmount);
+        ptrTree->mapETMTypeDisc[ETM_NoIgnore][EClassicTypeDisc::ETD_Total]
+            .dCredits,
+        ptrTree->mapETMTypeDisc[ETM_NoIgnore][EClassicTypeDisc::ETD_Total]
+            .iAmount);
     for (int iL = 0; iL < n - 1; ++iL)
     {
         const auto& L = fGraph.arrRel[iL].first;
@@ -523,8 +526,10 @@ void FGraph::GenerateGraph()
 
     FormulaParser fFormulaParser(
         ptrTree->ptrGlobal->ptrConfig->GetSFormula(),
-        ptrTree->mapETMTypeDisc[ETM_NoIgnore][ETypeDisc::ETD_Total].dCredits,
-        ptrTree->mapETMTypeDisc[ETM_NoIgnore][ETypeDisc::ETD_Total].iAmount);
+        ptrTree->mapETMTypeDisc[ETM_NoIgnore][EClassicTypeDisc::ETD_Total]
+            .dCredits,
+        ptrTree->mapETMTypeDisc[ETM_NoIgnore][EClassicTypeDisc::ETD_Total]
+            .iAmount);
 
     for (int iL = 0; iL < n - 1; ++iL)
     {
@@ -619,8 +624,10 @@ void FGraph::GenerateAltGraph()
 
     FormulaParser fFormulaParser(
         ptrTree->ptrGlobal->ptrConfig->GetSFormula(),
-        ptrTree->mapETMTypeDisc[ETM_NoIgnore][ETypeDisc::ETD_Total].dCredits,
-        ptrTree->mapETMTypeDisc[ETM_NoIgnore][ETypeDisc::ETD_Total].iAmount);
+        ptrTree->mapETMTypeDisc[ETM_NoIgnore][EClassicTypeDisc::ETD_Total]
+            .dCredits,
+        ptrTree->mapETMTypeDisc[ETM_NoIgnore][EClassicTypeDisc::ETD_Total]
+            .iAmount);
 
     for (int iL = 0; iL < n - 1; ++iL)
     {
@@ -890,7 +897,8 @@ bool graphLess(pair<int, double> l, pair<int, double> r)
 void FGraph::CalculateCluster(double&                                  dResult,
                               const vector<vector<pair<int, double>>>& fAdjList)
 {
-    const int N = fAdjList.size();
+    const int         N = fAdjList.size();
+    std::vector<char> mark(N, 0);
 
     int iAmountClosedTriag = 0;
     int iAmountOpenTriag   = 0;
@@ -898,49 +906,81 @@ void FGraph::CalculateCluster(double&                                  dResult,
     // Вершина треугольника
     for (int i = 0; i < N; ++i)
     {
-        // Левая вершина
-        for (int pairLeft = 0; pairLeft < int(fAdjList[i].size()) - 1;
-             ++pairLeft)
-        {
-            const auto& [left, distanceLeft] = fAdjList[i][pairLeft];
+        const auto& neigh = fAdjList[i];
+        int         deg   = neigh.size();
+        if (deg < 2)
+            continue;
 
-            for (int pairRight = pairLeft + 1; pairRight < fAdjList[i].size();
-                 ++pairRight)
+        // Матрица смежности
+        for (auto& [v, dist] : neigh)
+        {
+            mark[v] = 1;
+        }
+
+        for (int a = 0; a < deg - 1; ++a)
+        {
+            int left = neigh[a].first;
+            for (int b = a + 1; b < deg; ++b)
             {
-                const auto& [right, distancepairRight] = fAdjList[i][pairRight];
+                int right = neigh[b].first;
                 ++iAmountOpenTriag;
 
-                pair<int, double> serchRight = { right, -1 };
-
-                // Если замыкает, то есть в i есть k
-                const auto& it = lower_bound(ALL(fAdjList[left]), serchRight);
-
-                if (it != fAdjList[left].end())
-                    if (it->first == right)
-                        ++iAmountClosedTriag;
+                if (mark[right] &&
+                    std::binary_search(ALL(fAdjList[left]),
+                                           std::make_pair(right, -1.0),
+                    [](auto& p1, auto& p2)
+                    {
+                        return p1.first < p2.first;
+                    }))
+                {
+                    ++iAmountClosedTriag;
+                }
             }
         }
-        // pair<int, double> searchJ = { i, -1 };
-        // auto              pairJ   = lower_bound(ALL(fAdjList[i]), searchJ);
-        // for (; pairJ != fAdjList[i].end(); ++pairJ)
-        //{
-        //     auto& [j, valJ]           = *pairJ;
-        //     pair<int, double> searchK = { j, -1 };
-        //     auto              pairK   = lower_bound(ALL(fAdjList[j]),
-        //     searchK); for (; pairK != fAdjList[j].end(); ++pairK)
-        //     {
-        //         auto& [k, valK] = *pairK;
-        //         ++iAmountOpenTriag;
-        //         pair<int, double> k2 = { k, -1 };
-        //         // Если замыкает, то есть в i есть k
-        //         const auto& it =
-        //             lower_bound(fAdjList[i].begin(), fAdjList[i].end(), k2);
-        //         if (it != fAdjList[i].end())
-        //             if (it->first == k)
-        //                 ++iAmountClosedTriag;
-        //     }
-        // }
     }
+
+    //// Левая вершина
+    // for (int pairLeft = 0; pairLeft < int(fAdjList[i].size()) - 1;
+    //      ++pairLeft)
+    //{
+    //     const auto& [left, distanceLeft] = fAdjList[i][pairLeft];
+
+    //    for (int pairRight = pairLeft + 1; pairRight < fAdjList[i].size();
+    //         ++pairRight)
+    //    {
+    //        const auto& [right, distancepairRight] = fAdjList[i][pairRight];
+    //        ++iAmountOpenTriag;
+
+    //        pair<int, double> serchRight = { right, -1 };
+
+    //        // Если замыкает, то есть в i есть k
+    //        const auto& it = lower_bound(ALL(fAdjList[left]), serchRight);
+
+    //        if (it != fAdjList[left].end())
+    //            if (it->first == right)
+    //                ++iAmountClosedTriag;
+    //    }
+    //}
+    // pair<int, double> searchJ = { i, -1 };
+    // auto              pairJ   = lower_bound(ALL(fAdjList[i]), searchJ);
+    // for (; pairJ != fAdjList[i].end(); ++pairJ)
+    //{
+    //     auto& [j, valJ]           = *pairJ;
+    //     pair<int, double> searchK = { j, -1 };
+    //     auto              pairK   = lower_bound(ALL(fAdjList[j]),
+    //     searchK); for (; pairK != fAdjList[j].end(); ++pairK)
+    //     {
+    //         auto& [k, valK] = *pairK;
+    //         ++iAmountOpenTriag;
+    //         pair<int, double> k2 = { k, -1 };
+    //         // Если замыкает, то есть в i есть k
+    //         const auto& it =
+    //             lower_bound(fAdjList[i].begin(), fAdjList[i].end(), k2);
+    //         if (it != fAdjList[i].end())
+    //             if (it->first == k)
+    //                 ++iAmountClosedTriag;
+    //     }
+    // }
 
     if (iAmountOpenTriag)
     {

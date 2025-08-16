@@ -410,7 +410,7 @@ void FAdapOutData::CreateGephiLableCSVData()
                             continue;
                         /*  for (int iRowNum = 0;
                                iRowNum <
-                               fGraph.mapGraphDataTypeDisc.at(ETypeDisc::ETD_Total)
+                               fGraph.mapGraphDataTypeDisc.at(EClassicTypeDisc::ETD_Total)
                                    .iAmount;
                                ++iRowNum)*/
 
@@ -503,7 +503,7 @@ void FAdapOutData::CreateGephiLableCSVData()
 
                                     // X
                                 case 8:
-                                    if (it->mapAllDisc.count(fNodeName.first))
+                                    if (mapAddGraphParams.count(fNodeName))
                                         fDataContainer =
                                             mapAddGraphParams[{ wsKey,
                                                                 iFirstCourse }]
@@ -511,7 +511,8 @@ void FAdapOutData::CreateGephiLableCSVData()
                                     break;
                                     // Y
                                 case 9:
-                                    if (it->mapAllDisc.count(fNodeName.first))
+                                    if (mapAddGraphParams.count(
+                                            fNodeName))
                                         fDataContainer =
                                             mapAddGraphParams[{ wsKey,
                                                                 iFirstCourse }]
@@ -519,7 +520,7 @@ void FAdapOutData::CreateGephiLableCSVData()
                                     break;
                                     // Z
                                 case 10:
-                                    if (it->mapAllDisc.count(fNodeName.first))
+                                    if (mapAddGraphParams.count(fNodeName))
                                         fDataContainer =
                                             mapAddGraphParams[{ wsKey,
                                                                 iFirstCourse }]
@@ -527,7 +528,7 @@ void FAdapOutData::CreateGephiLableCSVData()
                                     break;
                                     // Color
                                 case 11:
-                                    if (it->mapAllDisc.count(fNodeName.first))
+                                    if (mapAddGraphParams.count(fNodeName))
                                         fDataContainer =
                                             mapAddGraphParams[{ wsKey,
                                                                 iFirstCourse }]
@@ -587,6 +588,27 @@ string
 
 string FAdapOutData::AddCompString(const map<string, vector<string>>& mapComp,
                                    bool                               bIsBrache)
+{
+    string sReturn;
+    if (bIsBrache)
+        sReturn += "(";
+
+    int j = -1;
+    for (const auto& [sNameComp, arrIndicator] : mapComp)
+    {
+        ++j;
+        if (j)
+            sReturn += ",";
+        sReturn += sNameComp;
+    }
+    if (bIsBrache)
+        sReturn += ")";
+
+    return sReturn;
+}
+
+string FAdapOutData::AddCompString(const map<string, set<string>>& mapComp,
+                                   bool                            bIsBrache)
 {
     string sReturn;
     if (bIsBrache)
@@ -880,7 +902,7 @@ void FAdapOutData::CreateTotalData()
         vector<any> arrRow(
             fTotalData.arrHeader
                 .size());    // Без push_back, чтобы гарантировать
-                             // совпадение кол-во столбцов
+        // совпадение кол-во столбцов
         for (int iColumnNum = 0; iColumnNum < arrOriginMetricTotalHead.size();
              ++iColumnNum)
         {
@@ -899,49 +921,83 @@ void FAdapOutData::CreateTotalData()
                     case 2:
                         fDataContainer = it->iYearStart;
                         break;
-                    case 3:
+#define END_DEFAULT_PARAMS 4
+                    case END_DEFAULT_PARAMS - 1:
                         fDataContainer = it->iCodeUGSN;
                         break;
 
-#define START_TYPE_DISC_CREDITS 4
-                    case START_TYPE_DISC_CREDITS:
-                    case START_TYPE_DISC_CREDITS + 1:
-                    case START_TYPE_DISC_CREDITS + 2:
-                    case START_TYPE_DISC_CREDITS + 3:
-                        if (it->mapETMTypeDisc[ETM_NoExtended].count(ETypeDisc(
-                                iColumnNum - START_TYPE_DISC_CREDITS)))
-                        {
-                            fDataContainer =
-                                it->mapETMTypeDisc[ETM_NoExtended]
-                                    .at(ETypeDisc(iColumnNum -
-                                                  START_TYPE_DISC_CREDITS))
-                                    .dCredits;
-                        }
-                        else
-                        {
-                            // fDataContainer.fData = FGlobal::dNoInit;
-                        }
-                        break;
+                        // #define START_TYPE_DISC_CREDITS 4
+                        //                     case START_TYPE_DISC_CREDITS:
+                        //                     case START_TYPE_DISC_CREDITS + 1:
+                        //                     case START_TYPE_DISC_CREDITS + 2:
+                        //                     case START_TYPE_DISC_CREDITS + 3:
+                        //                         if
+                        //                         (it->mapETMTypeDisc[ETM_NoExtended].count(EClassicTypeDisc(
+                        //                                 iColumnNum -
+                        //                                 START_TYPE_DISC_CREDITS)))
+                        //                         {
+                        //                             fDataContainer =
+                        //                                 it->mapETMTypeDisc[ETM_NoExtended]
+                        //                                     .at(EClassicTypeDisc(iColumnNum
+                        //                                     -
+                        //                                                   START_TYPE_DISC_CREDITS))
+                        //                                     .dCredits;
+                        //                         }
+                        //                         else
+                        //                         {
+                        //                             // fDataContainer.fData =
+                        //                             FGlobal::dNoInit;
+                        //                         }
+                        //                         break;
+                        //
+                        // #define START_TYPE_DISC_AMOUNT 8
+                        //                     case START_TYPE_DISC_AMOUNT:
+                        //                     case START_TYPE_DISC_AMOUNT + 1:
+                        //                     case START_TYPE_DISC_AMOUNT + 2:
+                        //                     case START_TYPE_DISC_AMOUNT + 3:
+                        //                         if
+                        //                         (it->mapETMTypeDisc[ETM_NoExtended].count(
+                        //                                 EClassicTypeDisc(iColumnNum
+                        //                                 -
+                        //                                 START_TYPE_DISC_AMOUNT)))
+                        //                         {
+                        //                             fDataContainer =
+                        //                                 it->mapETMTypeDisc[ETM_NoExtended]
+                        //                                     .at(EClassicTypeDisc(iColumnNum
+                        //                                     -
+                        //                                                   START_TYPE_DISC_AMOUNT))
+                        //                                     .iAmount;
+                        //                         }
+                        //                         else
+                        //                         {
+                        //                             // fDataContainer.fData =
+                        //                             FGlobal::dNoInit;
+                        //                         }
+                        //                         break;
+                }
 
-#define START_TYPE_DISC_AMOUNT 8
-                    case START_TYPE_DISC_AMOUNT:
-                    case START_TYPE_DISC_AMOUNT + 1:
-                    case START_TYPE_DISC_AMOUNT + 2:
-                    case START_TYPE_DISC_AMOUNT + 3:
-                        if (it->mapETMTypeDisc[ETM_NoExtended].count(
-                                ETypeDisc(iColumnNum - START_TYPE_DISC_AMOUNT)))
-                        {
-                            fDataContainer =
-                                it->mapETMTypeDisc[ETM_NoExtended]
-                                    .at(ETypeDisc(iColumnNum -
-                                                  START_TYPE_DISC_AMOUNT))
-                                    .iAmount;
-                        }
-                        else
-                        {
-                            // fDataContainer.fData = FGlobal::dNoInit;
-                        }
-                        break;
+                int iXShift = iColumnNum - END_DEFAULT_PARAMS;
+                if ((iXShift >= 0) &&
+                    (iXShift < ptrGlobal->ptrConfig->GetArrTypeDisc().size()))
+                {
+                    if (it->mapETMTypeDisc[ETM_NoExtended].count(iXShift))
+                    {
+                        fDataContainer = it->mapETMTypeDisc[ETM_NoExtended]
+                                             .at(iXShift)
+                                             .dCredits;
+                    }
+                }
+
+                iXShift -= ptrGlobal->ptrConfig->GetArrTypeDisc().size();
+                if ((iXShift >= 0) &&
+                    (iXShift < ptrGlobal->ptrConfig->GetArrTypeDisc().size()))
+                {
+                    if (it->mapETMTypeDisc[ETM_NoExtended].count(iXShift))
+                    {
+                        fDataContainer = it->mapETMTypeDisc[ETM_NoExtended]
+                                             .at(iXShift)
+                                             .iAmount;
+                    }
                 }
 
                 arrRow[iColumnNum] = (fDataContainer);
@@ -1044,10 +1100,10 @@ void FAdapOutData::CreateXYZColor(
     shared_ptr<FCurricula> ptrCurricula, const FTypeGraph& fGraph,
     map<pair<wstring, int>, FAddGraphParams>& mapAddGraphParams)
 {
-    int                       iRowNum = -1;
+    int iRowNum = -1;
     map<int, vector<pair<wstring, int>>>
                      mapReverceCourse;    // Разбиение на курсы
-    map<string, int>          mapCompColor;        // Перечень компетенций
+    map<string, int> mapCompColor;        // Перечень компетенций
 
     for (const auto& [wsKey, iCourse] : fGraph.arrRel)
     {
@@ -1056,8 +1112,8 @@ void FAdapOutData::CreateXYZColor(
             ptrCurricula->ptrGraph->GetGraphDisc(wsKey);
         if (fDisc == nullptr)
             continue;
-        
-        const auto& fNodeName = fGraph.arrRel[iRowNum];
+
+        const auto& fNodeName    = fGraph.arrRel[iRowNum];
         int         iFirstCourse = iCourse;
         if (ptrCurricula->mapAllDisc.count(fNodeName.first))
         {
@@ -1076,6 +1132,10 @@ void FAdapOutData::CreateXYZColor(
                                        ->first;
                 }
             }
+        }
+        else
+        {
+            mapCompColor[ptrGlobal->ConwertToString(fNodeName.first)];
         }
 
         mapReverceCourse[iCourse].push_back({ wsKey, iFirstCourse });
@@ -1129,16 +1189,31 @@ void FAdapOutData::CreateXYZColor(
         {
             ++iX;
 
+            int iShiftX = ptrGlobal->GetRandomInt(
+                -ptrGlobal->ptrConfig->GetIRandomShift(),
+                ptrGlobal->ptrConfig->GetIRandomShift());
+
+            int iShiftY = ptrGlobal->GetRandomInt(
+                -ptrGlobal->ptrConfig->GetIRandomShift(),
+                ptrGlobal->ptrConfig->GetIRandomShift());
+
+            int iShiftZ = ptrGlobal->GetRandomInt(
+                -ptrGlobal->ptrConfig->GetIRandomShift(),
+                ptrGlobal->ptrConfig->GetIRandomShift());
+
             mapAddGraphParams[{ wsDisc, iCourse }].X =
                 (iX % ptrGlobal->ptrConfig->GetIRowSizeGraph()) *
-                ptrGlobal->ptrConfig->GetIShiftXGraph();
+                    ptrGlobal->ptrConfig->GetIShiftXGraph() +
+                iShiftX;
 
             mapAddGraphParams[{ wsDisc, iCourse }].Y =
                 (iX / ptrGlobal->ptrConfig->GetIRowSizeGraph()) *
-                ptrGlobal->ptrConfig->GetIShiftYGraph();
+                    ptrGlobal->ptrConfig->GetIShiftYGraph() +
+                iShiftY;
 
             mapAddGraphParams[{ wsDisc, iCourse }].Z =
-                abs(iCourse) * ptrGlobal->ptrConfig->GetIShiftZGraph();
+                abs(iCourse) * ptrGlobal->ptrConfig->GetIShiftZGraph() +
+                iShiftZ;
 
             if (ptrCurricula->mapAllDisc.count(wsDisc))
                 for (const auto& [sNameComp, arrIndicator] :
@@ -1148,6 +1223,11 @@ void FAdapOutData::CreateXYZColor(
                         mapCompColor[sNameComp];    // Генерируем обобщённый
                                                     // цвет
                 }
+            else
+            {
+                mapAddGraphParams[{ wsDisc, iCourse }].Color ^=
+                    mapCompColor[ptrGlobal->ConwertToString(wsDisc)]; 
+            }
         }
     }
 }
@@ -1178,85 +1258,123 @@ void FAdapOutData::CreateGraphData()
                 {
                     switch (iColumnNum)
                     {
-                        case 0:
+#define END_CREDITS 1
+                        case END_CREDITS - 1:
                             fDataContainer = it->sCurName;
                             break;
+                    }
 
-#define START_GRAPH_DATA_CREDITS 1
-                        case START_GRAPH_DATA_CREDITS:
-                        case START_GRAPH_DATA_CREDITS + 1:
-                        case START_GRAPH_DATA_CREDITS + 2:
-                        case START_GRAPH_DATA_CREDITS + 3:
-                            if (fGraph.mapGraphDataTypeDisc.count(ETypeDisc(
-                                    iColumnNum - START_GRAPH_DATA_CREDITS)))
-                            {
-                                fDataContainer =
-                                    fGraph.mapGraphDataTypeDisc
-                                        .at(ETypeDisc(iColumnNum -
-                                                      START_GRAPH_DATA_CREDITS))
-                                        .dCredits;
-                            }
-                            else
-                            {
-                                // fDataContainer.fData =
-                                // FGlobal::dNoInit;
-                            }
-                            break;
+                    int iXShift = iColumnNum - END_CREDITS;
+                    if ((iXShift >= 0) &&
+                        (iXShift <
+                         ptrGlobal->ptrConfig->GetArrTypeDisc().size()))
+                    {
+                        if (fGraph.mapGraphDataTypeDisc.count(iXShift))
+                        {
+                            fDataContainer =
+                                fGraph.mapGraphDataTypeDisc.at(iXShift)
+                                    .dCredits;
+                        }
+                    }
 
-#define START_GRAPH_DATA_AMOUNT 5
-                        case START_GRAPH_DATA_AMOUNT:
-                        case START_GRAPH_DATA_AMOUNT + 1:
-                        case START_GRAPH_DATA_AMOUNT + 2:
-                        case START_GRAPH_DATA_AMOUNT + 3:
-                            if (fGraph.mapGraphDataTypeDisc.count(ETypeDisc(
-                                    iColumnNum - START_GRAPH_DATA_AMOUNT)))
-                            {
-                                fDataContainer =
-                                    fGraph.mapGraphDataTypeDisc
-                                        .at(ETypeDisc(iColumnNum -
-                                                      START_GRAPH_DATA_AMOUNT))
-                                        .iAmount;
-                            }
-                            else
-                            {
-                                // fDataContainer.fData =
-                                // FGlobal::dNoInit;
-                            }
-                            break;
-                        case 9:
+                    iXShift -= ptrGlobal->ptrConfig->GetArrTypeDisc().size();
+
+                    if ((iXShift >= 0) &&
+                        (iXShift <
+                         ptrGlobal->ptrConfig->GetArrTypeDisc().size()))
+                    {
+                        if (fGraph.mapGraphDataTypeDisc.count(iXShift))
+                        {
+                            fDataContainer =
+                                fGraph.mapGraphDataTypeDisc.at(iXShift).iAmount;
+                        }
+                    }
+
+                    iXShift -= ptrGlobal->ptrConfig->GetArrTypeDisc().size();
+
+                    switch (iXShift)
+                    {
+                        case 0:
                             fDataContainer = fGraph.dMaxDiscScore;
                             break;
-                        case 10:
+                        case 1:
                             fDataContainer = fGraph.dMinDiscScore;
                             break;
-                        case 11:
+                        case 2:
                             fDataContainer = fGraph.dMaxRib;
                             break;
-                        case 12:
+                        case 3:
                             fDataContainer = fGraph.dMinRib;
                             break;
-                        case 13:
+                        case 4:
                             fDataContainer = fGraph.dDiametrLen;
                             break;
-                        case 14:
+                        case 5:
                             fDataContainer = fGraph.dDiametrStep;
                             break;
-                        case 15:
+                        case 6:
                             fDataContainer = fGraph.iComponent;
                             break;
-                        case 16:
+                        case 7:
                             fDataContainer = fGraph.dMaxSpanTree;
                             break;
-                        case 17:
+                        case 8:
                             fDataContainer = fGraph.dMinSpanTree;
                             break;
-                        case 18:
+                        case 9:
                             fDataContainer = fGraph.dDense;
                             break;
-                        case 19:
+                        case 10:
                             fDataContainer = fGraph.dGlobalСluster;
                             break;
                     }
+
+                    //                        case START_GRAPH_DATA_CREDITS:
+                    //                        case START_GRAPH_DATA_CREDITS + 1:
+                    //                        case START_GRAPH_DATA_CREDITS + 2:
+                    //                        case START_GRAPH_DATA_CREDITS + 3:
+                    //                            if
+                    //                            (fGraph.mapGraphDataTypeDisc.count(EClassicTypeDisc(
+                    //                                    iColumnNum -
+                    //                                    START_GRAPH_DATA_CREDITS)))
+                    //                            {
+                    //                                fDataContainer =
+                    //                                    fGraph.mapGraphDataTypeDisc
+                    //                                        .at(EClassicTypeDisc(iColumnNum
+                    //                                        -
+                    //                                                      START_GRAPH_DATA_CREDITS))
+                    //                                        .dCredits;
+                    //                            }
+                    //                            else
+                    //                            {
+                    //                                // fDataContainer.fData =
+                    //                                // FGlobal::dNoInit;
+                    //                            }
+                    //                            break;
+                    //
+                    // #define START_GRAPH_DATA_AMOUNT 5
+                    //                        case START_GRAPH_DATA_AMOUNT:
+                    //                        case START_GRAPH_DATA_AMOUNT + 1:
+                    //                        case START_GRAPH_DATA_AMOUNT + 2:
+                    //                        case START_GRAPH_DATA_AMOUNT + 3:
+                    //                            if
+                    //                            (fGraph.mapGraphDataTypeDisc.count(EClassicTypeDisc(
+                    //                                    iColumnNum -
+                    //                                    START_GRAPH_DATA_AMOUNT)))
+                    //                            {
+                    //                                fDataContainer =
+                    //                                    fGraph.mapGraphDataTypeDisc
+                    //                                        .at(EClassicTypeDisc(iColumnNum
+                    //                                        -
+                    //                                                      START_GRAPH_DATA_AMOUNT))
+                    //                                        .iAmount;
+                    //                            }
+                    //                            else
+                    //                            {
+                    //                                // fDataContainer.fData =
+                    //                                // FGlobal::dNoInit;
+                    //                            }
+                    //                            break;
 
                     arrRow[iColumnNum] = (fDataContainer);
                 }

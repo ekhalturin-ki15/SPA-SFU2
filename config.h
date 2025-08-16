@@ -236,6 +236,7 @@ private:
     int iShiftXGraph;
     int iShiftYGraph;
     int iShiftZGraph;
+    int iRandomShift;
     // int iIndicatorDeep;
 
     // Int Params adapter
@@ -289,6 +290,11 @@ public:
     {
         return iShiftZGraph;
     }
+
+    const int& GetIRandomShift() const
+    {
+        return iRandomShift;
+    }
     // const int& GetIIndicatorDeep() const
     //{
     //     return iIndicatorDeep;
@@ -323,7 +329,9 @@ private:
     bool bOutTotalInfo;
     bool bOutDataCorridor;
     bool bOutWithoutEmptyCell;
-    bool bOutCompRU;
+    bool bOutCompEN;
+    bool bIsOutExcel;
+    bool bSolveFirstPageMultirow;
 
     // Bool Params adapter
 private:
@@ -430,9 +438,19 @@ public:
         return bOutWithoutEmptyCell;
     }
     
-    const bool& GetBOutCompRU() const
+    const bool& GetBOutCompEN() const
     {
-        return bOutCompRU;
+        return bOutCompEN;
+    }
+
+    const bool& GetBIsOutExcel() const
+    {
+        return bIsOutExcel;
+    }
+
+    const bool& GetBSolveFirstPageMultirow() const
+    {
+        return bSolveFirstPageMultirow;
     }
 
     // double Params
